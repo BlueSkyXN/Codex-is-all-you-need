@@ -10,13 +10,13 @@ Codex preset catalog.
 ```text
 Agents:
   common     6
-  dev       12
-  data       4
-  office     4
+  dev       14
+  data       5
+  office     5
   research   4
 
 Skills:
-  dev       17
+  dev       19
   data       4
   office     5
   research   3

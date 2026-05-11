@@ -89,9 +89,9 @@ open ~/.codex/dashboard/index.html
 ```text
 examples/catalog/
   common/       6 agents, 0 public skills
-  dev/         12 agents, 17 public skills
-  data/         4 agents, 4 public skills
-  office/       4 agents, 5 public skills
+  dev/         14 agents, 19 public skills
+  data/         5 agents, 4 public skills
+  office/       5 agents, 5 public skills
   research/     4 agents, 3 public skills
 
 examples/runtime/

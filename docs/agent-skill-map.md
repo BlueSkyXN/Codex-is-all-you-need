@@ -55,10 +55,12 @@ Actual availability is decided by runtime filesystem visibility:
 | Agent | Role | Recommended Skills |
 |---|---|---|
 | `dev_api_designer` | API contract design and review | `api-contract-review`, `fullstack-feature`, `test-strategy` |
+| `dev_architect_reviewer` | Architecture, service boundaries, technology choices, migration paths, reliability, and evolution risk review | `migration-plan`, `refactor-plan`, `api-contract-review`, `security-review`, `performance-diagnosis`, `test-strategy` |
 | `dev_backend_engineer` | Backend services, APIs, data integrity, auth, queues, observability | `api-contract-review`, `test-strategy`, `security-review`, `performance-diagnosis` |
 | `dev_cli_engineer` | CLI flags, config discovery, exit codes, terminal UX | `cli-tooling-workflow`, `test-strategy`, `release-check` |
 | `dev_code_mapper` | Read-only codebase mapping before implementation | `repo-onboarding`, `refactor-plan`, `migration-plan` |
 | `dev_code_reviewer` | Review diffs, PRs, regressions, test gaps | `pr-review`, `security-review`, `api-contract-review`, `test-strategy` |
+| `dev_docs_engineer` | Developer docs, API/CLI docs, guides, README structure, and docs-as-code workflows | `repo-onboarding`, `api-contract-review`, `cli-tooling-workflow`, `release-check` |
 | `dev_docs_researcher` | API, SDK, CLI, config, version behavior verification | `api-contract-review`, `dependency-upgrade`, `release-check` |
 | `dev_frontend_engineer` | UI components, state, routing, accessibility, browser validation | `frontend-ui-implementation`, `test-strategy`, `performance-diagnosis` |
 | `dev_implementer` | Scoped implementation, bug fixes, tests, targeted refactors | `bugfix`, `fullstack-feature`, `refactor-plan`, `test-strategy`, `api-contract-review`, `dependency-upgrade` |
@@ -72,6 +74,7 @@ Actual availability is decided by runtime filesystem visibility:
 | Agent | Role | Recommended Skills |
 |---|---|---|
 | `data_profile_analyst` | Dataset profiling, schema, grain, missingness, anomalies | `tabular-analysis`, `data-cleaning` |
+| `data_pipeline_engineer` | Reproducible ETL/ELT, data quality checks, orchestration, and data monitoring | `data-cleaning`, `sql-analysis`, `tabular-analysis`, `analysis-report` |
 | `data_sql_analyst` | SQL and metric logic review | `sql-analysis`, `tabular-analysis` |
 | `data_script_builder` | Reproducible data scripts and outputs | `tabular-analysis`, `data-cleaning`, `sql-analysis`, `analysis-report` |
 | `data_insight_reviewer` | Review analysis claims, charts, and recommendations | `analysis-report`, `tabular-analysis`, `sql-analysis` |
@@ -81,6 +84,7 @@ Actual availability is decided by runtime filesystem visibility:
 | Agent | Role | Recommended Skills |
 |---|---|---|
 | `office_weekly_summarizer` | Extract weekly progress, blockers, and missing information | `weekly-report` |
+| `office_product_planner` | Product planning, PRD drafting, requirement consolidation, roadmap framing, and success metrics | `briefing-note`, `project-report`, `weekly-report` |
 | `office_report_writer` | Draft reports, status updates, briefings, and management summaries | `weekly-report`, `project-report`, `briefing-note` |
 | `office_meeting_summarizer` | Meeting minutes, decisions, owners, deadlines | `meeting-summary` |
 | `office_slide_planner` | Deck storyline, slide outline, speaker notes | `ppt-outline` |

@@ -132,6 +132,34 @@ The dashboard detects these hints by matching visible skill names in the instruc
 
 面板会通过 instruction 文本中出现的 skill 名称，识别 agent 的推荐技能。
 
+## Orchestrator Agents / 编排 Agent
+
+An orchestrator agent is useful when a task spans multiple domains or needs several specialist agents. Keep it lightweight.
+
+当任务跨多个领域，或需要多个专家 agent 协作时，可以使用编排 agent。但它必须保持轻量。
+
+Good responsibilities:
+
+合理职责：
+
+- Classify the task domain.
+- Recommend a small agent lineup.
+- Define handoffs, boundaries, validation gates, and stop conditions.
+- Merge findings into a next-action plan.
+
+Avoid:
+
+避免：
+
+- Treating the orchestrator as an external scheduler, message bus, queue system, or state store.
+- Assuming nested subagents are always available.
+- Replacing specialist agents such as implementers, reviewers, analysts, or writers.
+- Creating large agent teams for small tasks.
+
+In Codex, the main/default agent remains responsible for actual tool calls, subagent spawning, file edits, verification, and final delivery.
+
+在 Codex 中，实际工具调用、subagent 拉起、文件修改、验证和最终交付仍由 main/default agent 负责。
+
 ## Review Checklist / 检查清单
 
 Before publishing an agent:

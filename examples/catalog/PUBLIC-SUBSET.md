@@ -9,7 +9,7 @@ Codex preset catalog.
 
 ```text
 Agents:
-  common     5
+  common     6
   dev       12
   data       4
   office     4

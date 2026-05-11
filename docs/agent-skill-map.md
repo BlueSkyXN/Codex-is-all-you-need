@@ -42,10 +42,13 @@ Actual availability is decided by runtime filesystem visibility:
 | Agent | Role | Recommended Skills |
 |---|---|---|
 | `common_task_planner` | Task decomposition, assumptions, validation plan | optional runtime-provided long-text workflow |
+| `common_orchestrator` | Cross-domain task coordination, agent lineup, handoffs, validation gates | optional runtime-provided long-text workflow |
 | `common_context_summarizer` | Context compression and handoff | optional runtime-provided long-text workflow |
 | `common_docs_researcher` | Docs, CLI, config, schema, and source verification | optional runtime-provided long-text workflow |
 | `common_quality_reviewer` | Output review and unsupported-claim detection | optional runtime-provided review workflow |
 | `common_file_organizer` | Folder organization, manifests, indexes | optional runtime-provided file-indexing workflow |
+
+`common_orchestrator` is a lightweight Codex orchestration preset. It coordinates plans and handoffs; it does not replace the main/default agent as the runtime controller.
 
 ## Dev Pack / 开发包
 

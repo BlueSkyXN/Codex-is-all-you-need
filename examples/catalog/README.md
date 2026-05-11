@@ -31,7 +31,7 @@ Current public subset:
 当前公开子集：
 
 ```text
-common/    5 agents, 0 public skills
+common/    6 agents, 0 public skills
 dev/      12 agents, 17 public skills
 data/      4 agents, 4 public skills
 office/    4 agents, 5 public skills

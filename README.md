@@ -4,9 +4,9 @@ Public-safe tooling for Codex preset catalogs, local suite inspection, and a rea
 
 这是一个面向公开分享的 Codex 预设工具仓库，用于展示 agent / skill catalog、local suite 检查逻辑，以及只读双语面板。
 
-This repository is intentionally not a complete copy of any private production setup. It contains public-safe tooling and examples only. Private agents, private skills, runtime paths, generated scan results, and machine-specific symlink state should stay outside this repository.
+This repository is intentionally not a complete copy of any private production setup. It contains public-safe tooling, design docs, and a sanitized production-derived example catalog. Private skills, runtime paths, generated scan results, and machine-specific symlink state should stay outside this repository.
 
-本仓库不是任何私有生产环境的完整拷贝，只放可公开的工具和示例。私有 agents、私有 skills、真实 runtime 路径、生成的扫描结果和本机 symlink 状态都应留在仓库外。
+本仓库不是任何私有生产环境的完整拷贝，只放可公开的工具、设计文档和经过脱敏的 production-derived 示例目录。私有 skills、真实 runtime 路径、生成的扫描结果和本机 symlink 状态都应留在仓库外。
 
 ## Repository Layout / 仓库结构
 
@@ -54,8 +54,8 @@ Migration notes / 迁移说明
   CN: 如何从 Claude Code 风格的 agents / skills 中学习结构，而不复制私有生产内容。
 
 Examples / 示例
-  EN: Sanitized toy agents, skills, and suite layout examples.
-  CN: 脱敏后的 toy agents、skills 和 suite 目录示例。
+  EN: Sanitized production-derived agents, skills, and suite layout examples.
+  CN: 从真实生产设计抽取并脱敏后的 agents、skills 和 suite 目录示例。
 ```
 
 ## Dashboard / 预设面板
@@ -104,21 +104,17 @@ See [dashboard/README.md](dashboard/README.md) for setup, config fields, status 
 
 ## Examples / 示例
 
-The files under `examples/` are public-safe templates. They are not intended to be installed as-is into a real machine without review.
+The files under `examples/` are public-safe templates derived from a real production preset design. They are not intended to be installed as-is into a real machine without review.
 
-`examples/` 下的文件是可公开模板，不应在未经审查的情况下直接安装到真实机器。
+`examples/` 下的文件是从真实生产 preset 设计抽取后的可公开模板，不应在未经审查的情况下直接安装到真实机器。
 
 ```text
 examples/catalog/
-  common/agents/common_task_planner.toml
-  dev/agents/dev_code_reviewer.toml
-  dev/skills/bugfix/
-  data/agents/data_profile_analyst.toml
-  data/skills/tabular-analysis/
-  office/agents/office_report_writer.toml
-  office/skills/weekly-report/
-  research/agents/research_synthesis_writer.toml
-  research/skills/research-synthesis/
+  common/       5 agents, 0 public skills
+  dev/         12 agents, 17 public skills
+  data/         4 agents, 4 public skills
+  office/       4 agents, 5 public skills
+  research/     4 agents, 3 public skills
 
 examples/runtime/
   AGENTS.md
@@ -126,3 +122,7 @@ examples/runtime/
 examples/suites/
   README.md
 ```
+
+The public catalog intentionally excludes private symlinked skills and any generated local dashboard state.
+
+公开示例目录刻意排除了私有 symlink skills 和任何本机生成的 dashboard 状态。

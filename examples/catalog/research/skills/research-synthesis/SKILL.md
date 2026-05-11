@@ -1,32 +1,46 @@
 ---
 name: research-synthesis
-description: Use when combining multiple research materials, notes, articles, transcripts, or source excerpts into a structured brief or comparison.
+description: Use when turning mapped evidence and provided materials into a balanced research synthesis.
 ---
 
-# Research Synthesis
+# Research synthesis workflow
 
-## Workflow
+Use this skill after an evidence table or source map exists.
 
-1. Inventory the source set and note source type, date, and reliability.
-2. Extract claims, evidence, numbers, and definitions.
-3. Group findings by theme rather than by source order.
-4. Mark conflicts, weak evidence, missing context, and time-sensitive facts.
-5. Produce a structured brief with clear source notes.
+## Structure
 
-## Validation
+1. Context and scope
+2. Material set used
+3. Main findings
+4. Evidence basis
+5. Conflicts and uncertainty
+6. Gaps and limitations
+7. Implications
+8. Recommended next steps
 
-- Preserve citations, filenames, URLs, or page references when available.
-- Use current sources for facts that may have changed.
-- Distinguish evidence from inference.
-- Do not fill missing source material with invented context.
+## Principles
+
+- Synthesize from evidence, not from unsupported notes.
+- Preserve disagreement rather than forcing consensus.
+- State confidence level for major findings.
+- Keep claims traceable to source identifiers.
+- Separate facts from interpretation.
+- Avoid overclaiming.
+
+## Do not
+
+- Invent sources, quotes, statistics, or claims.
+- Hide weak evidence.
+- Present speculation as fact.
+- Add external facts unless explicitly requested.
 
 ## Output
 
-Provide:
+Return:
 
-- Scope.
-- Source inventory.
-- Key findings.
-- Evidence notes.
-- Open questions.
-- Practical implications.
+1. Synthesis draft
+2. Evidence basis
+3. Confidence and limitations
+4. Conflicts or uncertainty
+5. Missing information
+6. Recommended follow-up

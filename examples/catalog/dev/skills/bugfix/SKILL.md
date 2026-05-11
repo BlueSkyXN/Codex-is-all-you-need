@@ -1,30 +1,50 @@
 ---
 name: bugfix
-description: Use when the user wants to diagnose and fix a software defect, failing test, regression, or broken CLI/API behavior.
+description: Use for software bug fixes that need reproduction, root-cause analysis, minimal implementation, and validation.
 ---
 
-# Bugfix
+# Bugfix workflow
 
-## Workflow
+Use this workflow when the task is to find and fix a defect in code.
 
-1. Reproduce or localize the defect from logs, tests, or user-provided steps.
-2. Identify the smallest code path that explains the behavior.
-3. Inspect surrounding conventions before editing.
-4. Patch the root cause, not only the visible symptom.
-5. Add or update the narrowest meaningful test when practical.
-6. Run a verification command and report any gap.
+## Steps
 
-## Guardrails
+1. Define the observed failure.
+   - Error message
+   - Reproduction steps
+   - Affected file, feature, endpoint, CLI command, or behavior
 
-- Do not overwrite unrelated local changes.
-- Do not introduce a new abstraction unless it reduces real complexity.
-- Do not claim a fix is verified without a command, test, or direct observation.
+2. Explore before editing.
+   - Map likely files and execution paths.
+   - Identify existing tests.
+   - Identify smallest validation command.
+
+3. Reproduce or establish a validation path.
+   - Run the smallest relevant test/check first.
+   - If reproduction is impossible, state why and choose the closest validation.
+
+4. Implement the smallest defensible fix.
+   - Avoid unrelated changes.
+   - Preserve public contracts unless explicitly asked.
+   - Add or update tests when behavior changes.
+
+5. Validate.
+   - Run the smallest relevant checks.
+   - Escalate to broader checks only if needed.
 
 ## Output
 
-Report:
+Return:
 
-- Root cause.
-- Files changed.
-- Verification run.
-- Remaining risk, if any.
+1. Root cause
+2. Fix summary
+3. Files changed
+4. Tests or checks run
+5. Residual risks
+
+## Do not
+
+- Do not rewrite architecture unless required.
+- Do not weaken tests to make them pass.
+- Do not hide failing or inconclusive validation.
+- Do not modify unrelated files.

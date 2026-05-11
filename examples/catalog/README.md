@@ -1,8 +1,8 @@
 # Example Catalog / 示例素材目录
 
-This is a sanitized source catalog shaped like a real Codex preset catalog.
+This is a sanitized source catalog derived from a real Codex preset catalog.
 
-这是一个脱敏后的 source catalog 示例，结构与真实 Codex 预设素材目录一致。
+这是一个从真实 Codex preset catalog 抽取并脱敏后的 source catalog，结构与生产素材目录一致。
 
 ```text
 common/
@@ -26,6 +26,25 @@ The dashboard can scan this directory as `source.codex_root` when paired with a 
 
 配合本机 `suites_root` 时，dashboard 可以把本目录作为 `source.codex_root` 扫描。
 
-These examples are intentionally small. They show naming, layout, and public-safe boundaries.
+Current public subset:
 
-这些示例刻意保持精简，只用于展示命名、目录结构和公开安全边界。
+当前公开子集：
+
+```text
+common/    5 agents, 0 public skills
+dev/      12 agents, 17 public skills
+data/      4 agents, 4 public skills
+office/    4 agents, 5 public skills
+research/  4 agents, 3 public skills
+```
+
+Private symlinked skills are intentionally excluded. Agent `Recommended skills`
+hints are sanitized so they only name public skills or generic runtime-provided
+workflows.
+
+私有 symlink skills 已被刻意排除。agent 中的 `Recommended skills` 提示也已脱敏，
+只会指向公开 skill，或使用“当前 runtime 可见的通用 workflow”这类泛化说法。
+
+See `PUBLIC-SUBSET.md` for the publication boundary.
+
+发布边界见 `PUBLIC-SUBSET.md`。

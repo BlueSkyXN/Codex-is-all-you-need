@@ -1,6 +1,6 @@
 # Agent Skill Map / Agent 与 Skill 分工
 
-This is a public-safe example map for a five-pack Codex preset system.
+This is a public-safe map for the example five-pack Codex preset catalog.
 
 这是一个公开安全的五类 Codex 预设分工示例。
 
@@ -41,21 +41,28 @@ Actual availability is decided by runtime filesystem visibility:
 
 | Agent | Role | Recommended Skills |
 |---|---|---|
-| `common_task_planner` | Task decomposition, assumptions, validation plan | optional long-text workflow |
-| `common_context_summarizer` | Context compression and handoff | optional long-text workflow |
-| `common_docs_researcher` | Docs, CLI, config, schema, and source verification | optional long-text workflow |
-| `common_quality_reviewer` | Output review and unsupported-claim detection | optional review/escalation workflow |
-| `common_file_organizer` | Folder organization, manifests, indexes | optional long-text workflow |
+| `common_task_planner` | Task decomposition, assumptions, validation plan | optional runtime-provided long-text workflow |
+| `common_context_summarizer` | Context compression and handoff | optional runtime-provided long-text workflow |
+| `common_docs_researcher` | Docs, CLI, config, schema, and source verification | optional runtime-provided long-text workflow |
+| `common_quality_reviewer` | Output review and unsupported-claim detection | optional runtime-provided review workflow |
+| `common_file_organizer` | Folder organization, manifests, indexes | optional runtime-provided file-indexing workflow |
 
 ## Dev Pack / 开发包
 
 | Agent | Role | Recommended Skills |
 |---|---|---|
-| `dev_code_mapper` | Read-only codebase mapping before implementation | `refactor-plan` |
-| `dev_docs_researcher` | API, SDK, CLI, config, version behavior verification | optional long-text workflow |
-| `dev_implementer` | Scoped implementation, bug fixes, tests, targeted refactors | `bugfix`, `fullstack-feature`, `refactor-plan` |
-| `dev_test_runner` | Test execution, failure reproduction, log diagnosis | `bugfix` |
-| `dev_code_reviewer` | Review diffs, PRs, regressions, test gaps | `pr-review` |
+| `dev_api_designer` | API contract design and review | `api-contract-review`, `fullstack-feature`, `test-strategy` |
+| `dev_backend_engineer` | Backend services, APIs, data integrity, auth, queues, observability | `api-contract-review`, `test-strategy`, `security-review`, `performance-diagnosis` |
+| `dev_cli_engineer` | CLI flags, config discovery, exit codes, terminal UX | `cli-tooling-workflow`, `test-strategy`, `release-check` |
+| `dev_code_mapper` | Read-only codebase mapping before implementation | `repo-onboarding`, `refactor-plan`, `migration-plan` |
+| `dev_code_reviewer` | Review diffs, PRs, regressions, test gaps | `pr-review`, `security-review`, `api-contract-review`, `test-strategy` |
+| `dev_docs_researcher` | API, SDK, CLI, config, version behavior verification | `api-contract-review`, `dependency-upgrade`, `release-check` |
+| `dev_frontend_engineer` | UI components, state, routing, accessibility, browser validation | `frontend-ui-implementation`, `test-strategy`, `performance-diagnosis` |
+| `dev_implementer` | Scoped implementation, bug fixes, tests, targeted refactors | `bugfix`, `fullstack-feature`, `refactor-plan`, `test-strategy`, `api-contract-review`, `dependency-upgrade` |
+| `dev_performance_engineer` | Measured performance diagnosis and optimization | `performance-diagnosis`, `build-optimization`, `test-strategy` |
+| `dev_python_engineer` | Python scripts, APIs, CLIs, packaging, typing, pytest | `python-quality`, `test-strategy`, `performance-diagnosis`, `dependency-upgrade` |
+| `dev_security_reviewer` | Read-only security review | `security-review`, `dependency-upgrade`, `pr-review` |
+| `dev_test_runner` | Test execution, failure reproduction, log diagnosis | `bugfix`, `test-strategy`, `performance-diagnosis` |
 
 ## Data Pack / 数据包
 

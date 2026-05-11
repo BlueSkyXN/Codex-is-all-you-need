@@ -72,9 +72,9 @@ This keeps context small while preserving reliable procedures.
 
 ## Public-Safe Skill Policy / 公开安全策略
 
-Public examples should be toy workflows, not private production skills.
+Public examples may be minimal demo workflows or sanitized production-derived workflows.
 
-公开示例应该是 toy workflow，而不是私有生产 skill。
+公开示例可以是最小演示 workflow，也可以是从真实生产 skill 中抽取并脱敏后的通用工作流。
 
 Do not publish:
 
@@ -92,7 +92,7 @@ Publish instead:
 
 - Generic skill anatomy.
 - Small examples that show structure.
-- Sanitized workflows that teach the pattern.
+- Sanitized production-derived workflows that teach the pattern.
 - Placeholder scripts with no private dependencies.
 - Migration notes that describe how to extract reusable ideas.
 

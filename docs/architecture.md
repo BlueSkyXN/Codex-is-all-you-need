@@ -67,10 +67,10 @@ Project-level `.agents/skills` overlays can be added later for project-specific 
 
 ## Example Assets / 示例资产
 
-The `examples/` directory contains a sanitized source catalog, suite notes, and a sample runtime `AGENTS.md`.
+The `examples/` directory contains a sanitized production-derived source catalog, suite notes, and a sample runtime `AGENTS.md`.
 
-`examples/` 目录包含脱敏后的 source catalog、suite 说明和一个示例 runtime `AGENTS.md`。
+`examples/` 目录包含从真实生产设计抽取并脱敏后的 source catalog、suite 说明和一个示例 runtime `AGENTS.md`。
 
-They are documentation fixtures, not production presets.
+They are documentation fixtures and public templates, not a complete production preset system.
 
-它们是文档示例，不是生产预设。
+它们是文档示例和公开模板，不是完整生产预设系统。

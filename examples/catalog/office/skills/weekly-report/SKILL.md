@@ -1,33 +1,55 @@
 ---
 name: weekly-report
-description: Use when drafting daily reports, weekly reports, monthly reports, project progress updates, or leadership-facing status summaries.
+description: Use when drafting or reviewing weekly reports from provided materials, progress logs, meeting notes, or team updates.
 ---
 
-# Weekly Report
 
-## Workflow
+## Purpose
 
-1. Inventory source material, dates, owners, and project boundaries.
-2. Separate confirmed facts from assumptions and unverified updates.
-3. Write an executive summary first when the audience is management.
-4. Structure details around goal, progress, risk, action, and next step.
-5. Keep wording conservative when progress is preliminary.
+Create a weekly report that is factual, concise, and useful for status tracking.
 
-## Report Shape
+## Inputs
+
+Use only provided materials, such as:
+
+- `materials/` files
+- meeting notes
+- ticket summaries
+- project logs
+- explicit user-provided updates
+
+## Process
+
+1. Identify the reporting period, audience, and expected format.
+2. Extract confirmed progress, in-progress work, blockers, risks, decisions, and next steps.
+3. Separate facts from interpretation.
+4. Preserve source references where available.
+5. List missing information instead of inventing details.
+6. Draft in a concise business style.
+
+## Recommended structure
 
 ```text
-Summary
-Progress
-Risks
-Actions
-Next Steps
-Appendix or source notes
+1. Summary
+2. Completed this week
+3. In progress
+4. Blockers and risks
+5. Metrics or milestones
+6. Next week plan
+7. Help needed / missing information
 ```
 
-## Quality Bar
+## Rules
 
-- Dates are concrete.
-- Metrics are not overstated.
-- Risks map to actions.
-- Unverified third-party updates are marked as such.
-- The report can be forwarded without exposing internal drafting notes.
+- Do not invent dates, owners, metrics, blockers, decisions, or deadlines.
+- Do not claim work is completed unless the materials support it.
+- Keep wording concrete and scannable.
+
+## Output
+
+Return:
+
+1. Source materials used
+2. Weekly report draft
+3. Missing information
+4. Suggested next steps

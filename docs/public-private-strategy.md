@@ -8,8 +8,8 @@ This repository is the public layer. It should teach the system design and provi
 
 ```text
 public repository
-  EN: Dashboard, docs, sanitized examples, migration guides.
-  CN: 面板、文档、脱敏示例、迁移说明。
+  EN: Dashboard, docs, sanitized production-derived examples, migration guides.
+  CN: 面板、文档、经过脱敏的 production-derived 示例、迁移说明。
 
 private production catalog
   EN: Real agents, real skills, private workflows, local business process.
@@ -39,7 +39,8 @@ The public repository may include:
 
 - Dashboard source code.
 - Public-safe docs.
-- Sanitized toy agents and skills.
+- Sanitized public-safe agents and skills.
+- Production-derived examples after private content has been removed.
 - Example config with placeholder paths.
 - Migration guides and architecture diagrams.
 
@@ -48,7 +49,8 @@ The public repository must not include:
 公开仓库不应包含：
 
 - Real production paths.
-- Private skill names or content.
+- Private skill content.
+- Unpublished private skill names that only make sense in a local catalog.
 - Generated dashboard state from a real machine.
 - Private business templates.
 - Credentials, tokens, account names, or internal service URLs.
@@ -168,5 +170,5 @@ Before publishing:
 - Run a private-path keyword scan.
 - Confirm generated dashboard output is ignored.
 - Confirm example configs use placeholder paths only.
-- Confirm example agents and skills are toy workflows.
+- Confirm example agents and skills are public-safe and do not depend on unpublished private skills.
 - Confirm docs explain the public/private boundary.

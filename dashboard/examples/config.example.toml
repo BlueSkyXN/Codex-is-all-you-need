@@ -1,0 +1,43 @@
+[source]
+name = "local production"
+codex_root = "/path/to/your/codex/source"
+suites_root = "/Users/example/.codex/suites"
+
+# For a public-safe demo, codex_root can point to this repository's
+# examples/catalog directory. Use a temporary suites_root with matching symlinks.
+# codex_root = "/path/to/Codex-is-all-you-need/examples/catalog"
+
+# Optional. Any resolved skill path under these roots is marked private.
+private_roots = [
+  "/path/to/private/skills"
+]
+
+# Optional. Any resolved path under these roots is marked public.
+public_roots = [
+  "/path/to/public/repo"
+]
+
+[output]
+dir = "/Users/example/.codex/dashboard"
+state_file = "preset-state.json"
+html_file = "index.html"
+
+[checks]
+forbidden_runtime_roots = [
+  "/Volumes/ExternalDisk"
+]
+
+[[runtimes]]
+name = "user-home"
+path = "/Users/example"
+expected_suite = "user"
+
+[[runtimes]]
+name = "github-dev"
+path = "/Users/example/GitHub"
+expected_suite = "github"
+
+[[runtimes]]
+name = "external-project"
+path = "/Volumes/ExternalDisk/Project"
+expected_suite = "nondev-all"

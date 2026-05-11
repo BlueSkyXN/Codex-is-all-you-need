@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Codex 预设面板</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #ffffff;
+      --bg-soft: #f4f7fb;
+      --panel: #ffffff;
+      --panel-2: #f7f9fc;
+      --panel-3: #edf5ff;
+      --ink: #161616;
+      --muted: #6f6f6f;
+      --line: #dde5ee;
+      --line-strong: #8d8d8d;
+      --accent: #0f62fe;
+      --accent-hover: #0043ce;
+      --accent-2: #08bdba;
+      --accent-light: rgba(15, 98, 254, .08);
+      --accent-glow: rgba(15, 98, 254, .18);
+      --ok: #198038;
+      --warn: #b28600;
+      --bad: #da1e28;
+      --private: #8a3ffc;
+      --shadow: 0 0 0 1px rgba(15, 98, 254, .015), 0 10px 30px rgba(15, 98, 254, .06);
+      --shadow-soft: 0 0 0 1px rgba(15, 98, 254, .015);
+      --radius: 0;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(rgba(15, 98, 254, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 98, 254, .035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), #be95ff);
+      z-index: 10;
+    }
+
+    .shell {
+      width: min(1440px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 18px 0 44px;
+    }
+
+    .top-utility {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, .65fr);
+      gap: 14px;
+      align-items: stretch;
+      margin-bottom: 14px;
+    }
+
+    .mast,
+    .status-card,
+    .panel {
+      background: rgba(255, 255, 255, .94);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .mast {
+      position: relative;
+      overflow: hidden;
+      padding: 22px 24px;
+      min-height: 146px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .mast::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    }
+
+    .mast::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 0 62%, rgba(15, 98, 254, .055) 62% 62.35%, transparent 62.35%);
+      pointer-events: none;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.1;
+      font-weight: 760;
+      max-width: 760px;
+      font-family: var(--mono);
+    }
+
+    h1::after {
+      content: "";
+      display: inline-block;
+      width: .58ch;
+      height: .12em;
+      margin-left: 4px;
+      background: var(--accent);
+      vertical-align: .08em;
+      animation: blink-cursor 1s step-end infinite;
+    }
+
+    @keyframes blink-cursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .subline,
+    .meta,
+    .muted {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .status-card {
+      padding: 18px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .status-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .status-line strong {
+      color: var(--ink);
+      font-weight: 700;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+
+    .status-line:last-child { border-bottom: 0; padding-bottom: 0; }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) repeat(4, minmax(112px, auto));
+      gap: 8px;
+      align-items: center;
+      margin: 14px 0;
+    }
+
+    input,
+    button {
+      height: 38px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: var(--radius);
+      font: 13px var(--mono);
+      padding: 0 12px;
+      box-shadow: var(--shadow-soft);
+      outline: none;
+    }
+
+    input:focus,
+    button:focus-visible {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow), 0 0 18px rgba(15, 98, 254, .08);
+    }
+
+    button {
+      cursor: pointer;
+      min-width: 92px;
+      font-weight: 700;
+      transition: border-color .15s ease, background-color .15s ease;
+    }
+
+    button:hover {
+      border-color: var(--line-strong);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    button.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+      box-shadow: 0 0 14px var(--accent-glow);
+    }
+
+    .lang-switch {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(44px, auto));
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--panel);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .lang-switch button {
+      min-width: 44px;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      background: var(--panel);
+    }
+
+    .lang-switch button.active {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .metric {
+      position: relative;
+      overflow: hidden;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      min-height: 92px;
+      box-shadow: var(--shadow-soft);
+      transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+    }
+
+    .metric::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), #be95ff);
+    }
+
+    .metric:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    .metric strong {
+      display: block;
+      font: 760 30px/1 var(--mono);
+      margin-bottom: 10px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font: 12px/1.35 var(--mono);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, .46fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .panel {
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: linear-gradient(90deg, rgba(15, 98, 254, .055), rgba(8, 189, 186, .035), #ffffff 68%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.2;
+      font-weight: 760;
+      font-family: var(--mono);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    td {
+      color: #262626;
+    }
+
+    th {
+      color: var(--muted);
+      background: var(--panel-3);
+      font: 700 11px var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    tbody tr:hover td {
+      background: rgba(15, 98, 254, .045);
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    code,
+    .mono {
+      font-family: var(--mono);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #ffffff;
+      color: #52606d;
+      font: 700 11px var(--mono);
+      white-space: nowrap;
+    }
+
+    .ok { color: #0e6027; border-color: rgba(25,128,56,.34); background: rgba(25,128,56,.08); }
+    .warn { color: #684e00; border-color: rgba(178,134,0,.36); background: rgba(241,194,27,.14); }
+    .bad { color: #a2191f; border-color: rgba(218,30,40,.34); background: rgba(218,30,40,.08); }
+    .private { color: #6929c4; border-color: rgba(138,63,252,.34); background: rgba(138,63,252,.08); }
+    .dim { color: var(--muted); }
+
+    details {
+      border-bottom: 1px solid var(--line);
+    }
+
+    details:last-child { border-bottom: 0; }
+
+    summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: minmax(160px, 1fr) auto auto auto;
+      gap: 12px;
+      align-items: center;
+      transition: background-color .15s ease;
+    }
+
+    summary:hover {
+      background: rgba(15, 98, 254, .045);
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    .suite-body {
+      padding: 0 16px 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .mini-list {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .88);
+      max-height: 360px;
+      overflow: auto;
+    }
+
+    .mini-list .row {
+      display: grid;
+      grid-template-columns: minmax(150px, 1fr) auto;
+      gap: 8px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      align-items: center;
+    }
+
+    .mini-list .row:hover {
+      background: rgba(15, 98, 254, .045);
+    }
+
+    .mini-list .row:last-child { border-bottom: 0; }
+
+    .issue-list {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .issue {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      background: rgba(255, 255, 255, .9);
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 980px) {
+      .shell { width: min(100% - 24px, 1440px); padding-top: 14px; }
+      header,
+      .grid,
+      .suite-body,
+      .toolbar { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      h1 { font-size: 28px; }
+      summary { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <script id="state-data" type="application/json">__STATE_JSON__</script>
+  <main class="shell">
+    <div class="top-utility">
+      <div class="lang-switch" aria-label="Language">
+        <button data-lang="zh" class="active" type="button">中文</button>
+        <button data-lang="en" type="button">EN</button>
+      </div>
+    </div>
+
+    <header>
+      <section class="mast">
+        <div>
+          <h1 data-i18n="title">Codex 预设面板</h1>
+          <p class="subline" id="sourceLine"></p>
+        </div>
+        <div class="meta" id="metaLine"></div>
+      </section>
+      <aside class="status-card" id="statusCard"></aside>
+    </header>
+
+    <section class="toolbar">
+      <input id="query" type="search" data-i18n-placeholder="searchPlaceholder" placeholder="筛选 agents、skills、suites、路径">
+      <button data-view="all" data-i18n="views.all" class="active">全部</button>
+      <button data-view="suites" data-i18n="views.suites">Suites</button>
+      <button data-view="agents" data-i18n="views.agents">Agents</button>
+      <button data-view="skills" data-i18n="views.skills">Skills</button>
+    </section>
+
+    <section class="cards" id="metrics"></section>
+
+    <section class="grid">
+      <div>
+        <section class="panel view-block" data-block="suites">
+          <div class="panel-head">
+            <h2 data-i18n="sections.suites">Suites</h2>
+            <span class="muted" id="suiteNote"></span>
+          </div>
+          <div id="suiteList"></div>
+        </section>
+
+        <section class="panel view-block" data-block="agents">
+          <div class="panel-head">
+            <h2 data-i18n="sections.agents">Agents</h2>
+            <span class="muted" id="agentNote"></span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th data-i18n="tables.name">名称</th><th data-i18n="tables.group">分组</th><th data-i18n="tables.effort">推理强度</th><th data-i18n="tables.nickname">别名</th><th data-i18n="tables.suites">Suites</th><th data-i18n="tables.skillHints">Skill 提示</th></tr></thead>
+              <tbody id="agentRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel view-block" data-block="skills">
+          <div class="panel-head">
+            <h2 data-i18n="sections.skills">Skills</h2>
+            <span class="muted" id="skillNote"></span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th data-i18n="tables.name">名称</th><th data-i18n="tables.group">分组</th><th data-i18n="tables.scope">范围</th><th data-i18n="tables.suites">Suites</th><th data-i18n="tables.finalPath">最终路径</th></tr></thead>
+              <tbody id="skillRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <aside>
+        <section class="panel">
+          <div class="panel-head">
+            <h2 data-i18n="sections.runtime">Runtime</h2>
+            <span class="muted" id="runtimeNote"></span>
+          </div>
+          <table>
+            <thead><tr><th data-i18n="tables.name">名称</th><th data-i18n="tables.status">状态</th><th data-i18n="tables.suite">Suite</th></tr></thead>
+            <tbody id="runtimeRows"></tbody>
+          </table>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2 data-i18n="sections.issues">Issues</h2>
+            <span class="muted" id="issueNote"></span>
+          </div>
+          <div class="issue-list" id="issueList"></div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const state = JSON.parse(document.getElementById('state-data').textContent);
+    const langKey = 'codexPresetDashboardLang';
+    let activeView = 'all';
+
+    const messages = {
+      zh: {
+        title: 'Codex 预设面板',
+        searchPlaceholder: '筛选 agents、skills、suites、路径',
+        generated: '生成',
+        config: '配置',
+        views: { all: '全部', suites: 'Suites', agents: 'Agents', skills: 'Skills' },
+        sections: { suites: 'Suites', agents: 'Agents', skills: 'Skills', runtime: 'Runtime', issues: 'Issues' },
+        tables: {
+          name: '名称',
+          group: '分组',
+          effort: '推理强度',
+          nickname: '别名',
+          suites: 'Suites',
+          skillHints: 'Skill 提示',
+          scope: '范围',
+          finalPath: '最终路径',
+          status: '状态',
+          suite: 'Suite'
+        },
+        metrics: {
+          groups: '分组',
+          agents: 'Agents',
+          skills: 'Skills',
+          privateSkills: '私有 Skills',
+          suites: 'Suites',
+          agentLinks: 'Agent 链接',
+          skillLinks: 'Skill 链接',
+          issues: 'Issues'
+        },
+        statusCard: {
+          suitesRoot: 'suites 根目录',
+          privateRoots: '私有根目录',
+          publicRoots: '公开根目录',
+          runtimeConnected: 'runtime 连接'
+        },
+        labels: {
+          none: '无',
+          default: '默认',
+          unknown: '未知',
+          publicSafe: 'public-safe',
+          noSuites: '没有匹配的 suite。',
+          noIssues: '没有问题'
+        },
+        counts: {
+          agents: (n) => `${n} 个 Agent`,
+          skills: (n) => `${n} 个 Skill`,
+          private: (n) => `${n} 个私有 Skill`,
+          connected: (n, total) => `${n}/${total} 已连接`,
+          issues: (errors, warnings) => `${errors} 个错误，${warnings} 个警告`
+        },
+        status: {
+          connected: '已连接',
+          missing: '缺失',
+          partial: '部分连接',
+          occupied: '已占用',
+          'wrong-target': '目标错误',
+          valid: '有效',
+          ok: '正常',
+          error: '错误',
+          warning: '警告',
+          private: '私有'
+        },
+        scopes: {
+          private: '私有',
+          public: '公开',
+          production: '生产',
+          external: '外部',
+          unknown: '未知'
+        },
+        areas: {
+          agent: 'agent',
+          skill: 'skill',
+          source: 'source',
+          suite: 'suite',
+          runtime: 'runtime'
+        }
+      },
+      en: {
+        title: 'Codex Preset Dashboard',
+        searchPlaceholder: 'Filter agents, skills, suites, paths',
+        generated: 'generated',
+        config: 'config',
+        views: { all: 'All', suites: 'Suites', agents: 'Agents', skills: 'Skills' },
+        sections: { suites: 'Suites', agents: 'Agents', skills: 'Skills', runtime: 'Runtime', issues: 'Issues' },
+        tables: {
+          name: 'Name',
+          group: 'Group',
+          effort: 'Effort',
+          nickname: 'Nickname',
+          suites: 'Suites',
+          skillHints: 'Skill Hints',
+          scope: 'Scope',
+          finalPath: 'Final Path',
+          status: 'Status',
+          suite: 'Suite'
+        },
+        metrics: {
+          groups: 'Groups',
+          agents: 'Agents',
+          skills: 'Skills',
+          privateSkills: 'Private Skills',
+          suites: 'Suites',
+          agentLinks: 'Agent Links',
+          skillLinks: 'Skill Links',
+          issues: 'Issues'
+        },
+        statusCard: {
+          suitesRoot: 'suites root',
+          privateRoots: 'private roots',
+          publicRoots: 'public roots',
+          runtimeConnected: 'runtime connected'
+        },
+        labels: {
+          none: 'none',
+          default: 'default',
+          unknown: 'unknown',
+          publicSafe: 'public-safe',
+          noSuites: 'No suites match.',
+          noIssues: 'no issues'
+        },
+        counts: {
+          agents: (n) => `${n} agents`,
+          skills: (n) => `${n} skills`,
+          private: (n) => `${n} private`,
+          connected: (n, total) => `${n}/${total} connected`,
+          issues: (errors, warnings) => `${errors} errors, ${warnings} warnings`
+        },
+        status: {
+          connected: 'connected',
+          missing: 'missing',
+          partial: 'partial',
+          occupied: 'occupied',
+          'wrong-target': 'wrong-target',
+          valid: 'valid',
+          ok: 'ok',
+          error: 'error',
+          warning: 'warning',
+          private: 'private'
+        },
+        scopes: {
+          private: 'private',
+          public: 'public',
+          production: 'production',
+          external: 'external',
+          unknown: 'unknown'
+        },
+        areas: {
+          agent: 'agent',
+          skill: 'skill',
+          source: 'source',
+          suite: 'suite',
+          runtime: 'runtime'
+        }
+      }
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const savedLang = (() => {
+      try {
+        return localStorage.getItem(langKey);
+      } catch {
+        return '';
+      }
+    })();
+    let lang = savedLang === 'en' ? 'en' : 'zh';
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+    const getMessage = (path) => path.split('.').reduce((value, key) => value?.[key], messages[lang]) ?? path;
+    const label = (value, group = 'labels') => {
+      const raw = String(value ?? '');
+      if (!raw) return getMessage('labels.none');
+      const table = messages[lang][group] || {};
+      return table[raw] || table[raw.toLowerCase()] || raw;
+    };
+    const pill = (text, cls = '', displayText) => `<span class="pill ${cls}">${esc((displayText ?? text) || getMessage('labels.none'))}</span>`;
+    const statusClass = (status) => {
+      if (['connected', 'valid', 'ok'].includes(status)) return 'ok';
+      if (['error', 'wrong-target', 'occupied'].includes(status)) return 'bad';
+      if (['warning', 'partial', 'missing'].includes(status)) return 'warn';
+      if (status === 'private') return 'private';
+      return '';
+    };
+    const includes = (item, q) => JSON.stringify(item).toLowerCase().includes(q);
+
+    function applyTranslations() {
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      document.title = getMessage('title');
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        el.textContent = getMessage(el.dataset.i18n);
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+        el.setAttribute('placeholder', getMessage(el.dataset.i18nPlaceholder));
+      });
+      document.querySelectorAll('button[data-lang]').forEach((button) => {
+        button.classList.toggle('active', button.dataset.lang === lang);
+      });
+    }
+
+    function renderHeader() {
+      $('sourceLine').textContent = `${state.source.name} | ${state.source.codex_root}`;
+      $('metaLine').textContent = `${getMessage('generated')} ${state.generated_at} | ${getMessage('config')} ${state.config_path}`;
+      const items = [
+        [getMessage('statusCard.suitesRoot'), state.source.suites_root],
+        [getMessage('statusCard.privateRoots'), state.source.private_roots.length],
+        [getMessage('statusCard.publicRoots'), state.source.public_roots.length],
+        [getMessage('statusCard.runtimeConnected'), messages[lang].counts.connected(state.summary.connected_runtimes, state.summary.runtimes)],
+      ];
+      $('statusCard').innerHTML = items.map(([k, v]) => `
+        <div class="status-line"><span>${esc(k)}</span><strong>${esc(v)}</strong></div>
+      `).join('');
+    }
+
+    function renderMetrics() {
+      const s = state.summary;
+      const metrics = [
+        [getMessage('metrics.groups'), s.groups],
+        [getMessage('metrics.agents'), s.agents],
+        [getMessage('metrics.skills'), s.skills],
+        [getMessage('metrics.privateSkills'), s.private_skills],
+        [getMessage('metrics.suites'), s.suites],
+        [getMessage('metrics.agentLinks'), s.suite_agent_links],
+        [getMessage('metrics.skillLinks'), s.suite_skill_links],
+        [getMessage('metrics.issues'), s.issues],
+      ];
+      $('metrics').innerHTML = metrics.map(([metricLabel, value]) => `
+        <article class="metric"><strong>${esc(value)}</strong><span>${esc(metricLabel)}</span></article>
+      `).join('');
+    }
+
+    function renderSuites(q) {
+      const suites = state.suites.filter((item) => includes(item, q));
+      $('suiteNote').textContent = `${suites.length}/${state.suites.length}`;
+      $('suiteList').innerHTML = suites.map((suite, index) => `
+        <details ${index < 2 ? 'open' : ''}>
+          <summary>
+            <strong class="mono">${esc(suite.name)}</strong>
+            ${pill(`${suite.agent_count} agents`, '', messages[lang].counts.agents(suite.agent_count))}
+            ${pill(`${suite.skill_count} skills`, '', messages[lang].counts.skills(suite.skill_count))}
+            ${suite.private_skill_count ? pill(`${suite.private_skill_count} private`, 'private', messages[lang].counts.private(suite.private_skill_count)) : pill('public-safe', 'ok', getMessage('labels.publicSafe'))}
+          </summary>
+          <div class="suite-body">
+            <div class="mini-list">
+              ${suite.agents.map((item) => `
+                <div class="row"><span class="mono">${esc(item.name)}</span>${pill(item.source_group || 'unknown', '', item.source_group || getMessage('labels.unknown'))}</div>
+              `).join('')}
+            </div>
+            <div class="mini-list">
+              ${suite.skills.map((item) => `
+                <div class="row"><span class="mono">${esc(item.name)}</span>${pill(item.source_scope || 'unknown', statusClass(item.source_scope), label(item.source_scope || 'unknown', 'scopes'))}</div>
+              `).join('')}
+            </div>
+          </div>
+        </details>
+      `).join('') || `<div class="issue"><span class="muted">${esc(getMessage('labels.noSuites'))}</span></div>`;
+    }
+
+    function renderAgents(q) {
+      const agents = state.agents.filter((item) => includes(item, q));
+      $('agentNote').textContent = `${agents.length}/${state.agents.length}`;
+      $('agentRows').innerHTML = agents.map((item) => `
+        <tr>
+          <td><code>${esc(item.name)}</code></td>
+          <td>${pill(item.group)}</td>
+          <td>${item.model_reasoning_effort ? pill(item.model_reasoning_effort, 'ok') : pill('default', '', getMessage('labels.default'))}</td>
+          <td class="mono">${esc(item.nickname || '')}</td>
+          <td>${(item.used_by_suites || []).map((x) => pill(x)).join(' ') || `<span class="dim">${esc(getMessage('labels.none'))}</span>`}</td>
+          <td>${(item.recommended_skills || []).map((x) => pill(x)).join(' ') || `<span class="dim">${esc(getMessage('labels.none'))}</span>`}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderSkills(q) {
+      const skills = state.skills.filter((item) => includes(item, q));
+      $('skillNote').textContent = `${skills.length}/${state.skills.length}`;
+      $('skillRows').innerHTML = skills.map((item) => `
+        <tr>
+          <td><code>${esc(item.name)}</code></td>
+          <td>${pill(item.group)}</td>
+          <td>${pill(item.scope, statusClass(item.scope), label(item.scope, 'scopes'))}</td>
+          <td>${(item.used_by_suites || []).map((x) => pill(x)).join(' ') || `<span class="dim">${esc(getMessage('labels.none'))}</span>`}</td>
+          <td><code>${esc(item.realpath)}</code></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderRuntime() {
+      $('runtimeNote').textContent = messages[lang].counts.connected(state.summary.connected_runtimes, state.summary.runtimes);
+      $('runtimeRows').innerHTML = state.runtimes.map((item) => `
+        <tr>
+          <td><code>${esc(item.name)}</code><br><span class="muted">${esc(item.path)}</span></td>
+          <td>${pill(item.status, statusClass(item.status), label(item.status, 'status'))}</td>
+          <td><code>${esc(item.expected_suite)}</code></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderIssues() {
+      $('issueNote').textContent = messages[lang].counts.issues(state.summary.errors, state.summary.warnings);
+      $('issueList').innerHTML = state.issues.length ? state.issues.map((item) => `
+        <article class="issue">
+          ${pill(item.severity, statusClass(item.severity), label(item.severity, 'status'))}
+          ${pill(item.area, '', label(item.area, 'areas'))}
+          <div style="margin-top:8px">${esc(item.message)}</div>
+          ${item.path ? `<code>${esc(item.path)}</code>` : ''}
+        </article>
+      `).join('') : `<article class="issue">${pill('ok', 'ok', label('ok', 'status'))} ${esc(getMessage('labels.noIssues'))}</article>`;
+    }
+
+    function applyView() {
+      document.querySelectorAll('[data-block]').forEach((el) => {
+        const show = activeView === 'all' || el.dataset.block === activeView;
+        el.classList.toggle('hidden', !show);
+      });
+      document.querySelectorAll('button[data-view]').forEach((button) => {
+        button.classList.toggle('active', button.dataset.view === activeView);
+      });
+    }
+
+    function renderLists() {
+      const q = $('query').value.trim().toLowerCase();
+      renderSuites(q);
+      renderAgents(q);
+      renderSkills(q);
+      applyView();
+    }
+
+    function renderAll() {
+      applyTranslations();
+      renderHeader();
+      renderMetrics();
+      renderRuntime();
+      renderIssues();
+      renderLists();
+    }
+
+    renderAll();
+
+    $('query').addEventListener('input', renderLists);
+    document.querySelectorAll('button[data-view]').forEach((button) => {
+      button.addEventListener('click', () => {
+        activeView = button.dataset.view;
+        applyView();
+      });
+    });
+    document.querySelectorAll('button[data-lang]').forEach((button) => {
+      button.addEventListener('click', () => {
+        lang = button.dataset.lang === 'en' ? 'en' : 'zh';
+        try {
+          localStorage.setItem(langKey, lang);
+        } catch {
+          // file:// previews may disable storage in some browsers; the toggle still works.
+        }
+        renderAll();
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# Local dashboard state. Generated outputs should live under ~/.codex/dashboard,
+# but keep these ignored in case someone runs the tool from the repo.
+dashboard/config.toml
+dashboard/preset-state.json
+dashboard/index.html
+dashboard/dist/

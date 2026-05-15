@@ -1,7 +1,6 @@
 name = "data_sql_analyst"
 description = "Use for read-only review of SQL queries, joins, filters, aggregations, window functions, date logic, database analysis, and metric definitions."
 
-model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["SQL analyst"]

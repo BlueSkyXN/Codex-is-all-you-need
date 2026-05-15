@@ -1,7 +1,6 @@
 name = "dev_code_mapper"
 description = "Use for read-only exploration of a software repository before implementation: locate relevant files, symbols, execution paths, tests, configs, and risk areas."
 
-model_verbosity = "low"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Mapper"]

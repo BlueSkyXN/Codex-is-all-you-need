@@ -18,13 +18,13 @@
   skills/<skill-name>/SKILL.md
 ```
 
-当前分组包括 `common`、`dev`、`data`、`office`、`research`。Agent 文件使用 snake_case，例如 `dev_python_engineer.toml`。Skill 目录使用 kebab-case，例如 `python-quality/`。
+当前分组包括 `common`、`product-engineering`、`dev`、`data`、`office`、`research`。Agent 文件使用 snake_case，例如 `dev_python_engineer.toml`。Skill 目录使用 kebab-case，例如 `python-quality/`。
 
 ## Agent TOML 规则
 
 - Agent 角色应保持通用和可复用。
 - `description`、`developer_instructions`、`nickname_candidates` 只能包含可公开内容。
-- `model_reasoning_effort` 只保留 `high`、`xhigh`，或直接省略。
+- 默认不设置模型策略字段；agent 应继承 runtime 配置，除非有明确理由单独覆盖。
 - `nickname_candidates` 最多保留一个候选名。
 - Recommended skills 只能引用本 catalog 中的公开 skill，或描述为当前 runtime 可见的通用 workflow。
 

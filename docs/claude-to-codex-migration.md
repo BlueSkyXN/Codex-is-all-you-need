@@ -55,7 +55,6 @@ Codex 风格 TOML：
 ```toml
 name = "dev_code_reviewer"
 description = "Review code changes for correctness, maintainability, security, tests, and release risk."
-model_reasoning_effort = "high"
 nickname_candidates = ["Reviewer"]
 
 developer_instructions = """
@@ -77,7 +76,7 @@ Conversion rules:
 | `name` | Keep or rename into domain-prefixed snake_case |
 | `description` | Keep the trigger intent, shorten examples |
 | `tools` | Usually omit; Codex runtime controls tools |
-| `model` | Convert to `model_reasoning_effort = "high"` or `"xhigh"` when needed |
+| `model` | Usually omit; runtime configuration controls model policy |
 | Long role body | Compress into `developer_instructions` |
 | Workflow details | Move repeated procedures into skills |
 | Private examples | Replace with public-safe examples |

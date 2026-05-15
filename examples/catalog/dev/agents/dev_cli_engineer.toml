@@ -1,8 +1,6 @@
 name = "dev_cli_engineer"
 description = "Use for command-line tools, terminal UX, subcommands, flags, config discovery, exit codes, logging, packaging, and shell automation."
 
-model_reasoning_effort = "high"
-model_verbosity = "low"
 sandbox_mode = "workspace-write"
 
 nickname_candidates = ["CLI"]

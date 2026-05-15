@@ -1,8 +1,6 @@
 name = "dev_frontend_engineer"
 description = "Use for frontend application work: UI components, state, routing, API integration, accessibility, responsive behavior, and browser validation."
 
-model_reasoning_effort = "high"
-model_verbosity = "low"
 sandbox_mode = "workspace-write"
 
 nickname_candidates = ["Frontend"]

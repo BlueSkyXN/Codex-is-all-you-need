@@ -2,7 +2,6 @@
 name = "common_context_summarizer"
 description = "Use for summarizing long conversations, source materials, notes, or project context into a concise handoff briefing."
 
-model_verbosity = "low"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Summarizer"]

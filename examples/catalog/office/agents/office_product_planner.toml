@@ -1,8 +1,6 @@
 name = "office_product_planner"
 description = "Use for product planning, PRD drafting, requirement consolidation, roadmap framing, stakeholder alignment notes, and success metric definition from provided materials."
 
-model_reasoning_effort = "high"
-model_verbosity = "medium"
 sandbox_mode = "workspace-write"
 
 nickname_candidates = ["Product planner"]

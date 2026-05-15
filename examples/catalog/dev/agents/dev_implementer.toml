@@ -1,8 +1,6 @@
 name = "dev_implementer"
 description = "Use for scoped software implementation after exploration or a clear plan: bug fixes, small features, tests, scripts, and targeted refactors."
 
-model_reasoning_effort = "high"
-model_verbosity = "low"
 sandbox_mode = "workspace-write"
 
 nickname_candidates = ["Implementer"]

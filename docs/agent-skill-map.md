@@ -1,8 +1,8 @@
 # Agent Skill Map / Agent 与 Skill 分工
 
-This is a public-safe map for the example five-pack Codex preset catalog.
+This is a public-safe map for the example six-pack Codex preset catalog.
 
-这是一个公开安全的五类 Codex 预设分工示例。
+这是一个公开安全的六类 Codex 预设分工示例。
 
 It documents the relationship between agents, recommended skills, and suites without exposing private paths, private workflows, or real machine state.
 
@@ -49,6 +49,21 @@ Actual availability is decided by runtime filesystem visibility:
 | `common_file_organizer` | Folder organization, manifests, indexes | optional runtime-provided file-indexing workflow |
 
 `common_orchestrator` is a lightweight Codex orchestration preset. It coordinates plans and handoffs; it does not replace the main/default agent as the runtime controller.
+
+## Product Engineering Pack / 产品工程包
+
+| Agent | Role | Recommended Skills |
+|---|---|---|
+| `product_engineering_requirements_lead` | PRD, scope lock, non-goals, success metrics, and spec handoff | `prd-workflow` |
+| `product_engineering_functional_specifier` | Functional behavior, flows, states, fields, permissions, errors, ACs, and traceability | `functional-spec`, `prd-workflow` |
+| `product_engineering_technical_bridge` | Engineering bridge drafts, API/data implications, NFRs, test draft, and owner-confirmation questions | `technical-spec-bridge` |
+| `product_engineering_delivery_planner` | Implementation plan, task breakdown, dependency graph, validation tasks, and dev handoff | `delivery-task-planning`, `readiness-review` |
+| `product_engineering_readiness_reviewer` | Readiness review for PRD, spec, tech bridge, delivery plan, or change-spec handoff | `readiness-review` |
+| `product_engineering_change_adapter` | Repository change-spec or OpenSpec-style proposal, design, tasks, and behavior deltas | `change-spec-adapter`, `readiness-review` |
+
+`product-engineering` is a planning and engineering-management layer. It should prepare `agent-handoff.md`, `task-breakdown.md`, `review-report.md`, or equivalent change-spec artifacts before `dev` takes over implementation.
+
+`product-engineering` 是规划与工程管理层。它应该在 `dev` 接手实现前，准备好 `agent-handoff.md`、`task-breakdown.md`、`review-report.md` 或等价 change-spec 产物。
 
 ## Dev Pack / 开发包
 
@@ -104,8 +119,14 @@ Actual availability is decided by runtime filesystem visibility:
 user
   common
 
+planning
+  common + product-engineering
+
 github
   common + dev
+
+github-planning
+  common + product-engineering + selected dev reviewers
 
 nondev-data
   common + data

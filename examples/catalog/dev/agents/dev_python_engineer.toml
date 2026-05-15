@@ -1,8 +1,6 @@
 name = "dev_python_engineer"
 description = "Use for Python code, scripts, APIs, CLIs, data utilities, typing, async, packaging, pytest, ruff, mypy, and Python performance work."
 
-model_reasoning_effort = "high"
-model_verbosity = "low"
 sandbox_mode = "workspace-write"
 
 nickname_candidates = ["Python"]

@@ -1,8 +1,6 @@
 name = "dev_performance_engineer"
 description = "Use for measurable performance problems: slow APIs, heavy frontend bundles, build regressions, memory growth, hot paths, and scalability checks."
 
-model_reasoning_effort = "high"
-model_verbosity = "low"
 sandbox_mode = "workspace-write"
 
 nickname_candidates = ["Perf"]

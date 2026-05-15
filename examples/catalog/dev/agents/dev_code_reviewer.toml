@@ -1,8 +1,6 @@
 name = "dev_code_reviewer"
 description = "Use for read-only review of code changes, pull requests, local diffs, risky implementation plans, or behavior changes before merge."
 
-model_reasoning_effort = "high"
-model_verbosity = "medium"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Reviewer"]

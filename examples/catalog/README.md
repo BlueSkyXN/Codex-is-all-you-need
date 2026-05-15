@@ -8,6 +8,9 @@ This is a sanitized source catalog derived from a real Codex preset catalog.
 common/
   agents/
   skills/
+product-engineering/
+  agents/
+  skills/
 dev/
   agents/
   skills/
@@ -31,11 +34,12 @@ Current public subset:
 当前公开子集：
 
 ```text
-common/    6 agents, 0 public skills
-dev/      14 agents, 19 public skills
-data/      5 agents, 4 public skills
-office/    5 agents, 5 public skills
-research/  4 agents, 3 public skills
+common/                 6 agents, 0 public skills
+product-engineering/    6 agents, 6 public skills
+dev/                   14 agents, 19 public skills
+data/                   5 agents, 4 public skills
+office/                 5 agents, 5 public skills
+research/               4 agents, 3 public skills
 ```
 
 Private symlinked skills are intentionally excluded. Agent `Recommended skills`

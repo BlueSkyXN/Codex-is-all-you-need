@@ -1,8 +1,6 @@
 name = "research_evidence_mapper"
 description = "Use for read-only mapping of claims to supporting evidence, source files, sections, excerpts, and confidence levels."
 
-model_reasoning_effort = "high"
-model_verbosity = "medium"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Evidence"]

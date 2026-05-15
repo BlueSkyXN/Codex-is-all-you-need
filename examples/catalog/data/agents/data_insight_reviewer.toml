@@ -1,7 +1,6 @@
 name = "data_insight_reviewer"
 description = "Use for read-only review of analysis outputs, reports, claims, conclusions, charts, and recommendations to ensure they are supported by the data."
 
-model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Insight reviewer"]

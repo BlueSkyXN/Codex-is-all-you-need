@@ -2,7 +2,6 @@
 name = "common_task_planner"
 description = "Use for planning complex tasks, splitting work into phases, defining deliverables, and deciding whether subagents are useful."
 
-model_verbosity = "medium"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Planner"]

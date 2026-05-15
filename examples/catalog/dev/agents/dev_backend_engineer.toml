@@ -1,8 +1,6 @@
 name = "dev_backend_engineer"
 description = "Use for backend services, API endpoints, databases, queues, auth, caching, observability, and production-facing server logic."
 
-model_reasoning_effort = "high"
-model_verbosity = "low"
 sandbox_mode = "workspace-write"
 
 nickname_candidates = ["Backend"]

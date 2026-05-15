@@ -14,7 +14,6 @@ from pathlib import Path
 from typing import Any
 
 
-ALLOWED_REASONING_EFFORTS = {"high", "xhigh"}
 DEFAULT_CONFIG = Path.home() / ".codex" / "dashboard" / "config.toml"
 SCRIPT_DIR = Path(__file__).resolve().parent
 TEMPLATE = SCRIPT_DIR / "templates" / "index.html"
@@ -79,6 +78,23 @@ def parse_agent_toml(path: Path, issues: list[dict[str, str]]) -> tuple[dict[str
         return {}, False
 
 
+def extract_recommended_skills(text: str, skill_names: set[str]) -> list[str]:
+    """Read explicit `Recommended skills:` hints without substring false positives."""
+    found: set[str] = set()
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line.lower().startswith("recommended skills:"):
+            continue
+        _, _, value = line.partition(":")
+        for item in value.split(","):
+            name = item.strip().strip(".` ")
+            if name.lower().startswith("or "):
+                name = name[3:].strip().strip(".` ")
+            if name in skill_names:
+                found.add(name)
+    return sorted(found)
+
+
 def list_group_dirs(codex_root: Path) -> list[Path]:
     if not codex_root.is_dir():
         return []
@@ -114,9 +130,6 @@ def scan_source(
         if agents_dir.is_dir():
             for path in sorted(agents_dir.glob("*.toml"), key=lambda p: p.name):
                 data, valid = parse_agent_toml(path, issues)
-                effort = data.get("model_reasoning_effort")
-                if effort is not None and effort not in ALLOWED_REASONING_EFFORTS:
-                    add_issue(issues, "error", "agent", f"Invalid model_reasoning_effort: {effort}", path)
                 nicknames = data.get("nickname_candidates") or []
                 if isinstance(nicknames, str):
                     nicknames = [nicknames]
@@ -129,7 +142,6 @@ def scan_source(
                     "realpath": str(path.resolve(strict=False)),
                     "is_symlink": path.is_symlink(),
                     "valid_toml": valid,
-                    "model_reasoning_effort": effort or "",
                     "nickname": nicknames[0] if isinstance(nicknames, list) and nicknames else "",
                     "developer_instructions": data.get("developer_instructions", ""),
                     "recommended_skills": [],
@@ -177,7 +189,7 @@ def scan_source(
     skill_names = {skill["name"] for skill in skills}
     for agent in agents:
         text = str(agent.get("developer_instructions") or "")
-        agent["recommended_skills"] = sorted(name for name in skill_names if name in text)
+        agent["recommended_skills"] = extract_recommended_skills(text, skill_names)
 
     return groups, agents, skills
 

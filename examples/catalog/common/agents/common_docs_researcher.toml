@@ -2,7 +2,6 @@
 name = "common_docs_researcher"
 description = "Use for verifying local documentation, official docs, CLI flags, configuration keys, tool behavior, and version-specific instructions."
 
-model_verbosity = "medium"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Docs researcher"]

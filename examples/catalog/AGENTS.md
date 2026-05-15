@@ -18,13 +18,13 @@ Each group follows the same layout:
   skills/<skill-name>/SKILL.md
 ```
 
-Current groups are `common`, `dev`, `data`, `office`, and `research`. Agent files use snake_case names such as `dev_python_engineer.toml`. Skill folders use kebab-case names such as `python-quality/`.
+Current groups are `common`, `product-engineering`, `dev`, `data`, `office`, and `research`. Agent files use snake_case names such as `dev_python_engineer.toml`. Skill folders use kebab-case names such as `python-quality/`.
 
 ## Agent TOML Rules
 
 - Keep agent roles generic and reusable.
 - Use only public-safe `description`, `developer_instructions`, and `nickname_candidates`.
-- Keep `model_reasoning_effort` to `high`, `xhigh`, or omit it.
+- Do not set model policy fields by default; agents should inherit runtime configuration unless an override is explicitly justified.
 - Keep at most one `nickname_candidates` entry.
 - Recommended skills must reference public skills in this catalog or generic runtime-visible workflows.
 

@@ -506,7 +506,7 @@
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th data-i18n="tables.name">名称</th><th data-i18n="tables.group">分组</th><th data-i18n="tables.effort">推理强度</th><th data-i18n="tables.nickname">别名</th><th data-i18n="tables.suites">Suites</th><th data-i18n="tables.skillHints">Skill 提示</th></tr></thead>
+              <thead><tr><th data-i18n="tables.name">名称</th><th data-i18n="tables.group">分组</th><th data-i18n="tables.nickname">别名</th><th data-i18n="tables.suites">Suites</th><th data-i18n="tables.skillHints">Skill 提示</th></tr></thead>
               <tbody id="agentRows"></tbody>
             </table>
           </div>
@@ -565,7 +565,6 @@
         tables: {
           name: '名称',
           group: '分组',
-          effort: '推理强度',
           nickname: '别名',
           suites: 'Suites',
           skillHints: 'Skill 提示',
@@ -642,7 +641,6 @@
         tables: {
           name: 'Name',
           group: 'Group',
-          effort: 'Effort',
           nickname: 'Nickname',
           suites: 'Suites',
           skillHints: 'Skill Hints',
@@ -819,7 +817,6 @@
         <tr>
           <td><code>${esc(item.name)}</code></td>
           <td>${pill(item.group)}</td>
-          <td>${item.model_reasoning_effort ? pill(item.model_reasoning_effort, 'ok') : pill('default', '', getMessage('labels.default'))}</td>
           <td class="mono">${esc(item.nickname || '')}</td>
           <td>${(item.used_by_suites || []).map((x) => pill(x)).join(' ') || `<span class="dim">${esc(getMessage('labels.none'))}</span>`}</td>
           <td>${(item.recommended_skills || []).map((x) => pill(x)).join(' ') || `<span class="dim">${esc(getMessage('labels.none'))}</span>`}</td>

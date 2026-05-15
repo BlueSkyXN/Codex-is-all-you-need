@@ -2,7 +2,6 @@
 name = "common_file_organizer"
 description = "Use for organizing working folders, generated outputs, drafts, materials, and indexes without deleting source files."
 
-model_verbosity = "low"
 sandbox_mode = "workspace-write"
 
 nickname_candidates = ["Organizer"]

@@ -19,12 +19,14 @@ docs/
   agent-design.md
   agent-skill-map.md
   skill-design.md
+  product-engineering-flow.md
   claude-to-codex-migration.md
   public-private-strategy.md
 
 examples/
   catalog/
     common/
+    product-engineering/
     dev/
     data/
     office/
@@ -81,6 +83,7 @@ See [dashboard/README.md](dashboard/README.md) for setup, config fields, status 
 - [Agent Design](docs/agent-design.md)
 - [Agent Skill Map](docs/agent-skill-map.md)
 - [Skill Design](docs/skill-design.md)
+- [Product Engineering Flow](docs/product-engineering-flow.md)
 - [Claude To Codex Migration](docs/claude-to-codex-migration.md)
 - [Public And Private Strategy](docs/public-private-strategy.md)
 
@@ -90,11 +93,12 @@ The files under `examples/` are public-safe templates derived from a real produc
 
 ```text
 examples/catalog/
-  common/       6 agents, 0 public skills
-  dev/         14 agents, 19 public skills
-  data/         5 agents, 4 public skills
-  office/       5 agents, 5 public skills
-  research/     4 agents, 3 public skills
+  common/                 6 agents, 0 public skills
+  product-engineering/    6 agents, 6 public skills
+  dev/                   14 agents, 19 public skills
+  data/                   5 agents, 4 public skills
+  office/                 5 agents, 5 public skills
+  research/               4 agents, 3 public skills
 
 examples/runtime/
   AGENTS.md

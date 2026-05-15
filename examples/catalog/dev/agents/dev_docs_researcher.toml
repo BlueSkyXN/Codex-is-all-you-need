@@ -1,7 +1,6 @@
 name = "dev_docs_researcher"
 description = "Use when software implementation depends on uncertain API, SDK, framework, CLI, config, dependency, or version-specific behavior."
 
-model_verbosity = "low"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Docs"]

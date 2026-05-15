@@ -1,8 +1,6 @@
 name = "dev_api_designer"
 description = "Use for API contract design or review: REST, GraphQL, OpenAPI, auth, pagination, versioning, error semantics, and backward compatibility."
 
-model_reasoning_effort = "high"
-model_verbosity = "low"
 sandbox_mode = "workspace-write"
 
 nickname_candidates = ["API"]

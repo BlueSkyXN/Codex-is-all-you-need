@@ -1,8 +1,6 @@
 name = "research_gap_finder"
 description = "Use for read-only identification of conflicts, missing evidence, weak assumptions, unsupported claims, and next research questions."
 
-model_reasoning_effort = "high"
-model_verbosity = "medium"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Gap finder"]

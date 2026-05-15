@@ -9,23 +9,26 @@ Codex preset catalog.
 
 ```text
 Agents:
-  common     6
-  dev       14
-  data       5
-  office     5
-  research   4
+  common                 6
+  product-engineering    6
+  dev                   14
+  data                   5
+  office                 5
+  research               4
 
 Skills:
-  dev       19
-  data       4
-  office     5
-  research   3
+  product-engineering    6
+  dev                   19
+  data                   4
+  office                 5
+  research               3
 ```
 
 The included agents and skills are generic workflows for planning, software
-development, data analysis, office reporting, and research synthesis.
+development, product-engineering planning, data analysis, office reporting, and
+research synthesis.
 
-已包含内容都是通用工作流，覆盖任务规划、软件开发、数据分析、办公报告和研究综合。
+已包含内容都是通用工作流，覆盖任务规划、软件开发、产品工程规划、数据分析、办公报告和研究综合。
 
 ## Excluded / 已排除
 
@@ -42,7 +45,7 @@ development, data analysis, office reporting, and research synthesis.
 - Do not copy skill directories that are symlinks to a private skill library.
 - Keep agent roles when they are generic and reusable.
 - Remove `Recommended skills` references to unpublished private skills.
-- Keep `model_reasoning_effort` only when it is `high`, `xhigh`, or omitted.
+- Omit model policy overrides by default so public examples inherit runtime configuration.
 - Keep one `nickname_candidates` entry per agent.
 
 ## Maintenance / 维护

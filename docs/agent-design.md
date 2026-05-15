@@ -31,7 +31,6 @@ Suite = visible package of agents and skills for one runtime domain
 ```toml
 name = "dev_code_reviewer"
 description = "Review code changes for correctness, maintainability, security, tests, and release risk."
-model_reasoning_effort = "high"
 nickname_candidates = ["Reviewer"]
 
 developer_instructions = """
@@ -58,10 +57,6 @@ name
 description
   EN: Explain when to use the agent. Keep it operational.
   CN: 说明何时使用该 agent，避免抽象口号。
-
-model_reasoning_effort
-  EN: Use high, xhigh, or omit the field.
-  CN: 只使用 high、xhigh，或直接省略。
 
 nickname_candidates
   EN: Keep one short nickname.
@@ -108,6 +103,7 @@ For a small and maintainable preset system, group agents by work domain.
 | Pack | Purpose | Example Agents |
 |---|---|---|
 | `common` | General planning, synthesis, review, context management | `common_task_planner` |
+| `product-engineering` | Pre-implementation product engineering, scope control, specs, delivery planning | `product_engineering_requirements_lead` |
 | `dev` | Software development, code review, debugging, API/CLI verification | `dev_code_reviewer` |
 | `data` | Table, database, metric, and notebook analysis | `data_profile_analyst` |
 | `office` | Reports, slides, project updates, management writing | `office_report_writer` |
@@ -128,9 +124,9 @@ Recommended skills: bugfix, tabular-analysis.
 Use these only when they are visible in the current runtime and match the task.
 ```
 
-The dashboard detects these hints by matching visible skill names in the instruction text.
+The dashboard detects these hints from the explicit `Recommended skills:` line and only keeps names that exist in the scanned skill catalog.
 
-面板会通过 instruction 文本中出现的 skill 名称，识别 agent 的推荐技能。
+面板会从显式的 `Recommended skills:` 行识别推荐技能，并且只保留扫描到的真实 skill 名称。
 
 ## Orchestrator Agents / 编排 Agent
 
@@ -168,7 +164,7 @@ Before publishing an agent:
 
 - The agent has one clear job.
 - It does not mention private paths, clients, credentials, or non-public project names.
-- `model_reasoning_effort` is `high`, `xhigh`, or absent.
+- It does not set model policy fields by default; inherit runtime configuration unless there is a documented reason to override.
 - `nickname_candidates` has one entry.
 - Recommended skills are hints, not claims of guaranteed availability.
 - The instructions say how to verify work or report missing verification.

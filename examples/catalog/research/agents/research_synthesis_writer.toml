@@ -1,8 +1,6 @@
 name = "research_synthesis_writer"
 description = "Use for drafting research briefs, synthesis notes, comparison summaries, and reports from already mapped evidence."
 
-model_reasoning_effort = "high"
-model_verbosity = "medium"
 sandbox_mode = "workspace-write"
 
 nickname_candidates = ["Synthesizer"]

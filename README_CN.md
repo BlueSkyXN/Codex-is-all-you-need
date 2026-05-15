@@ -19,12 +19,14 @@ docs/
   agent-design.md
   agent-skill-map.md
   skill-design.md
+  product-engineering-flow.md
   claude-to-codex-migration.md
   public-private-strategy.md
 
 examples/
   catalog/
     common/
+    product-engineering/
     dev/
     data/
     office/
@@ -79,6 +81,7 @@ open ~/.codex/dashboard/index.html
 - [Agent 设计](docs/agent-design.md)
 - [Agent 与 Skill 分工](docs/agent-skill-map.md)
 - [Skill 设计](docs/skill-design.md)
+- [Product Engineering Flow](docs/product-engineering-flow.md)
 - [Claude 到 Codex 迁移](docs/claude-to-codex-migration.md)
 - [公开与私有分层](docs/public-private-strategy.md)
 
@@ -88,11 +91,12 @@ open ~/.codex/dashboard/index.html
 
 ```text
 examples/catalog/
-  common/       6 agents, 0 public skills
-  dev/         14 agents, 19 public skills
-  data/         5 agents, 4 public skills
-  office/       5 agents, 5 public skills
-  research/     4 agents, 3 public skills
+  common/                 6 agents, 0 public skills
+  product-engineering/    6 agents, 6 public skills
+  dev/                   14 agents, 19 public skills
+  data/                   5 agents, 4 public skills
+  office/                 5 agents, 5 public skills
+  research/               4 agents, 3 public skills
 
 examples/runtime/
   AGENTS.md

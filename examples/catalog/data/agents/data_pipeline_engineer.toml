@@ -1,8 +1,6 @@
 name = "data_pipeline_engineer"
 description = "Use for designing, implementing, or reviewing reproducible data pipelines, ETL/ELT jobs, data quality checks, orchestration, and data monitoring."
 
-model_reasoning_effort = "high"
-model_verbosity = "medium"
 sandbox_mode = "workspace-write"
 
 nickname_candidates = ["Pipeline"]

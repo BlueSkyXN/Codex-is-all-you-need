@@ -2,8 +2,6 @@
 name = "common_quality_reviewer"
 description = "Use for reviewing an output, plan, report, draft, analysis, or decision for completeness, correctness, unsupported claims, and missed constraints."
 
-model_reasoning_effort = "high"
-model_verbosity = "medium"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Quality reviewer"]

@@ -66,6 +66,9 @@ codex/
   common/
     agents/
     skills/
+  product-engineering/
+    agents/
+    skills/
   dev/
     agents/
     skills/
@@ -93,6 +96,9 @@ suite 是本机组合层，不是素材源。
 ```text
 ~/.codex/suites/
   user/
+    agents/
+    skills/
+  planning/
     agents/
     skills/
   github/

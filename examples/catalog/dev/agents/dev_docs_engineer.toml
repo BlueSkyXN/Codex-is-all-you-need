@@ -1,8 +1,6 @@
 name = "dev_docs_engineer"
 description = "Use for creating, restructuring, or validating developer documentation, API docs, CLI docs, guides, README content, and docs-as-code workflows."
 
-model_reasoning_effort = "high"
-model_verbosity = "medium"
 sandbox_mode = "workspace-write"
 
 nickname_candidates = ["Doc engineer"]

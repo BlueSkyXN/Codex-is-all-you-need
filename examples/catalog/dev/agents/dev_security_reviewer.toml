@@ -1,8 +1,6 @@
 name = "dev_security_reviewer"
 description = "Use for read-only software security review: auth, permissions, input validation, secrets, dependency risk, supply chain, and dangerous workflows."
 
-model_reasoning_effort = "high"
-model_verbosity = "medium"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Security"]

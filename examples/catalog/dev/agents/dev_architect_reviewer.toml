@@ -1,8 +1,6 @@
 name = "dev_architect_reviewer"
 description = "Use for read-only review of system architecture, service boundaries, technology choices, migration plans, scalability, reliability, and long-term maintainability."
 
-model_reasoning_effort = "high"
-model_verbosity = "medium"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Architect"]

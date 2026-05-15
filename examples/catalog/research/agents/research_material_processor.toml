@@ -1,7 +1,6 @@
 name = "research_material_processor"
 description = "Use for read-only inventory, classification, deduplication, and structuring of already collected research materials before synthesis."
 
-model_verbosity = "low"
 sandbox_mode = "read-only"
 
 nickname_candidates = ["Processor"]

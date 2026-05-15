@@ -94,9 +94,9 @@ Important fields:
 
 ```text
 source.codex_root
-  EN: Production source catalog. It should contain groups such as common, dev,
-      data, office, and research.
-  CN: 生产素材目录。通常包含 common、dev、data、office、research 等分组。
+  EN: Production source catalog. It should contain groups such as common,
+      product-engineering, dev, data, office, and research.
+  CN: 生产素材目录。通常包含 common、product-engineering、dev、data、office、research 等分组。
 
 source.suites_root
   EN: Local suite aggregation directory. Each suite contains agents/ and skills/.
@@ -163,8 +163,8 @@ Suites / 组合包
   每个 suite package 暴露的 agents / skills。
 
 Agents / 角色
-  Agent name, source group, reasoning effort, nickname, suite usage, and skill hints.
-  Agent 名称、来源分组、推理强度、别名、suite 使用情况和 skill 提示。
+  Agent name, source group, nickname, suite usage, and explicit `Recommended skills:` hints.
+  Agent 名称、来源分组、别名、suite 使用情况和显式 `Recommended skills:` 提示。
 
 Skills / 技能
   Skill name, source group, scope, final resolved path, and suite usage.

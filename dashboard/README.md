@@ -253,9 +253,13 @@ write generated state into the repository unless the config explicitly asks for 
 
 ## Current Limitations / 当前限制
 
-The current version focuses on source catalogs, local suites, and runtime `.codex/agents` plus `.codex/skills` connections.
+The current version focuses on source catalogs, local suites, and configured runtime `.codex/agents` plus `.codex/skills` directory connections.
 
-当前版本主要覆盖 source catalog、本机 suites，以及 runtime 的 `.codex/agents` 和 `.codex/skills` 连接状态。
+当前版本主要覆盖 source catalog、本机 suites，以及已配置 runtime 的 `.codex/agents` 和 `.codex/skills` 目录连接状态。
+
+It does not yet audit every per-repo individual entrypoint created by `scripts/sync_codex_entrypoints.py`.
+
+它还不会逐个审计 `scripts/sync_codex_entrypoints.py` 给每个 repo 创建的 individual entrypoints。
 
 Project-level `.agents/skills` overlays are a planned next step. Until that is implemented, the dashboard should not be treated as a complete view of every skill Codex can discover inside an individual project folder.
 
@@ -266,10 +270,9 @@ Project-level `.agents/skills` overlays are a planned next step. Until that is i
 - [Architecture / 架构说明](../docs/architecture.md)
 - [Agent Design / Agent 设计](../docs/agent-design.md)
 - [Agent Skill Map / Agent 与 Skill 分工](../docs/agent-skill-map.md)
+- [Discovery Boundaries / 发现边界](../docs/discovery-boundaries.md)
 - [Skill Design / Skill 设计](../docs/skill-design.md)
 - [Public And Private Strategy / 公开与私有分层](../docs/public-private-strategy.md)
-
-项目级 `.agents/skills` 叠加层是后续计划。在实现之前，不应把该面板视为某个具体项目里 Codex 可发现 skill 的完整视图。
 
 ## Troubleshooting / 排障
 

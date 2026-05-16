@@ -29,7 +29,7 @@ Use this repository to:
 - It is not an official OpenAI directory standard.
 - It is not a one-command installer for a complete production setup.
 - It is not a mirror of a private `~/.codex` home or private business skills.
-- It does not make a parent `.codex` automatically inherited by every child git repository. Codex repo-level discovery is bounded by the current project root. See [Architecture](docs/architecture.md).
+- It does not make a parent `.codex` automatically inherited by every child git repository. Codex repo-level discovery is bounded by the current project root. See [Architecture](docs/architecture.md) and [Discovery Boundaries](docs/discovery-boundaries.md).
 
 ## Repository Layout
 
@@ -48,6 +48,7 @@ docs/
   agent-design.md                 # custom agent design
   skill-design.md                 # skill design
   agent-skill-map.md              # agent and skill responsibility map
+  discovery-boundaries.md         # sanitized discovery boundary conclusions
   product-engineering-flow.md
   claude-to-codex-migration.md
   public-private-strategy.md
@@ -56,9 +57,6 @@ examples/
   catalog/                        # sanitized public agent / skill source catalog
   runtime/                        # runtime AGENTS.md example
   suites/                         # suite symlink pattern notes
-
-local/
-  codex-skill-discovery-matrix.md # local discovery experiment notes
 ```
 
 ## Core Model
@@ -366,7 +364,7 @@ This repository is the public-safe layer. It may contain:
 - Dashboard source code.
 - Sanitized agent / skill examples.
 - Suite / runtime management patterns.
-- Discovery boundary experiment notes.
+- Sanitized discovery boundary conclusions.
 - Reusable entrypoint sync scripts.
 
 It should not contain:

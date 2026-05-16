@@ -86,18 +86,18 @@ planning
   common + product-engineering
 
 github
-  common + dev
+  common + product-engineering + dev
 
-github-planning
-  common + product-engineering + selected dev reviewers
+dev-only
+  common + dev
 
 nondev-office
   common + office
 ```
 
-Use `planning` when the directory holds PRDs, specs, taskbooks, or AI handoff packages. Use `github` when the directory is primarily a code repository ready for implementation. Use a mixed suite only when the same repo is actively moving from planning into implementation.
+Use `planning` when the directory holds PRDs, specs, taskbooks, or AI handoff packages. Use `github` when a code workspace needs both product-engineering and dev capabilities. Use a smaller `dev-only` suite only when planning artifacts are intentionally out of scope.
 
-当目录主要放 PRD、规格、任务书或 AI 交接包时，使用 `planning`。当目录主要是已准备进入实现的代码仓库时，使用 `github`。只有同一个 repo 正从规划推进到实现时，才使用混合 suite。
+当目录主要放 PRD、规格、任务书或 AI 交接包时，使用 `planning`。当代码工作区同时需要产品工程和开发能力时，使用 `github`。只有明确不需要规划产物时，才使用更小的 `dev-only` suite。
 
 ## Handoff Standard / 交接标准
 

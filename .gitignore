@@ -6,6 +6,9 @@ __pycache__/
 .codex/
 .agents/
 
+# Local-only experiment logs and machine-specific notes.
+local/
+
 # Local dashboard state. Generated outputs should live under ~/.codex/dashboard,
 # but keep these ignored in case someone runs the tool from the repo.
 dashboard/config.toml

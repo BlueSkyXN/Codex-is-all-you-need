@@ -63,10 +63,12 @@ Important consequences:
 - Repo-local custom agents belong in `.codex/agents/*.toml`.
 - Repo-local skills can be exposed from `.codex/skills/<skill>` or `.agents/skills/<skill>`.
 
-This repository includes a local matrix record at
-`local/codex-skill-discovery-matrix.md`.
+This repository includes a sanitized public summary at
+[discovery-boundaries.md](discovery-boundaries.md). Keep machine-specific
+matrix logs under ignored `local/` files.
 
-本仓库在 `local/codex-skill-discovery-matrix.md` 保存了本机矩阵实验记录。
+本仓库在 [discovery-boundaries.md](discovery-boundaries.md) 保存脱敏后的公开结论。
+包含本机路径和 run ID 的矩阵实验记录应放在被忽略的 `local/` 文件里。
 
 ## 3. Quick Start / 快速开始
 

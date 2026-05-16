@@ -29,7 +29,7 @@ source catalog -> local suites -> runtime .codex entrypoints
 - 不是 OpenAI 官方 preset 目录规范。
 - 不是一键安装完整生产环境的脚本。
 - 不是私有 `~/.codex` 或真实业务 skills 的镜像。
-- 不是让父目录 `.codex` 自动继承到所有子 git repo 的机制。Codex repo-level discovery 有 project root 边界，详见 [架构说明](docs/architecture.md)。
+- 不是让父目录 `.codex` 自动继承到所有子 git repo 的机制。Codex repo-level discovery 有 project root 边界，详见 [架构说明](docs/architecture.md) 和 [发现边界](docs/discovery-boundaries.md)。
 
 ## 仓库结构
 
@@ -48,6 +48,7 @@ docs/
   agent-design.md                 # custom agent 设计
   skill-design.md                 # skill 设计
   agent-skill-map.md              # agent 与 skill 分工
+  discovery-boundaries.md         # 脱敏后的 discovery 边界结论
   product-engineering-flow.md
   claude-to-codex-migration.md
   public-private-strategy.md
@@ -56,9 +57,6 @@ examples/
   catalog/                        # 脱敏后的公开 agent / skill source catalog
   runtime/                        # runtime AGENTS.md 示例
   suites/                         # suite symlink 模式说明
-
-local/
-  codex-skill-discovery-matrix.md # 本机 discovery 实验记录
 ```
 
 ## 核心概念
@@ -364,7 +362,7 @@ runtime 可见位置：
 - dashboard 源码。
 - 脱敏后的 agent / skill 示例。
 - suite / runtime 管理模式。
-- 发现边界实验记录。
+- 脱敏后的 discovery 边界结论。
 - 可复用的 entrypoint 同步脚本。
 
 不应提交：

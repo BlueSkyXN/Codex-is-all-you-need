@@ -1,8 +1,11 @@
 # Agent Skill Map / Agent 与 Skill 分工
 
-This is a public-safe map for the example six-pack Codex preset catalog.
+This is a public-safe map for the example six-pack Codex preset catalog. It is
+the detailed reference for which agents and skills are included, what each role
+is for, and which skills are recommended by each agent.
 
-这是一个公开安全的六类 Codex 预设分工示例。
+这是一个公开安全的六类 Codex 预设分工示例，也是支持 agent / skill 的详细索引：
+包含哪些 agent / skill、每个角色负责什么、每个 agent 推荐哪些 skills。
 
 It documents the relationship between agents, recommended skills, and suites without exposing private paths, private workflows, or real machine state.
 
@@ -123,10 +126,7 @@ planning
   common + product-engineering
 
 github
-  common + dev
-
-github-planning
-  common + product-engineering + selected dev reviewers
+  common + product-engineering + dev
 
 nondev-data
   common + data

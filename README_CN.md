@@ -14,6 +14,9 @@ dashboard/
   templates/index.html
   examples/config.example.toml
 
+scripts/
+  sync_codex_entrypoints.py
+
 docs/
   architecture.md
   agent-design.md
@@ -74,6 +77,41 @@ open ~/.codex/dashboard/index.html
 生成的 HTML 面板支持中文和英文，可通过 `中文 / EN` 切换。
 
 更多安装、配置字段、状态含义和排障说明见 [dashboard/README.md](dashboard/README.md)。
+
+## Repo 入口同步
+
+Codex repo-level discovery 不会从子 git repo 自动继承父目录的 `.codex`。如果希望
+`/Users/sky/GitHub/*` 下的一批 repo 共享已经聚合好的 GitHub runtime，可以把每个 repo
+自己的 `.codex/agents` 和 `.codex/skills` 入口同步为 symlink：
+
+```bash
+python3 scripts/sync_codex_entrypoints.py sync \
+  --workspace /Users/sky/GitHub \
+  --source-root /Users/sky/GitHub/.codex
+```
+
+`sync` 会创建缺失入口，也会更新目标发生变化的 symlink。默认是 dry-run；确认输出后再写入：
+
+```bash
+python3 scripts/sync_codex_entrypoints.py sync \
+  --workspace /Users/sky/GitHub \
+  --source-root /Users/sky/GitHub/.codex \
+  --apply
+```
+
+如果还要移除仍指向当前 `--source-root`、但已经不在聚合层里的陈旧 symlink，加 `--prune`。
+
+后续如果要清理脚本管理的入口，用 `clean`。它只删除指向当前 `--source-root` 的 symlink：
+
+```bash
+python3 scripts/sync_codex_entrypoints.py clean \
+  --workspace /Users/sky/GitHub \
+  --source-root /Users/sky/GitHub/.codex
+```
+
+脚本只创建 repo-local `.codex` 下的入口，不会 symlink 整个 `.codex` 目录，也不会写入 `.agents`。
+`.agents/skills` 可以留给项目专属 skill；custom agent 的有效 repo-local 路径仍是
+`.codex/agents/*.toml`。
 
 ## 设计文档
 

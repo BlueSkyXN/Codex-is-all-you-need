@@ -43,13 +43,19 @@ suite 是本机 symlink 组合层。本目录只说明模式，不创建真实 s
 
 ## Runtime Links / 运行目录连接
 
-Only link the two exposed directories:
+Only link exposed runtime entrypoints. A parent workspace `.codex` is a useful
+aggregate target, but child git repositories do not inherit it automatically.
 
-只连接两个暴露目录：
+只连接暴露的 runtime entrypoints。父级工作区 `.codex` 可以作为聚合 target，
+但子 git repo 不会自动继承它。
 
 ```text
 <runtime>/.codex/agents -> ~/.codex/suites/<suite>/agents
 <runtime>/.codex/skills -> ~/.codex/suites/<suite>/skills
+
+# Or sync individual repo-local entries from an aggregate:
+<runtime>/.codex/agents/<agent>.toml -> /Users/sky/GitHub/.codex/agents/<agent>.toml
+<runtime>/.codex/skills/<skill> -> /Users/sky/GitHub/.codex/skills/<skill>
 ```
 
 Do not link the entire `.codex` folder.

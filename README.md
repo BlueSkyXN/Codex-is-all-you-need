@@ -14,6 +14,9 @@ dashboard/
   templates/index.html
   examples/config.example.toml
 
+scripts/
+  sync_codex_entrypoints.py
+
 docs/
   architecture.md
   agent-design.md
@@ -76,6 +79,47 @@ Use `dashboard/examples/config.example.toml` as the starting point for a local c
 The generated HTML supports Chinese and English through a `中文 / EN` switch.
 
 See [dashboard/README.md](dashboard/README.md) for setup, config fields, status meanings, and troubleshooting.
+
+## Repo Entrypoint Sync
+
+Codex repo-level discovery does not automatically inherit a parent directory's
+`.codex` from child git repositories. To share an already-aggregated GitHub
+runtime across repos under `/Users/sky/GitHub/*`, sync repo-local `.codex/agents`
+and `.codex/skills` entrypoints as symlinks:
+
+```bash
+python3 scripts/sync_codex_entrypoints.py sync \
+  --workspace /Users/sky/GitHub \
+  --source-root /Users/sky/GitHub/.codex
+```
+
+`sync` creates missing entrypoints and updates existing symlinks whose target
+changed. The default mode is dry-run. Apply only after reviewing the planned
+changes:
+
+```bash
+python3 scripts/sync_codex_entrypoints.py sync \
+  --workspace /Users/sky/GitHub \
+  --source-root /Users/sky/GitHub/.codex \
+  --apply
+```
+
+Add `--prune` to remove stale symlinks that still point into the selected
+`--source-root` but no longer exist in the aggregate.
+
+To remove the managed entrypoints later, use `clean`. It removes only symlinks
+that point into the selected `--source-root`:
+
+```bash
+python3 scripts/sync_codex_entrypoints.py clean \
+  --workspace /Users/sky/GitHub \
+  --source-root /Users/sky/GitHub/.codex
+```
+
+The helper creates only repo-local `.codex` entrypoints. It does not symlink the
+whole `.codex` directory and does not write into `.agents`. `.agents/skills` can
+stay reserved for project-specific skills; repo-local custom agents still belong
+in `.codex/agents/*.toml`.
 
 ## Design Guides
 

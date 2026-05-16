@@ -21,14 +21,16 @@ local suite aggregation
   CN: 本机 symlink 聚合层，决定每个运行目录暴露哪些 agents / skills。
 
 runtime directories
-  EN: Work directories where Codex runs. They expose `.codex/agents` and
-      `.codex/skills` by linking to a suite.
-  CN: Codex 实际运行的工作目录，通过 `.codex/agents` 和 `.codex/skills`
-      连接到某个 suite。
+  EN: Work directories where Codex runs. They expose repo-local `.codex`
+      entrypoints by linking to a suite or to a workspace aggregate.
+  CN: Codex 实际运行的工作目录，通过 repo-local `.codex` entrypoints
+      连接到某个 suite 或工作区聚合层。
 
 project overlays
-  EN: Optional `.agents/skills` folders for project-specific extras.
-  CN: 可选的 `.agents/skills`，用于项目专属补充。
+  EN: Optional `.agents/skills` folders for project-specific skill extras.
+      Project-specific custom agents still belong in `.codex/agents/*.toml`.
+  CN: 可选的 `.agents/skills`，用于项目专属 skill 补充。项目专属
+      custom agent 仍应放在 `.codex/agents/*.toml`。
 ```
 
 ## Public Repository Rules / 公开仓库规则
@@ -124,18 +126,68 @@ This supports one source item being reused by many suites.
 
 ## Runtime Rules / 运行目录规则
 
-Runtime directories should link only the exposed entries:
+Runtime directories should link only the exposed entries. A parent workspace
+`.codex` is not inherited automatically by child git repositories, so each repo
+that should opt in needs local entrypoints:
 
-运行目录只应连接暴露入口：
+运行目录只应连接暴露入口。父级工作区 `.codex` 不会被子 git repo 自动继承，
+所以每个需要 opt in 的 repo 都需要本地 entrypoints：
 
 ```text
 <runtime>/.codex/agents -> ~/.codex/suites/<suite>/agents
 <runtime>/.codex/skills -> ~/.codex/suites/<suite>/skills
+
+# Or individual entrypoints that point to an aggregate:
+<runtime>/.codex/agents/<agent>.toml -> /Users/sky/GitHub/.codex/agents/<agent>.toml
+<runtime>/.codex/skills/<skill> -> /Users/sky/GitHub/.codex/skills/<skill>
 ```
 
 Do not symlink the whole `.codex` folder. Other local files under `.codex` may need to stay runtime-specific.
 
 不要 symlink 整个 `.codex` 文件夹。`.codex` 下的其他本地文件可能需要保留运行目录自己的配置。
+
+For batch setup, use the entrypoint sync helper in dry-run mode first:
+
+批量设置时，先用 entrypoint sync helper 做 dry-run：
+
+```bash
+python3 scripts/sync_codex_entrypoints.py sync \
+  --workspace /Users/sky/GitHub \
+  --source-root /Users/sky/GitHub/.codex
+```
+
+Apply after reviewing the plan:
+
+确认计划后再 apply：
+
+```bash
+python3 scripts/sync_codex_entrypoints.py sync \
+  --workspace /Users/sky/GitHub \
+  --source-root /Users/sky/GitHub/.codex \
+  --apply
+```
+
+Use `--prune` with `sync` to remove stale symlinks that still point into the
+same aggregate but no longer exist there.
+
+需要清理仍指向同一聚合层、但聚合层已不存在的陈旧 symlink 时，在 `sync` 后加
+`--prune`。
+
+Clean managed entrypoints with:
+
+清理脚本管理的 entrypoints：
+
+```bash
+python3 scripts/sync_codex_entrypoints.py clean \
+  --workspace /Users/sky/GitHub \
+  --source-root /Users/sky/GitHub/.codex
+```
+
+The helper updates each target repo's `.git/info/exclude` with `.codex/` and
+`.agents/` so machine-local symlink state stays untracked.
+
+这个 helper 会向每个目标 repo 的 `.git/info/exclude` 写入 `.codex/` 和
+`.agents/`，让本机 symlink 状态保持未跟踪。
 
 ## Project-Specific Overlays / 项目专属叠加
 
@@ -146,8 +198,11 @@ Shared suites are good for broad work domains. Project-specific skills can live 
 ```text
 <project>/
   .codex/
-    agents -> suite agents
-    skills -> suite skills
+    agents/
+      shared_agent.toml -> workspace aggregate
+      project_agent.toml
+    skills/
+      shared-skill -> workspace aggregate
   .agents/
     skills/
       project-only-skill/
@@ -159,8 +214,8 @@ This gives two layers:
 这形成两层：
 
 ```text
-.codex = shared abstract capability
-.agents = project-specific capability
+.codex = shared abstract capability plus repo-local custom agents
+.agents = project-specific skill capability
 ```
 
 The dashboard currently focuses on `.codex` suite connections. Project overlay discovery can be added later.

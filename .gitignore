@@ -2,6 +2,10 @@
 __pycache__/
 *.pyc
 
+# Local Codex runtime entrypoints. These are machine-specific symlink mounts.
+.codex/
+.agents/
+
 # Local dashboard state. Generated outputs should live under ~/.codex/dashboard,
 # but keep these ignored in case someone runs the tool from the repo.
 dashboard/config.toml

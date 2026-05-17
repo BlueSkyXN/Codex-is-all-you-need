@@ -17,6 +17,7 @@ Agents:
   research               4
 
 Skills:
+  common                 1
   product-engineering    6
   dev                   19
   data                   4
@@ -24,11 +25,11 @@ Skills:
   research               3
 ```
 
-The included agents and skills are generic workflows for planning, software
-development, product-engineering planning, data analysis, office reporting, and
-research synthesis.
+The included agents and skills are generic workflows for planning, Codex project
+instructions, software development, product-engineering planning, data analysis,
+office reporting, and research synthesis.
 
-已包含内容都是通用工作流，覆盖任务规划、软件开发、产品工程规划、数据分析、办公报告和研究综合。
+已包含内容都是通用工作流，覆盖任务规划、Codex 项目指令、软件开发、产品工程规划、数据分析、办公报告和研究综合。
 
 ## Excluded / 已排除
 

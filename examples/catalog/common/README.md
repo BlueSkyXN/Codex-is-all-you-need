@@ -2,7 +2,7 @@
 
 [中文](README_CN.md) | English
 
-Shared agents for planning, coordination, research of local docs, file organization, quality review, and context handoff. These roles are domain-neutral and can be combined with `dev`, `data`, `office`, or `research` presets.
+Shared agents and skills for planning, coordination, research of local docs, file organization, quality review, context handoff, and Codex project instruction design. These roles are domain-neutral and can be combined with `dev`, `data`, `office`, or `research` presets.
 
 ## Contents
 
@@ -15,7 +15,7 @@ agents/
   common_quality_reviewer.toml
   common_task_planner.toml
 skills/
-  (no public skills in this group)
+  codex-agents-md-builder/
 ```
 
 ## Agent Roles
@@ -26,6 +26,10 @@ skills/
 - `common_docs_researcher`: verify local docs, official docs, CLI flags, and config keys.
 - `common_file_organizer`: organize folders, drafts, materials, and indexes without deleting sources.
 - `common_quality_reviewer`: review outputs for completeness, correctness, missed constraints, and unsupported claims.
+
+## Skills
+
+- `codex-agents-md-builder`: design, audit, or restructure repository `AGENTS.md` files for the Codex loading model.
 
 ## Maintenance Notes
 

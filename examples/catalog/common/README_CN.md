@@ -2,7 +2,7 @@
 
 [English](README.md) | 中文
 
-这里存放规划、协调、本地文档核对、文件整理、质量复核和上下文交接相关的通用 agents。这些角色不绑定具体领域，可与 `dev`、`data`、`office`、`research` 组合使用。
+这里存放规划、协调、本地文档核对、文件整理、质量复核、上下文交接和 Codex 项目指令设计相关的通用 agents 与 skills。这些角色不绑定具体领域，可与 `dev`、`data`、`office`、`research` 组合使用。
 
 ## 内容清单
 
@@ -15,7 +15,7 @@ agents/
   common_quality_reviewer.toml
   common_task_planner.toml
 skills/
-  （本分组暂无公开 skills）
+  codex-agents-md-builder/
 ```
 
 ## Agent 角色
@@ -26,6 +26,10 @@ skills/
 - `common_docs_researcher`：核对本地文档、官方文档、CLI 参数和配置键。
 - `common_file_organizer`：整理目录、草稿、素材和索引，不删除源文件。
 - `common_quality_reviewer`：复核产物的完整性、正确性、约束遗漏和无依据结论。
+
+## Skills
+
+- `codex-agents-md-builder`：按 Codex 加载模型设计、审计或重构仓库的 `AGENTS.md` 文件。
 
 ## 维护说明
 

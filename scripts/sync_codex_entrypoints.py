@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 """Manage repo-local Codex entrypoint symlinks from an aggregated `.codex`.
 
-The script intentionally syncs individual entries instead of linking the whole
-`.codex` directory. That keeps repo-local `.codex/config.toml` and project-only
-agent files possible while exposing shared skills and agents explicitly.
+Choose `--link-mode directories` to link runtime entrypoint directories:
+`.codex/agents -> <source-root>/agents` and
+`.codex/skills -> <source-root>/skills`. Prefer this for workspace aggregates
+such as `/Users/sky/GitHub/.codex`.
+
+Choose `--link-mode entries` when a repo must keep real `.codex/agents` or
+`.codex/skills` directories and expose each shared agent or skill one by one.
+The script never links the whole `.codex` directory, so repo-local
+`.codex/config.toml` can stay private to the runtime.
 """
 
 from __future__ import annotations
@@ -26,6 +32,13 @@ IGNORE_HEADER = "# Codex local entrypoint symlinks"
 class Entry:
     kind: str
     name: str
+    source: Path
+    target_rel: Path
+
+
+@dataclass(frozen=True)
+class DirectoryLink:
+    kind: str
     source: Path
     target_rel: Path
 
@@ -182,6 +195,18 @@ def collect_entries(source_root: Path) -> tuple[list[Entry], list[str]]:
     return entries, warnings
 
 
+def collect_directory_links(source_root: Path) -> tuple[list[DirectoryLink], list[str]]:
+    warnings: list[str] = []
+    links: list[DirectoryLink] = []
+    for name in ("agents", "skills"):
+        source = source_root / name
+        if source.is_dir():
+            links.append(DirectoryLink(kind=name, source=source, target_rel=Path(".codex") / name))
+        else:
+            warnings.append(f"missing source {name} directory: {source}")
+    return links, warnings
+
+
 def git_info_exclude(repo: Path) -> Path:
     result = subprocess.run(
         ["git", "-C", os.fspath(repo), "rev-parse", "--git-path", "info/exclude"],
@@ -287,6 +312,91 @@ def sync_entry(repo: Path, entry: Entry, apply: bool, counters: Counters) -> Non
     counters.created += 1
 
 
+def sync_entries(repo: Path, entries: list[Entry], apply: bool, counters: Counters) -> None:
+    reported_symlinked_parents: set[Path] = set()
+    for entry in entries:
+        linked_parent = symlink_ancestor(repo, entry.target_rel.parent)
+        if linked_parent is not None:
+            if linked_parent not in reported_symlinked_parents:
+                print(f"CONFLICT {linked_parent}: symlinked directory; refusing to write through it")
+                counters.conflicts += 1
+                reported_symlinked_parents.add(linked_parent)
+            else:
+                counters.skipped += 1
+            continue
+        sync_entry(repo, entry, apply, counters)
+
+
+def managed_entry_dir(target_dir: Path, source_dir: Path) -> bool:
+    if not target_dir.is_dir() or target_dir.is_symlink():
+        return False
+
+    for child in sorted(target_dir.iterdir()):
+        if not child.is_symlink():
+            return False
+        if not path_is_relative_to(symlink_target_abs(child), source_dir):
+            return False
+    return True
+
+
+def replace_managed_entry_dir(target_dir: Path, apply: bool) -> None:
+    if not apply:
+        return
+
+    for child in sorted(target_dir.iterdir()):
+        child.unlink()
+    target_dir.rmdir()
+
+
+def sync_directory_link(repo: Path, link: DirectoryLink, apply: bool, counters: Counters) -> None:
+    target = repo / link.target_rel
+    linked_parent = symlink_ancestor(repo, link.target_rel.parent)
+    if linked_parent is not None:
+        print(f"CONFLICT {linked_parent}: symlinked directory; refusing to write through it")
+        counters.conflicts += 1
+        return
+
+    if target.is_symlink():
+        if same_symlink_target(target, link.source):
+            counters.unchanged += 1
+            return
+        current = os.readlink(target)
+        if apply:
+            target.unlink()
+            target.symlink_to(link.source)
+            print(f"UPDATE {target} -> {link.source} (was {current})")
+        else:
+            print(f"DRY update {target} -> {link.source} (was {current})")
+        counters.updated += 1
+        return
+
+    if target.exists():
+        if managed_entry_dir(target, link.source):
+            if apply:
+                replace_managed_entry_dir(target, apply=True)
+                target.symlink_to(link.source)
+                print(f"REPLACE-DIR {target} -> {link.source}")
+            else:
+                print(f"DRY replace-dir {target} -> {link.source}")
+            counters.updated += 1
+            return
+
+        print(
+            f"CONFLICT {target}: existing non-symlink with local content, "
+            f"wanted directory link -> {link.source}"
+        )
+        counters.conflicts += 1
+        return
+
+    if apply:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.symlink_to(link.source)
+        print(f"CREATE {target} -> {link.source}")
+    else:
+        print(f"DRY create {target} -> {link.source}")
+    counters.created += 1
+
+
 def prune_stale(repo: Path, entries: list[Entry], apply: bool, counters: Counters) -> None:
     valid_by_dir: dict[Path, set[str]] = {}
     source_by_dir: dict[Path, Path] = {}
@@ -368,6 +478,47 @@ def clean_entrypoints(repo: Path, source_root: Path, apply: bool, remove_empty_d
                 counters.removed += 1
 
 
+def clean_directory_links(repo: Path, source_root: Path, apply: bool, remove_empty_dirs: bool, counters: Counters) -> None:
+    for target_dir, source_dir in managed_dirs(repo, source_root):
+        linked_parent = symlink_ancestor(repo, target_dir.parent.relative_to(repo))
+        if linked_parent is not None:
+            print(f"CONFLICT {linked_parent}: symlinked directory; refusing to clean through it")
+            counters.conflicts += 1
+            continue
+
+        if target_dir.is_symlink():
+            if not same_symlink_target(target_dir, source_dir):
+                print(f"SKIP clean {target_dir}: not managed by {source_dir}")
+                counters.skipped += 1
+                continue
+            if apply:
+                target_dir.unlink()
+                print(f"CLEAN {target_dir}")
+            else:
+                print(f"DRY clean {target_dir}")
+            counters.removed += 1
+            continue
+
+        if target_dir.exists():
+            counters.unchanged += 1
+            continue
+
+        counters.unchanged += 1
+
+    if remove_empty_dirs:
+        directory = repo / ".codex"
+        if not directory.is_symlink() and directory.is_dir():
+            try:
+                next(directory.iterdir())
+            except StopIteration:
+                if apply:
+                    directory.rmdir()
+                    print(f"RMDIR {directory}")
+                else:
+                    print(f"DRY rmdir {directory}")
+                counters.removed += 1
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Sync or clean repo-local .codex entrypoint symlinks from an aggregated workspace .codex.",
@@ -390,6 +541,16 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--include", action="append", default=[], help="include glob matched against repo name/path")
     parser.add_argument("--exclude", action="append", default=[], help="exclude glob matched against repo name/path")
     parser.add_argument("--recursive", action="store_true", help="discover nested git repos instead of direct children only")
+    parser.add_argument(
+        "--link-mode",
+        choices=("directories", "entries"),
+        default=None,
+        help=(
+            "directories links .codex/agents and .codex/skills to source directories; "
+            "entries links each agent/skill under real target directories; "
+            "recommended: directories for workspace aggregates"
+        ),
+    )
     parser.add_argument("--prune", action="store_true", help="with sync, remove stale symlinks that point into the source root")
     parser.add_argument("--no-ignore", action="store_true", help="do not update .git/info/exclude")
     parser.add_argument("--remove-ignore", action="store_true", help="with clean, remove the local .codex/.agents ignore lines")
@@ -403,21 +564,45 @@ def main(argv: list[str]) -> int:
     args.workspace = abs_lexical(args.workspace.expanduser())
     args.source_root = abs_lexical((args.source_root or (args.workspace / ".codex")).expanduser())
 
-    entries, warnings = collect_entries(args.source_root) if args.action == "sync" else ([], [])
+    if args.link_mode is None:
+        print(
+            "Choose --link-mode directories or --link-mode entries. "
+            "Recommended: directories for workspace aggregates such as /Users/sky/GitHub/.codex; "
+            "use entries when the repo must keep real .codex/agents or .codex/skills directories."
+        )
+        return 2
+
+    entries: list[Entry] = []
+    directory_links: list[DirectoryLink] = []
+    warnings: list[str] = []
+    if args.action == "sync":
+        if args.link_mode == "entries":
+            entries, warnings = collect_entries(args.source_root)
+        else:
+            directory_links, warnings = collect_directory_links(args.source_root)
     repos = select_repos(args)
     mode = "APPLY" if args.apply else "DRY-RUN"
 
     print(f"action: {args.action}")
     print(f"mode: {mode}")
+    print(f"link_mode: {args.link_mode}")
     print(f"workspace: {args.workspace}")
     print(f"source_root: {args.source_root}")
     print(f"repos: {len(repos)}")
     if args.action == "sync":
-        print(f"entries: {len(entries)}")
+        if args.link_mode == "entries":
+            print(f"entries: {len(entries)}")
+        else:
+            print(f"directory_links: {len(directory_links)}")
+            if args.prune:
+                print("WARN --prune has no effect with --link-mode directories")
     for warning in warnings:
         print(f"WARN {warning}")
 
-    if args.action == "sync" and not entries:
+    if args.action == "sync" and args.link_mode == "entries" and not entries:
+        print("No entries found; aborting.")
+        return 2
+    if args.action == "sync" and args.link_mode == "directories" and not directory_links:
         print("No entries found; aborting.")
         return 2
     if not repos:
@@ -429,13 +614,18 @@ def main(argv: list[str]) -> int:
         print(f"\n== {repo} ==")
         if args.action == "sync" and not args.no_ignore:
             ensure_local_ignore(repo, args.apply, counters)
-        if args.action == "sync":
-            for entry in entries:
-                sync_entry(repo, entry, args.apply, counters)
+        if args.action == "sync" and args.link_mode == "entries":
+            sync_entries(repo, entries, args.apply, counters)
             if args.prune:
                 prune_stale(repo, entries, args.apply, counters)
+        elif args.action == "sync":
+            for link in directory_links:
+                sync_directory_link(repo, link, args.apply, counters)
         else:
-            clean_entrypoints(repo, args.source_root, args.apply, args.remove_empty_dirs, counters)
+            if args.link_mode == "entries":
+                clean_entrypoints(repo, args.source_root, args.apply, args.remove_empty_dirs, counters)
+            else:
+                clean_directory_links(repo, args.source_root, args.apply, args.remove_empty_dirs, counters)
             if args.remove_ignore and not args.no_ignore:
                 remove_local_ignore(repo, args.apply, counters)
 

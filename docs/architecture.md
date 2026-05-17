@@ -33,7 +33,7 @@ Only runtime entrypoints should point to suites or to an already-aggregated work
 <runtime>/.codex/agents -> <suites-root>/<suite>/agents
 <runtime>/.codex/skills -> <suites-root>/<suite>/skills
 
-# Or, when each repo needs its own local entrypoints:
+# Or, when a repo must keep real entry directories:
 <runtime>/.codex/agents/<agent>.toml -> <workspace>/.codex/agents/<agent>.toml
 <runtime>/.codex/skills/<skill> -> <workspace>/.codex/skills/<skill>
 ```

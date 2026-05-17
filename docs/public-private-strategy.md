@@ -137,7 +137,7 @@ that should opt in needs local entrypoints:
 <runtime>/.codex/agents -> ~/.codex/suites/<suite>/agents
 <runtime>/.codex/skills -> ~/.codex/suites/<suite>/skills
 
-# Or individual entrypoints that point to an aggregate:
+# Or, when a repo must keep real .codex/agents or .codex/skills directories:
 <runtime>/.codex/agents/<agent>.toml -> /Users/sky/GitHub/.codex/agents/<agent>.toml
 <runtime>/.codex/skills/<skill> -> /Users/sky/GitHub/.codex/skills/<skill>
 ```
@@ -146,14 +146,18 @@ Do not symlink the whole `.codex` folder. Other local files under `.codex` may n
 
 不要 symlink 整个 `.codex` 文件夹。`.codex` 下的其他本地文件可能需要保留运行目录自己的配置。
 
-For batch setup, use the entrypoint sync helper in dry-run mode first:
+For batch setup, use the entrypoint sync helper in dry-run mode first. Choose
+`--link-mode directories` for workspace aggregates unless the target repo needs
+real entry directories.
 
-批量设置时，先用 entrypoint sync helper 做 dry-run：
+批量设置时，先用 entrypoint sync helper 做 dry-run。对 workspace 聚合层优先选择
+`--link-mode directories`；只有目标 repo 需要保留真实入口目录时才用逐项模式。
 
 ```bash
 python3 scripts/sync_codex_entrypoints.py sync \
   --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex
+  --source-root /Users/sky/GitHub/.codex \
+  --link-mode directories
 ```
 
 Apply after reviewing the plan:
@@ -164,14 +168,15 @@ Apply after reviewing the plan:
 python3 scripts/sync_codex_entrypoints.py sync \
   --workspace /Users/sky/GitHub \
   --source-root /Users/sky/GitHub/.codex \
+  --link-mode directories \
   --apply
 ```
 
-Use `--prune` with `sync` to remove stale symlinks that still point into the
-same aggregate but no longer exist there.
+Use `--link-mode entries --prune` with `sync` to remove stale individual symlinks
+that still point into the same aggregate but no longer exist there.
 
-需要清理仍指向同一聚合层、但聚合层已不存在的陈旧 symlink 时，在 `sync` 后加
-`--prune`。
+需要清理仍指向同一聚合层、但聚合层已不存在的逐项 symlink 时，使用
+`--link-mode entries --prune`。
 
 Clean managed entrypoints with:
 
@@ -180,7 +185,8 @@ Clean managed entrypoints with:
 ```bash
 python3 scripts/sync_codex_entrypoints.py clean \
   --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex
+  --source-root /Users/sky/GitHub/.codex \
+  --link-mode directories
 ```
 
 The helper updates each target repo's `.git/info/exclude` with `.codex/` and

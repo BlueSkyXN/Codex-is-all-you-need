@@ -120,26 +120,40 @@ If your workspace aggregate is:
 /Users/sky/GitHub/.codex/skills
 ```
 
-then batch-sync entrypoints into child repos:
+then batch-sync entrypoints into child repos. Choose the link mode explicitly;
+`directories` is recommended for workspace aggregates.
 
-可以批量同步入口到子 repo：
+可以批量同步入口到子 repo。运行时显式选择链接模式；对 workspace 聚合层，建议优先用 `directories`。
 
 ```bash
 # dry-run
 python3 scripts/sync_codex_entrypoints.py sync \
   --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex
+  --source-root /Users/sky/GitHub/.codex \
+  --link-mode directories
 
 # apply
 python3 scripts/sync_codex_entrypoints.py sync \
   --workspace /Users/sky/GitHub \
   --source-root /Users/sky/GitHub/.codex \
+  --link-mode directories \
   --apply
 ```
 
-The script creates individual symlinks:
+Recommended directory mode creates:
 
-脚本创建 individual symlinks：
+推荐的目录模式会创建：
+
+```text
+<repo>/.codex/agents -> <source-root>/agents
+<repo>/.codex/skills -> <source-root>/skills
+```
+
+Use `--link-mode entries` when a repo must keep real `.codex/agents` or
+`.codex/skills` directories:
+
+当某个 repo 必须保留真实 `.codex/agents` 或 `.codex/skills` 目录时，使用
+`--link-mode entries`：
 
 ```text
 <repo>/.codex/agents/<agent>.toml -> <source-root>/agents/<agent>.toml
@@ -153,9 +167,11 @@ It also writes `.codex/` and `.agents/` into each target repo's
 
 ## 4. Sync, Update, Prune, Clean / 创建、更新、裁剪、清理
 
-The script supports two actions: `sync` and `clean`.
+The script supports two actions: `sync` and `clean`, and two link modes:
+`directories` and `entries`.
 
-脚本支持两个动作：`sync` 和 `clean`。
+脚本支持两个动作：`sync` 和 `clean`，以及两种链接模式：`directories` 和
+`entries`。
 
 ```bash
 # Create missing entrypoints and update changed symlink targets.
@@ -163,6 +179,7 @@ The script supports two actions: `sync` and `clean`.
 python3 scripts/sync_codex_entrypoints.py sync \
   --workspace /Users/sky/GitHub \
   --source-root /Users/sky/GitHub/.codex \
+  --link-mode directories \
   --apply
 
 # Also remove stale symlinks that still point into the selected source root.
@@ -170,6 +187,7 @@ python3 scripts/sync_codex_entrypoints.py sync \
 python3 scripts/sync_codex_entrypoints.py sync \
   --workspace /Users/sky/GitHub \
   --source-root /Users/sky/GitHub/.codex \
+  --link-mode entries \
   --prune \
   --apply
 
@@ -178,6 +196,7 @@ python3 scripts/sync_codex_entrypoints.py sync \
 python3 scripts/sync_codex_entrypoints.py clean \
   --workspace /Users/sky/GitHub \
   --source-root /Users/sky/GitHub/.codex \
+  --link-mode directories \
   --apply
 ```
 
@@ -186,9 +205,9 @@ For a narrower run:
 缩小范围：
 
 ```bash
-python3 scripts/sync_codex_entrypoints.py sync --repo XDB
-python3 scripts/sync_codex_entrypoints.py sync --include 'CPA-*'
-python3 scripts/sync_codex_entrypoints.py sync --exclude 'Archive-*'
+python3 scripts/sync_codex_entrypoints.py sync --link-mode directories --repo XDB
+python3 scripts/sync_codex_entrypoints.py sync --link-mode directories --include 'CPA-*'
+python3 scripts/sync_codex_entrypoints.py sync --link-mode directories --exclude 'Archive-*'
 ```
 
 Safety rules:
@@ -196,8 +215,10 @@ Safety rules:
 安全规则：
 
 - Default mode is dry-run.
+- `--link-mode` is explicit so the caller chooses directory links or individual entry links.
 - Non-symlink conflicts are reported, not overwritten.
-- Symlinked `.codex/agents` or `.codex/skills` directories are not written through.
+- Directory mode may replace old managed entry directories when every child is a symlink into the selected source directory.
+- Real directories with local content are reported as conflicts, not overwritten.
 - `clean` removes only symlinks that point into the selected `--source-root`.
 - `clean` does not delete real files, real directories, or project-specific entrypoints.
 
@@ -382,7 +403,7 @@ Helpful commands:
 python3 dashboard/build_dashboard.py --config ~/.codex/dashboard/config.toml --json-only
 find -L ~/.codex/suites -type l -print
 git diff --check
-python3 scripts/sync_codex_entrypoints.py sync --workspace /Users/sky/GitHub --source-root /Users/sky/GitHub/.codex
+python3 scripts/sync_codex_entrypoints.py sync --workspace /Users/sky/GitHub --source-root /Users/sky/GitHub/.codex --link-mode directories
 ```
 
 ## 10. Common Mistakes / 常见错误

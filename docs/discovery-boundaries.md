@@ -58,6 +58,10 @@ Use a workspace aggregate as a symlink target, not as an inherited parent:
 <workspace>/.codex/agents
 <workspace>/.codex/skills
 
+<repo>/.codex/agents -> <workspace>/.codex/agents
+<repo>/.codex/skills -> <workspace>/.codex/skills
+
+# Or, when a repo must keep real entry directories:
 <repo>/.codex/agents/<agent>.toml -> <workspace>/.codex/agents/<agent>.toml
 <repo>/.codex/skills/<skill>      -> <workspace>/.codex/skills/<skill>
 ```
@@ -70,6 +74,7 @@ The helper script automates this explicit opt-in:
 python3 scripts/sync_codex_entrypoints.py sync \
   --workspace /path/to/workspace \
   --source-root /path/to/workspace/.codex \
+  --link-mode directories \
   --apply
 ```
 

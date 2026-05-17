@@ -53,7 +53,7 @@ aggregate target, but child git repositories do not inherit it automatically.
 <runtime>/.codex/agents -> ~/.codex/suites/<suite>/agents
 <runtime>/.codex/skills -> ~/.codex/suites/<suite>/skills
 
-# Or sync individual repo-local entries from an aggregate:
+# Or, when a repo must keep real entry directories:
 <runtime>/.codex/agents/<agent>.toml -> /Users/sky/GitHub/.codex/agents/<agent>.toml
 <runtime>/.codex/skills/<skill> -> /Users/sky/GitHub/.codex/skills/<skill>
 ```

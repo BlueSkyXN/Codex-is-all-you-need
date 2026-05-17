@@ -144,35 +144,52 @@ Codex does not automatically inherit a parent `.codex` from child git repositori
 /Users/sky/GitHub/.codex/skills
 ```
 
-and you want every selected repo under `/Users/sky/GitHub/*` to see that capability set, create repo-local entrypoints:
+and you want every selected repo under `/Users/sky/GitHub/*` to see that capability set, create repo-local entrypoints. Choose the link mode explicitly; `directories` is recommended for workspace aggregates:
 
 ```bash
 # dry-run
 python3 scripts/sync_codex_entrypoints.py sync \
   --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex
+  --source-root /Users/sky/GitHub/.codex \
+  --link-mode directories
 
 # apply
 python3 scripts/sync_codex_entrypoints.py sync \
   --workspace /Users/sky/GitHub \
   --source-root /Users/sky/GitHub/.codex \
+  --link-mode directories \
   --apply
 ```
 
-Result:
+Recommended directory-mode result:
+
+```text
+<repo>/.codex/agents -> /Users/sky/GitHub/.codex/agents
+<repo>/.codex/skills -> /Users/sky/GitHub/.codex/skills
+```
+
+Use `--link-mode entries` only when a repo must keep real `.codex/agents` or `.codex/skills` directories:
 
 ```text
 <repo>/.codex/agents/<agent>.toml -> /Users/sky/GitHub/.codex/agents/<agent>.toml
 <repo>/.codex/skills/<skill>      -> /Users/sky/GitHub/.codex/skills/<skill>
 ```
 
-Update and clean:
+Update and clean examples:
 
 ```bash
-# update and remove stale symlinks
+# directory mode updates automatically through the linked directories
 python3 scripts/sync_codex_entrypoints.py sync \
   --workspace /Users/sky/GitHub \
   --source-root /Users/sky/GitHub/.codex \
+  --link-mode directories \
+  --apply
+
+# entries mode can also remove stale symlinks
+python3 scripts/sync_codex_entrypoints.py sync \
+  --workspace /Users/sky/GitHub \
+  --source-root /Users/sky/GitHub/.codex \
+  --link-mode entries \
   --prune \
   --apply
 
@@ -180,10 +197,11 @@ python3 scripts/sync_codex_entrypoints.py sync \
 python3 scripts/sync_codex_entrypoints.py clean \
   --workspace /Users/sky/GitHub \
   --source-root /Users/sky/GitHub/.codex \
+  --link-mode directories \
   --apply
 ```
 
-The script only manages symlinks that point into the selected `--source-root`. It does not delete real files, real directories, or project-specific entrypoints.
+The script only manages symlinks that point into the selected `--source-root`. It does not delete real files, real directories, or project-specific entrypoints. If a real directory contains local content, directory mode reports a conflict instead of replacing it.
 
 ## Supported Agents And Skills
 

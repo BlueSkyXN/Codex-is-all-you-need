@@ -257,9 +257,9 @@ The current version focuses on source catalogs, local suites, and configured run
 
 当前版本主要覆盖 source catalog、本机 suites，以及已配置 runtime 的 `.codex/agents` 和 `.codex/skills` 目录连接状态。
 
-It does not yet audit every per-repo individual entrypoint created by `scripts/sync_codex_entrypoints.py`.
+It does not yet audit every per-repo individual entrypoint created by `scripts/sync_codex_entrypoints.py --link-mode entries`.
 
-它还不会逐个审计 `scripts/sync_codex_entrypoints.py` 给每个 repo 创建的 individual entrypoints。
+它还不会逐个审计 `scripts/sync_codex_entrypoints.py --link-mode entries` 给每个 repo 创建的 individual entrypoints。
 
 Project-level `.agents/skills` overlays are a planned next step. Until that is implemented, the dashboard should not be treated as a complete view of every skill Codex can discover inside an individual project folder.
 

@@ -224,6 +224,15 @@ This gives two layers:
 .agents = project-specific skill capability
 ```
 
+Do not expand shared suite skills into `.agents/skills`. That directory is
+reserved for user-owned or project-owned overlays. If a repo needs shared
+skills beside local `.codex` content, use entry links under `.codex/skills`
+instead.
+
+不要把共享 suite skills 展开到 `.agents/skills`。这个目录应保留给用户或项目自有叠加层。
+如果某个 repo 需要在本地 `.codex` 内容旁边放共享 skills，应在 `.codex/skills` 下使用
+逐项链接。
+
 The dashboard currently focuses on `.codex` suite connections. Project overlay discovery can be added later.
 
 当前面板主要检查 `.codex` 的 suite 连接。项目叠加层发现能力可后续加入。

@@ -166,7 +166,7 @@ python3 scripts/sync_codex_entrypoints.py sync \
 <repo>/.codex/skills -> /Users/sky/GitHub/.codex/skills
 ```
 
-只有当某个 repo 必须保留真实 `.codex/agents` 或 `.codex/skills` 目录时，才选择 `--link-mode entries`：
+只有当某个 repo 必须保留真实 `.codex/agents` 或 `.codex/skills` 目录、只选择少量共享条目，或需要把共享条目和本地实验条目并列时，才选择 `--link-mode entries`：
 
 ```text
 <repo>/.codex/agents/<agent>.toml -> /Users/sky/GitHub/.codex/agents/<agent>.toml
@@ -200,6 +200,8 @@ python3 scripts/sync_codex_entrypoints.py clean \
 ```
 
 脚本只处理指向当前 `--source-root` 的 symlink，不删除真实文件、真实目录或项目自定义 entrypoints。如果真实目录里有本地内容，目录模式会报告 conflict，而不是直接替换。
+
+`.agents/skills` 应保留给项目专属 skills。不要把共享 suite skills 部署到这里；共享 runtime 可见性应通过 `.codex/skills` 的目录级或逐项链接实现。
 
 ## 支持的 Agents 和 Skills
 

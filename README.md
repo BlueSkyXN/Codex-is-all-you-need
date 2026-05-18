@@ -168,7 +168,7 @@ Recommended directory-mode result:
 <repo>/.codex/skills -> /Users/sky/GitHub/.codex/skills
 ```
 
-Use `--link-mode entries` only when a repo must keep real `.codex/agents` or `.codex/skills` directories:
+Use `--link-mode entries` only when a repo must keep real `.codex/agents` or `.codex/skills` directories, selectively opt in to a small set of shared entries, or mix shared entries with local experiments:
 
 ```text
 <repo>/.codex/agents/<agent>.toml -> /Users/sky/GitHub/.codex/agents/<agent>.toml
@@ -202,6 +202,8 @@ python3 scripts/sync_codex_entrypoints.py clean \
 ```
 
 The script only manages symlinks that point into the selected `--source-root`. It does not delete real files, real directories, or project-specific entrypoints. If a real directory contains local content, directory mode reports a conflict instead of replacing it.
+
+Keep `.agents/skills` for project-only skills. Do not deploy shared suite skills there; use `.codex/skills` directory or entry links for shared runtime visibility.
 
 ## Supported Agents And Skills
 

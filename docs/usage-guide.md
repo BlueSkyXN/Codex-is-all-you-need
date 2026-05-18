@@ -150,10 +150,12 @@ Recommended directory mode creates:
 ```
 
 Use `--link-mode entries` when a repo must keep real `.codex/agents` or
-`.codex/skills` directories:
+`.codex/skills` directories, selectively opt in to a small set of shared
+entries, or mix shared entries with local experiments:
 
 当某个 repo 必须保留真实 `.codex/agents` 或 `.codex/skills` 目录时，使用
-`--link-mode entries`：
+`--link-mode entries`；它也适合只选择少量共享条目，或把共享条目和本地实验条目
+并列的 repo：
 
 ```text
 <repo>/.codex/agents/<agent>.toml -> <source-root>/agents/<agent>.toml
@@ -164,6 +166,11 @@ It also writes `.codex/` and `.agents/` into each target repo's
 `.git/info/exclude`, so machine-local entrypoint state stays untracked.
 
 它也会把 `.codex/` 和 `.agents/` 写入每个目标 repo 的 `.git/info/exclude`，避免本机入口状态污染 Git。
+
+Do not deploy shared suites into `.agents/skills`; keep `.agents/skills` for
+project-only skills.
+
+不要把共享 suite 部署到 `.agents/skills`；`.agents/skills` 应留给项目专属 skills。
 
 ## 4. Sync, Update, Prune, Clean / 创建、更新、裁剪、清理
 

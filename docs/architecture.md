@@ -38,6 +38,16 @@ Only runtime entrypoints should point to suites or to an already-aggregated work
 <runtime>/.codex/skills/<skill> -> <workspace>/.codex/skills/<skill>
 ```
 
+Directory links are the default for workspace aggregates because suite updates
+then flow through automatically. Entry-by-entry links are useful only when a
+repo must keep real `.codex/agents` or `.codex/skills` directories, selectively
+opt in to a small set of shared entries, or mix shared entries with local
+experiments.
+
+对 workspace 聚合层，默认使用目录级链接，因为 suite 更新会自动传导。逐项链接只适合
+需要保留真实 `.codex/agents` 或 `.codex/skills` 目录、选择性 opt in 少量共享条目，
+或把共享条目和本地实验条目并列的 repo。
+
 Do not symlink the whole `.codex` directory. Runtime directories may need their own `.codex/config.toml`, hooks, or other local files.
 
 不要 symlink 整个 `.codex` 目录。runtime directories 可能需要保留自己的 `.codex/config.toml`、hooks 或其他本地文件。
@@ -86,6 +96,11 @@ skills. Custom agents, however, are discovered from `.codex/agents/*.toml`;
 可以把项目级 `.agents/skills` 预留给项目专属 skill。但 custom agent 的有效
 发现路径是 `.codex/agents/*.toml`；`.agents/agents` 不是 custom agent
 discovery path。
+
+Do not expand shared suites into `.agents/skills`; keep that namespace available
+for user or project-defined skills.
+
+不要把共享 suite 展开到 `.agents/skills`；这个命名空间应留给用户或项目自定义 skills。
 
 ## Related Design Docs / 相关设计文档
 

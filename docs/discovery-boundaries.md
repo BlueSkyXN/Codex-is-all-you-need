@@ -66,6 +66,16 @@ Use a workspace aggregate as a symlink target, not as an inherited parent:
 <repo>/.codex/skills/<skill>      -> <workspace>/.codex/skills/<skill>
 ```
 
+Use directory links as the default for workspace aggregates. Use entry links
+only when a repo needs real local `.codex/agents` or `.codex/skills`
+directories, selective opt-in, or local experiments beside shared entries.
+Keep `.agents/skills` for project-only skills instead of shared suite content.
+
+对 workspace 聚合层默认使用目录级链接。只有当 repo 需要真实本地
+`.codex/agents` 或 `.codex/skills` 目录、选择性 opt in，或需要把本地实验条目和共享
+条目并列时，才使用逐项链接。`.agents/skills` 应保留给 project-only skills，而不是
+共享 suite 内容。
+
 The helper script automates this explicit opt-in:
 
 同步脚本用于自动化这种显式 opt-in：

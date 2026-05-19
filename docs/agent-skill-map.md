@@ -57,14 +57,19 @@ Actual availability is decided by runtime filesystem visibility:
 
 | Agent | Role | Recommended Skills |
 |---|---|---|
-| `product_engineering_requirements_lead` | PRD, scope lock, non-goals, success metrics, and spec handoff | `prd-workflow` |
-| `product_engineering_functional_specifier` | Functional behavior, flows, states, fields, permissions, errors, ACs, and traceability | `functional-spec`, `prd-workflow` |
+| `product_engineering_project_researcher` | Existing-project research: positioning, capability map, product structure, WBS-lite, evidence map, e2e flow, maturity, blockers, and next actions | `project-research`, `readiness-review` |
+| `product_engineering_requirements_lead` | PRD, scope lock, non-goals, success metrics, and spec handoff | `prd-workflow`, `project-research` |
+| `product_engineering_functional_specifier` | Functional behavior, flows, states, fields, permissions, errors, ACs, and traceability | `functional-spec`, `prd-workflow`, `project-research` |
 | `product_engineering_technical_bridge` | Engineering bridge drafts, API/data implications, NFRs, test draft, and owner-confirmation questions | `technical-spec-bridge` |
-| `product_engineering_delivery_planner` | Implementation plan, task breakdown, dependency graph, validation tasks, and dev handoff | `delivery-task-planning`, `readiness-review` |
-| `product_engineering_readiness_reviewer` | Readiness review for PRD, spec, tech bridge, delivery plan, or change-spec handoff | `readiness-review` |
+| `product_engineering_delivery_planner` | Implementation plan, task breakdown, dependency graph, validation tasks, and dev handoff | `delivery-task-planning`, `readiness-review`, `project-research` |
+| `product_engineering_readiness_reviewer` | Readiness review for PRD, spec, tech bridge, delivery plan, or change-spec handoff | `readiness-review`, `project-research` |
 | `product_engineering_change_adapter` | Repository change-spec or OpenSpec-style proposal, design, tasks, and behavior deltas | `change-spec-adapter`, `readiness-review` |
 
+`project-research` is the upstream entry point when an existing codebase needs an evidence-grounded research pack before PRD, spec, or delivery planning. It deliberately avoids scoring, completion percentages, and status-report language.
+
 `product-engineering` is a planning and engineering-management layer. It should prepare `agent-handoff.md`, `task-breakdown.md`, `review-report.md`, or equivalent change-spec artifacts before `dev` takes over implementation.
+
+`project-research` 是现有代码库进入 PRD、规格或交付规划前的上游入口，先形成证据可追溯的研究包。它刻意不输出评分、完成率或状态汇报语言。
 
 `product-engineering` 是规划与工程管理层。它应该在 `dev` 接手实现前，准备好 `agent-handoff.md`、`task-breakdown.md`、`review-report.md` 或等价 change-spec 产物。
 

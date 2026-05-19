@@ -35,7 +35,7 @@ Current public subset:
 
 ```text
 common/                 6 agents, 1 public skill
-product-engineering/    6 agents, 6 public skills
+product-engineering/    7 agents, 7 public skills
 dev/                   14 agents, 19 public skills
 data/                   5 agents, 4 public skills
 office/                 5 agents, 5 public skills

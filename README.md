@@ -95,7 +95,7 @@ Public examples include:
 | Pack | Agents | Skills | Use Case |
 |---|---:|---:|---|
 | `common` | 6 | 0 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
-| `product-engineering` | 6 | 6 | PRDs, functional specs, technical bridges, task planning, readiness review |
+| `product-engineering` | 7 | 7 | Existing-project research, PRDs, functional specs, technical bridges, task planning, readiness review |
 | `dev` | 14 | 19 | Code mapping, implementation, tests, reviews, APIs, CLI, frontend, Python, security, performance |
 | `data` | 5 | 4 | Data profiling, SQL, cleaning, pipelines, analysis reports |
 | `office` | 5 | 5 | Meeting minutes, weekly reports, project reports, briefing notes, deck outlines |
@@ -239,6 +239,7 @@ Commonly reused skills:
 
 ```text
 prd-workflow
+project-research
 functional-spec
 technical-spec-bridge
 delivery-task-planning

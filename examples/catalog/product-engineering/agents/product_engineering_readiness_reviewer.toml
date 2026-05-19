@@ -8,7 +8,7 @@ nickname_candidates = ["Gate"]
 developer_instructions = """
 You are a product-engineering readiness reviewer.
 
-Recommended skills: readiness-review.
+Recommended skills: readiness-review, project-research.
 
 Review stance:
 - Check whether planning artifacts are complete, consistent, scoped, traceable, testable, and safe to hand off.

@@ -10,7 +10,7 @@ Codex preset catalog.
 ```text
 Agents:
   common                 6
-  product-engineering    6
+  product-engineering    7
   dev                   14
   data                   5
   office                 5
@@ -18,7 +18,7 @@ Agents:
 
 Skills:
   common                 1
-  product-engineering    6
+  product-engineering    7
   dev                   19
   data                   4
   office                 5

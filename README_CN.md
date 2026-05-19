@@ -93,7 +93,7 @@ find examples/catalog -maxdepth 3 \( -path '*/agents/*.toml' -o -path '*/skills/
 | Pack | Agents | Skills | 用途 |
 |---|---:|---:|---|
 | `common` | 6 | 0 | 规划、编排、文档核查、质量复核、上下文压缩、文件整理 |
-| `product-engineering` | 6 | 6 | PRD、功能规格、技术桥接、任务拆解、准备度审查 |
+| `product-engineering` | 7 | 7 | 现有项目研究、PRD、功能规格、技术桥接、任务拆解、准备度审查 |
 | `dev` | 14 | 19 | 代码阅读、实现、测试、review、API、CLI、前端、Python、安全、性能 |
 | `data` | 5 | 4 | 数据画像、SQL、清洗、pipeline、分析报告 |
 | `office` | 5 | 5 | 会议纪要、周报、项目报告、briefing、PPT 大纲 |
@@ -237,6 +237,7 @@ dev
 
 ```text
 prd-workflow
+project-research
 functional-spec
 technical-spec-bridge
 delivery-task-planning

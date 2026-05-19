@@ -234,7 +234,7 @@ Safety rules:
 | Pack | Agents | Skills | Best For |
 |---|---:|---:|---|
 | `common` | 6 | 0 | Planning, orchestration, context summaries, docs verification, quality review |
-| `product-engineering` | 6 | 6 | PRDs, functional specs, technical bridge, delivery planning, readiness review |
+| `product-engineering` | 7 | 7 | Existing-project research, PRDs, functional specs, technical bridge, delivery planning, readiness review |
 | `dev` | 14 | 19 | Code mapping, implementation, testing, API, CLI, frontend, Python, security, performance |
 | `data` | 5 | 4 | Data profiling, SQL, cleaning, pipelines, reports |
 | `office` | 5 | 5 | Meeting minutes, weekly reports, project reports, briefing notes, slide outlines |

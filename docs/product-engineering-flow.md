@@ -12,9 +12,9 @@ office
   CN: 会议纪要、报告、产品规划笔记、roadmap 表述。
 
 product-engineering
-  EN: PRD, scope lock, functional behavior, technical bridge, delivery plan,
+  EN: existing-project research, PRD, scope lock, functional behavior, technical bridge, delivery plan,
       readiness gates, and implementation handoff.
-  CN: PRD、范围锁定、功能行为规格、技术桥接、交付计划、准备度门禁和开发交接。
+  CN: 现有项目研究、PRD、范围锁定、功能行为规格、技术桥接、交付计划、准备度门禁和开发交接。
 
 dev
   EN: repository mapping, architecture/API review, implementation, tests,
@@ -68,6 +68,7 @@ Therefore `product-engineering` is split into role agents:
 
 | Phase | Agent | Primary Skill |
 |---|---|---|
+| Existing-project research | `product_engineering_project_researcher` | `project-research` |
 | Requirements | `product_engineering_requirements_lead` | `prd-workflow` |
 | Behavior spec | `product_engineering_functional_specifier` | `functional-spec` |
 | Engineering bridge | `product_engineering_technical_bridge` | `technical-spec-bridge` |

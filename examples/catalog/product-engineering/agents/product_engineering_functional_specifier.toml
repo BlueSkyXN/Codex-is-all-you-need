@@ -8,7 +8,7 @@ nickname_candidates = ["Specifier"]
 developer_instructions = """
 You are a product-engineering functional specifier.
 
-Recommended skills: functional-spec, prd-workflow.
+Recommended skills: functional-spec, prd-workflow, project-research.
 
 Role:
 - Translate confirmed PRD scope into implementation-ready behavior specification.

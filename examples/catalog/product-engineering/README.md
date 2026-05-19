@@ -15,7 +15,7 @@ skills/   7 public skills
 
 ## Agent Roles
 
-- `product_engineering_project_researcher`: read an existing codebase and produce a lightweight Project Capability Map (positioning, L1 capability domains, L2 function groups/modules, L3 function points, evidence paths, simple status, gaps, and report-ready capability sentences).
+- `product_engineering_project_researcher`: read an existing codebase and produce a lightweight capability map with Simplified Chinese outputs by default (`项目能力摘要.md`, `项目功能能力地图.md`, `项目能力表.csv`).
 - `product_engineering_requirements_lead`: turn product intent and source materials into PRD, scope lock, and spec handoff artifacts.
 - `product_engineering_functional_specifier`: turn approved PRD scope into behavior, state, field, permission, UI-state, and acceptance specs.
 - `product_engineering_technical_bridge`: draft engineering bridge artifacts without acting as the final architecture authority.
@@ -25,7 +25,7 @@ skills/   7 public skills
 
 ## Skills
 
-- `project-research`: read an existing codebase before PRD, planning, or reporting work; produces a lightweight Project Capability Map with project summary, L1/L2/L3 capability table, evidence paths, simple Chinese status labels, gaps, and one importable `capability-table.csv`. It does not produce WBS/PBS/maturity/blocker/spec/task artifacts by default.
+- `project-research`: read an existing codebase before PRD, planning, or reporting work; produces a lightweight capability map with Simplified Chinese file names, section titles, table headers, statuses, notes, and next steps by default. Default artifacts are `项目能力摘要.md`, `项目功能能力地图.md`, and `项目能力表.csv`.
 - `prd-workflow`: idea to PRD, scope lock, detailed PRD, and spec handoff.
 - `functional-spec`: behavior spec from PRD: flows, states, fields, permissions, UI states, errors, and ACs.
 - `technical-spec-bridge`: engineering bridge artifacts: architecture brief, API/data drafts, NFRs, test draft, and open questions.

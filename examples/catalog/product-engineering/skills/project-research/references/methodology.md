@@ -1,47 +1,47 @@
-# Project Capability Map Methodology
+# 项目功能能力地图方法
 
-This skill is intentionally lightweight. Its job is not to create a formal research pack. Its job is to help a local AI quickly read a codebase and turn it into a capability/function-point map that a human can use for management tracking, progress reporting, PRD scoping, or performance-material preparation.
+这个 skill 要刻意保持轻。它不是正式项目研究包，也不是项目管理计划。它只负责让本地 AI 快速读代码，把一个项目整理成“能力域、功能组、功能点、证据、状态、下一步”。
 
-## 1. Default output is one map, not many artifacts
+## 1. 默认只产出一张能力地图
 
-The default shape is:
-
-```text
-Project goal
--> capability domain
--> function group / module
--> function point
--> evidence
--> status
--> next step
-```
-
-The map should answer the management question:
+默认结构是：
 
 ```text
-这个项目做了什么？有哪些能力域？每个能力域下面有哪些模块？每个模块已经形成哪些功能点？
+项目目标
+-> 一级能力域
+-> 二级功能组或模块
+-> 三级功能点
+-> 证据
+-> 状态
+-> 下一步
 ```
 
-Do not expand into PBS, WBS, tracking matrices, maturity reports, blocker reports, spec cards, deployment reviews, target-shift logs, or many CSV files unless the user explicitly asks for a separate downstream activity.
+它要回答的问题是：
 
-## 2. Layer definitions
+```text
+这个项目做了什么？有哪些能力域？每个能力域下有哪些模块？每个模块已经形成哪些功能点？
+```
 
-| Layer | Meaning | Example |
+除非用户明确要求，不要展开产品结构、工作分解、跟踪矩阵、成熟度、卡点长报告、规格卡、部署检查、目标变化日志或大量表格。
+
+## 2. 层级定义
+
+| 层级 | 含义 | 示例 |
 |---|---|---|
-| L0 | Project goal | `面向跨境电商质量分析的 AI 工作台` |
-| L1 | Capability domain / subsystem | `AI工作流/智能中台能力域` |
-| L2 | Function group / module | `Dify封装` |
-| L3 | Observable function point | `工作流调用` |
+| 项目目标 | 一句话说明项目用途 | `面向跨境电商质量分析的 AI 工作台` |
+| 一级能力域 | 项目的主要能力板块 | `AI工作流/智能中台能力域` |
+| 二级功能组或模块 | 能力域下的功能组、模块或子系统 | `Dify封装` |
+| 三级功能点 | 用户或系统能观察到的具体功能 | `工作流调用` |
 
-L4 task/spec expansion is deliberately out of scope for the default run. Use `functional-spec` for formal behavior specs and `delivery-task-planning` for implementation task planning.
+默认不展开到研发任务或正式规格。要写正式规格，用 `functional-spec`；要拆研发任务，用 `delivery-task-planning`。
 
-## 3. Business-first decomposition
+## 3. 先按业务能力拆，不按目录机械拆
 
-Decompose by business capability first. Do not mechanically split by repository folders such as `frontend`, `backend`, `scripts`, or `infra`.
+优先按“项目能做什么”来拆，不要直接照搬 `frontend`、`backend`、`scripts`、`infra` 这类目录名。
 
-Engineering layers are still useful evidence, but they are secondary. A function point may be supported by frontend, backend, data, AI, and deployment files at the same time.
+工程目录仍然是证据来源，但不是能力结构本身。一个功能点可能同时由页面、接口、数据、AI 调用和配置共同支撑。
 
-Typical L1 domains for AI/platform projects can include:
+AI 或平台类项目常见的一级能力域包括：
 
 - `前端工作台能力域`
 - `后端控制面能力域`
@@ -50,11 +50,11 @@ Typical L1 domains for AI/platform projects can include:
 - `数据中台/AI+BI能力域`
 - `业务智能体能力域`
 
-These are examples, not mandatory rows. Only include a domain when the target project has evidence or a clearly marked inference.
+这些只是参考，不是必须套用。目标项目没有证据支撑的能力域不要强行写进去。
 
-## 4. Function point rules
+## 4. 功能点必须具体
 
-An L3 function point must be observable behavior. Good examples:
+三级功能点必须是可观察功能。好的写法：
 
 - `工作流调用`
 - `参数传递`
@@ -63,7 +63,7 @@ An L3 function point must be observable behavior. Good examples:
 - `人工复核`
 - `调用日志记录`
 
-Weak examples that should be rewritten:
+太虚的写法要改掉：
 
 - `平台能力`
 - `后端逻辑`
@@ -71,27 +71,27 @@ Weak examples that should be rewritten:
 - `数据支持`
 - `系统建设`
 
-## 5. Evidence rules
+## 5. 证据规则
 
-Every L3 row should cite evidence when possible:
+每个三级功能点尽量给出证据：
 
-- Code path: `src/services/workflow.py`
-- UI path: `src/pages/tasks/index.tsx`
-- API path: `apps/api/routes/task.py`
-- Config path: `docker-compose.yml`
-- Prompt/workflow path: `prompts/monthly-report.md`
-- Test path: `tests/test_task_api.py`
-- Doc path: `README.md`
+- 代码路径：`src/services/workflow.py`
+- 页面路径：`src/pages/tasks/index.tsx`
+- 接口路径：`apps/api/routes/task.py`
+- 配置路径：`docker-compose.yml`
+- 提示词或工作流：`prompts/monthly-report.md`
+- 测试路径：`tests/test_task_api.py`
+- 文档路径：`README.md`
 
-When direct evidence is missing:
+没有直接证据时：
 
-- Use `[INFERRED]` for items inferred from names, routes, config, or docs.
-- Use `[UNKNOWN]` when the item is expected or mentioned but evidence was not found.
-- Do not borrow capability rows from peer projects to make the map look complete.
+- 用 `[推断]` 标记，并说明是从哪个目录、路由、配置或文档推断出来的。
+- 用 `[未知]` 标记应该确认但没找到证据的内容。
+- 不要从其他项目借能力项来补齐表格。
 
-## 6. Status is simple
+## 6. 状态要简单
 
-Use one primary status per L3 function point:
+每个三级功能点只选一个主状态：
 
 - `已规划`
 - `已设计`
@@ -101,27 +101,31 @@ Use one primary status per L3 function point:
 - `已废弃/重构`
 - `未发现证据`
 
-Do not use M0-M9, weighted progress, completion percentage, or status-report language in this skill.
+不要使用成熟度等级、加权进度、完成百分比或汇报式结论。
 
-## 7. Output language convention
+## 7. 输出语言
 
-Generated artifacts should be in Simplified Chinese by default. Keep code paths, command names, file names, package names, API names, config keys, IDs, and CSV headers in their original form.
+默认产物使用简体中文：
 
-The CSV header is intentionally stable and English:
+- 文件名用中文。
+- 标题、章节、说明、表头、状态、备注、下一步都用中文。
+- CSV 表头也用中文。
+
+保留原文的内容只限于真实标识，例如代码路径、命令、包名、API 名、配置键、skill 名、文件扩展名和代码标识符。
+
+默认 CSV 表头：
 
 ```csv
-l1_domain,l2_module,l3_function,function_desc,evidence,current_status,next_step,notes
+一级能力域,二级功能组或模块,三级功能点,功能说明,证据路径,当前状态,下一步,备注
 ```
 
-CSV cell content should be Chinese unless the value is a path, command, identifier, or exact source reference.
+## 8. 下游承接
 
-## 8. Downstream handoff
+这份能力地图可以交给后续工作继续用：
 
-This capability map can feed other work:
+- `prd-workflow`：根据能力地图选择需求范围。
+- `functional-spec`：把选中的三级功能点提升为正式功能规格。
+- `delivery-task-planning`：把选中的缺口展开成研发任务和依赖顺序。
+- 汇报类工作流：把能力地图整理成进展、月报或绩效材料。
 
-- `prd-workflow`: use the L1/L2/L3 map to decide PRD scope.
-- `functional-spec`: promote selected L3 function points into formal behavior specs.
-- `delivery-task-planning`: expand selected gaps into implementation tasks and dependency order.
-- reporting/office workflows: reuse the capability map as raw material for progress or performance expression.
-
-The downstream step should add evaluation, priority, schedule, ownership, or reporting language. This skill should not preempt those decisions.
+优先让下游步骤去加优先级、排期、负责人、评分和汇报话术。这个 skill 不提前替人做这些判断。

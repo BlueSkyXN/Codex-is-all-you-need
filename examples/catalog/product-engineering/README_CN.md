@@ -15,7 +15,7 @@ skills/   7 个公开 skills
 
 ## Agent 角色
 
-- `product_engineering_project_researcher`：读取现有代码库，输出轻量项目功能能力地图（项目定位、L1能力域、L2功能组/模块、L3功能点、证据路径、简单状态、缺口和可用于汇报的能力表达）。
+- `product_engineering_project_researcher`：读取现有代码库，输出轻量项目功能能力地图（项目定位、一级能力域、二级功能组或模块、三级功能点、证据路径、当前状态、缺口和可用于汇报的中文表达）。
 - `product_engineering_requirements_lead`：把产品意图和输入材料整理成 PRD、scope lock 和 spec handoff。
 - `product_engineering_functional_specifier`：把已确认的 PRD 范围转成行为、状态、字段、权限、UI state 和验收标准规格。
 - `product_engineering_technical_bridge`：输出工程桥接草案，但不替代最终架构决策角色。
@@ -25,7 +25,7 @@ skills/   7 个公开 skills
 
 ## Skills
 
-- `project-research`：在 PRD、规划或汇报之前读取现有代码库，产出轻量项目功能能力地图：项目摘要、L1/L2/L3 能力表、证据路径、简体中文状态标签、缺口摘要和一个可导入的 `capability-table.csv`。默认不产出 WBS/PBS/成熟度/卡点/规格/任务类重型产物。
+- `project-research`：在 PRD、规划或汇报之前读取现有代码库，产出轻量项目功能能力地图：`项目能力摘要.md`、`项目功能能力地图.md` 和 `项目能力表.csv`。默认使用简体中文文件名、中文章节、中文表头和中文状态；默认不产出工作分解、产品结构拆解、成熟度、卡点长分析、规格或任务类重型产物。
 - `prd-workflow`：从 idea 到 PRD、scope lock、detailed PRD 和 spec handoff。
 - `functional-spec`：从 PRD 输出行为规格：流程、状态、字段、权限、UI states、错误和 AC。
 - `technical-spec-bridge`：输出工程桥接产物：架构简报、API/data draft、NFR、测试草案和开放问题。
@@ -37,7 +37,7 @@ skills/   7 个公开 skills
 
 当任务处在“产品意图”和“开发实现”之间时使用这个 catalog。交接点应该是清楚的 `agent-handoff.md`、`task-breakdown.md`、`review-report.md` 或等价 change-spec 产物。
 
-如果项目已经存在但还不清楚它到底是什么，先用 `project-research`。它输出的能力地图会喂给 `prd-workflow`（选择范围）、`functional-spec`（把选中的功能点提升为正式规格）、`delivery-task-planning`（把选中的缺口展开为工作）以及汇报类 workflow（表达已形成能力，但不虚构进度分数）。
+如果项目已经存在但还不清楚它到底是什么，先用 `project-research`。它输出的能力地图会交给 `prd-workflow`（选择范围）、`functional-spec`（把选中的功能点提升为正式规格）、`delivery-task-planning`（把选中的缺口展开为工作）以及汇报类流程（表达已形成能力，但不虚构进度分数）。
 
 进入需要代码库映射、API 兼容性审查、架构审查、实现、测试、PR review、安全 review、性能诊断或发布验证的阶段后，再使用 `dev`。
 

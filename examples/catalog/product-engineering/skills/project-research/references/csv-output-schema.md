@@ -1,33 +1,34 @@
-# Capability Table CSV Schema
+# 项目能力表 CSV 规则
 
-Default output file:
+默认输出文件：
 
 ```text
-capability-table.csv
+项目能力表.csv
 ```
 
-Use UTF-8 CSV with exactly this header:
+默认使用 UTF-8 编码，并使用这组中文表头：
 
 ```csv
-l1_domain,l2_module,l3_function,function_desc,evidence,current_status,next_step,notes
+一级能力域,二级功能组或模块,三级功能点,功能说明,证据路径,当前状态,下一步,备注
 ```
 
-## Columns
+## 字段说明
 
-| Column | Meaning |
+| 字段 | 含义 |
 |---|---|
-| `l1_domain` | L1 capability domain / subsystem, written in Simplified Chinese. |
-| `l2_module` | L2 function group / module, written in Simplified Chinese unless it is an exact code/module name. |
-| `l3_function` | L3 observable function point. |
-| `function_desc` | Short description of the function point. |
-| `evidence` | Code/doc/config/test path, or `[INFERRED] ...`, or `[UNKNOWN] ...`. |
-| `current_status` | One of: `已规划`, `已设计`, `已开发`, `可运行`, `待验证`, `已废弃/重构`, `未发现证据`. |
-| `next_step` | One concise next-step note for the L2 module. Repeating the same L2 note across rows is acceptable. |
-| `notes` | Optional caveat, evidence limitation, or owner-confirmation need. Do not put long prose here. |
+| `一级能力域` | 项目的主要能力板块，用简体中文描述。 |
+| `二级功能组或模块` | 能力域下的功能组、模块或子系统；如果是代码里的真实模块名，可以保留原文。 |
+| `三级功能点` | 具体、可观察的功能点。 |
+| `功能说明` | 用一句中文说明这个功能点做什么。 |
+| `证据路径` | 代码、文档、配置、测试路径；没有直接证据时写 `[推断] ...` 或 `[未知] ...`。 |
+| `当前状态` | 只能使用：`已规划`、`已设计`、`已开发`、`可运行`、`待验证`、`已废弃/重构`、`未发现证据`。 |
+| `下一步` | 针对二级模块的一句话下一步建议。平铺表格里可以重复。 |
+| `备注` | 可选，写证据限制、需要人工确认的点或简短说明。不要写长篇。 |
 
-## Rules
+## 规则
 
-- Do not create multiple CSV files by default.
-- Do not add percentage, score, weight, schedule, cost, staffing, owner, maturity, WBS, PBS, blocker, or tracking-matrix columns.
-- Keep values short enough for spreadsheet import and filtering.
-- Redact secrets and personal data.
+- 默认只生成这一个 CSV。
+- 默认不要加英文表头。
+- 不要添加完成率、评分、权重、排期、成本、资源、负责人、成熟度、工作分解、产品结构、卡点或跟踪矩阵字段。
+- 每个单元格尽量短，便于筛选、排序和导入表格工具。
+- 密钥和个人数据必须脱敏。

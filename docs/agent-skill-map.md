@@ -57,7 +57,7 @@ Actual availability is decided by runtime filesystem visibility:
 
 | Agent | Role | Recommended Skills |
 |---|---|---|
-| `product_engineering_project_researcher` | Existing-project capability mapping: positioning, L1 capability domains, L2 function groups/modules, L3 function points, evidence paths, simple status, gaps, and report-ready capability sentences | `project-research`, `readiness-review` |
+| `product_engineering_project_researcher` | Existing-project capability mapping with Simplified Chinese artifacts by default: `项目能力摘要.md`, `项目功能能力地图.md`, `项目能力表.csv` | `project-research`, `readiness-review` |
 | `product_engineering_requirements_lead` | PRD, scope lock, non-goals, success metrics, and spec handoff | `prd-workflow`, `project-research` |
 | `product_engineering_functional_specifier` | Functional behavior, flows, states, fields, permissions, errors, ACs, and traceability | `functional-spec`, `prd-workflow`, `project-research` |
 | `product_engineering_technical_bridge` | Engineering bridge drafts, API/data implications, NFRs, test draft, and owner-confirmation questions | `technical-spec-bridge` |
@@ -65,11 +65,11 @@ Actual availability is decided by runtime filesystem visibility:
 | `product_engineering_readiness_reviewer` | Readiness review for PRD, spec, tech bridge, delivery plan, or change-spec handoff | `readiness-review`, `project-research` |
 | `product_engineering_change_adapter` | Repository change-spec or OpenSpec-style proposal, design, tasks, and behavior deltas | `change-spec-adapter`, `readiness-review` |
 
-`project-research` is the lightweight upstream entry point when an existing codebase needs an evidence-grounded Project Capability Map before PRD, planning, or reporting work. It defaults to `project-summary.md`, `capability-map.md`, and `capability-table.csv`; WBS/PBS, maturity, blockers, specs, task planning, scoring, and reporting narrative are downstream activities.
+`project-research` is the lightweight upstream entry point when an existing codebase needs an evidence-grounded capability map before PRD, planning, or reporting work. It defaults to Simplified Chinese file names, sections, table headers, statuses, notes, and next steps. Default artifacts are `项目能力摘要.md`, `项目功能能力地图.md`, and `项目能力表.csv`.
 
 `product-engineering` is a planning and engineering-management layer. It should prepare `agent-handoff.md`, `task-breakdown.md`, `review-report.md`, or equivalent change-spec artifacts before `dev` takes over implementation.
 
-`project-research` 是现有代码库进入 PRD、规划或汇报前的轻量上游入口，先形成证据可追溯的 Project Capability Map。默认只产出 `project-summary.md`、`capability-map.md` 和 `capability-table.csv`；WBS/PBS、成熟度、卡点、规格、任务规划、评分和汇报叙事都属于下游活动。
+`project-research` 是现有代码库进入 PRD、规划或汇报前的轻量上游入口，先形成证据可追溯的项目功能能力地图。默认只产出 `项目能力摘要.md`、`项目功能能力地图.md` 和 `项目能力表.csv`，并默认使用简体中文文件名、中文章节、中文表头、中文状态、中文备注和中文下一步；工作分解、产品结构拆解、成熟度、卡点、规格、任务规划、评分和汇报叙事都属于下游活动。
 
 `product-engineering` 是规划与工程管理层。它应该在 `dev` 接手实现前，准备好 `agent-handoff.md`、`task-breakdown.md`、`review-report.md` 或等价 change-spec 产物。
 

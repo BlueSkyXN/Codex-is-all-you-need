@@ -1,137 +1,140 @@
 ---
 name: project-research
-description: "Use before PRD, planning, or progress reporting to read an existing codebase and produce a lightweight Project Capability Map: project positioning, L1 capability domains, L2 function groups/modules, L3 function points, evidence paths, simple status, and next-step notes. Not for WBS, PBS, maturity scoring, blocker analysis, task planning, schedule/resource estimates, or implementation."
+description: "用于读取已有代码项目，产出轻量的项目功能能力地图：项目定位、一级能力域、二级功能组或模块、三级功能点、证据路径、当前状态和下一步。默认不做工作分解、产品结构拆解、成熟度评估、卡点长分析、任务计划、排期或资源估算。"
 ---
 
-# Project Capability Map
+# 项目功能能力地图
 
-## Purpose
+## 目标
 
-Read an existing codebase, configuration, and docs, then produce a lightweight project capability map that can support management tracking, progress reporting, PRD scoping, and performance-material preparation.
+读取一个已有代码项目、配置和文档，整理出一份轻量的项目功能能力地图，帮助后续做进展管理、项目汇报、绩效材料和需求范围判断。
 
-The core output is one evidence-backed table:
+核心产物是一张证据表：
 
 ```text
-L0 project goal
--> L1 capability domain
--> L2 function group / module
--> L3 function point
--> evidence path
--> current status
--> next step
+项目目标
+-> 一级能力域
+-> 二级功能组或模块
+-> 三级功能点
+-> 证据路径
+-> 当前状态
+-> 下一步
 ```
 
-This skill keeps the legacy runtime name `project-research`, but its default behavior is now **Project Capability Map**, not a full research pack.
+保留 `project-research` 这个 skill 名只是为了兼容已有运行入口；默认工作方式已经改成“项目功能能力地图”，不是完整项目研究包。
 
-## Boundary
+## 边界
 
-This skill answers:
+这个 skill 只回答：
 
-- What is this project for?
-- Which capability domains does it expose?
-- Which function groups or modules exist under each domain?
-- Which observable function points can be found?
-- Which files, docs, configs, tests, or commands support each function point?
-- What is the current simple status of each function point?
-- What is the most useful next step for each L2 module?
+- 这个项目是做什么的。
+- 项目有哪些主要能力域。
+- 每个能力域下面有哪些功能组或模块。
+- 每个功能组或模块下面有哪些可观察的功能点。
+- 每个功能点有哪些代码、文档、配置、测试或命令证据。
+- 每个功能点当前处于什么简单状态。
+- 每个二级模块下一步最该补什么。
 
-This skill does **not** produce by default:
+默认不输出：
 
-- Product Breakdown Structure / PBS.
-- Work Breakdown Structure / WBS.
-- Tracking matrix.
-- Full blocker list.
-- Delivery maturity or M0-M9 levels.
-- Function spec cards.
-- Deployment/ops review.
-- Target-shift log.
-- Snapshot/incremental state.
-- Large `tables/` data layer.
-- Completion percentages, weights, scores, resource estimates, schedules, owners, staffing, or performance judgments.
+- 产品结构拆解。
+- 工作分解。
+- 跟踪矩阵。
+- 长篇卡点清单。
+- 交付成熟度或成熟度等级。
+- 详细功能规格卡。
+- 部署和运维检查报告。
+- 目标变化日志。
+- 增量快照。
+- 大量表格文件。
+- 完成率、权重、评分、排期、负责人、资源估算、成本估算或绩效判断。
 
-If the user asks for task planning, hand off to `delivery-task-planning`. If the user asks for formal behavior specs, hand off to `functional-spec`. If the user asks for scoring, reporting language, or performance evaluation, treat that as a downstream pass on top of the capability map.
+如果用户要拆研发任务，转交 `delivery-task-planning`。如果用户要正式功能规格，转交 `functional-spec`。如果用户要打分、写汇报话术或做绩效评价，应在能力地图完成后另起下游步骤。
 
-## Safety
+## 安全
 
-- Default to read-only scanning.
-- Run only non-destructive commands needed to verify evidence, such as listing files, reading docs, inspecting manifests, or running clearly safe smoke/test commands.
-- Do not delete files, rewrite config, run migrations, reset Git state, clear databases, or deploy unless the user explicitly asks outside this skill run.
-- Do not copy raw secrets, tokens, credentials, private URLs, or personal data into outputs. Record variable names and redacted examples only.
-- If commands are run for evidence, record the command and result briefly in the relevant evidence or notes field.
+- 默认只读扫描。
+- 只运行不会破坏项目的命令，例如列文件、读文档、查配置、看入口、跑明确安全的 smoke/test 命令。
+- 不删除文件、不改配置、不跑迁移、不重置 Git、不清数据库、不部署，除非用户在这个 skill 之外明确要求。
+- 不把原始 token、密钥、密码、私有 URL 或个人数据写进产物；只记录变量名和脱敏示例。
+- 如果为了证明证据运行了命令，在相关备注里简短记录命令和结果。
 
-## Output Language
+## 输出语言
 
-- Write human-facing outputs in Simplified Chinese by default.
-- Keep file names, CSV column names, IDs, code paths, commands, package names, API names, config keys, and code identifiers in their original form.
-- CSV uses stable English `snake_case` headers for import compatibility; cell content should be Simplified Chinese unless it is an ID, path, command, code identifier, config key, or exact source reference.
+- 默认产物使用简体中文，包括文件标题、章节名、说明文字、表格列名、状态、备注和下一步。
+- 默认生成中文文件名：
+  - `项目能力摘要.md`
+  - `项目功能能力地图.md`
+  - `项目能力表.csv`
+- CSV 默认使用中文表头，便于直接给人阅读和导入表格工具。
+- 代码路径、命令、包名、API 名、配置键、代码标识符、skill 名和文件扩展名保持原文，不强行翻译。
+- 需要给自动化脚本消费时，用户可以另行要求英文文件名或英文表头；默认不要主动输出英文版。
 
-## Status Labels
+## 状态标签
 
-Use exactly one primary status per L3 function point:
+每个三级功能点只选一个主状态：
 
-| Status | Meaning |
+| 状态 | 含义 |
 |---|---|
-| `已规划` | Goal or plan exists, but no concrete design or code evidence was found. |
-| `已设计` | Architecture, interface, schema, prompt, route, or template exists, but implementation is incomplete or not found. |
-| `已开发` | Code or configuration exists for the function point. |
-| `可运行` | The function point can start, execute, or produce observable output in the current or documented environment. |
-| `待验证` | Evidence suggests implementation exists, but integration, tests, stability, or real usage still needs confirmation. |
-| `已废弃/重构` | Evidence shows the function point is deprecated, replaced, or no longer the intended path. |
-| `未发现证据` | The function point is expected or mentioned, but no supporting evidence was found. |
+| `已规划` | 有目标或计划，但没有找到具体设计或代码证据。 |
+| `已设计` | 已有结构、接口、数据模型、模板、路由或方案，但没有看到完整实现。 |
+| `已开发` | 已有对应代码或配置。 |
+| `可运行` | 能启动、执行或产出可观察结果。 |
+| `待验证` | 看起来已经实现，但还需要联调、测试、稳定性或真实使用确认。 |
+| `已废弃/重构` | 证据显示该功能点已经废弃、替换或不再按原路径推进。 |
+| `未发现证据` | 资料中提到或按项目目标应有，但没有找到支撑证据。 |
 
-Do not use M0-M9 maturity levels in this skill.
+不要使用成熟度等级、百分比或“完成了多少”的表达。
 
-## Workflow
+## 工作流程
 
-1. Confirm the target project root. Default to the current working directory.
-2. Confirm output directory. Default to `./local/capability-map/` unless the user provides a path.
-3. Scan only enough repository evidence to build the map: README/docs, manifests, entry points, routes, APIs, models, services, UI components, prompts/workflows, config, tests, examples, deployment files, and recent generated artifacts when relevant.
-4. Write a one-sentence L0 project goal. Prefer explicit repo docs; mark inferred goals as `[INFERRED]` with the source.
-5. Identify L1 capability domains by business behavior, not by mechanically copying frontend/backend folders. Keep L1 to 3-8 domains when the repo supports that range.
-6. Under each L1, identify L2 function groups/modules. Keep each L1 to 3-8 L2 modules when evidence supports that range.
-7. Under each L2, identify L3 function points. Keep each L2 to 2-8 L3 function points. L3 must be observable behavior, not an abstract concept.
-8. Attach evidence for every L3 function point:
-   - Use concrete paths and line numbers when practical.
-   - Mark unsupported but plausible items as `[INFERRED]` with the inference source.
-   - Mark missing evidence as `[UNKNOWN]` or status `未发现证据`.
-9. Assign one primary status from the allowed status labels.
-10. Give one concise next-step note per L2 module. Repeat that note across rows only when using a flat CSV table.
-11. Write exactly the default outputs unless the user explicitly asks for more:
-    - `project-summary.md`
-    - `capability-map.md`
-    - `capability-table.csv`
-12. Print a short delivery summary: output paths, L1 count, L2 count, L3 count, key evidence gaps, and three report-ready sentences.
+1. 确认目标项目根目录，默认使用当前目录。
+2. 确认输出目录，默认使用 `./local/项目能力地图/`。
+3. 只扫描足够支撑能力地图的证据：README、文档、依赖清单、入口文件、路由、接口、模型、服务、页面组件、提示词、工作流、配置、测试、示例、部署文件和近期生成物。
+4. 写一句项目目标。优先使用仓库里明确写出的目标；如果是推断，标记 `[推断]` 并说明来源。
+5. 按业务能力识别一级能力域，不要机械照搬 `frontend`、`backend`、`scripts` 这类目录名。一般控制在 3-8 个。
+6. 在每个一级能力域下识别二级功能组或模块。一般每个一级能力域控制在 3-8 个。
+7. 在每个二级功能组或模块下识别三级功能点。一般每个二级模块控制在 2-8 个。三级功能点必须是可观察功能，不要写抽象概念。
+8. 为每个三级功能点附证据：
+   - 尽量使用具体路径，必要时带行号。
+   - 只有推断没有直接证据时，标记 `[推断]` 并写明推断来源。
+   - 找不到证据时，标记 `[未知]` 或状态 `未发现证据`。
+9. 为每个三级功能点选择一个主状态。
+10. 为每个二级模块写一句下一步建议。平铺 CSV 时，同一个二级模块的下一步可以在多行重复。
+11. 默认只写这 3 个产物：
+    - `项目能力摘要.md`
+    - `项目功能能力地图.md`
+    - `项目能力表.csv`
+12. 最后输出简短交付摘要：产物路径、一级/二级/三级数量、主要证据缺口、3 句可用于汇报的中文表达。
 
-## Outputs
+## 默认产物
 
-Default outputs:
-
-- `project-summary.md` — project goal, core capability domains, formed capabilities, major gaps, and report-ready one-liner.
-- `capability-map.md` — readable L1/L2/L3 capability map table, L1 summaries, gap summary, and three report-ready sentences.
-- `capability-table.csv` — importable flat table with stable columns:
+- `项目能力摘要.md`：项目目标、核心能力域、当前已形成能力、主要缺口和一句汇报表达。
+- `项目功能能力地图.md`：可读的一级/二级/三级能力地图表、按一级能力域汇总说明、缺口摘要和 3 句汇报表达。
+- `项目能力表.csv`：可导入表格工具的平铺能力表，默认表头：
 
 ```csv
-l1_domain,l2_module,l3_function,function_desc,evidence,current_status,next_step,notes
+一级能力域,二级功能组或模块,三级功能点,功能说明,证据路径,当前状态,下一步,备注
 ```
 
-The CSV is the management-friendly data layer. Do not create many CSV files by default.
+默认不要创建很多 CSV 文件。
 
-## References / Load When
+## 参考文件 / 何时读取
 
-- `references/methodology.md` — load when the user asks about the design rationale or when checking whether an output is too heavy.
-- `references/project-summary-template.md` — load when writing `project-summary.md`.
-- `references/capability-map-template.md` — load when writing `capability-map.md`.
-- `references/csv-output-schema.md` — load when writing `capability-table.csv`.
+- `references/methodology.md`：当用户问为什么这么设计，或需要检查产物是否又变重时读取。
+- `references/project-summary-template.md`：写 `项目能力摘要.md` 时读取。
+- `references/capability-map-template.md`：写 `项目功能能力地图.md` 时读取。
+- `references/csv-output-schema.md`：写 `项目能力表.csv` 时读取。
 
-## Validation
+## 验收标准
 
-- Output language is Simplified Chinese by default.
-- The output contains L0 project goal plus L1/L2/L3 capability rows.
-- L1 is capability/domain shaped; L2 is function-group/module shaped; L3 is observable function-point shaped.
-- L3 rows cite concrete evidence paths whenever available.
-- Claims without direct evidence are marked `[INFERRED]` or `[UNKNOWN]`; they are not written as facts.
-- Every L3 row uses one of the allowed Chinese status labels.
-- Default output is limited to `project-summary.md`, `capability-map.md`, and `capability-table.csv`.
-- No WBS, PBS, tracking matrix, maturity model, blocker analysis, spec cards, snapshot, task cards, or large `tables/` layer appears unless the user explicitly asks for that separate downstream work.
-- No completion percentage, score, weight, schedule, cost, resource estimate, staffing plan, owner assignment, or performance judgment appears.
-- Secrets and personal data are redacted.
+- 产物默认使用简体中文。
+- 输出包含项目目标，以及一级/二级/三级能力行。
+- 一级是能力域，二级是功能组或模块，三级是可观察功能点。
+- 三级功能点尽量引用具体证据路径。
+- 没有直接证据的内容必须标记 `[推断]` 或 `[未知]`，不能当事实写。
+- 每个三级功能点只使用允许的中文状态标签。
+- 默认产物仅限 `项目能力摘要.md`、`项目功能能力地图.md`、`项目能力表.csv`。
+- 不默认输出工作分解、产品结构拆解、跟踪矩阵、成熟度模型、卡点长分析、规格卡、快照、任务卡或大量表格。
+- 不输出完成率、评分、权重、排期、成本、资源估算、负责人分配或绩效判断。
+- 密钥和个人数据必须脱敏。

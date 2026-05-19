@@ -1,153 +1,137 @@
 ---
 name: project-research
-description: "Use before PRD, planning, or progress reporting to turn an existing codebase into a trackable project structure: capability tree / CBS, function points, spec candidates, product structure, WBS, evidence map, blockers, maturity, Markdown summaries, and CSV tables. Not for scoring, completion-rate reporting, resource estimation, or implementation."
+description: "Use before PRD, planning, or progress reporting to read an existing codebase and produce a lightweight Project Capability Map: project positioning, L1 capability domains, L2 function groups/modules, L3 function points, evidence paths, simple status, and next-step notes. Not for WBS, PBS, maturity scoring, blocker analysis, task planning, schedule/resource estimates, or implementation."
 ---
 
-# Project Research
+# Project Capability Map
 
 ## Purpose
 
-Turn an existing codebase, configuration, and docs into a trackable project structure that downstream skills (`prd-workflow`, `functional-spec`, `delivery-task-planning`) and humans can use for planning, management, and progress reporting.
+Read an existing codebase, configuration, and docs, then produce a lightweight project capability map that can support management tracking, progress reporting, PRD scoping, and performance-material preparation.
 
-The core deliverable is not a long narrative. It is a linked structure:
+The core output is one evidence-backed table:
 
-- Capability Breakdown Structure (`capability-map.md`): capability domains, function points, and spec candidates.
-- Product Breakdown Structure (`product-structure.md`): shipped modules, components, integrations, and runtime artifacts.
-- Work Breakdown Structure (`work-breakdown.md`): management-level work packages that move capabilities forward.
-- Tracking matrix (`tracking-matrix.md`): the management index linking capability, function point, spec candidate, product module, work package, evidence, maturity, blocker, and next action.
-- CSV tables (`tables/*.csv`): the manageable data layer for importing into spreadsheets, Notion, Airtable, BI tools, or later reporting automation.
+```text
+L0 project goal
+-> L1 capability domain
+-> L2 function group / module
+-> L3 function point
+-> evidence path
+-> current status
+-> next step
+```
 
-Markdown files explain the project. CSV files carry the durable tracking rows. Keep both in sync.
+This skill keeps the legacy runtime name `project-research`, but its default behavior is now **Project Capability Map**, not a full research pack.
 
 ## Boundary
 
-Project research answers what the project is, what it already does, which function points and capability domains exist, which specs are missing, where the end-to-end chain breaks, what blockers stand in the way, and how capabilities can be tracked over time.
+This skill answers:
 
-It can record status tags, maturity levels, blockers, and management work packages. It does not assign weights, completion percentages, performance scores, resource estimates, dates, owners, or status-report narrative. Evaluation, scheduling, and reporting are downstream activities that run on top of the accepted tracking structure.
+- What is this project for?
+- Which capability domains does it expose?
+- Which function groups or modules exist under each domain?
+- Which observable function points can be found?
+- Which files, docs, configs, tests, or commands support each function point?
+- What is the current simple status of each function point?
+- What is the most useful next step for each L2 module?
 
-In this skill, **CBS means Capability Breakdown Structure**, not Cost Breakdown Structure. Cost breakdown, resource planning, schedule estimation, and staffing are out of scope.
+This skill does **not** produce by default:
+
+- Product Breakdown Structure / PBS.
+- Work Breakdown Structure / WBS.
+- Tracking matrix.
+- Full blocker list.
+- Delivery maturity or M0-M9 levels.
+- Function spec cards.
+- Deployment/ops review.
+- Target-shift log.
+- Snapshot/incremental state.
+- Large `tables/` data layer.
+- Completion percentages, weights, scores, resource estimates, schedules, owners, staffing, or performance judgments.
+
+If the user asks for task planning, hand off to `delivery-task-planning`. If the user asks for formal behavior specs, hand off to `functional-spec`. If the user asks for scoring, reporting language, or performance evaluation, treat that as a downstream pass on top of the capability map.
 
 ## Safety
 
-- Default to read-only scanning. Run only non-destructive commands needed to verify runnable/test/deployment evidence.
-- Do not delete files, rewrite config, run migrations, reset Git state, clear databases, or deploy unless the user explicitly asks outside this research pass.
+- Default to read-only scanning.
+- Run only non-destructive commands needed to verify evidence, such as listing files, reading docs, inspecting manifests, or running clearly safe smoke/test commands.
+- Do not delete files, rewrite config, run migrations, reset Git state, clear databases, or deploy unless the user explicitly asks outside this skill run.
 - Do not copy raw secrets, tokens, credentials, private URLs, or personal data into outputs. Record variable names and redacted examples only.
-- If commands are run, record the command and result in the relevant evidence row or Markdown section.
+- If commands are run for evidence, record the command and result briefly in the relevant evidence or notes field.
 
 ## Output Language
 
-- Write human-facing outputs in Simplified Chinese by default: Markdown titles, prose, table descriptions, notes, blocker descriptions, maturity reasons, and next actions.
+- Write human-facing outputs in Simplified Chinese by default.
 - Keep file names, CSV column names, IDs, code paths, commands, package names, API names, config keys, and code identifiers in their original form.
-- CSV files use stable English `snake_case` headers for import compatibility; cell content should be Simplified Chinese unless it is an ID, path, command, code identifier, or exact source reference.
-- The English templates in `references/` are structural guides. Do not copy their English headings verbatim into final artifacts; localize generated section titles and explanatory text to Simplified Chinese.
+- CSV uses stable English `snake_case` headers for import compatibility; cell content should be Simplified Chinese unless it is an ID, path, command, code identifier, config key, or exact source reference.
 
-## Tiers
+## Status Labels
 
-Choose one tier per run. Default is `standard`.
+Use exactly one primary status per L3 function point:
 
-- `quick` — positioning, capability map, blocker list, and tracking matrix. Use when scoping a discussion or first-touch onboarding.
-- `standard` — Full capability map, product structure, WBS, tracking matrix, evidence map, end-to-end flow, maturity, blockers, and next actions. Use as the durable tracking baseline for most projects.
-- `deep` — Adds per-function spec cards, deployment/ops review, and target-shift log. Use before serious PRD work on a critical capability, or when handing the project to a new owner.
+| Status | Meaning |
+|---|---|
+| `已规划` | Goal or plan exists, but no concrete design or code evidence was found. |
+| `已设计` | Architecture, interface, schema, prompt, route, or template exists, but implementation is incomplete or not found. |
+| `已开发` | Code or configuration exists for the function point. |
+| `可运行` | The function point can start, execute, or produce observable output in the current or documented environment. |
+| `待验证` | Evidence suggests implementation exists, but integration, tests, stability, or real usage still needs confirmation. |
+| `已废弃/重构` | Evidence shows the function point is deprecated, replaced, or no longer the intended path. |
+| `未发现证据` | The function point is expected or mentioned, but no supporting evidence was found. |
 
-Tier is selected by the user or inferred from the request. Do not silently upgrade or downgrade.
+Do not use M0-M9 maturity levels in this skill.
 
 ## Workflow
 
-1. Confirm target project root (default to current working directory) and tier.
-2. Confirm output directory (default `./local/research/`; create if missing).
-3. If `snapshot.json` already exists in the output dir, run in incremental mode: re-scan, diff against the snapshot, and update only what changed. Record any goal changes in `target-shift-log.md` instead of overwriting prior entries.
-4. Scan project structure: entry points, languages and frameworks, dependency manifests, routes, models, components, scripts, deployment configs, tests, docs, examples, env templates, and CI files.
-5. Reconstruct project positioning using only signals present in the repo. Separate explicit goals (named in README/docs) from implicit goals (inferred from code structure). Mark every inferred item as `[INFERRED]` with the inference source.
-6. Build three breakdown views in sequence; do not collapse them into one view (see `references/methodology.md` §8 for the reasoning):
-   - **Capability tree / CBS (`capability-map.md`)**: business-behavior view. L0 project goal → L1 capability domain → L2 capability module → L3 function point → optional L4 spec candidate.
-   - **Product structure / PBS (`product-structure.md`)**: deliverable view. Subsystems, modules, components, integrations, and runtime artifacts. Use what the repository actually ships, not idealized architecture.
-   - **Work Breakdown Structure / WBS (`work-breakdown.md`)**: management work packages that move capabilities or function points forward. Record tracking status and management-unit fit; do not estimate person-weeks, schedules, cost, or staffing.
-7. Write the CSV data layer under `tables/` using `references/csv-output-schema.md`. At minimum, export capability, function-point, product-structure, WBS, evidence, blocker, maturity, and tracking-matrix rows for the selected tier.
-8. Build the evidence map: for each function point, attach code path, evidence type, evidence strength, and confidence.
-9. Trace the end-to-end main flow from external input to archived output and audit log. Mark where humans are required and where AI/ML is involved.
-10. Catalog blockers as first-class artifacts (need / spec / code / data / AI-output / deployment / test / ops / dependency types). Each blocker records symptom, hypothesis, attempted fixes, next step, and whether it blocks end-to-end delivery.
-11. Assign a delivery maturity level per capability domain using the M0-M9 scale, with traced evidence. Apply status tags (`planned`, `specified`, `designed`, `implemented`, `runnable`, `integrated`, `tested`, `demoable`, `deployed`, `operable`, `blocked`, `changed`, `deprecated`); multiple tags per capability are allowed and expected.
-12. Write `tracking-matrix.md` and `tables/tracking_matrix.csv` as the main management index linking capabilities, function points, spec candidates, product modules, work packages, evidence, maturity, blockers, and next actions.
-13. For `deep` tier only: produce a function spec card per critical function point, a deployment/ops review, and drill the most critical work packages in `work-breakdown.md` to task-card level.
-14. Write `next-actions.md` with short-term loop-closing items, mid-term build items, long-term optimization items, and items that need human or owner confirmation. Next actions are summary-level; the detailed work decomposition lives in `work-breakdown.md`.
-15. Update `snapshot.json` with the current scan state for the next incremental run.
-16. Print a delivery summary: tier, output paths, capability count, function-point count, evidence counts, top three blockers, and the single most useful next action.
+1. Confirm the target project root. Default to the current working directory.
+2. Confirm output directory. Default to `./local/capability-map/` unless the user provides a path.
+3. Scan only enough repository evidence to build the map: README/docs, manifests, entry points, routes, APIs, models, services, UI components, prompts/workflows, config, tests, examples, deployment files, and recent generated artifacts when relevant.
+4. Write a one-sentence L0 project goal. Prefer explicit repo docs; mark inferred goals as `[INFERRED]` with the source.
+5. Identify L1 capability domains by business behavior, not by mechanically copying frontend/backend folders. Keep L1 to 3-8 domains when the repo supports that range.
+6. Under each L1, identify L2 function groups/modules. Keep each L1 to 3-8 L2 modules when evidence supports that range.
+7. Under each L2, identify L3 function points. Keep each L2 to 2-8 L3 function points. L3 must be observable behavior, not an abstract concept.
+8. Attach evidence for every L3 function point:
+   - Use concrete paths and line numbers when practical.
+   - Mark unsupported but plausible items as `[INFERRED]` with the inference source.
+   - Mark missing evidence as `[UNKNOWN]` or status `未发现证据`.
+9. Assign one primary status from the allowed status labels.
+10. Give one concise next-step note per L2 module. Repeat that note across rows only when using a flat CSV table.
+11. Write exactly the default outputs unless the user explicitly asks for more:
+    - `project-summary.md`
+    - `capability-map.md`
+    - `capability-table.csv`
+12. Print a short delivery summary: output paths, L1 count, L2 count, L3 count, key evidence gaps, and three report-ready sentences.
 
 ## Outputs
 
-Written under the chosen output directory (default `./local/research/`).
+Default outputs:
 
-Quick tier:
+- `project-summary.md` — project goal, core capability domains, formed capabilities, major gaps, and report-ready one-liner.
+- `capability-map.md` — readable L1/L2/L3 capability map table, L1 summaries, gap summary, and three report-ready sentences.
+- `capability-table.csv` — importable flat table with stable columns:
 
-- `project-overview.md`
-- `capability-map.md`
-- `blocker-list.md`
-- `tracking-matrix.md`
-- `tables/capability_tree.csv`
-- `tables/function_inventory.csv`
-- `tables/blockers.csv`
-- `tables/tracking_matrix.csv`
-- `snapshot.json`
+```csv
+l1_domain,l2_module,l3_function,function_desc,evidence,current_status,next_step,notes
+```
 
-Standard tier (adds):
-
-- `capability-map.md` — capability tree / CBS + navigation links into the tracking matrix
-- `product-structure.md` — PBS view of shipped deliverables
-- `work-breakdown.md` — WBS at management work-package granularity
-- `tracking-matrix.md` — management index linking capability/function/spec/work/evidence/status
-- `tables/capability_tree.csv` — L0-L4 capability hierarchy as rows
-- `tables/function_inventory.csv` — function points, spec candidates, status tags, and evidence refs
-- `tables/product_structure.csv` — PBS hierarchy as rows
-- `tables/wbs.csv` — WBS work packages as rows
-- `tables/evidence_map.csv`
-- `tables/blockers.csv`
-- `tables/maturity.csv`
-- `tables/tracking_matrix.csv`
-- `evidence-map.md`
-- `e2e-flow.md`
-- `delivery-maturity.md`
-- `next-actions.md`
-
-Deep tier (adds):
-
-- `function-spec-cards/<id>.md` (one per critical function point)
-- `deployment-ops-review.md`
-- `target-shift-log.md` (also created in incremental runs whenever goals shift)
-- `tables/spec_candidates.csv`
-- `tables/task_cards.csv` (only for drilled-down WBS packages)
+The CSV is the management-friendly data layer. Do not create many CSV files by default.
 
 ## References / Load When
 
-- `references/methodology.md` — load on first use, or when the user asks about maturity, status tags, evidence strength, vibe-coding adaptation, or anti-fabrication rules.
-- `references/project-overview-template.md` — load when writing `project-overview.md`.
+- `references/methodology.md` — load when the user asks about the design rationale or when checking whether an output is too heavy.
+- `references/project-summary-template.md` — load when writing `project-summary.md`.
 - `references/capability-map-template.md` — load when writing `capability-map.md`.
-- `references/product-structure-template.md` — load when writing `product-structure.md`.
-- `references/work-breakdown-template.md` — load when writing `work-breakdown.md`.
-- `references/tracking-matrix-template.md` — load when writing `tracking-matrix.md`.
-- `references/csv-output-schema.md` — load when writing `tables/*.csv`.
-- `references/evidence-map-template.md` — load when writing `evidence-map.md`.
-- `references/function-spec-card-template.md` — load when writing each card in `function-spec-cards/`.
-- `references/blocker-list-template.md` — load when writing `blocker-list.md`.
-- `references/delivery-maturity-template.md` — load when writing `delivery-maturity.md`.
-- `references/e2e-flow-template.md` — load when writing `e2e-flow.md`.
-- `references/deployment-ops-template.md` — load when writing `deployment-ops-review.md`.
-- `references/next-actions-template.md` — load when writing `next-actions.md`.
-- `references/target-shift-log-template.md` — load when writing or appending `target-shift-log.md`.
-- `references/snapshot-schema.md` — load when writing or reading `snapshot.json`.
+- `references/csv-output-schema.md` — load when writing `capability-table.csv`.
 
 ## Validation
 
-- Every capability, function point, and maturity claim cites a concrete path (and line number when applicable).
-- Items without direct evidence are marked `[INFERRED]` with the inference source, or `[UNKNOWN]` with what would resolve them.
-- No completion percentage, weight, score, "X% done", resource estimate, cost estimate, schedule commitment, or staffing plan appears in any output. The research pass is not the evaluation pass.
-- Blockers are written as symptom + hypothesis + next-step triples, not as complaints.
-- The capability map is organized by business behavior, with engineering layers (frontend/backend/data/AI/deploy) as a secondary mapping. It explicitly separates function points from spec candidates.
-- The three breakdown views (capability / product / work) are produced separately and stay aligned through `tracking-matrix.md`. They are not merged into one master table.
-- `work-breakdown.md` stays at management work-package granularity in standard tier; drill-down to task-card level happens only in deep tier and only for the most critical packages. Full project-wide task decomposition is left to `delivery-task-planning`.
-- `tracking-matrix.md` has one row per tracked function point or work package and is usable as the later progress-management entrypoint.
-- CSV files under `tables/` use stable IDs, `parent_id` for hierarchy expansion, and cross-file references instead of duplicated prose. `tables/tracking_matrix.csv` is the primary importable management table.
-- Outputs redact secret values and personal data. Use `API_KEY=<redacted>` style examples when config evidence matters.
-- Cost Breakdown, Organization Breakdown, Risk Breakdown, resource planning, and scheduling are deliberately out of scope. Capability Breakdown is in scope.
-- Incremental runs append to `target-shift-log.md` instead of overwriting; prior entries are preserved.
-- Output language is Simplified Chinese by default. Keep file names, IDs, code identifiers, paths, commands, API names, config keys, and CSV headers in their original form for traceability and import stability.
-- The delivery summary at the end of the run is short and does not duplicate the artifacts.
+- Output language is Simplified Chinese by default.
+- The output contains L0 project goal plus L1/L2/L3 capability rows.
+- L1 is capability/domain shaped; L2 is function-group/module shaped; L3 is observable function-point shaped.
+- L3 rows cite concrete evidence paths whenever available.
+- Claims without direct evidence are marked `[INFERRED]` or `[UNKNOWN]`; they are not written as facts.
+- Every L3 row uses one of the allowed Chinese status labels.
+- Default output is limited to `project-summary.md`, `capability-map.md`, and `capability-table.csv`.
+- No WBS, PBS, tracking matrix, maturity model, blocker analysis, spec cards, snapshot, task cards, or large `tables/` layer appears unless the user explicitly asks for that separate downstream work.
+- No completion percentage, score, weight, schedule, cost, resource estimate, staffing plan, owner assignment, or performance judgment appears.
+- Secrets and personal data are redacted.

@@ -2,7 +2,7 @@
 
 [中文](README_CN.md) | English
 
-Agents and skills for pre-implementation product engineering: existing-project research, requirements, scope control, functional behavior, technical bridge drafts, delivery planning, readiness review, and change-spec handoff.
+Agents and skills for pre-implementation product engineering: existing-project capability mapping, requirements, scope control, functional behavior, technical bridge drafts, delivery planning, readiness review, and change-spec handoff.
 
 This catalog is separate from `dev`. It prepares implementation-ready artifacts, but it does not perform repository-aware implementation, testing, PR review, security review, or release checks.
 
@@ -15,7 +15,7 @@ skills/   7 public skills
 
 ## Agent Roles
 
-- `product_engineering_project_researcher`: research an existing codebase end-to-end and produce an evidence-grounded tracking structure (positioning, capability tree / CBS, product structure / PBS, WBS, tracking matrix, CSV tables, evidence map, end-to-end flow, maturity, blockers, next actions).
+- `product_engineering_project_researcher`: read an existing codebase and produce a lightweight Project Capability Map (positioning, L1 capability domains, L2 function groups/modules, L3 function points, evidence paths, simple status, gaps, and report-ready capability sentences).
 - `product_engineering_requirements_lead`: turn product intent and source materials into PRD, scope lock, and spec handoff artifacts.
 - `product_engineering_functional_specifier`: turn approved PRD scope into behavior, state, field, permission, UI-state, and acceptance specs.
 - `product_engineering_technical_bridge`: draft engineering bridge artifacts without acting as the final architecture authority.
@@ -25,7 +25,7 @@ skills/   7 public skills
 
 ## Skills
 
-- `project-research`: research an existing codebase before PRD or planning work; produces project overview, capability tree / CBS, product structure / PBS, WBS, tracking matrix, importable CSV tables, evidence map, end-to-end flow, maturity, blockers, and next actions. Three tiers (quick / standard / deep). Strict no-scoring rule — evaluation is a separate downstream pass.
+- `project-research`: read an existing codebase before PRD, planning, or reporting work; produces a lightweight Project Capability Map with project summary, L1/L2/L3 capability table, evidence paths, simple Chinese status labels, gaps, and one importable `capability-table.csv`. It does not produce WBS/PBS/maturity/blocker/spec/task artifacts by default.
 - `prd-workflow`: idea to PRD, scope lock, detailed PRD, and spec handoff.
 - `functional-spec`: behavior spec from PRD: flows, states, fields, permissions, UI states, errors, and ACs.
 - `technical-spec-bridge`: engineering bridge artifacts: architecture brief, API/data drafts, NFRs, test draft, and open questions.
@@ -37,7 +37,7 @@ skills/   7 public skills
 
 Use this catalog when the work is between product intent and implementation. The handoff point is a clear `agent-handoff.md`, `task-breakdown.md`, `review-report.md`, or equivalent change-spec artifact.
 
-When the project already exists and you do not yet know what it is, start with `project-research`. Its research pack feeds `prd-workflow` (for new scoped work), `functional-spec` (via deep-tier spec card drafts), `delivery-task-planning` (via blocker list and work breakdown), and `readiness-review` (via maturity and evidence map).
+When the project already exists and you do not yet know what it is, start with `project-research`. Its capability map feeds `prd-workflow` (to choose scope), `functional-spec` (to promote selected function points into formal specs), `delivery-task-planning` (to expand selected gaps into work), and reporting workflows (to describe formed capabilities without inventing progress scores).
 
 Use `dev` after the handoff when the task requires codebase mapping, API compatibility review, architecture review, implementation, testing, PR review, security review, performance diagnosis, or release validation.
 

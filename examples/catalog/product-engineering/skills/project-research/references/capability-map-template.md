@@ -1,50 +1,31 @@
-# Capability Map: {project name}
+# 项目功能能力地图：{project_name}
 
-## L0 — Project goal
-{One sentence; copy from `project-overview.md`.}
+## A. 项目定位
 
-## Capability Breakdown Structure (CBS)
+{一句话说明这个项目是什么、面向谁、解决什么问题。若为推断，标记 `[INFERRED]` 并写明来源。}
 
-For each business-behavior capability domain, fill the L1-L4 block below. In this skill, CBS means Capability Breakdown Structure. Decompose by behavior first, then map to engineering layers in §Engineering mapping.
+## B. 能力地图表
 
-CSV companion: write the same hierarchy to `tables/capability_tree.csv`, and write the L3 function-point inventory to `tables/function_inventory.csv`.
-
-### {L1 capability name}
-
-**Purpose:** {what this capability lets the user/system do}
-**Status tags:** {planned, specified, implemented, runnable, integrated, tested, blocked, changed, ...}
-**Maturity (M0-M9):** M{n} — {evidence summary, see `delivery-maturity.md`}
-
-#### L2 — Capability modules
-| Module | Path | Role |
-|---|---|---|
-| ... | `src/...` | ... |
-
-#### L3 — Function points
-| ID | Function point | Path:line | Status tags |
-|---|---|---|---|
-| FP-{capability}-001 | ... | `src/file.py:120` | implemented, runnable |
-| FP-{capability}-002 | ... | `[UNKNOWN]` — referenced in README but no code found | planned |
-
-#### L4 — Spec candidates
-Lightweight spec stubs for function points that need later promotion into `functional-spec`. These are not approved specs yet.
-
-| Spec candidate ID | Function point | Actor / trigger | Input | Output | Acceptance signal | Open question |
+| L1能力域 | L2功能组/模块 | L3功能点 | 功能说明 | 证据路径 | 状态 | L2下一步 |
 |---|---|---|---|---|---|---|
-| SPEC-{capability}-001 | FP-{capability}-001 | ... | ... | ... | ... | ... |
+| {能力域} | {功能组/模块} | {功能点} | {可观察功能说明} | `{path}` / `[INFERRED] ...` / `[UNKNOWN] ...` | 已开发 | {一句话下一步} |
 
-(Repeat L1 block per capability domain.)
+## C. 按 L1 汇总的能力说明
 
-## Engineering mapping
-Map each L1 capability to engineering layers (frontend / backend / data / AI / deploy / ops). This is a secondary view; the L1 list above is the primary decomposition.
+### {L1能力域}
 
-| L1 capability | Frontend | Backend | Data | AI/ML | Deploy/Ops |
-|---|---|---|---|---|---|
-| ... | ... | ... | ... | ... | ... |
+- 已看到的能力：{用 1-3 句说明该能力域目前形成了什么。}
+- 主要证据：`{path}`、`{path}`
+- 主要缺口：{只写关键缺口，不展开长篇卡点分析。}
 
-## Cross-view alignment
-Short navigation table linking this view to `product-structure.md`, `work-breakdown.md`, and `tracking-matrix.md`. Navigation only — do not duplicate detail.
+## D. 缺口摘要
 
-| L1 capability | Primary product modules (→ `product-structure.md`) | Key function points | Spec candidates | Work items (→ `work-breakdown.md`) | Tracking row |
-|---|---|---|---|---|---|
-| ... | `subsystem-a`, `subsystem-b` | FP-{...}-001, FP-{...}-003 | SPEC-{...}-001 | WP-{...}-002, WP-{...}-005 | TRK-{...}-001 |
+| 缺口 | 影响 | 建议下一步 |
+|---|---|---|
+| {缺口} | {影响到哪个能力域/功能组} | {一句话建议} |
+
+## E. 可用于汇报的 3 句话
+
+1. {一句面向管理者的项目能力描述。}
+2. {一句说明当前已形成能力。}
+3. {一句说明下一阶段重点。}

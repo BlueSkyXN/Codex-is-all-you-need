@@ -15,7 +15,7 @@ skills/   7 个公开 skills
 
 ## Agent 角色
 
-- `product_engineering_project_researcher`：对现有代码库做端到端研究，输出证据可追溯的研究包（项目定位、能力树、产品结构、轻量 WBS、证据地图、端到端流程、成熟度、卡点、下一步建议）。
+- `product_engineering_project_researcher`：对现有代码库做端到端研究，输出证据可追溯的可跟踪结构（项目定位、能力树 / CBS、产品结构 / PBS、WBS、跟踪矩阵、可导入 CSV 表、证据地图、端到端流程、成熟度、卡点、下一步建议）。
 - `product_engineering_requirements_lead`：把产品意图和输入材料整理成 PRD、scope lock 和 spec handoff。
 - `product_engineering_functional_specifier`：把已确认的 PRD 范围转成行为、状态、字段、权限、UI state 和验收标准规格。
 - `product_engineering_technical_bridge`：输出工程桥接草案，但不替代最终架构决策角色。
@@ -25,7 +25,7 @@ skills/   7 个公开 skills
 
 ## Skills
 
-- `project-research`：在 PRD/规划之前对现有项目做端到端研究，产出项目概览、能力树、产品结构（PBS）、轻量 WBS、证据地图、端到端流程、成熟度、卡点和下一步建议。三档（quick / standard / deep）。研究阶段严格不输出权重、完成率或评分，评估是独立的下游 pass。
+- `project-research`：在 PRD/规划之前对现有项目做端到端研究，产出项目概览、能力树 / CBS、产品结构 / PBS、WBS、跟踪矩阵、可导入 CSV 表、证据地图、端到端流程、成熟度、卡点和下一步建议。三档（quick / standard / deep）。研究阶段严格不输出权重、完成率或评分，评估是独立的下游 pass。
 - `prd-workflow`：从 idea 到 PRD、scope lock、detailed PRD 和 spec handoff。
 - `functional-spec`：从 PRD 输出行为规格：流程、状态、字段、权限、UI states、错误和 AC。
 - `technical-spec-bridge`：输出工程桥接产物：架构简报、API/data draft、NFR、测试草案和开放问题。

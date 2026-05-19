@@ -2,6 +2,8 @@
 
 Describes what the system actually ships — subsystems, modules, components, integrations, and runtime artifacts. This is the engineering-shipped view, not an idealized architecture diagram.
 
+CSV companion: write the same PBS hierarchy to `tables/product_structure.csv`.
+
 ## Top-level subsystems
 
 | Subsystem | Path / location | Role | Tech stack |

@@ -2,6 +2,8 @@
 
 Blockers are first-class artifacts. Each entry is a triple: symptom + hypothesis + next step. Complaints without a next step are not blockers.
 
+CSV companion: write active and recently closed blocker rows to `tables/blockers.csv`.
+
 ## Active blockers
 
 | ID | Title | Type | Capability impacted (→ `capability-map.md`) | Severity | Status | Blocks e2e? |

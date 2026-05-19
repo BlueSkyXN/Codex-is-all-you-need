@@ -144,19 +144,23 @@ The single largest failure mode of an LLM doing project research is to invent ca
 
 ## 7. Output language convention
 
-- The research pack uses the same primary language as the target project's documentation. An English-first repo gets English outputs; a Chinese-first repo gets Chinese outputs.
-- Code paths, identifiers, and command names stay in their original form regardless of language.
-- The `methodology.md` and the template stubs in this skill are written in English so they are stable across projects, but they are reference material; the outputs they produce follow the target project's convention.
+- The research pack uses Simplified Chinese for human-facing output by default: Markdown headings, prose, table explanations, blocker descriptions, maturity reasons, and next actions.
+- Code paths, IDs, identifiers, commands, package names, API names, config keys, and source references stay in their original form regardless of language.
+- CSV file names and header names stay in stable English `snake_case` for import compatibility. CSV cell content uses Simplified Chinese unless the value is an ID, path, command, code identifier, config key, or exact source reference.
+- The `methodology.md` and the template stubs in this skill are written in English so they are stable as source instructions, but they are reference material only. Generated artifacts should localize section headings and explanatory text to Simplified Chinese.
 
-## 8. Breakdown structures: capability, product, work, and what stays out
+## 8. Breakdown structures: capability, product, work, and tracking
 
-The research pack uses three breakdown structures in parallel, kept as separate documents so each view stays clean:
+The research pack uses three breakdown structures in parallel, kept as separate documents so each view stays clean. They are connected by `tracking-matrix.md`, which becomes the progress-management entrypoint.
 
-| View | File | Question it answers | Granularity |
-|---|---|---|---|
-| Capability tree | `capability-map.md` | What capabilities does the system have or need? | L1 domain → L3 function point |
-| Product structure (PBS) | `product-structure.md` | What does the system actually ship — subsystems, modules, components, runtime artifacts? | Subsystem → module → component |
-| Work breakdown (WBS-lite) | `work-breakdown.md` | What work would move each capability to its next maturity level? | Work package (1-3 person-weeks); deep tier may drill to task cards |
+Each view also has a CSV companion under `tables/`. Markdown is for reading and review; CSV is for management import, filtering, sorting, and reporting.
+
+| View | Markdown | CSV | Question it answers | Granularity |
+|---|---|---|---|---|
+| Capability Breakdown Structure (CBS) | `capability-map.md` | `tables/capability_tree.csv`, `tables/function_inventory.csv` | What capability domains, modules, function points, and spec candidates does the system have or need? | L1 domain -> L4 spec candidate |
+| Product structure (PBS) | `product-structure.md` | `tables/product_structure.csv` | What does the system actually ship: subsystems, modules, components, runtime artifacts? | Subsystem -> module -> component |
+| Work Breakdown Structure (WBS) | `work-breakdown.md` | `tables/wbs.csv` | What work packages move each capability or function point forward? | Management work package; deep tier may drill to task cards |
+| Tracking matrix | `tracking-matrix.md` | `tables/tracking_matrix.csv` | How do capability, function point, spec candidate, product module, work package, evidence, maturity, blocker, and next action connect? | One row per tracked function point or work package |
 
 ### 8.1 Why three views, not one
 
@@ -164,40 +168,52 @@ A single fused table looks compact but quietly distorts each view:
 
 - Capabilities are business-shaped (what the system does for a user). They do not map 1:1 to modules — one capability often spans many modules; one module often supports many capabilities.
 - Product structure is engineering-shaped (what the codebase actually ships). It reveals integrations, shared infrastructure, and runtime artifacts that the capability view hides.
-- Work items are time-shaped (effort to move forward). They cross both capabilities and modules and have their own dependency graph.
+- Work items are progress-shaped. They cross both capabilities and modules and have their own dependency graph.
 
 Forcing all three into one row encourages the model to drop whichever view does not fit the row, which is the most common way capability/product confusion enters a research pack.
 
 ### 8.2 Keeping the three views aligned
 
-Independence does not mean disconnection. The end of `capability-map.md` carries a short **Cross-view alignment** table:
+Independence does not mean disconnection. `tracking-matrix.md` is the primary cross-view alignment artifact:
 
 | Capability (L1) | Primary product modules | Key function points | Open work items |
 |---|---|---|---|
 | ... | (refs into `product-structure.md`) | (refs into `capability-map.md` body) | (refs into `work-breakdown.md`) |
 
-This is the only cross-reference. It is intentionally short — the goal is navigation, not duplication. If a reader needs more, they jump to the target document.
+The matrix is intentionally an index, not a merged mega-document. It should help a reader jump to the right capability, spec candidate, module, work package, evidence row, blocker, or next action without duplicating the full content of those files.
 
-### 8.3 WBS granularity rule
+### 8.3 CSV management layer
 
-Research-pass WBS is deliberately lighter than project-management WBS:
+The CSV layer is the manageable output layer. It should include the "expanded" forms of each breakdown structure:
 
-- **Default (standard tier)**: work-package granularity, 1-3 person-weeks per item. Each package names the capability and maturity transition it serves (for example, "move task-management capability from M5 to M6"), plus a one-line scope description and any blockers it depends on.
-- **Drill-down (deep tier)**: the most critical packages — typically the top 3-5 that gate the end-to-end chain — are decomposed into task cards (hours to a few days). Other packages remain at package granularity.
-- **Out of scope**: full project-wide task decomposition, dependency graphs across all tasks, sequencing, and per-task validation expectations. Those are produced by `delivery-task-planning` after the research pack is accepted.
+- `tables/capability_tree.csv` expands CBS into one row per L0/L1/L2/L3/L4 node with `id`, `parent_id`, `level`, and `type`.
+- `tables/product_structure.csv` expands PBS into one row per subsystem/module/component/integration/artifact.
+- `tables/wbs.csv` expands WBS into one row per management work package; deep tier may add `tables/task_cards.csv`.
+- `tables/tracking_matrix.csv` links the views together and is the primary spreadsheet import table.
 
-If a reader needs full WBS, the research pack tells them where to go (`delivery-task-planning`) rather than expanding inside this skill.
+Do not create a new CSV for every possible slice. Add a CSV only when it represents a real tracked object or a stable cross-view relation. See `csv-output-schema.md` for the required columns.
 
-### 8.4 What stays out of this skill
+### 8.4 WBS granularity rule
+
+Research-pass WBS is a normal WBS, but its purpose is tracking and management, not estimating or scheduling:
+
+- **Default (standard tier)**: work-package granularity. Each package names the capability, function points, maturity transition, scope, tracking status, blockers, dependencies, and evidence needed.
+- **Management unit check**: mark whether a package is useful as a tracking unit (`yes`, `split-needed`, `merge-needed`, or `unknown`). This is not an effort estimate.
+- **Drill-down (deep tier)**: the most critical packages that gate the end-to-end chain can be decomposed into task cards. Other packages remain at package level.
+- **Out of scope**: schedules, staffing, cost estimation, ownership assignment without evidence, and resource commitments. Detailed delivery sequencing and validation expectations are produced by `delivery-task-planning` after the research pack is accepted.
+
+If a reader needs detailed task planning, delivery sequencing, or validation tasks, the research pack tells them where to go (`delivery-task-planning`) rather than expanding inside this skill.
+
+### 8.5 What stays out of this skill
 
 The breakdown-structure family includes more than these three. The ones we deliberately do not produce in a research pass:
 
-- **CBS (Cost Breakdown)** — cost is an evaluation/budgeting activity. Mixing it into research distorts the evidence (people start sizing the research to justify a budget). It belongs downstream, on top of an accepted pack.
+- **Cost Breakdown** — cost is an evaluation/budgeting activity. Mixing it into research distorts the evidence (people start sizing the research to justify a budget). It belongs downstream, on top of an accepted pack.
 - **OBS (Organization Breakdown)** — ownership and RACI live with the team and change faster than the research pack should. Capture owners only where they are evidenced (commit history, CODEOWNERS), not as a separate breakdown.
 - **RBS (Risk Breakdown)** — research surfaces blockers and unknowns, which are concrete and code-grounded. Treating risk as a separate hierarchy invites speculation. Open risks are recorded inside `blocker-list.md` and `next-actions.md`, not as a parallel tree.
 - **BOM (Bill of Materials)** — meaningful for hardware/manufacturing; not applicable to software research.
 
-These are valid management tools, but they belong to other skills or other phases. Keeping them out of the research pass preserves its evidence discipline.
+These are valid management tools, but they belong to other skills or other phases. In this skill, **CBS always means Capability Breakdown Structure**.
 
 ## 9. Interaction with downstream skills
 
@@ -205,7 +221,7 @@ The research pack is designed to feed:
 
 - `prd-workflow` — uses `project-overview.md`, `capability-map.md`, and `next-actions.md` to scope a new PRD on top of an existing system.
 - `functional-spec` — uses `function-spec-cards/` (deep tier) as starting drafts; cards are not yet PRD-approved specs and must be reviewed before promotion.
-- `delivery-task-planning` — uses `blocker-list.md` and `next-actions.md` to size near-term work.
+- `delivery-task-planning` — uses `tracking-matrix.md`, `work-breakdown.md`, `blocker-list.md`, and `next-actions.md` to produce delivery sequencing and task cards.
 - `readiness-review` — uses `evidence-map.md` and `delivery-maturity.md` to judge whether a capability is ready to move to the next gate.
 - Office and reporting skills (e.g., `project-progress-report`) — reuse the research pack as raw material; they apply their own evaluation pass and do not assume completion language already exists in the pack.
 

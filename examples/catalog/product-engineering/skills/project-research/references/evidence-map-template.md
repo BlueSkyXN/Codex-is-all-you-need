@@ -2,6 +2,8 @@
 
 Per-function-point trace from claim to source. Every row must cite a real path. Rows without paths are not allowed — move them to `[UNKNOWN]` rows with what would resolve them.
 
+CSV companion: write evidence rows to `tables/evidence_map.csv`.
+
 ## Function-point evidence
 
 | Function point (→ `capability-map.md`) | Code path | Evidence type | Evidence strength (→ `methodology.md` §4) | Confidence | Notes |

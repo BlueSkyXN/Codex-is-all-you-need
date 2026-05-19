@@ -15,7 +15,7 @@ skills/   7 public skills
 
 ## Agent Roles
 
-- `product_engineering_project_researcher`: research an existing codebase end-to-end and produce an evidence-grounded research pack (positioning, capability map, product structure, lite work breakdown, evidence map, end-to-end flow, maturity, blockers, next actions).
+- `product_engineering_project_researcher`: research an existing codebase end-to-end and produce an evidence-grounded tracking structure (positioning, capability tree / CBS, product structure / PBS, WBS, tracking matrix, CSV tables, evidence map, end-to-end flow, maturity, blockers, next actions).
 - `product_engineering_requirements_lead`: turn product intent and source materials into PRD, scope lock, and spec handoff artifacts.
 - `product_engineering_functional_specifier`: turn approved PRD scope into behavior, state, field, permission, UI-state, and acceptance specs.
 - `product_engineering_technical_bridge`: draft engineering bridge artifacts without acting as the final architecture authority.
@@ -25,7 +25,7 @@ skills/   7 public skills
 
 ## Skills
 
-- `project-research`: research an existing codebase before PRD or planning work; produces project overview, capability tree, product structure (PBS), lite WBS, evidence map, end-to-end flow, maturity, blockers, and next actions. Three tiers (quick / standard / deep). Strict no-scoring rule — evaluation is a separate downstream pass.
+- `project-research`: research an existing codebase before PRD or planning work; produces project overview, capability tree / CBS, product structure / PBS, WBS, tracking matrix, importable CSV tables, evidence map, end-to-end flow, maturity, blockers, and next actions. Three tiers (quick / standard / deep). Strict no-scoring rule — evaluation is a separate downstream pass.
 - `prd-workflow`: idea to PRD, scope lock, detailed PRD, and spec handoff.
 - `functional-spec`: behavior spec from PRD: flows, states, fields, permissions, UI states, errors, and ACs.
 - `technical-spec-bridge`: engineering bridge artifacts: architecture brief, API/data drafts, NFRs, test draft, and open questions.

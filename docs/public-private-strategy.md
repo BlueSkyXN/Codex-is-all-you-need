@@ -195,6 +195,12 @@ The helper updates each target repo's `.git/info/exclude` with `.codex/` and
 这个 helper 会向每个目标 repo 的 `.git/info/exclude` 写入 `.codex/` 和
 `.agents/`，让本机 symlink 状态保持未跟踪。
 
+For user-level defaults across repositories, use Git's XDG ignore path
+`~/.config/git/ignore`; see [Global Git Ignore Profile](global-git-ignore.md).
+
+跨仓库的用户级默认规则应使用 Git 的 XDG ignore 路径
+`~/.config/git/ignore`；见 [Global Git Ignore Profile](global-git-ignore.md)。
+
 ## Project-Specific Overlays / 项目专属叠加
 
 Shared suites are good for broad work domains. Project-specific skills can live in project-local overlays:

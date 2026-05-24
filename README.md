@@ -49,6 +49,7 @@ docs/
   skill-design.md                 # skill design
   agent-skill-map.md              # agent and skill responsibility map
   discovery-boundaries.md         # sanitized discovery boundary conclusions
+  global-git-ignore.md            # user-level Git ignore profile
   product-engineering-flow.md
   claude-to-codex-migration.md
   public-private-strategy.md
@@ -374,6 +375,8 @@ Recommended:
 
 - Run every bulk script in dry-run mode first.
 - Ignore `.codex/` and `.agents/` as local entrypoint state.
+- Keep cross-repository personal ignore rules in `~/.config/git/ignore`; see
+  [Global Git Ignore Profile](docs/global-git-ignore.md).
 - Use symlinks in suites and keep real files in the source catalog.
 - Keep private production catalogs separate from public examples.
 - Run `dashboard/build_dashboard.py --json-only` after suite changes.

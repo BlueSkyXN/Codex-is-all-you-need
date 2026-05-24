@@ -49,6 +49,7 @@ docs/
   skill-design.md                 # skill 设计
   agent-skill-map.md              # agent 与 skill 分工
   discovery-boundaries.md         # 脱敏后的 discovery 边界结论
+  global-git-ignore.md            # 用户级 Git ignore 配置
   product-engineering-flow.md
   claude-to-codex-migration.md
   public-private-strategy.md
@@ -372,6 +373,8 @@ runtime 可见位置：
 
 - 所有批量脚本先 dry-run。
 - `.codex/` 和 `.agents/` 作为本机 entrypoint state 加入 ignore。
+- 跨仓库个人 ignore 规则放在 `~/.config/git/ignore`；见
+  [Global Git Ignore Profile](docs/global-git-ignore.md)。
 - suite 里使用 symlink，source catalog 里保存真实文件。
 - 私有生产 catalog 和公开示例 catalog 分离。
 - 每次改 suite 后跑 `dashboard/build_dashboard.py --json-only`。

@@ -167,6 +167,12 @@ It also writes `.codex/` and `.agents/` into each target repo's
 
 它也会把 `.codex/` 和 `.agents/` 写入每个目标 repo 的 `.git/info/exclude`，避免本机入口状态污染 Git。
 
+For cross-repository personal defaults, keep user-level rules in
+`~/.config/git/ignore`; see [Global Git Ignore Profile](global-git-ignore.md).
+
+跨仓库个人默认规则应放在 `~/.config/git/ignore`；见
+[Global Git Ignore Profile](global-git-ignore.md)。
+
 Do not deploy shared suites into `.agents/skills`; keep `.agents/skills` for
 project-only skills.
 

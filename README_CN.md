@@ -49,6 +49,7 @@ docs/
   skill-design.md                 # skill 设计
   agent-skill-map.md              # agent 与 skill 分工
   discovery-boundaries.md         # 脱敏后的 discovery 边界结论
+  model-catalog-override.md       # Codex 自定义模型 catalog override 教程
   global-git-ignore.md            # 用户级 Git ignore 配置
   product-engineering-flow.md
   claude-to-codex-migration.md

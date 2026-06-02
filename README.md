@@ -49,6 +49,7 @@ docs/
   skill-design.md                 # skill design
   agent-skill-map.md              # agent and skill responsibility map
   discovery-boundaries.md         # sanitized discovery boundary conclusions
+  user-global-agents-example.md   # public-safe user-level AGENTS.md example
   model-catalog-override.md       # custom Codex model catalog override guide
   global-git-ignore.md            # user-level Git ignore profile
   product-engineering-flow.md

@@ -52,7 +52,7 @@ docs/
   user-global-agents-example.md   # public-safe user-level AGENTS.md example
   model-catalog-override.md       # custom Codex model catalog override guide
   global-git-ignore.md            # user-level Git ignore profile
-  product-engineering-flow.md
+  architecture-first-sdlc-flow.md
   claude-to-codex-migration.md
   public-private-strategy.md
 
@@ -97,9 +97,9 @@ Public examples include:
 
 | Pack | Agents | Skills | Use Case |
 |---|---:|---:|---|
-| `common` | 6 | 0 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
-| `product-engineering` | 7 | 7 | Existing-project research, PRDs, functional specs, technical bridges, task planning, readiness review |
-| `dev` | 14 | 19 | Code mapping, implementation, tests, reviews, APIs, CLI, frontend, Python, security, performance |
+| `common` | 6 | 1 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
+| `sdlc-manager` | 7 | 19 | Architecture-first SDLC control: BRD/URS/PRD, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
+| `dev` | 14 | 20 | Code mapping, implementation, tests, reviews, APIs, CLI, frontend, Python, security, performance |
 | `data` | 5 | 4 | Data profiling, SQL, cleaning, pipelines, analysis reports |
 | `office` | 5 | 5 | Meeting minutes, weekly reports, project reports, briefing notes, deck outlines |
 | `research` | 4 | 3 | Material processing, evidence tables, deduplication, synthesis, gap review |
@@ -221,6 +221,15 @@ common
   common_quality_reviewer
   common_file_organizer
 
+sdlc-manager
+  sdlc_project_researcher
+  sdlc_requirements_manager
+  sdlc_srs_specifier
+  sdlc_solution_spec_manager
+  sdlc_delivery_planner
+  sdlc_readiness_reviewer
+  sdlc_change_manager
+
 dev
   dev_code_mapper
   dev_implementer
@@ -243,13 +252,21 @@ Commonly reused skills:
 ```text
 prd-workflow
 project-research
-functional-spec
-technical-spec-bridge
-delivery-task-planning
-readiness-review
-change-spec-adapter
+srs-workflow
+nfr-spec
+hld-workflow
+lld-workflow
+domain-boundary-modeling
+architecture-decision-record
+solution-spec-workflow
+spec-slice-writer
+dev-handoff-planning
+requirements-traceability
+sdlc-readiness-review
+change-control
 
 repo-onboarding
+spec-driven-implementation
 bugfix
 pr-review
 test-strategy
@@ -265,7 +282,7 @@ For the complete catalog and recommended pairings, read [docs/agent-skill-map.md
 
 ```text
 examples/catalog/common/README.md
-examples/catalog/product-engineering/README.md
+examples/catalog/sdlc-manager/README.md
 examples/catalog/dev/README.md
 examples/catalog/data/README.md
 examples/catalog/office/README.md

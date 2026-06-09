@@ -116,13 +116,14 @@ Split:
 
 ## Domain Mapping / 领域映射
 
-Large Claude agent libraries often have many categories. A compact Codex setup can map them into five packs.
+Large Claude agent libraries often have many categories. A compact Codex setup can map them into six packs.
 
-大型 Claude agent 库通常分类很多。紧凑的 Codex 预设可以收敛成五个包。
+大型 Claude agent 库通常分类很多。紧凑的 Codex 预设可以收敛成六个包。
 
 | Codex Pack | Typical Claude Sources | Codex Purpose |
 |---|---|---|
 | `common` | meta-orchestration, documentation, review helpers | Planning, context cleanup, quality review |
+| `sdlc-manager` | product, requirements, architecture, planning, PM roles | Architecture-first SDLC control, requirements, specs, traceability, handoff |
 | `dev` | core development, language specialists, infrastructure, quality/security | Coding, testing, debugging, API/CLI verification |
 | `data` | data-ai, database, analytics roles | Tables, DB exports, metrics, reproducible analysis |
 | `office` | business-product, project management, writing roles | Reports, status updates, slides, formal documents |
@@ -131,7 +132,7 @@ Large Claude agent libraries often have many categories. A compact Codex setup c
 ## Migration Workflow / 迁移工作流
 
 1. Inventory source agents and skills.
-2. Classify each item into `common`, `dev`, `data`, `office`, or `research`.
+2. Classify each item into `common`, `sdlc-manager`, `dev`, `data`, `office`, or `research`.
 3. Decide whether it should become an agent, a skill, both, or neither.
 4. Strip private examples, paths, credentials, and internal process names.
 5. Convert agents into short TOML files.

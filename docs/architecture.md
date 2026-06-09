@@ -6,9 +6,9 @@ The dashboard follows a three-layer model.
 
 ```text
 source catalog / 素材目录
-  EN: Groups such as common, product-engineering, dev, data, office, and research.
+  EN: Groups such as common, sdlc-manager, dev, data, office, and research.
       Each group can contain agents/*.toml and skills/<skill-name>/SKILL.md.
-  CN: common、product-engineering、dev、data、office、research 等分组。
+  CN: common、sdlc-manager、dev、data、office、research 等分组。
       每个分组可以包含 agents/*.toml 和 skills/<skill-name>/SKILL.md。
 
 local suites / 本机组合包
@@ -107,7 +107,7 @@ for user or project-defined skills.
 - [Agent Design / Agent 设计](agent-design.md)
 - [Agent Skill Map / Agent 与 Skill 分工](agent-skill-map.md)
 - [Skill Design / Skill 设计](skill-design.md)
-- [Product Engineering Flow / 产品工程流程](product-engineering-flow.md)
+- [SDLC Manager Flow / SDLC 管理流程](architecture-first-sdlc-flow.md)
 - [Claude To Codex Migration / Claude 到 Codex 迁移](claude-to-codex-migration.md)
 - [Public And Private Strategy / 公开与私有分层](public-private-strategy.md)
 

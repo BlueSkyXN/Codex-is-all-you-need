@@ -95,8 +95,8 @@ Important fields:
 ```text
 source.codex_root
   EN: Production source catalog. It should contain groups such as common,
-      product-engineering, dev, data, office, and research.
-  CN: 生产素材目录。通常包含 common、product-engineering、dev、data、office、research 等分组。
+      sdlc-manager, dev, data, office, and research.
+  CN: 生产素材目录。通常包含 common、sdlc-manager、dev、data、office、research 等分组。
 
 source.suites_root
   EN: Local suite aggregation directory. Each suite contains agents/ and skills/.

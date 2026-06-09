@@ -8,7 +8,7 @@ Agents and skills for software engineering work: repository exploration, impleme
 
 ```text
 agents/   14 development agents
-skills/   19 public skills
+skills/   20 public skills
 ```
 
 ## Agent Groups
@@ -27,12 +27,13 @@ frontend-ui-implementation
 fullstack-feature        git-workflow             migration-plan
 performance-diagnosis    pr-review                prompt-evaluation
 python-quality           refactor-plan            release-check
-repo-onboarding          security-review          test-strategy
+repo-onboarding          security-review          spec-driven-implementation
+test-strategy
 ```
 
 ## Usage Notes
 
-Use this catalog when the task involves a codebase, build system, API, UI, test suite, security surface, or release workflow. Prefer read-only mapper/reviewer agents before broad implementation. Keep examples and instructions framework-neutral unless a skill explicitly targets a known tool family.
+Use this catalog when the task involves a codebase, build system, API, UI, test suite, security surface, or release workflow. It is SDLC-aware: when SRS, NFR, HLD, LLD, ADR, Domain Boundary Map, SPEC slices, handoff, or traceability materials exist, dev agents should follow them. Missing SDLC artifacts are a risk signal, not an automatic stop condition for clear direct-dev tasks. Prefer read-only mapper/reviewer agents before broad implementation. Keep examples and instructions framework-neutral unless a skill explicitly targets a known tool family.
 
 ## Maintenance Notes
 

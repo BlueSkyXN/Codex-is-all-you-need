@@ -8,7 +8,7 @@
 
 - `README.md` 与 `README_CN.md`：英文和中文项目入口说明。
 - `docs/`：架构、agent 设计、skill 设计、迁移策略、公开/私有分层说明。
-- `examples/catalog/`：脱敏后的 preset catalog，按 `common`、`dev`、`data`、`office`、`research` 分组；agent 位于 `agents/*.toml`，skill 位于 `skills/<skill-name>/SKILL.md`。
+- `examples/catalog/`：脱敏后的 preset catalog，按 `common`、`sdlc-manager`、`dev`、`data`、`office`、`research` 分组；agent 位于 `agents/*.toml`，skill 位于 `skills/<skill-name>/SKILL.md`。
 - `examples/runtime/` 与 `examples/suites/`：runtime 和 suite 布局示例。
 - `dashboard/`：Python 静态 dashboard 生成器、HTML 模板和示例配置。
 

@@ -68,7 +68,7 @@ codex/
   common/
     agents/
     skills/
-  product-engineering/
+  sdlc-manager/
     agents/
     skills/
   dev/

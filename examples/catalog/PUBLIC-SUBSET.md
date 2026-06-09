@@ -10,7 +10,7 @@ Codex preset catalog.
 ```text
 Agents:
   common                 6
-  product-engineering    7
+  sdlc-manager          7
   dev                   14
   data                   5
   office                 5
@@ -18,18 +18,18 @@ Agents:
 
 Skills:
   common                 1
-  product-engineering    7
-  dev                   19
+  sdlc-manager          19
+  dev                   20
   data                   4
   office                 5
   research               3
 ```
 
 The included agents and skills are generic workflows for planning, Codex project
-instructions, software development, product-engineering planning, data analysis,
-office reporting, and research synthesis.
+instructions, Architecture-first SDLC management, software development, data
+analysis, office reporting, and research synthesis.
 
-已包含内容都是通用工作流，覆盖任务规划、Codex 项目指令、软件开发、产品工程规划、数据分析、办公报告和研究综合。
+已包含内容都是通用工作流，覆盖任务规划、Codex 项目指令、架构先行 SDLC 管理、软件开发、数据分析、办公报告和研究综合。
 
 ## Excluded / 已排除
 

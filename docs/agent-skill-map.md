@@ -53,25 +53,29 @@ Actual availability is decided by runtime filesystem visibility:
 
 `common_orchestrator` is a lightweight Codex orchestration preset. It coordinates plans and handoffs; it does not replace the main/default agent as the runtime controller.
 
-## Product Engineering Pack / 产品工程包
+## SDLC Manager Pack / SDLC 管理包
 
 | Agent | Role | Recommended Skills |
 |---|---|---|
-| `product_engineering_project_researcher` | Existing-project capability mapping with Simplified Chinese artifacts by default: `项目能力摘要.md`, `项目功能能力地图.md`, `项目能力表.csv` | `project-research`, `readiness-review` |
-| `product_engineering_requirements_lead` | PRD, scope lock, non-goals, success metrics, and spec handoff | `prd-workflow`, `project-research` |
-| `product_engineering_functional_specifier` | Functional behavior, flows, states, fields, permissions, errors, ACs, and traceability | `functional-spec`, `prd-workflow`, `project-research` |
-| `product_engineering_technical_bridge` | Engineering bridge drafts, API/data implications, NFRs, test draft, and owner-confirmation questions | `technical-spec-bridge` |
-| `product_engineering_delivery_planner` | Implementation plan, task breakdown, dependency graph, validation tasks, and dev handoff | `delivery-task-planning`, `readiness-review`, `project-research` |
-| `product_engineering_readiness_reviewer` | Readiness review for PRD, spec, tech bridge, delivery plan, or change-spec handoff | `readiness-review`, `project-research` |
-| `product_engineering_change_adapter` | Repository change-spec or OpenSpec-style proposal, design, tasks, and behavior deltas | `change-spec-adapter`, `readiness-review` |
+| `sdlc_project_researcher` | Existing-project capability mapping, evidence paths, gaps, and downstream SDLC routing | `project-research`, `requirements-traceability`, `sdlc-readiness-review` |
+| `sdlc_requirements_manager` | BRD, URS, PRD, scope baseline, assumptions, success metrics, and requirements package shaping | `requirements-workflow`, `brd-workflow`, `urs-workflow`, `prd-workflow`, `artifact-profile-router` |
+| `sdlc_srs_specifier` | Software-facing SRS, requirement IDs, acceptance criteria, NFR hooks, and traceability-ready requirements | `srs-workflow`, `nfr-spec`, `requirements-traceability` |
+| `sdlc_solution_spec_manager` | Architecture-first solution package, HLD/LLD/ADR/domain-boundary routing, NFR impact, and SPEC slice organization | `solution-spec-workflow`, `hld-workflow`, `lld-workflow`, `domain-boundary-modeling`, `modular-monolith-architecture`, `architecture-decision-record`, `spec-slice-writer`, `nfr-spec`, `sdlc-readiness-review` |
+| `sdlc_delivery_planner` | Dev handoff and task cards from SRS/NFR/HLD/LLD/ADR/domain-boundary/SPEC/RTM/issue evidence | `dev-handoff-planning`, `requirements-traceability`, `sdlc-readiness-review` |
+| `sdlc_readiness_reviewer` | Readiness review for SDLC materials, direct-dev requests, or handoff packages | `sdlc-readiness-review`, `requirements-traceability`, `dev-handoff-planning` |
+| `sdlc_change_manager` | Baseline, scope, requirement, traceability, and change-control decisions | `change-control`, `requirements-traceability`, `sdlc-readiness-review` |
 
-`project-research` is the lightweight upstream entry point when an existing codebase needs an evidence-grounded capability map before PRD, planning, or reporting work. It defaults to Simplified Chinese file names, sections, table headers, statuses, notes, and next steps. Default artifacts are `项目能力摘要.md`, `项目功能能力地图.md`, and `项目能力表.csv`.
+`sdlc-manager` is an Architecture-first SDLC control plane: architecture defines structure, domain boundaries define ownership, and specifications define execution. It owns requirements, architecture/design artifacts, domain boundaries, SPEC slices, traceability, readiness, change control, and dev handoff.
 
-`product-engineering` is a planning and engineering-management layer. It should prepare `agent-handoff.md`, `task-breakdown.md`, `review-report.md`, or equivalent change-spec artifacts before `dev` takes over implementation.
+`project-research` is the lightweight upstream entry point when an existing codebase needs an evidence-grounded capability map before BRD/URS/PRD, SRS/SPEC, traceability, handoff, or reporting work. It defaults to Simplified Chinese file names, sections, table headers, statuses, notes, and next steps. Default artifacts are `项目能力摘要.md`, `项目功能能力地图.md`, and `项目能力表.csv`.
 
-`project-research` 是现有代码库进入 PRD、规划或汇报前的轻量上游入口，先形成证据可追溯的项目功能能力地图。默认只产出 `项目能力摘要.md`、`项目功能能力地图.md` 和 `项目能力表.csv`，并默认使用简体中文文件名、中文章节、中文表头、中文状态、中文备注和中文下一步；工作分解、产品结构拆解、成熟度、卡点、规格、任务规划、评分和汇报叙事都属于下游活动。
+`solution-spec-workflow` coordinates a solution package; it should not replace dedicated `hld-workflow`, `lld-workflow`, `domain-boundary-modeling`, `modular-monolith-architecture`, or `architecture-decision-record` workflows.
 
-`product-engineering` 是规划与工程管理层。它应该在 `dev` 接手实现前，准备好 `agent-handoff.md`、`task-breakdown.md`、`review-report.md` 或等价 change-spec 产物。
+`sdlc-manager` 是架构先行的 SDLC 控制面：架构定义结构，领域边界定义归属，规格定义执行。它负责需求、架构/设计材料、领域边界、SPEC 切片、需求追踪、准备度、变更控制和开发交接。
+
+`project-research` 是现有代码库进入 BRD/URS/PRD、SRS/SPEC、traceability、handoff 或汇报前的轻量上游入口，先形成证据可追溯的项目功能能力地图。默认只产出 `项目能力摘要.md`、`项目功能能力地图.md` 和 `项目能力表.csv`，并默认使用简体中文文件名、中文章节、中文表头、中文状态、中文备注和中文下一步。
+
+`solution-spec-workflow` 负责协调 solution package；它不替代专项的 `hld-workflow`、`lld-workflow`、`domain-boundary-modeling`、`modular-monolith-architecture` 或 `architecture-decision-record`。
 
 ## Dev Pack / 开发包
 
@@ -79,16 +83,16 @@ Actual availability is decided by runtime filesystem visibility:
 |---|---|---|
 | `dev_api_designer` | API contract design and review | `api-contract-review`, `fullstack-feature`, `test-strategy` |
 | `dev_architect_reviewer` | Architecture, service boundaries, technology choices, migration paths, reliability, and evolution risk review | `migration-plan`, `refactor-plan`, `api-contract-review`, `security-review`, `performance-diagnosis`, `test-strategy` |
-| `dev_backend_engineer` | Backend services, APIs, data integrity, auth, queues, observability | `api-contract-review`, `test-strategy`, `security-review`, `performance-diagnosis` |
-| `dev_cli_engineer` | CLI flags, config discovery, exit codes, terminal UX | `cli-tooling-workflow`, `test-strategy`, `release-check` |
+| `dev_backend_engineer` | Backend services, APIs, data integrity, auth, queues, observability | `spec-driven-implementation`, `api-contract-review`, `test-strategy`, `security-review`, `performance-diagnosis` |
+| `dev_cli_engineer` | CLI flags, config discovery, exit codes, terminal UX | `spec-driven-implementation`, `cli-tooling-workflow`, `test-strategy`, `release-check` |
 | `dev_code_mapper` | Read-only codebase mapping before implementation | `repo-onboarding`, `refactor-plan`, `migration-plan` |
 | `dev_code_reviewer` | Review diffs, PRs, regressions, test gaps | `pr-review`, `security-review`, `api-contract-review`, `test-strategy` |
 | `dev_docs_engineer` | Developer docs, API/CLI docs, guides, README structure, and docs-as-code workflows | `repo-onboarding`, `api-contract-review`, `cli-tooling-workflow`, `release-check` |
 | `dev_docs_researcher` | API, SDK, CLI, config, version behavior verification | `api-contract-review`, `dependency-upgrade`, `release-check` |
-| `dev_frontend_engineer` | UI components, state, routing, accessibility, browser validation | `frontend-ui-implementation`, `test-strategy`, `performance-diagnosis` |
-| `dev_implementer` | Scoped implementation, bug fixes, tests, targeted refactors | `bugfix`, `fullstack-feature`, `refactor-plan`, `test-strategy`, `api-contract-review`, `dependency-upgrade` |
+| `dev_frontend_engineer` | UI components, state, routing, accessibility, browser validation | `spec-driven-implementation`, `frontend-ui-implementation`, `test-strategy`, `performance-diagnosis` |
+| `dev_implementer` | Scoped implementation, bug fixes, tests, targeted refactors | `spec-driven-implementation`, `bugfix`, `fullstack-feature`, `refactor-plan`, `test-strategy`, `api-contract-review`, `dependency-upgrade` |
 | `dev_performance_engineer` | Measured performance diagnosis and optimization | `performance-diagnosis`, `build-optimization`, `test-strategy` |
-| `dev_python_engineer` | Python scripts, APIs, CLIs, packaging, typing, pytest | `python-quality`, `test-strategy`, `performance-diagnosis`, `dependency-upgrade` |
+| `dev_python_engineer` | Python scripts, APIs, CLIs, packaging, typing, pytest | `spec-driven-implementation`, `python-quality`, `test-strategy`, `performance-diagnosis`, `dependency-upgrade` |
 | `dev_security_reviewer` | Read-only security review | `security-review`, `dependency-upgrade`, `pr-review` |
 | `dev_test_runner` | Test execution, failure reproduction, log diagnosis | `bugfix`, `test-strategy`, `performance-diagnosis` |
 
@@ -128,10 +132,10 @@ user
   common
 
 planning
-  common + product-engineering
+  common + sdlc-manager
 
 github
-  common + product-engineering + dev
+  common + sdlc-manager + dev
 
 nondev-data
   common + data

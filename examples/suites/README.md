@@ -23,11 +23,11 @@ suite 是本机 symlink 组合层。本目录只说明模式，不创建真实 s
   planning/
     agents/
       common_task_planner.toml -> <source>/common/agents/common_task_planner.toml
-      product_engineering_requirements_lead.toml -> <source>/product-engineering/agents/product_engineering_requirements_lead.toml
-      product_engineering_delivery_planner.toml -> <source>/product-engineering/agents/product_engineering_delivery_planner.toml
+      sdlc_requirements_manager.toml -> <source>/sdlc-manager/agents/sdlc_requirements_manager.toml
+      sdlc_delivery_planner.toml -> <source>/sdlc-manager/agents/sdlc_delivery_planner.toml
     skills/
-      prd-workflow -> <source>/product-engineering/skills/prd-workflow
-      delivery-task-planning -> <source>/product-engineering/skills/delivery-task-planning
+      prd-workflow -> <source>/sdlc-manager/skills/prd-workflow
+      dev-handoff-planning -> <source>/sdlc-manager/skills/dev-handoff-planning
 
   nondev-all/
     agents/

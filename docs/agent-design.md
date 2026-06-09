@@ -103,7 +103,7 @@ For a small and maintainable preset system, group agents by work domain.
 | Pack | Purpose | Example Agents |
 |---|---|---|
 | `common` | General planning, synthesis, review, context management | `common_task_planner` |
-| `product-engineering` | Pre-implementation product engineering, scope control, specs, delivery planning | `product_engineering_requirements_lead` |
+| `sdlc-manager` | Architecture-first SDLC control, requirements, HLD/LLD, ADR, domain boundaries, specs, handoff | `sdlc_solution_spec_manager` |
 | `dev` | Software development, code review, debugging, API/CLI verification | `dev_code_reviewer` |
 | `data` | Table, database, metric, and notebook analysis | `data_profile_analyst` |
 | `office` | Reports, slides, project updates, management writing | `office_report_writer` |

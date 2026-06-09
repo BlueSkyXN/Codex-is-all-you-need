@@ -8,7 +8,7 @@ This is a sanitized source catalog derived from a real Codex preset catalog.
 common/
   agents/
   skills/
-product-engineering/
+sdlc-manager/
   agents/
   skills/
 dev/
@@ -35,8 +35,8 @@ Current public subset:
 
 ```text
 common/                 6 agents, 1 public skill
-product-engineering/    7 agents, 7 public skills
-dev/                   14 agents, 19 public skills
+sdlc-manager/           7 agents, 19 public skills
+dev/                   14 agents, 20 public skills
 data/                   5 agents, 4 public skills
 office/                 5 agents, 5 public skills
 research/               4 agents, 3 public skills

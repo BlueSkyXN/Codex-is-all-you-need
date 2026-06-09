@@ -8,7 +8,7 @@ This repository publishes public-safe Codex preset documentation, examples, and 
 
 - `README.md` and `README_CN.md`: top-level English and Chinese project introductions.
 - `docs/`: architecture, agent design, skill design, migration, and public/private strategy notes.
-- `examples/catalog/`: sanitized preset catalog grouped by `common`, `dev`, `data`, `office`, and `research`; agents live in `agents/*.toml`, skills live in `skills/<skill-name>/SKILL.md`.
+- `examples/catalog/`: sanitized preset catalog grouped by `common`, `sdlc-manager`, `dev`, `data`, `office`, and `research`; agents live in `agents/*.toml`, skills live in `skills/<skill-name>/SKILL.md`.
 - `examples/runtime/` and `examples/suites/`: runtime and suite layout examples.
 - `dashboard/`: Python static dashboard generator, HTML template, and example config.
 

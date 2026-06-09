@@ -8,7 +8,7 @@
 
 ```text
 agents/   14 个开发 agents
-skills/   19 个公开 skills
+skills/   20 个公开 skills
 ```
 
 ## Agent 分组
@@ -27,12 +27,13 @@ frontend-ui-implementation
 fullstack-feature        git-workflow             migration-plan
 performance-diagnosis    pr-review                prompt-evaluation
 python-quality           refactor-plan            release-check
-repo-onboarding          security-review          test-strategy
+repo-onboarding          security-review          spec-driven-implementation
+test-strategy
 ```
 
 ## 使用说明
 
-当任务涉及代码仓库、构建系统、API、UI、测试、安全面或发布流程时，优先使用本 catalog。大范围实现前，优先使用只读的 mapper/reviewer agents。除非某个 skill 明确面向特定工具族，否则示例和说明应保持框架中立。
+当任务涉及代码仓库、构建系统、API、UI、测试、安全面或发布流程时，优先使用本 catalog。它是 SDLC-aware：如果存在 SRS、NFR、HLD、LLD、ADR、Domain Boundary Map、SPEC 切片、handoff 或 traceability 材料，dev agents 应遵循这些材料；缺少 SDLC 材料是风险信号，不是明确 direct-dev 任务的自动阻断条件。大范围实现前，优先使用只读的 mapper/reviewer agents。除非某个 skill 明确面向特定工具族，否则示例和说明应保持框架中立。
 
 ## 维护说明
 

@@ -17,7 +17,7 @@ Agents:
   research               4
 
 Skills:
-  common                 1
+  common                 2
   sdlc-manager          19
   dev                   20
   data                   4

@@ -13,9 +13,9 @@ source catalog / 素材目录
 
 local suites / 本机组合包
   EN: Machine-local symlink compositions such as user, github, nondev-data,
-      and nondev-all. Suites are not new sources; they are composed views over
+      nondev-all, and all. Suites are not new sources; they are composed views over
       source entries.
-  CN: 本机上的 symlink 组合层，例如 user、github、nondev-data、nondev-all。
+  CN: 本机上的 symlink 组合层，例如 user、github、nondev-data、nondev-all、all。
       suite 不是新的素材源，而是对 source entries 的组合视图。
 
 runtime directories / 运行目录
@@ -57,19 +57,19 @@ Do not symlink the whole `.codex` directory. Runtime directories may need their 
 Repo-level discovery is bounded by the current project root. With a git root,
 Codex discovers repo skills and custom agents only along the path from the git
 root to the current working directory. Without a git root, discovery is limited
-to the current working directory. A parent workspace such as `/Users/sky/GitHub`
+to the current working directory. A parent workspace such as `/path/to/workspace`
 is not inherited by child git repositories automatically.
 
 repo-level discovery 受当前 project root 限制。有 git root 时，Codex 只在
 git root 到当前工作目录的路径链上发现 repo skills 和 custom agents。没有 git
-root 时，只看当前工作目录。像 `/Users/sky/GitHub` 这样的父级工作区不会被子
+root 时，只看当前工作目录。像 `/path/to/workspace` 这样的父级工作区不会被子
 git repo 自动继承。
 
-This means a workspace aggregate such as `/Users/sky/GitHub/.codex` should be
+This means a workspace aggregate such as `/path/to/workspace/.codex` should be
 treated as a stable symlink target. Each child repo still needs repo-local
 entrypoints under its own `.codex`.
 
-这意味着 `/Users/sky/GitHub/.codex` 这样的工作区聚合层应被当作稳定的
+这意味着 `/path/to/workspace/.codex` 这样的工作区聚合层应被当作稳定的
 symlink target。每个子 repo 仍需要在自己的 `.codex` 下创建 repo-local
 entrypoints。
 

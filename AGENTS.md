@@ -1,54 +1,191 @@
-# Repository Guidelines
+# Repository agent instructions
 
-[中文](AGENTS_CN.md) | English
+## Purpose
 
-## Project Structure & Module Organization
+This repository publishes a public-safe Codex preset system: sanitized agent and
+skill catalog examples, architecture and migration documentation, a read-only
+dashboard generator, and a script for managing repo-local Codex runtime
+entrypoints.
 
-This repository publishes public-safe Codex preset documentation, examples, and a read-only dashboard.
+The public storyline is "source catalog -> local suites -> runtime .codex
+entrypoints". Keep changes aligned with that model and with the
+architecture-first SDLC catalog shape.
 
-- `README.md` and `README_CN.md`: top-level English and Chinese project introductions.
-- `docs/`: architecture, agent design, skill design, migration, and public/private strategy notes.
-- `examples/catalog/`: sanitized preset catalog grouped by `common`, `sdlc-manager`, `dev`, `data`, `office`, and `research`; agents live in `agents/*.toml`, skills live in `skills/<skill-name>/SKILL.md`.
-- `examples/runtime/` and `examples/suites/`: runtime and suite layout examples.
-- `dashboard/`: Python static dashboard generator, HTML template, and example config.
+## Codex startup behavior
 
-## Build, Test, and Development Commands
+- Codex is normally started from the repository root, so this file is the
+  startup router for repo-local instructions.
+- Subdirectory `AGENTS.md` files are on-demand navigation cards. They are not
+  guaranteed to be in the startup context when Codex starts from the root.
+- Before editing under any directory whose row below says `Yes`, read that
+  directory's `AGENTS.md` with `cat <path>/AGENTS.md`.
+- If multiple nested `AGENTS.md` files apply, read them from shallow to deep
+  before making changes.
+- If started from a subdirectory, Codex may automatically load the nearest
+  path-chain `AGENTS.md`; still use this root file as the directory router.
+- `AGENTS_CN.md` files are human-facing translation/reference files. Codex does
+  not treat them as project instruction files unless the user explicitly asks
+  to read or update them.
 
-- `python3 dashboard/build_dashboard.py --config ~/.codex/dashboard/config.toml`: generate dashboard JSON and HTML using a local config outside the repo.
-- `python3 dashboard/build_dashboard.py --config ~/.codex/dashboard/config.toml --json-only`: validate scan output without rendering HTML.
-- `open ~/.codex/dashboard/index.html`: preview the generated dashboard locally.
+## Directory map
 
-For first-time setup:
+| Path | Responsibility | Local AGENTS.md | Read when |
+|---|---|---:|---|
+| `README.md`, `README_CN.md` | Top-level English and Chinese project introductions | No | Keep them aligned with public catalog structure when editing user-facing docs |
+| `AGENTS.md` | Root startup router for Codex agents | This file | Any repository task from the root |
+| `AGENTS_CN.md` | Chinese reference for repository guidelines, not a Codex-loaded instruction file | No | Only when the user asks to sync Chinese guidance |
+| `docs/` | Architecture, usage, discovery, migration, public/private, and model catalog documentation | No | Read the specific doc being changed and adjacent docs that reference the same public model |
+| `dashboard/` | Stdlib Python read-only dashboard generator, HTML template, and example config | Yes | Before editing `build_dashboard.py`, dashboard templates, config examples, or dashboard docs |
+| `scripts/` | Filesystem automation for repo-local `.codex` entrypoint symlinks | Yes | Before editing symlink management behavior, CLI flags, cleanup logic, or related tests |
+| `tests/` | Unit tests for repository scripts | No | Follow `scripts/AGENTS.md` when changing tests for `scripts/` behavior |
+| `examples/catalog/` | Sanitized public agent and skill source catalog | Yes | Before changing agent TOML, skill folders, catalog group docs, or publication boundaries |
+| `examples/runtime/` | Public-safe example runtime `AGENTS.md` instructions | Yes | Before changing runtime instruction examples |
+| `examples/suites/` | Suite symlink pattern notes and examples | No | Read `examples/suites/README.md` before changing suite documentation |
+| `plugins/` | Installable Codex plugin packages built from public-safe skills | No | Before changing plugin manifests, bundled skills, or plugin documentation |
+| `.agents/plugins/marketplace.json` | Repo marketplace that exposes checked-in plugins | No | Before changing plugin availability or marketplace metadata |
+| `.codex/` | Machine-local runtime entrypoint symlinks, ignored local state | No | Do not edit unless the task explicitly targets runtime entrypoints and the user accepts local filesystem changes |
+
+## On-demand cat protocol
+
+Before editing files under a directory with a local `AGENTS.md`:
+
+1. Run `cat <path>/AGENTS.md` for the nearest listed directory.
+2. Follow any stricter local rules in that file.
+3. If the target spans multiple listed directories, read each relevant card
+   before editing.
+4. If a target directory ever contains `AGENTS.override.md`, stop and ask the
+   user how to handle the override; do not add or update an ignored plain
+   `AGENTS.md` in the same directory.
+
+## Commands
+
+This repository has no committed package manager config, Makefile, or CI
+workflow. Confirmed commands come from the checked-in Python scripts, tests, and
+repository docs.
+
+| Command | Purpose | Scope | Sandbox notes |
+|---|---|---|---|
+| `python3 -m unittest discover -s tests -v` | Run committed unit tests for `scripts/sync_codex_entrypoints.py` | repo | OK; uses temporary directories |
+| `python3 dashboard/build_dashboard.py --help` | Validate dashboard CLI loads | `dashboard/` | OK |
+| `python3 dashboard/build_dashboard.py --config ~/.codex/dashboard/config.toml --json-only` | Generate dashboard state without rendering HTML | `dashboard/` plus configured local paths | Requires local config outside repo; may read local Codex roots and write configured output, normally outside repo |
+| `python3 dashboard/build_dashboard.py --config ~/.codex/dashboard/config.toml` | Generate dashboard JSON and HTML | `dashboard/` plus configured local paths | Requires local config; output must stay outside the public repository unless explicitly configured for a local experiment |
+| `open ~/.codex/dashboard/index.html` | Preview generated dashboard | local machine | macOS GUI command; not a sandbox validation step |
+| `python3 scripts/sync_codex_entrypoints.py --help` | Validate entrypoint sync CLI loads | `scripts/` | OK |
+| `python3 scripts/sync_codex_entrypoints.py sync --workspace <workspace> --source-root <workspace>/.codex --link-mode directories` | Dry-run repo-local `.codex` directory link sync | local workspace | Replace placeholders before running; dry-run by default; reads local workspace paths; do not add `--apply` without explicit user request |
+| `git diff --check` | Check whitespace in the current diff | repo | OK; read-only |
+| `git status --short --branch` | Inspect current working tree | repo | OK; read-only |
+
+Catalog validation command:
 
 ```bash
-mkdir -p ~/.codex/dashboard
-cp dashboard/examples/config.example.toml ~/.codex/dashboard/config.toml
+python3 - <<'PY'
+from pathlib import Path
+import tomllib
+
+root = Path("examples/catalog")
+for path in root.glob("*/agents/*.toml"):
+    tomllib.loads(path.read_text())
+for path in root.glob("*/skills/*"):
+    if path.name.startswith("."):
+        continue
+    if not (path / "SKILL.md").is_file():
+        raise SystemExit(f"missing SKILL.md: {path}")
+print("catalog structure ok")
+PY
 ```
 
-Do not commit real runtime configs or generated dashboard output.
+Use `git diff --check -- examples/catalog` after catalog edits.
 
-## Coding Style & Naming Conventions
+## Global rules
 
-Python code should target the current stdlib-first style in `dashboard/build_dashboard.py`: clear functions, type hints where useful, `pathlib.Path` for filesystem work, and short explanatory comments only around non-obvious behavior. Use 4-space indentation for Python. Keep Markdown concise and bilingual only when the surrounding document is already bilingual.
+- Keep this repository public-safe. Do not add private absolute paths, internal
+  URLs, credentials, `.env` values, customer data, private template content, or
+  unpublished private skill names.
+- Prefer placeholders such as `~/.codex`, `<workspace>`, `<repo>`, and
+  `/path/to/...` in public docs and examples.
+- Preserve the separation between source catalog, local suites, and runtime
+  `.codex` entrypoints. Do not imply that Codex automatically inherits a parent
+  `.codex` directory across child git repositories.
+- Keep `dashboard/` read-only with respect to source catalogs, suites, runtime
+  folders, `.codex`, `.agents`, agent TOML, and `SKILL.md` files.
+- Keep `scripts/sync_codex_entrypoints.py` conservative: dry-run by default,
+  explicit link mode, no replacement of real local content, and no deletion of
+  non-managed files.
+- Python changes should stay stdlib-first unless a long-term dependency is
+  explicitly justified. Use `pathlib.Path` for filesystem work and type hints
+  where they clarify behavior.
+- Markdown should be concise. Keep bilingual content only where the surrounding
+  document is already bilingual or the file is explicitly a bilingual reference.
+- Agent TOML files use snake_case names such as `dev_python_engineer.toml`.
+  Skill directories use kebab-case names such as `python-quality/`, with the
+  entrypoint named `SKILL.md`.
+- For public catalog refreshes, verify current filesystem counts instead of
+  copying older numbers from memory or docs.
+- Treat `plugins/codex-next` as the canonical packaged surface for
+  public-safe distributable skills. When a public catalog skill is updated for
+  distribution, keep `examples/catalog/.../skills/<skill>/` and
+  `plugins/codex-next/skills/<skill>/` aligned unless the skill is explicitly
+  plugin-only, such as the `codex-next` router entrypoint.
+- Treat existing non-AGENTS working tree changes as user work unless the user
+  asks to modify them.
 
-Agent files use snake_case names such as `dev_python_engineer.toml`. Skill directories use kebab-case names such as `python-quality/`, with the entrypoint named `SKILL.md`.
+## Do not
 
-## Testing Guidelines
+- Do not commit real runtime configs, generated dashboard output, machine-local
+  symlink state, `.codex/config.toml`, private suite state, or private catalog
+  material.
+- Do not treat the checked-in repo marketplace at `.agents/plugins/marketplace.json`
+  as machine-local runtime state.
+- Do not create, delete, or rewrite `.codex`, `.agents`, suite symlinks, runtime
+  entrypoints, or source catalog files unless the user explicitly requested that
+  filesystem operation.
+- Do not run `scripts/sync_codex_entrypoints.py` with `--apply`, `clean`,
+  `--prune`, `--remove-ignore`, or `--remove-empty-dirs` against a real
+  workspace unless the user explicitly asked for that operation and the target
+  paths were inspected first.
+- Do not publish private model policy overrides in public agent TOML. Public
+  examples should inherit runtime configuration unless an override is explicitly
+  documented and safe.
+- Do not add private scripts, proprietary templates, private examples, or
+  symlinks to private skill libraries under `examples/catalog/`.
+- Do not claim test, dashboard, or catalog validation passed unless the command
+  was actually run in this turn.
+- Do not update `AGENTS_CN.md` or other translation/reference files just because
+  `AGENTS.md` changed; translate only when the user requests that scope.
 
-There is no committed test framework yet. For dashboard changes, run the smallest meaningful smoke check with a local config:
+## Validation
 
-```bash
-python3 dashboard/build_dashboard.py --config ~/.codex/dashboard/config.toml --json-only
-```
+Choose the smallest validation that matches the files changed:
 
-For documentation or catalog changes, inspect links, headings, TOML syntax, and public-safety wording manually. Do not claim coverage unless you add and run actual tests.
+1. Any Python script behavior change:
+   `python3 -m unittest discover -s tests -v`
+2. Dashboard code, template, or config example change:
+   `python3 dashboard/build_dashboard.py --help`, then run the JSON-only
+   dashboard command if a valid local config is available and safe to use.
+3. Catalog agent or skill change:
+   run the catalog validation snippet above and
+   `git diff --check -- examples/catalog`.
+4. `scripts/sync_codex_entrypoints.py` change:
+   `python3 -m unittest discover -s tests -v` and
+   `python3 scripts/sync_codex_entrypoints.py --help`.
+5. Documentation-only change:
+   inspect affected links/headings and run `git diff --check` for the touched
+   paths.
+6. AGENTS-only change:
+   confirm `find . -name AGENTS.override.md` is empty or does not affect the
+   target, check file sizes, and run `git diff --check` with the actual touched
+   `AGENTS.md` paths.
 
-## Commit & Pull Request Guidelines
+When a validation command depends on local config, GUI access, or external
+filesystem state, state whether it was skipped or run and why.
 
-Recent history uses short, imperative, Conventional-style messages, mostly `docs:`; examples include `docs: add public Codex preset catalog` and `docs: split README translations`. Prefer `docs:`, `dashboard:`, or `examples:` scopes when they reflect the changed area.
+## Notes for future agents
 
-Pull requests should describe the changed files, why the change is public-safe, and any validation run. Include screenshots only for dashboard UI changes.
-
-## Security & Configuration Tips
-
-Keep private skills, runtime paths, generated scan results, machine-specific symlink state, and real `~/.codex/dashboard/config.toml` values out of the repository. The dashboard is intended to stay read-only; changes should not create, delete, or rewrite `.codex`, `.agents`, suite symlinks, or source catalog files unless explicitly requested.
+- The public catalog currently uses groups `common`, `sdlc-manager`, `dev`,
+  `data`, `office`, and `research`. Verify counts from the filesystem before
+  reporting them.
+- `examples/catalog/common/skills/codex-agents-md-builder/` is the public copy
+  of the AGENTS design workflow. When editing it, keep the skill body and
+  references self-contained and public-safe.
+- The repository may have local `.codex/agents` and `.codex/skills` symlinks for
+  the maintainer's machine. They are local state, not public source.

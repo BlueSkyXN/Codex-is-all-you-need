@@ -1,0 +1,20 @@
+{
+  "name": "codex-is-all-you-need",
+  "interface": {
+    "displayName": "Codex Is All You Need"
+  },
+  "plugins": [
+    {
+      "name": "codex-next",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex-next"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

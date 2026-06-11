@@ -1,12 +1,10 @@
-# Catalog Guidelines
+# Catalog navigation card
 
-[中文](AGENTS_CN.md) | English
-
-These instructions apply to `examples/catalog/` and all nested catalog groups.
-
-## Purpose
-
-This directory is a sanitized, public-safe source catalog derived from a private Codex preset catalog. Keep it generic, reusable, and free of machine-specific or business-private details.
+This directory is the sanitized, public-safe source catalog for Codex agents and
+skills. Read this card before changing agent TOML, skill folders, group README
+files, or publication-boundary docs under `examples/catalog/`.
+Key files: `PUBLIC-SUBSET.md`, group `README.md` files, `*/agents/*.toml`,
+and `*/skills/*/SKILL.md`.
 
 ## Structure
 
@@ -20,6 +18,14 @@ Each group follows the same layout:
 
 Current groups are `common`, `sdlc-manager`, `dev`, `data`, `office`, and `research`. Agent files use snake_case names such as `dev_python_engineer.toml`. Skill folders use kebab-case names such as `python-quality/`.
 
+## Local invariants
+
+- This catalog is a reusable public subset, not a dump of private runtime state.
+- Keep the architecture-first SDLC control plane centered on `sdlc-manager`;
+  direct development fallback belongs in `dev`.
+- Runtime visibility is decided by filesystem placement and suites, not by
+  agent prose alone.
+
 ## Agent TOML Rules
 
 - Keep agent roles generic and reusable.
@@ -32,8 +38,17 @@ Current groups are `common`, `sdlc-manager`, `dev`, `data`, `office`, and `resea
 
 - Every skill directory must contain `SKILL.md`.
 - Use concise frontmatter with `name` and `description` when present.
-- Do not add private scripts, proprietary templates, private examples, or symlinks to private skill libraries.
+- Do not add private scripts, proprietary templates, private examples, or
+  symlinks to private skill libraries.
 - Keep examples abstract unless they are safe to publish.
+
+## Do not
+
+- Do not publish private absolute paths, internal URLs, credentials, customer
+  data, unpublished private skill names, or machine-local suite state.
+- Do not copy private symlinked skills into this catalog.
+- Do not remove `sdlc-manager` or collapse it back into a generic development
+  group without explicitly updating the public architecture docs.
 
 ## Validation
 

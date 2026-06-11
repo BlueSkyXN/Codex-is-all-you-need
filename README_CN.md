@@ -15,6 +15,7 @@ source catalog -> local suites -> runtime .codex entrypoints
 1. 学习如何把 Codex agents、skills、suites、runtime entrypoints 分层管理。
 2. 复制公开示例，搭建自己的本地 agent / skill catalog。
 3. 用 dashboard 和同步脚本检查、部署、维护本机 Codex 预设。
+4. 安装 Codex Next 插件，把公开 skills 打包成一套可复用工作流能力包。
 
 ## 适合谁
 
@@ -56,6 +57,9 @@ docs/
   claude-to-codex-migration.md
   public-private-strategy.md
 
+plugins/
+  codex-next/                     # 可安装的 skills 插件
+
 examples/
   catalog/                        # 脱敏后的公开 agent / skill source catalog
   runtime/                        # runtime AGENTS.md 示例
@@ -74,6 +78,8 @@ local suites
   本机组合层。每个 suite 通过 symlink 选择要暴露哪些 agents / skills。
   示例：~/.codex/suites/github/agents/*.toml
        ~/.codex/suites/github/skills/*
+       ~/.codex/suites/all/agents/*.toml
+       ~/.codex/suites/all/skills/*
 
 runtime entrypoints
   Codex 启动目录实际能发现的 .codex/agents 和 .codex/skills。
@@ -95,8 +101,8 @@ find examples/catalog -maxdepth 3 \( -path '*/agents/*.toml' -o -path '*/skills/
 
 | Pack | Agents | Skills | 用途 |
 |---|---:|---:|---|
-| `common` | 6 | 1 | 规划、编排、文档核查、质量复核、上下文压缩、文件整理 |
-| `sdlc-manager` | 7 | 19 | 架构先行 SDLC 控制：BRD/URS/PRD、SRS/NFR、HLD/LLD、ADR、领域边界、SPEC、交接 |
+| `common` | 6 | 2 | 规划、编排、文档核查、质量复核、上下文压缩、文件整理 |
+| `sdlc-manager` | 7 | 20 | 架构先行 SDLC 控制：BRD/URS/PRD、SRS/NFR、HLD/LLD、ADR、领域边界、SPEC、交接 |
 | `dev` | 14 | 20 | 代码阅读、实现、测试、review、API、CLI、前端、Python、安全、性能 |
 | `data` | 5 | 4 | 数据画像、SQL、清洗、pipeline、分析报告 |
 | `office` | 5 | 5 | 会议纪要、周报、项目报告、briefing、PPT 大纲 |
@@ -104,7 +110,40 @@ find examples/catalog -maxdepth 3 \( -path '*/agents/*.toml' -o -path '*/skills/
 
 完整分工见 [docs/agent-skill-map.md](docs/agent-skill-map.md)。
 
-### 2. 生成只读 dashboard
+### 2. 安装 Codex Next
+
+Codex Next 把公开安全的 skills 打包成一个可安装插件。它不打包
+`.codex/agents` custom agent TOML，也不打包本机 suite symlink。插件内包含
+`codex-next` 入口 skill，用来把任务路由到最小充分的内置工作流。
+
+插件源码：
+
+```text
+plugins/codex-next
+```
+
+仓库 marketplace：
+
+```text
+.agents/plugins/marketplace.json
+```
+
+从本仓库打开 Codex 后，用 `/plugins` 安装 `Codex Next`。如果你的 Codex
+环境没有自动发现 repo marketplace，可以把仓库根目录添加为本地 marketplace：
+
+```bash
+codex plugin marketplace add /path/to/Codex-is-all-you-need
+```
+
+然后从这个 marketplace 安装插件：
+
+```bash
+codex plugin add codex-next@codex-is-all-you-need
+```
+
+安装后可以调用 `$codex-next`，或直接要求 Codex 使用 Codex Next 处理任务。
+
+### 3. 生成只读 dashboard
 
 首次配置：
 
@@ -136,28 +175,28 @@ python3 dashboard/build_dashboard.py \
 
 Dashboard 是只读工具，不会创建、删除或修改 symlink。更多字段说明见 [dashboard/README.md](dashboard/README.md)。
 
-### 3. 批量同步 Git repo 入口
+### 4. 批量同步 Git repo 入口
 
 Codex 不会从子 git repo 自动继承父目录 `.codex`。如果你已经有一个聚合好的工作区入口，例如：
 
 ```text
-/Users/sky/GitHub/.codex/agents
-/Users/sky/GitHub/.codex/skills
+/path/to/workspace/.codex/agents
+/path/to/workspace/.codex/skills
 ```
 
-要让 `/Users/sky/GitHub/*` 下的一批 git repo 都可见这套能力，需要在每个 repo 里创建 repo-local entrypoints。运行时显式选择链接模式；对 workspace 聚合层，建议优先用 `directories`：
+要让 `/path/to/workspace/*` 下的一批 git repo 都可见这套能力，需要在每个 repo 里创建 repo-local entrypoints。运行时显式选择链接模式；对 workspace 聚合层，建议优先用 `directories`：
 
 ```bash
 # dry-run
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories
 
 # apply
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories \
   --apply
 ```
@@ -165,15 +204,15 @@ python3 scripts/sync_codex_entrypoints.py sync \
 推荐的目录模式同步后形态：
 
 ```text
-<repo>/.codex/agents -> /Users/sky/GitHub/.codex/agents
-<repo>/.codex/skills -> /Users/sky/GitHub/.codex/skills
+<repo>/.codex/agents -> /path/to/workspace/.codex/agents
+<repo>/.codex/skills -> /path/to/workspace/.codex/skills
 ```
 
 只有当某个 repo 必须保留真实 `.codex/agents` 或 `.codex/skills` 目录、只选择少量共享条目，或需要把共享条目和本地实验条目并列时，才选择 `--link-mode entries`：
 
 ```text
-<repo>/.codex/agents/<agent>.toml -> /Users/sky/GitHub/.codex/agents/<agent>.toml
-<repo>/.codex/skills/<skill>      -> /Users/sky/GitHub/.codex/skills/<skill>
+<repo>/.codex/agents/<agent>.toml -> /path/to/workspace/.codex/agents/<agent>.toml
+<repo>/.codex/skills/<skill>      -> /path/to/workspace/.codex/skills/<skill>
 ```
 
 更新、清理示例：
@@ -181,23 +220,23 @@ python3 scripts/sync_codex_entrypoints.py sync \
 ```bash
 # 目录模式会通过目录 symlink 自动跟随源目录更新
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories \
   --apply
 
 # 逐项模式可以额外清理陈旧 symlink
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode entries \
   --prune \
   --apply
 
 # 清理脚本管理的入口
 python3 scripts/sync_codex_entrypoints.py clean \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories \
   --apply
 ```

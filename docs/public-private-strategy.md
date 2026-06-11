@@ -109,6 +109,9 @@ suite 是本机组合层，不是素材源。
   nondev-all/
     agents/
     skills/
+  all/
+    agents/
+    skills/
 ```
 
 Each entry inside `agents/` or `skills/` should be a symlink to a source item.
@@ -138,8 +141,8 @@ that should opt in needs local entrypoints:
 <runtime>/.codex/skills -> ~/.codex/suites/<suite>/skills
 
 # Or, when a repo must keep real .codex/agents or .codex/skills directories:
-<runtime>/.codex/agents/<agent>.toml -> /Users/sky/GitHub/.codex/agents/<agent>.toml
-<runtime>/.codex/skills/<skill> -> /Users/sky/GitHub/.codex/skills/<skill>
+<runtime>/.codex/agents/<agent>.toml -> /path/to/workspace/.codex/agents/<agent>.toml
+<runtime>/.codex/skills/<skill> -> /path/to/workspace/.codex/skills/<skill>
 ```
 
 Do not symlink the whole `.codex` folder. Other local files under `.codex` may need to stay runtime-specific.
@@ -155,8 +158,8 @@ real entry directories.
 
 ```bash
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories
 ```
 
@@ -166,8 +169,8 @@ Apply after reviewing the plan:
 
 ```bash
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories \
   --apply
 ```
@@ -184,8 +187,8 @@ Clean managed entrypoints with:
 
 ```bash
 python3 scripts/sync_codex_entrypoints.py clean \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories
 ```
 

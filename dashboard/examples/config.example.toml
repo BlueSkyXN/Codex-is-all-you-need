@@ -41,3 +41,10 @@ expected_suite = "github"
 name = "external-project"
 path = "/Volumes/ExternalDisk/Project"
 expected_suite = "nondev-all"
+
+# Optional full-capability runtime. Use only when the directory intentionally
+# needs every source group at once.
+# [[runtimes]]
+# name = "full-capability"
+# path = "/Users/example/AllCapabilities"
+# expected_suite = "all"

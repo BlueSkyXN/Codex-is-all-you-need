@@ -4,7 +4,10 @@ __pycache__/
 
 # Local Codex runtime entrypoints. These are machine-specific symlink mounts.
 .codex/
-.agents/
+.agents/*
+!.agents/
+!.agents/plugins/
+!.agents/plugins/marketplace.json
 
 # Local-only experiment logs and machine-specific notes.
 local/

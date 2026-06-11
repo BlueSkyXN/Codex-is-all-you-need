@@ -148,6 +148,9 @@ nondev-research
 
 nondev-all
   common + data + office + research
+
+all
+  common + sdlc-manager + dev + data + office + research
 ```
 
 Runtime links should expose only:

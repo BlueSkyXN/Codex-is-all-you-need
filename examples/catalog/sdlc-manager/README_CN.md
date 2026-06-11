@@ -58,23 +58,25 @@ sdlc-readiness-review
 change-control
 ```
 
-## 交付材料等级
+## 车道与材料深度
 
 ```text
-Profile A: Task Delivery
-Profile B: Feature Delivery
-Profile C: System Delivery
-Profile D: Program Delivery
+快线: bugfix、小修、小配置、小文案、明确 issue
+增补: 清楚的新功能、小模块或局部行为变化
+重构: 外部行为基本不变的结构调整
+重建: 替换、重写、迁移或能力重新映射
+从头: greenfield 项目或全新子系统
 ```
 
-这些等级定义材料深度，不是所有 dev 工作的全局门槛。
+用 ADS 判断 Architecture、Domain、Specification 影响，选择最小充分材料。
+车道不是所有 dev 工作的全局门槛。
 
 ## 开发交接
 
 推荐路径：
 
 ```text
-SRS / NFR / SPEC / RTM / Dev Handoff
+requirements package / NFR / SPEC / RTM / Dev Handoff
 HLD / LLD / ADR / Domain Boundary Map when relevant
 -> dev repo onboarding
 -> implementation

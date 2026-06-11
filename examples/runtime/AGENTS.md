@@ -1,8 +1,18 @@
-# Example Runtime Instructions / 示例运行目录规则
+# Example runtime navigation card / 示例运行目录规则
 
-This file is a public-safe example of a runtime `AGENTS.md`.
+This directory contains public-safe examples of runtime-level Codex
+instructions. Read this card before changing the runtime instruction model or
+adding runtime entrypoint examples.
+Key files: `AGENTS.md`.
 
-这是一个可公开的 runtime `AGENTS.md` 示例。
+本目录包含可公开的 Codex runtime 级指令示例。修改 runtime 指令模型或新增
+runtime entrypoint 示例前，先阅读本卡片。关键文件：`AGENTS.md`。
+
+## Purpose / 用途
+
+This file is also a public-safe example of a runtime `AGENTS.md`.
+
+本文件同时也是一个可公开的 runtime `AGENTS.md` 示例。
 
 ## Communication / 沟通
 
@@ -29,3 +39,12 @@ This file is a public-safe example of a runtime `AGENTS.md`.
 Agents may recommend skills, but filesystem visibility decides what Codex can actually use.
 
 agent 可以推荐 skill，但实际是否可用由文件结构决定。
+
+## Do Not / 禁止
+
+- Do not add real machine paths, private suite names, credentials, or internal
+  URLs to this example.
+- Do not imply that a parent `.codex` is automatically inherited by every child
+  git repository.
+- 不要把真实本机路径、私有 suite 名称、凭据或内部 URL 写入本示例。
+- 不要暗示父级 `.codex` 会被每个子 git 仓库自动继承。

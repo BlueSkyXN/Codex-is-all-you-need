@@ -76,17 +76,18 @@ baseline / scope / requirements / architecture change
 | Readiness review | `sdlc_readiness_reviewer` | `sdlc-readiness-review`, `requirements-traceability`, `dev-handoff-planning` |
 | Change control | `sdlc_change_manager` | `change-control`, `requirements-traceability`, `sdlc-readiness-review` |
 
-## Artifact Depth / 材料深度
+## Lane and Material Depth / 车道与材料深度
 
-Use the smallest sufficient artifact profile. Do not force every task through the full stack.
+Use the smallest sufficient lane and material set. Do not force every task through the full stack.
 
-使用最小充分材料等级。不要强制每个任务都走完整材料栈。
+使用最小充分车道和材料集合。不要强制每个任务都走完整材料栈。
 
 ```text
-Profile A: Task Delivery
-Profile B: Feature Delivery
-Profile C: System Delivery
-Profile D: Program Delivery
+快线: bugfix, small repair, config, copy, clear issue
+增补: contained feature, small module, local behavior change
+重构: behavior-preserving structural change
+重建: replacement, rewrite, migration, capability remapping
+从头: greenfield project or new subsystem
 ```
 
 Small direct-dev tasks may only need a clear issue, repository evidence, and validation path. Larger or riskier changes may need SRS, NFR, HLD, LLD, ADR, Domain Boundary Map, SPEC slices, RTM, and handoff materials.
@@ -111,11 +112,14 @@ dev-only
 
 nondev-office
   common + office
+
+all
+  common + sdlc-manager + dev + data + office + research
 ```
 
-Use `planning` when a directory mainly holds requirements, architecture, specs, taskbooks, or handoff packages. Use `github` when a code workspace needs both SDLC control-plane and repo-aware development capabilities. Use `dev-only` only when planning artifacts are intentionally out of scope.
+Use `planning` when a directory mainly holds requirements, architecture, specs, taskbooks, or handoff packages. Use `github` when a code workspace needs both SDLC control-plane and repo-aware development capabilities. Use `dev-only` only when planning artifacts are intentionally out of scope. Use `all` only for an explicit full-capability runtime that needs development, SDLC, data, office, and research groups together.
 
-当目录主要放需求、架构、规格、任务书或交接包时，使用 `planning`。当代码工作区同时需要 SDLC 控制面和 repo-aware 开发能力时，使用 `github`。只有明确不需要规划材料时，才使用 `dev-only`。
+当目录主要放需求、架构、规格、任务书或交接包时，使用 `planning`。当代码工作区同时需要 SDLC 控制面和 repo-aware 开发能力时，使用 `github`。只有明确不需要规划材料时，才使用 `dev-only`。只有明确需要同时暴露开发、SDLC、数据、办公和研究能力的 runtime，才使用 `all`。
 
 ## Handoff Standard / 交接标准
 

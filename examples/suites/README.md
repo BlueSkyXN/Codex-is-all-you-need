@@ -39,6 +39,21 @@ suite 是本机 symlink 组合层。本目录只说明模式，不创建真实 s
       tabular-analysis -> <source>/data/skills/tabular-analysis
       weekly-report -> <source>/office/skills/weekly-report
       research-synthesis -> <source>/research/skills/research-synthesis
+
+  all/
+    agents/
+      common_task_planner.toml -> <source>/common/agents/common_task_planner.toml
+      sdlc_requirements_manager.toml -> <source>/sdlc-manager/agents/sdlc_requirements_manager.toml
+      dev_code_reviewer.toml -> <source>/dev/agents/dev_code_reviewer.toml
+      data_profile_analyst.toml -> <source>/data/agents/data_profile_analyst.toml
+      office_report_writer.toml -> <source>/office/agents/office_report_writer.toml
+      research_synthesis_writer.toml -> <source>/research/agents/research_synthesis_writer.toml
+    skills/
+      prd-workflow -> <source>/sdlc-manager/skills/prd-workflow
+      bugfix -> <source>/dev/skills/bugfix
+      tabular-analysis -> <source>/data/skills/tabular-analysis
+      weekly-report -> <source>/office/skills/weekly-report
+      research-synthesis -> <source>/research/skills/research-synthesis
 ```
 
 ## Runtime Links / 运行目录连接
@@ -73,6 +88,7 @@ common_task_planner.toml
   -> user/agents/common_task_planner.toml
   -> github/agents/common_task_planner.toml
   -> nondev-all/agents/common_task_planner.toml
+  -> all/agents/common_task_planner.toml
 ```
 
 For skills, the symlink points to the skill folder:

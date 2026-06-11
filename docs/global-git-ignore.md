@@ -22,7 +22,7 @@ On this machine, that resolves to:
 在这台机器上，它对应：
 
 ```text
-/Users/sky/.config/git/ignore
+~/.config/git/ignore
 ```
 
 Keep global `core.excludesfile` unset unless there is a deliberate reason to

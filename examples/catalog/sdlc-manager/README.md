@@ -58,23 +58,25 @@ sdlc-readiness-review
 change-control
 ```
 
-## Delivery artifact profiles
+## Lane and material depth
 
 ```text
-Profile A: Task Delivery
-Profile B: Feature Delivery
-Profile C: System Delivery
-Profile D: Program Delivery
+快线: bugfix, small repair, config, copy, clear issue
+增补: contained feature, small module, local behavior change
+重构: behavior-preserving structural change
+重建: replacement, rewrite, migration, capability remapping
+从头: greenfield project or new subsystem
 ```
 
-These profiles define material depth. They are not global dev blockers.
+Use ADS to judge Architecture, Domain, and Specification impact. Choose the
+smallest sufficient material set; lanes are not global dev blockers.
 
 ## Handoff to dev
 
 The preferred handoff is:
 
 ```text
-SRS / NFR / SPEC / RTM / Dev Handoff
+requirements package / NFR / SPEC / RTM / Dev Handoff
 HLD / LLD / ADR / Domain Boundary Map when relevant
 -> dev repo onboarding
 -> implementation

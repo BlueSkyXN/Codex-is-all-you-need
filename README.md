@@ -15,6 +15,7 @@ Use this repository to:
 1. Learn how to manage Codex agents, skills, suites, and runtime entrypoints.
 2. Copy public-safe examples to build your own local agent / skill catalog.
 3. Inspect, deploy, and maintain local Codex presets with a dashboard and scripts.
+4. Install Codex Next as a plugin that bundles the public skills into one reusable workflow pack.
 
 ## Who This Is For
 
@@ -56,6 +57,9 @@ docs/
   claude-to-codex-migration.md
   public-private-strategy.md
 
+plugins/
+  codex-next/                     # installable skills plugin
+
 examples/
   catalog/                        # sanitized public agent / skill source catalog
   runtime/                        # runtime AGENTS.md example
@@ -75,6 +79,8 @@ local suites
   through symlinks.
   Example: ~/.codex/suites/github/agents/*.toml
            ~/.codex/suites/github/skills/*
+           ~/.codex/suites/all/agents/*.toml
+           ~/.codex/suites/all/skills/*
 
 runtime entrypoints
   The .codex/agents and .codex/skills entries that Codex can discover from the
@@ -97,8 +103,8 @@ Public examples include:
 
 | Pack | Agents | Skills | Use Case |
 |---|---:|---:|---|
-| `common` | 6 | 1 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
-| `sdlc-manager` | 7 | 19 | Architecture-first SDLC control: BRD/URS/PRD, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
+| `common` | 6 | 2 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
+| `sdlc-manager` | 7 | 20 | Architecture-first SDLC control: BRD/URS/PRD, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
 | `dev` | 14 | 20 | Code mapping, implementation, tests, reviews, APIs, CLI, frontend, Python, security, performance |
 | `data` | 5 | 4 | Data profiling, SQL, cleaning, pipelines, analysis reports |
 | `office` | 5 | 5 | Meeting minutes, weekly reports, project reports, briefing notes, deck outlines |
@@ -106,7 +112,43 @@ Public examples include:
 
 See [docs/agent-skill-map.md](docs/agent-skill-map.md) for the full responsibility map.
 
-### 2. Generate the read-only dashboard
+### 2. Install Codex Next
+
+Codex Next packages the public-safe skills into one installable plugin. It does
+not package `.codex/agents` custom agent TOML or machine-local suite symlinks.
+The plugin includes a `codex-next` entrypoint skill for routing a task to the
+smallest useful bundled workflow.
+
+Plugin source:
+
+```text
+plugins/codex-next
+```
+
+Repo marketplace:
+
+```text
+.agents/plugins/marketplace.json
+```
+
+Open Codex from this repository and use `/plugins` to install `Codex Next`. If
+your Codex setup does not auto-detect the repo marketplace, add the repo root as
+a local marketplace source:
+
+```bash
+codex plugin marketplace add /path/to/Codex-is-all-you-need
+```
+
+Then install from the configured marketplace:
+
+```bash
+codex plugin add codex-next@codex-is-all-you-need
+```
+
+After installation, invoke `$codex-next` or ask Codex to use Codex Next for the
+task.
+
+### 3. Generate the read-only dashboard
 
 First-time setup:
 
@@ -138,28 +180,28 @@ python3 dashboard/build_dashboard.py \
 
 The dashboard is read-only. It does not create, delete, or modify symlinks. See [dashboard/README.md](dashboard/README.md) for config fields and status meanings.
 
-### 3. Sync repo entrypoints in bulk
+### 4. Sync repo entrypoints in bulk
 
 Codex does not automatically inherit a parent `.codex` from child git repositories. If you have an already-aggregated workspace entrypoint such as:
 
 ```text
-/Users/sky/GitHub/.codex/agents
-/Users/sky/GitHub/.codex/skills
+/path/to/workspace/.codex/agents
+/path/to/workspace/.codex/skills
 ```
 
-and you want every selected repo under `/Users/sky/GitHub/*` to see that capability set, create repo-local entrypoints. Choose the link mode explicitly; `directories` is recommended for workspace aggregates:
+and you want every selected repo under `/path/to/workspace/*` to see that capability set, create repo-local entrypoints. Choose the link mode explicitly; `directories` is recommended for workspace aggregates:
 
 ```bash
 # dry-run
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories
 
 # apply
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories \
   --apply
 ```
@@ -167,15 +209,15 @@ python3 scripts/sync_codex_entrypoints.py sync \
 Recommended directory-mode result:
 
 ```text
-<repo>/.codex/agents -> /Users/sky/GitHub/.codex/agents
-<repo>/.codex/skills -> /Users/sky/GitHub/.codex/skills
+<repo>/.codex/agents -> /path/to/workspace/.codex/agents
+<repo>/.codex/skills -> /path/to/workspace/.codex/skills
 ```
 
 Use `--link-mode entries` only when a repo must keep real `.codex/agents` or `.codex/skills` directories, selectively opt in to a small set of shared entries, or mix shared entries with local experiments:
 
 ```text
-<repo>/.codex/agents/<agent>.toml -> /Users/sky/GitHub/.codex/agents/<agent>.toml
-<repo>/.codex/skills/<skill>      -> /Users/sky/GitHub/.codex/skills/<skill>
+<repo>/.codex/agents/<agent>.toml -> /path/to/workspace/.codex/agents/<agent>.toml
+<repo>/.codex/skills/<skill>      -> /path/to/workspace/.codex/skills/<skill>
 ```
 
 Update and clean examples:
@@ -183,23 +225,23 @@ Update and clean examples:
 ```bash
 # directory mode updates automatically through the linked directories
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories \
   --apply
 
 # entries mode can also remove stale symlinks
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode entries \
   --prune \
   --apply
 
 # remove managed entrypoints
 python3 scripts/sync_codex_entrypoints.py clean \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories \
   --apply
 ```

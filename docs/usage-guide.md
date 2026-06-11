@@ -116,8 +116,8 @@ If your workspace aggregate is:
 如果你的工作区聚合层是：
 
 ```text
-/Users/sky/GitHub/.codex/agents
-/Users/sky/GitHub/.codex/skills
+/path/to/workspace/.codex/agents
+/path/to/workspace/.codex/skills
 ```
 
 then batch-sync entrypoints into child repos. Choose the link mode explicitly;
@@ -128,14 +128,14 @@ then batch-sync entrypoints into child repos. Choose the link mode explicitly;
 ```bash
 # dry-run
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories
 
 # apply
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories \
   --apply
 ```
@@ -190,16 +190,16 @@ The script supports two actions: `sync` and `clean`, and two link modes:
 # Create missing entrypoints and update changed symlink targets.
 # 创建缺失入口，并更新目标变化的 symlink。
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories \
   --apply
 
 # Also remove stale symlinks that still point into the selected source root.
 # 同时删除仍指向当前 source root、但已经不在聚合层中的陈旧 symlink。
 python3 scripts/sync_codex_entrypoints.py sync \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode entries \
   --prune \
   --apply
@@ -207,8 +207,8 @@ python3 scripts/sync_codex_entrypoints.py sync \
 # Remove managed entrypoints.
 # 清理脚本管理的入口。
 python3 scripts/sync_codex_entrypoints.py clean \
-  --workspace /Users/sky/GitHub \
-  --source-root /Users/sky/GitHub/.codex \
+  --workspace /path/to/workspace \
+  --source-root /path/to/workspace/.codex \
   --link-mode directories \
   --apply
 ```
@@ -239,8 +239,8 @@ Safety rules:
 
 | Pack | Agents | Skills | Best For |
 |---|---:|---:|---|
-| `common` | 6 | 1 | Planning, orchestration, context summaries, docs verification, quality review |
-| `sdlc-manager` | 7 | 19 | Architecture-first SDLC control: requirements, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
+| `common` | 6 | 2 | Planning, orchestration, context summaries, docs verification, quality review |
+| `sdlc-manager` | 7 | 20 | Architecture-first SDLC control: requirements, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
 | `dev` | 14 | 20 | SDLC-aware and direct-dev implementation, testing, API, CLI, frontend, Python, security, performance |
 | `data` | 5 | 4 | Data profiling, SQL, cleaning, pipelines, reports |
 | `office` | 5 | 5 | Meeting minutes, weekly reports, project reports, briefing notes, slide outlines |
@@ -376,6 +376,13 @@ ln -sfn "$PWD/examples/catalog/dev/skills/python-quality" \
   ~/.codex/suites/demo-dev/skills/python-quality
 ```
 
+An `all` suite can be built with the same pattern by linking every source group
+into one suite. Use it only for explicit full-capability runtimes; smaller
+domain suites are easier to reason about.
+
+`all` suite 可以用同样模式把所有 source group 链接进同一个 suite。它只适合明确
+需要全能力的 runtime；更小的任务域 suite 更容易维护和审查。
+
 Expose the suite to a runtime:
 
 暴露到 runtime：
@@ -416,7 +423,7 @@ Helpful commands:
 python3 dashboard/build_dashboard.py --config ~/.codex/dashboard/config.toml --json-only
 find -L ~/.codex/suites -type l -print
 git diff --check
-python3 scripts/sync_codex_entrypoints.py sync --workspace /Users/sky/GitHub --source-root /Users/sky/GitHub/.codex --link-mode directories
+python3 scripts/sync_codex_entrypoints.py sync --workspace /path/to/workspace --source-root /path/to/workspace/.codex --link-mode directories
 ```
 
 ## 10. Common Mistakes / 常见错误

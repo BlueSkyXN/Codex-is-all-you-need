@@ -1,0 +1,36 @@
+{
+  "name": "codex-next",
+  "version": "0.1.0",
+  "description": "Reusable Codex skills for SDLC planning, software delivery, development workflows, research, data work, and office productivity.",
+  "author": {
+    "name": "Codex Is All You Need",
+    "url": "https://github.com/BlueSkyXN/Codex-is-all-you-need"
+  },
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "codex",
+    "skills",
+    "sdlc",
+    "software-delivery",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codex Next",
+    "shortDescription": "A skill-powered upgrade pack for Codex workflows.",
+    "longDescription": "Codex Next packages reusable skills for routing work, researching projects, shaping requirements, designing solutions, planning validation, implementing safely, reviewing changes, and producing delivery-ready artifacts.",
+    "developerName": "Codex Is All You Need",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills",
+      "Workflow"
+    ],
+    "defaultPrompt": [
+      "Use $codex-next to route this task.",
+      "Use Codex Next to shape this idea into a dev handoff.",
+      "Use Codex Next to review this work plan."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

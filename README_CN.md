@@ -128,11 +128,25 @@ plugins/codex-next
 .agents/plugins/marketplace.json
 ```
 
-从本仓库打开 Codex 后，用 `/plugins` 安装 `Codex Next`。如果你的 Codex
-环境没有自动发现 repo marketplace，可以把仓库根目录添加为本地 marketplace：
+从 GitHub marketplace source 安装：
+
+```bash
+codex plugin marketplace add https://github.com/BlueSkyXN/Codex-is-all-you-need.git
+```
+
+本地开发时，也可以把当前 checkout 的仓库根目录添加为 marketplace：
 
 ```bash
 codex plugin marketplace add /path/to/Codex-is-all-you-need
+```
+
+确认 Codex 能看到未安装的 marketplace 条目。使用 JSON 输出时必须加
+`--available`；否则 `codex plugin list --json` 只显示已安装插件，容易误判为
+marketplace 为空。
+
+```bash
+codex plugin marketplace list --json
+codex plugin list --marketplace codex-is-all-you-need --available --json
 ```
 
 然后从这个 marketplace 安装插件：

@@ -131,12 +131,25 @@ Repo marketplace:
 .agents/plugins/marketplace.json
 ```
 
-Open Codex from this repository and use `/plugins` to install `Codex Next`. If
-your Codex setup does not auto-detect the repo marketplace, add the repo root as
-a local marketplace source:
+Install from the GitHub marketplace source:
+
+```bash
+codex plugin marketplace add https://github.com/BlueSkyXN/Codex-is-all-you-need.git
+```
+
+For local development, add the checked-out repository root instead:
 
 ```bash
 codex plugin marketplace add /path/to/Codex-is-all-you-need
+```
+
+Confirm that Codex can see the uninstalled marketplace entry. The `--available`
+flag is required for JSON output; without it, `codex plugin list --json` only
+shows installed plugins.
+
+```bash
+codex plugin marketplace list --json
+codex plugin list --marketplace codex-is-all-you-need --available --json
 ```
 
 Then install from the configured marketplace:

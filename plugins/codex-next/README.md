@@ -61,14 +61,28 @@ not part of the plugin package itself.
 
 ## Install
 
-From the repository root, add the repo marketplace if it is not already
-configured:
+For a network install from GitHub, add the marketplace source:
+
+```bash
+codex plugin marketplace add https://github.com/BlueSkyXN/Codex-is-all-you-need.git
+```
+
+For local development, add the checked-out repository root instead:
 
 ```bash
 codex plugin marketplace add /path/to/Codex-is-all-you-need
 ```
 
-Then install the plugin:
+Check that Codex can see the uninstalled marketplace entry. The `--available`
+flag is required when using JSON output; without it, `codex plugin list --json`
+only shows installed plugins.
+
+```bash
+codex plugin marketplace list --json
+codex plugin list --marketplace codex-is-all-you-need --available --json
+```
+
+Then install the plugin from the configured marketplace:
 
 ```bash
 codex plugin add codex-next@codex-is-all-you-need

@@ -1,11 +1,21 @@
 {
   "name": "codex-is-all-you-need",
+  "description": "A public-safe Codex marketplace for installing Codex Next, an all-in-one workflow skill pack for software delivery, SDLC, research, data, and office work.",
+  "owner": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
   "interface": {
     "displayName": "Codex Is All You Need"
   },
   "plugins": [
     {
       "name": "codex-next",
+      "description": "Installable Codex workflow pack with routing, SDLC, development, review, data, office, and research skills.",
+      "author": {
+        "name": "BlueSkyXN",
+        "url": "https://github.com/BlueSkyXN"
+      },
       "source": {
         "source": "local",
         "path": "./plugins/codex-next"
@@ -14,7 +24,8 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Productivity",
+      "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/codex-next"
     }
   ]
 }

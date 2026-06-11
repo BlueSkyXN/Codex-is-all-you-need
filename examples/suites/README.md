@@ -1,8 +1,11 @@
 # Suite Examples / Suite 示例
 
-Suites are local symlink compositions. This directory documents the pattern without creating real symlinks.
+Suites are legacy or local-development symlink compositions. This directory
+documents the pattern without creating real symlinks. For production shared
+skills, prefer the Codex Next plugin instead of runtime suite links.
 
-suite 是本机 symlink 组合层。本目录只说明模式，不创建真实 symlink。
+suite 是 legacy 或 local-dev symlink 组合层。本目录只说明模式，不创建真实 symlink。
+生产态共享 skills 优先使用 Codex Next 插件，而不是 runtime suite links。
 
 ## Example Layout / 示例结构
 
@@ -58,19 +61,22 @@ suite 是本机 symlink 组合层。本目录只说明模式，不创建真实 s
 
 ## Runtime Links / 运行目录连接
 
-Only link exposed runtime entrypoints. A parent workspace `.codex` is a useful
-aggregate target, but child git repositories do not inherit it automatically.
+Only link exposed runtime entrypoints when this legacy/local-dev path is
+intended. Production shared skills should come from an installed plugin. A
+parent workspace `.codex` is a useful aggregate target, but child git
+repositories do not inherit it automatically.
 
-只连接暴露的 runtime entrypoints。父级工作区 `.codex` 可以作为聚合 target，
-但子 git repo 不会自动继承它。
+只有明确使用 legacy/local-dev 路径时才连接暴露的 runtime entrypoints。生产态共享
+skills 应来自已安装插件。父级工作区 `.codex` 可以作为聚合 target，但子 git repo
+不会自动继承它。
 
 ```text
 <runtime>/.codex/agents -> ~/.codex/suites/<suite>/agents
 <runtime>/.codex/skills -> ~/.codex/suites/<suite>/skills
 
 # Or, when a repo must keep real entry directories:
-<runtime>/.codex/agents/<agent>.toml -> /Users/sky/GitHub/.codex/agents/<agent>.toml
-<runtime>/.codex/skills/<skill> -> /Users/sky/GitHub/.codex/skills/<skill>
+<runtime>/.codex/agents/<agent>.toml -> /path/to/workspace/.codex/agents/<agent>.toml
+<runtime>/.codex/skills/<skill> -> /path/to/workspace/.codex/skills/<skill>
 ```
 
 Do not link the entire `.codex` folder.

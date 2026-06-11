@@ -7,22 +7,22 @@
 In one line:
 
 ```text
-source catalog -> local suites -> runtime .codex entrypoints
+source catalog -> plugin package -> marketplace install
 ```
 
 Use this repository to:
 
-1. Learn how to manage Codex agents, skills, suites, and runtime entrypoints.
+1. Install Codex Next as a plugin that bundles the public skills into one reusable workflow pack.
 2. Copy public-safe examples to build your own local agent / skill catalog.
-3. Inspect, deploy, and maintain local Codex presets with a dashboard and scripts.
-4. Install Codex Next as a plugin that bundles the public skills into one reusable workflow pack.
+3. Learn how to design Codex agents, skills, and optional local suite compositions.
+4. Inspect and maintain legacy or local-development Codex presets with a dashboard and scripts.
 
 ## Who This Is For
 
 - Developers who want to turn repeated workflows into Codex skills.
 - Teams or individuals who want custom agents for different work domains.
 - Users migrating Claude Code-style agent / skill patterns into Codex.
-- People who want one source catalog, multiple suite compositions, and several runtime entrypoints.
+- People who want plugin-first shared skills, plus optional local suite compositions for custom agents or experiments.
 - People who want to publish structure and examples without leaking private prompts, paths, templates, or machine state.
 
 ## What This Is Not
@@ -45,7 +45,7 @@ scripts/
 
 docs/
   usage-guide.md                  # full bilingual usage guide
-  architecture.md                 # source / suite / runtime architecture
+  architecture.md                 # plugin-first architecture and legacy suite notes
   agent-design.md                 # custom agent design
   skill-design.md                 # skill design
   agent-skill-map.md              # agent and skill responsibility map
@@ -53,6 +53,7 @@ docs/
   user-global-agents-example.md   # public-safe user-level AGENTS.md example
   model-catalog-override.md       # custom Codex model catalog override guide
   global-git-ignore.md            # user-level Git ignore profile
+  suite-to-plugin-migration.md    # production cleanup path from suites to plugins
   architecture-first-sdlc-flow.md
   claude-to-codex-migration.md
   public-private-strategy.md
@@ -74,17 +75,22 @@ source catalog
   Example: examples/catalog/dev/agents/dev_python_engineer.toml
            examples/catalog/dev/skills/dev-python-quality/SKILL.md
 
+plugin package
+  Production distribution surface for public-safe shared skills.
+  Example: plugins/codex-next/skills/dev-python-quality/SKILL.md
+           .agents/plugins/marketplace.json
+
 local suites
-  Machine-local composition layer. Each suite chooses visible agents / skills
-  through symlinks.
+  Legacy or local-development composition layer. Each suite chooses visible
+  agents / skills through symlinks.
   Example: ~/.codex/suites/github/agents/*.toml
            ~/.codex/suites/github/skills/*
            ~/.codex/suites/all/agents/*.toml
            ~/.codex/suites/all/skills/*
 
 runtime entrypoints
-  The .codex/agents and .codex/skills entries that Codex can discover from the
-  current working directory.
+  Optional .codex/agents and legacy .codex/skills entries that Codex can
+  discover from the current working directory.
   Example: <repo>/.codex/agents/<agent>.toml
            <repo>/.codex/skills/<skill>
 ```
@@ -194,9 +200,16 @@ python3 dashboard/build_dashboard.py \
   --json-only
 ```
 
-The dashboard is read-only. It does not create, delete, or modify symlinks. See [dashboard/README.md](dashboard/README.md) for config fields and status meanings.
+The dashboard is read-only. It is mainly for source-catalog inspection and
+legacy/local-dev suite visibility checks. It does not create, delete, or modify
+symlinks. See [dashboard/README.md](dashboard/README.md) for config fields and
+status meanings.
 
-### 4. Sync repo entrypoints in bulk
+### 4. Optional: sync legacy/local-dev repo entrypoints
+
+Production shared skills should come from the installed Codex Next plugin. Use
+this helper only for legacy suite setups, local-development experiments, or
+project-specific custom agent exposure.
 
 Codex does not automatically inherit a parent `.codex` from child git repositories. If you have an already-aggregated workspace entrypoint such as:
 
@@ -264,7 +277,9 @@ python3 scripts/sync_codex_entrypoints.py clean \
 
 The script only manages symlinks that point into the selected `--source-root`. It does not delete real files, real directories, or project-specific entrypoints. If a real directory contains local content, directory mode reports a conflict instead of replacing it.
 
-Keep `.agents/skills` for project-only skills. Do not deploy shared suite skills there; use `.codex/skills` directory or entry links for shared runtime visibility.
+Keep `.agents/skills` for project-only skills. Do not deploy shared plugin or
+suite skills there. For production shared skills, install the plugin; for
+legacy/local-dev suite visibility, use `.codex/skills` directory or entry links.
 
 ## Supported Agents And Skills
 
@@ -387,7 +402,8 @@ Runtime-visible location:
 <repo>/.codex/agents/dev_python_engineer.toml
 ```
 
-Important: repo-local custom agents are discovered from `.codex/agents/*.toml`, not `.agents/agents`.
+Important: repo-local custom agents are discovered from `.codex/agents/*.toml`,
+not `.agents/agents`. Codex Next does not package these custom agent TOML files.
 
 ## How To Imitate A Skill
 
@@ -424,6 +440,10 @@ Runtime-visible location:
 <repo>/.codex/skills/dev-python-quality/SKILL.md
 ```
 
+For production shared skills, prefer the installed `codex-next` plugin instead
+of a repo-local `.codex/skills` symlink. The path above is for legacy,
+local-development, or project-specific exposure.
+
 Project-only skills may also live under:
 
 ```text
@@ -436,9 +456,10 @@ Recommended order:
 
 ```text
 1. Maintain the source catalog first.
-2. Maintain local suites second.
-3. Expose runtime entrypoints last.
-4. Verify with the dashboard and Codex visibility checks.
+2. Keep plugins/codex-next aligned as the packaged skill surface.
+3. Use local suites only for legacy/custom-agent/local-dev composition.
+4. Expose runtime entrypoints only when the plugin path is not enough.
+5. Verify with plugin, dashboard, and Codex visibility checks.
 ```
 
 Do not:
@@ -455,9 +476,11 @@ Recommended:
 - Ignore `.codex/` and `.agents/` as local entrypoint state.
 - Keep cross-repository personal ignore rules in `~/.config/git/ignore`; see
   [Global Git Ignore Profile](docs/global-git-ignore.md).
-- Use symlinks in suites and keep real files in the source catalog.
+- Keep plugin-packaged public skills aligned with the source catalog.
+- Use symlinks in legacy/local-dev suites and keep real files in the source catalog.
 - Keep private production catalogs separate from public examples.
-- Run `dashboard/build_dashboard.py --json-only` after suite changes.
+- Run `dashboard/build_dashboard.py --json-only` after suite changes, and use
+  Codex plugin listing commands after plugin packaging changes.
 
 ## Public And Private Boundary
 
@@ -465,7 +488,8 @@ This repository is the public-safe layer. It may contain:
 
 - Dashboard source code.
 - Sanitized agent / skill examples.
-- Suite / runtime management patterns.
+- Codex Next plugin packaging and marketplace metadata.
+- Legacy suite / runtime management patterns.
 - Sanitized discovery boundary conclusions.
 - Reusable entrypoint sync scripts.
 

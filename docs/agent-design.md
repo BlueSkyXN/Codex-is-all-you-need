@@ -23,7 +23,7 @@ For Codex, keep the agent narrow and let skills carry repeatable workflows.
 ```text
 Agent = role, judgment, boundaries, delegation style
 Skill = reusable procedure, file-format workflow, deterministic helper scripts
-Suite = visible package of agents and skills for one runtime domain
+Suite = optional legacy/local-dev package of agents and skills for one runtime domain
 ```
 
 ## Recommended TOML Shape / 推荐 TOML 形态
@@ -41,7 +41,8 @@ line, behavior, or test gap. Prefer existing project conventions.
 
 Recommended skills: dev-bugfix.
 Do not treat recommended skills as bundled dependencies. Use them only when
-the user request and runtime-visible skills make them relevant.
+the user request and plugin-installed or runtime-visible skills make them
+relevant.
 """
 ```
 
@@ -111,9 +112,13 @@ For a small and maintainable preset system, group agents by work domain.
 
 ## Skill Hints Are Not Bundles / Skill 提示不是捆绑
 
-Codex agents cannot force-load a private bundle of skills by TOML field alone. The runtime-visible filesystem decides which skills are discoverable.
+Codex agents cannot force-load a private bundle of skills by TOML field alone.
+Production shared skills are discoverable through installed plugins; legacy or
+project-local skills are discoverable through runtime-visible filesystem
+entrypoints.
 
-Codex agent 不能单靠 TOML 字段强制捆绑某组 skills。实际可见技能由 runtime 目录中的文件结构决定。
+Codex agent 不能单靠 TOML 字段强制捆绑某组 skills。生产态共享 skills 通过已安装插件
+发现；legacy 或 project-local skills 通过 runtime 可见文件入口发现。
 
 Use `developer_instructions` for soft guidance:
 
@@ -121,7 +126,8 @@ Use `developer_instructions` for soft guidance:
 
 ```text
 Recommended skills: dev-bugfix, data-tabular-analysis.
-Use these only when they are visible in the current runtime and match the task.
+Use these only when they are installed through a plugin or visible in the
+current runtime, and match the task.
 ```
 
 The dashboard detects these hints from the explicit `Recommended skills:` line and only keeps names that exist in the scanned skill catalog.

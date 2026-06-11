@@ -96,6 +96,9 @@ $codex-next:core-router
 
 or ask Codex to use Codex Next for the task.
 
+If you are migrating an existing machine from suite-based runtime entrypoints,
+see [Suite To Plugin Migration](../../docs/suite-to-plugin-migration.md).
+
 ## Local Development
 
 Validate the plugin manifest with:

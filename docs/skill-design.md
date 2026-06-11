@@ -117,9 +117,11 @@ Then remove:
 
 ## Skill And Agent Relationship / Skill 与 Agent 的关系
 
-An agent may recommend skills in `developer_instructions`, but the visible filesystem controls availability.
+An agent may recommend skills in `developer_instructions`, but installed
+plugins and runtime-visible filesystem entrypoints control availability.
 
-agent 可以在 `developer_instructions` 中推荐 skills，但是否可用由运行目录的文件结构决定。
+agent 可以在 `developer_instructions` 中推荐 skills，但是否可用由已安装插件和 runtime
+可见文件入口共同决定。
 
 Good pattern:
 
@@ -128,7 +130,8 @@ Good pattern:
 ```text
 Agent: "For table-heavy analysis, prefer tabular-analysis when visible."
 Skill: "When triggered, run the table profiling workflow and validation gates."
-Suite: "Expose both the data agent and tabular-analysis skill in data-heavy runtimes."
+Plugin: "Package tabular-analysis for production shared use."
+Suite: "Expose both the data agent and tabular-analysis skill only for legacy/local-dev data-heavy runtimes."
 ```
 
 ## Review Checklist / 检查清单

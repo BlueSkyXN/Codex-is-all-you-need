@@ -1,12 +1,19 @@
 # Codex Preset Dashboard / Codex 预设面板
 
-Read-only dashboard for Codex agent and skill preset systems.
+Read-only dashboard for Codex agent and skill preset systems, especially
+legacy/local-development suite compositions.
 
-这是一个只读面板，用来查看 Codex agent / skill 预设系统的素材、组合包和运行目录连接状态。
+这是一个只读面板，用来查看 Codex agent / skill 预设系统的素材、legacy/local-dev
+组合包和运行目录连接状态。
 
-It is meant for humans first: open one HTML file and quickly see which preset packages exist, what each package exposes, and whether runtime folders are connected correctly.
+It is meant for humans first: open one HTML file and quickly see which preset
+packages exist, what each package exposes, and whether legacy/local-dev runtime
+folders are connected correctly. Plugin-first production installs shared skills
+through Codex Next and does not require suite runtime links.
 
-它主要是给人看的：打开一个 HTML 文件，就能快速看到有哪些 preset packages、每个 package 暴露了哪些 agents / skills，以及 runtime folders 是否正确连接。
+它主要是给人看的：打开一个 HTML 文件，就能快速看到有哪些 preset packages、每个
+package 暴露了哪些 agents / skills，以及 legacy/local-dev runtime folders 是否正确连接。
+plugin-first 生产态通过 Codex Next 安装共享 skills，不要求 suite runtime links。
 
 ## Quick Start / 快速开始
 
@@ -73,7 +80,7 @@ Minimal config:
 
 ```toml
 [source]
-name = "local production"
+name = "legacy local suite demo"
 codex_root = "/path/to/your/codex/source"
 suites_root = "/Users/example/.codex/suites"
 
@@ -94,13 +101,14 @@ Important fields:
 
 ```text
 source.codex_root
-  EN: Production source catalog. It should contain groups such as common,
-      sdlc-manager, dev, data, office, and research.
-  CN: 生产素材目录。通常包含 common、sdlc-manager、dev、data、office、research 等分组。
+  EN: Source catalog scanned by the dashboard. It usually contains groups such
+      as common, sdlc-manager, dev, data, office, and research.
+  CN: dashboard 扫描的素材目录。通常包含 common、sdlc-manager、dev、data、office、research 等分组。
 
 source.suites_root
-  EN: Local suite aggregation directory. Each suite contains agents/ and skills/.
-  CN: 本机 suite 聚合目录。每个 suite 里包含 agents/ 和 skills/。
+  EN: Legacy/local-development suite aggregation directory. Each suite contains
+      agents/ and skills/.
+  CN: legacy/local-dev suite 聚合目录。每个 suite 里包含 agents/ 和 skills/。
 
 source.private_roots
   EN: Optional roots that should be marked private when a skill resolves under them.
@@ -115,10 +123,10 @@ output.dir
   CN: preset-state.json 和 index.html 的输出目录。
 
 runtimes
-  EN: Runtime folders to inspect. Each runtime is expected to expose:
+  EN: Legacy/local-dev runtime folders to inspect. Each runtime is expected to expose:
       <runtime>/.codex/agents -> <suites_root>/<expected_suite>/agents
       <runtime>/.codex/skills -> <suites_root>/<expected_suite>/skills
-  CN: 需要检查的运行目录。每个 runtime 预期暴露：
+  CN: 需要检查的 legacy/local-dev 运行目录。每个 runtime 预期暴露：
       <runtime>/.codex/agents -> <suites_root>/<expected_suite>/agents
       <runtime>/.codex/skills -> <suites_root>/<expected_suite>/skills
 ```
@@ -138,11 +146,11 @@ source catalog / 素材目录:
   <codex_root>/<group>/agents/*.toml
   <codex_root>/<group>/skills/<skill-name>/SKILL.md
 
-local suites / 本机组合包:
+legacy/local-dev suites / legacy 或 local-dev 本机组合包:
   <suites_root>/<suite>/agents/*
   <suites_root>/<suite>/skills/*
 
-runtime folders / 运行目录:
+runtime folders / legacy 或 local-dev 运行目录:
   <runtime>/.codex/agents
   <runtime>/.codex/skills
 ```
@@ -159,8 +167,8 @@ Overview metrics / 总览指标
   分组数、agent 数、skill 数、suite 数、runtime 数、issue 数。
 
 Suites / 组合包
-  Each suite package and the agents/skills it exposes.
-  每个 suite package 暴露的 agents / skills。
+  Each legacy/local-dev suite package and the agents/skills it exposes.
+  每个 legacy/local-dev suite package 暴露的 agents / skills。
 
 Agents / 角色
   Agent name, source group, nickname, suite usage, and explicit `Recommended skills:` hints.
@@ -171,8 +179,9 @@ Skills / 技能
   Skill 名称、来源分组、范围、最终解析路径和 suite 使用情况。
 
 Runtime / 运行目录
-  Whether each runtime is connected, missing, partially connected, occupied, or wrong-target.
-  每个 runtime 是已连接、缺失、部分连接、已占用，还是指向错误目标。
+  Whether each configured legacy/local-dev runtime is connected, missing,
+  partially connected, occupied, or wrong-target.
+  每个已配置 legacy/local-dev runtime 是已连接、缺失、部分连接、已占用，还是指向错误目标。
 
 Issues / 问题
   Warnings and errors found during the scan.
@@ -183,24 +192,24 @@ Issues / 问题
 
 ```text
 connected / 已连接
-  .codex/agents and .codex/skills both point to the expected suite.
-  .codex/agents 和 .codex/skills 都指向预期 suite。
+  .codex/agents and .codex/skills both point to the expected legacy/local-dev suite.
+  .codex/agents 和 .codex/skills 都指向预期 legacy/local-dev suite。
 
 missing / 缺失
   Runtime does not currently expose agents/skills at the checked location.
   runtime 在检查位置没有暴露 agents / skills。
 
 partial / 部分连接
-  Only one of agents/skills points to the expected suite.
-  agents / skills 只有一项指向预期 suite。
+  Only one of agents/skills points to the expected legacy/local-dev suite.
+  agents / skills 只有一项指向预期 legacy/local-dev suite。
 
 occupied / 已占用
   agents or skills exists as a real directory/file instead of the expected symlink.
   agents 或 skills 是真实目录/文件，而不是预期 symlink。
 
 wrong-target / 目标错误
-  agents or skills is a symlink, but not to the expected suite.
-  agents 或 skills 是 symlink，但没有指向预期 suite。
+  agents or skills is a symlink, but not to the expected legacy/local-dev suite.
+  agents 或 skills 是 symlink，但没有指向预期 legacy/local-dev suite。
 ```
 
 ## JSON-Only Mode / 仅生成 JSON
@@ -253,9 +262,11 @@ write generated state into the repository unless the config explicitly asks for 
 
 ## Current Limitations / 当前限制
 
-The current version focuses on source catalogs, local suites, and configured runtime `.codex/agents` plus `.codex/skills` directory connections.
+The current version focuses on source catalogs, legacy/local-dev suites, and
+configured runtime `.codex/agents` plus `.codex/skills` directory connections.
 
-当前版本主要覆盖 source catalog、本机 suites，以及已配置 runtime 的 `.codex/agents` 和 `.codex/skills` 目录连接状态。
+当前版本主要覆盖 source catalog、legacy/local-dev suites，以及已配置 runtime 的
+`.codex/agents` 和 `.codex/skills` 目录连接状态。
 
 It does not yet audit every per-repo individual entrypoint created by `scripts/sync_codex_entrypoints.py --link-mode entries`.
 

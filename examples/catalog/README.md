@@ -25,9 +25,13 @@ research/
   skills/
 ```
 
-The dashboard can scan this directory as `source.codex_root` when paired with a local `suites_root`.
+The Codex Next plugin packages the public skills from this catalog for
+production use. The dashboard can also scan this directory as
+`source.codex_root` when paired with a local legacy/local-dev `suites_root`.
 
-配合本机 `suites_root` 时，dashboard 可以把本目录作为 `source.codex_root` 扫描。
+Codex Next 插件会把本 catalog 中的公开 skills 打包成生产可用的插件。配合本机
+legacy/local-dev `suites_root` 时，dashboard 也可以把本目录作为 `source.codex_root`
+扫描。
 
 Current public subset:
 
@@ -43,11 +47,11 @@ research/               4 agents, 3 public skills
 ```
 
 Private symlinked skills are intentionally excluded. Agent `Recommended skills`
-hints are sanitized so they only name public skills or generic runtime-provided
-workflows.
+hints are sanitized so they only name public skills or generic
+plugin-installed/runtime-provided workflows.
 
 私有 symlink skills 已被刻意排除。agent 中的 `Recommended skills` 提示也已脱敏，
-只会指向公开 skill，或使用“当前 runtime 可见的通用 workflow”这类泛化说法。
+只会指向公开 skill，或使用“plugin 安装 / 当前 runtime 可见的通用 workflow”这类泛化说法。
 
 See `PUBLIC-SUBSET.md` for the publication boundary.
 

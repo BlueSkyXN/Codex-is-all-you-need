@@ -138,7 +138,10 @@ Large Claude agent libraries often have many categories. A compact Codex setup c
 5. Convert agents into short TOML files.
 6. Convert reusable procedures into lean `SKILL.md` folders.
 7. Add only public-safe examples to this repository.
-8. Keep private production versions in a private catalog and expose them locally through suites.
+8. Package public shared skills through Codex Next when they are meant for
+   production reuse; keep private production versions in a private catalog.
+9. Use local suites only for legacy/local-development composition, custom
+   agents, or experiments.
 
 ## Decision Table / 决策表
 
@@ -160,5 +163,7 @@ After migration:
 - Agent TOML parses.
 - Skill folders contain `SKILL.md`.
 - Public repo has no private paths or sensitive names.
-- Dashboard can scan the catalog and suites without parse errors.
+- Codex Next plugin exposes the intended public shared skills when packaging is
+  in scope.
+- Dashboard can scan the catalog and legacy/local-dev suites without parse errors when suites are in scope.
 - Generated local dashboard output stays outside the public repository.

@@ -7,22 +7,22 @@
 一句话：
 
 ```text
-source catalog -> local suites -> runtime .codex entrypoints
+source catalog -> plugin package -> marketplace install
 ```
 
-你可以用它做三件事：
+你可以用它做这些事：
 
-1. 学习如何把 Codex agents、skills、suites、runtime entrypoints 分层管理。
+1. 安装 Codex Next 插件，把公开 skills 打包成一套可复用工作流能力包。
 2. 复制公开示例，搭建自己的本地 agent / skill catalog。
-3. 用 dashboard 和同步脚本检查、部署、维护本机 Codex 预设。
-4. 安装 Codex Next 插件，把公开 skills 打包成一套可复用工作流能力包。
+3. 学习如何设计 Codex agents、skills，以及可选的本机 suite 组合层。
+4. 用 dashboard 和同步脚本检查、维护 legacy 或 local-dev Codex 预设。
 
 ## 适合谁
 
 - 想把常用工作流沉淀成 Codex skills 的开发者。
 - 想为不同任务域准备不同 custom agents 的团队或个人。
 - 想把 Claude Code 风格的 agent / skill 经验迁移到 Codex 的用户。
-- 想用 symlink 管理“一个素材、多套组合、多处 runtime 暴露”的本机环境。
+- 想使用 plugin-first 共享 skills，同时为 custom agents 或实验保留可选本机 suite 组合层的人。
 - 想公开分享 agent / skill 结构，但又不想泄露私有 prompt、路径、模板或真实配置的人。
 
 ## 这不是
@@ -45,7 +45,7 @@ scripts/
 
 docs/
   usage-guide.md                  # 完整双语使用指南
-  architecture.md                 # source / suite / runtime 架构
+  architecture.md                 # plugin-first 架构和 legacy suite 说明
   agent-design.md                 # custom agent 设计
   skill-design.md                 # skill 设计
   agent-skill-map.md              # agent 与 skill 分工
@@ -53,6 +53,7 @@ docs/
   user-global-agents-example.md   # 公开安全的用户全局 AGENTS.md 示例
   model-catalog-override.md       # Codex 自定义模型 catalog override 教程
   global-git-ignore.md            # 用户级 Git ignore 配置
+  suite-to-plugin-migration.md    # 从 suites 迁移到 plugin 的生产清理流程
   architecture-first-sdlc-flow.md
   claude-to-codex-migration.md
   public-private-strategy.md
@@ -74,15 +75,20 @@ source catalog
   示例：examples/catalog/dev/agents/dev_python_engineer.toml
        examples/catalog/dev/skills/dev-python-quality/SKILL.md
 
+plugin package
+  生产态公开共享 skills 的分发层。
+  示例：plugins/codex-next/skills/dev-python-quality/SKILL.md
+       .agents/plugins/marketplace.json
+
 local suites
-  本机组合层。每个 suite 通过 symlink 选择要暴露哪些 agents / skills。
+  legacy 或 local-dev 组合层。每个 suite 通过 symlink 选择要暴露哪些 agents / skills。
   示例：~/.codex/suites/github/agents/*.toml
        ~/.codex/suites/github/skills/*
        ~/.codex/suites/all/agents/*.toml
        ~/.codex/suites/all/skills/*
 
 runtime entrypoints
-  Codex 启动目录实际能发现的 .codex/agents 和 .codex/skills。
+  Codex 启动目录可选发现的 .codex/agents 和 legacy .codex/skills。
   示例：<repo>/.codex/agents/<agent>.toml
        <repo>/.codex/skills/<skill>
 ```
@@ -157,6 +163,9 @@ codex plugin add codex-next@codex-is-all-you-need
 
 安装后可以调用 `$codex-next:core-router`，或直接要求 Codex 使用 Codex Next 处理任务。
 
+如果你要把已有机器从 suite-based runtime entrypoints 迁移到 Codex Next，见
+[Suite To Plugin Migration](docs/suite-to-plugin-migration.md)。
+
 ### 3. 生成只读 dashboard
 
 首次配置：
@@ -187,9 +196,13 @@ python3 dashboard/build_dashboard.py \
   --json-only
 ```
 
-Dashboard 是只读工具，不会创建、删除或修改 symlink。更多字段说明见 [dashboard/README.md](dashboard/README.md)。
+Dashboard 是只读工具，主要用于 source catalog 检查和 legacy/local-dev suite 可见性检查。
+它不会创建、删除或修改 symlink。更多字段说明见 [dashboard/README.md](dashboard/README.md)。
 
-### 4. 批量同步 Git repo 入口
+### 4. 可选：同步 legacy/local-dev Git repo 入口
+
+生产态共享 skills 应来自已安装的 Codex Next 插件。这个 helper 只用于 legacy suite
+设置、local-dev 实验，或项目专属 custom agent 暴露。
 
 Codex 不会从子 git repo 自动继承父目录 `.codex`。如果你已经有一个聚合好的工作区入口，例如：
 
@@ -257,7 +270,9 @@ python3 scripts/sync_codex_entrypoints.py clean \
 
 脚本只处理指向当前 `--source-root` 的 symlink，不删除真实文件、真实目录或项目自定义 entrypoints。如果真实目录里有本地内容，目录模式会报告 conflict，而不是直接替换。
 
-`.agents/skills` 应保留给项目专属 skills。不要把共享 suite skills 部署到这里；共享 runtime 可见性应通过 `.codex/skills` 的目录级或逐项链接实现。
+`.agents/skills` 应保留给项目专属 skills。不要把共享 plugin 或 suite skills 部署到这里。
+生产态共享 skills 应安装插件；legacy/local-dev suite 可见性才通过 `.codex/skills`
+的目录级或逐项链接实现。
 
 ## 支持的 Agents 和 Skills
 
@@ -380,7 +395,8 @@ runtime 可见位置：
 <repo>/.codex/agents/dev_python_engineer.toml
 ```
 
-注意：custom agent 的 repo-local discovery 路径是 `.codex/agents/*.toml`，不是 `.agents/agents`。
+注意：custom agent 的 repo-local discovery 路径是 `.codex/agents/*.toml`，
+不是 `.agents/agents`。Codex Next 不打包这些 custom agent TOML 文件。
 
 ## 如何仿照创建自己的 Skill
 
@@ -417,6 +433,9 @@ runtime 可见位置：
 <repo>/.codex/skills/dev-python-quality/SKILL.md
 ```
 
+生产态共享 skills 优先使用已安装的 `codex-next` 插件，而不是 repo-local
+`.codex/skills` symlink。上面的路径用于 legacy、local-dev 或项目专属暴露。
+
 项目专属 skill 也可以放在：
 
 ```text
@@ -429,9 +448,10 @@ runtime 可见位置：
 
 ```text
 1. 先维护 source catalog
-2. 再维护 local suites
-3. 最后暴露 runtime entrypoints
-4. 用 dashboard 和 Codex 可见性验证
+2. 保持 plugins/codex-next 这个 packaged skill surface 同步
+3. local suites 只用于 legacy/custom-agent/local-dev 组合
+4. 只有 plugin 路径不够时才暴露 runtime entrypoints
+5. 用 plugin、dashboard 和 Codex 可见性验证
 ```
 
 不要：
@@ -448,9 +468,11 @@ runtime 可见位置：
 - `.codex/` 和 `.agents/` 作为本机 entrypoint state 加入 ignore。
 - 跨仓库个人 ignore 规则放在 `~/.config/git/ignore`；见
   [Global Git Ignore Profile](docs/global-git-ignore.md)。
-- suite 里使用 symlink，source catalog 里保存真实文件。
+- 保持 plugin 打包的公开 skills 和 source catalog 对齐。
+- legacy/local-dev suite 里使用 symlink，source catalog 里保存真实文件。
 - 私有生产 catalog 和公开示例 catalog 分离。
-- 每次改 suite 后跑 `dashboard/build_dashboard.py --json-only`。
+- 每次改 suite 后跑 `dashboard/build_dashboard.py --json-only`；每次改 plugin package 后使用
+  Codex plugin list 命令验证。
 
 ## 公开与私有边界
 
@@ -458,7 +480,8 @@ runtime 可见位置：
 
 - dashboard 源码。
 - 脱敏后的 agent / skill 示例。
-- suite / runtime 管理模式。
+- Codex Next plugin package 和 marketplace metadata。
+- legacy suite / runtime 管理模式。
 - 脱敏后的 discovery 边界结论。
 - 可复用的 entrypoint 同步脚本。
 

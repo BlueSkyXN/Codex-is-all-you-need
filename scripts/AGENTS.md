@@ -1,9 +1,10 @@
 # scripts navigation card
 
-This directory contains filesystem automation for managing repo-local Codex
-runtime entrypoint symlinks. Read this card before changing CLI flags, sync or
-clean behavior, conflict handling, ignore-file behavior, or tests for the sync
-script.
+This directory contains legacy/local-development filesystem automation for
+managing repo-local Codex runtime entrypoint symlinks. Production shared skills
+should come from the installed plugin. Read this card before changing CLI flags,
+sync or clean behavior, conflict handling, ignore-file behavior, or tests for
+the sync script.
 Key files: `sync_codex_entrypoints.py` and
 `../tests/test_sync_codex_entrypoints.py`.
 

@@ -8,6 +8,9 @@
 
 本目录是从私有 Codex preset catalog 抽取并脱敏后的公开安全 source catalog。内容应保持通用、可复用，不包含机器特定信息或业务私有细节。
 
+生产态共享 skill 可见性由 Codex Next 插件打包提供。custom agent 与 legacy/local-dev
+本地可见性由 filesystem placement 和 suites 决定，而不是由 agent prose 单独决定。
+
 ## 目录结构
 
 每个分组都遵循同一结构：
@@ -26,7 +29,8 @@
 - `description`、`developer_instructions`、`nickname_candidates` 只能包含可公开内容。
 - 默认不设置模型策略字段；agent 应继承 runtime 配置，除非有明确理由单独覆盖。
 - `nickname_candidates` 最多保留一个候选名。
-- Recommended skills 只能引用本 catalog 中的公开 skill，或描述为当前 runtime 可见的通用 workflow。
+- Recommended skills 只能引用本 catalog 中的公开 skill，或描述为 plugin-installed /
+  runtime-visible 的通用 workflow。
 
 ## Skill 规则
 

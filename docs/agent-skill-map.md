@@ -7,9 +7,12 @@ is for, and which skills are recommended by each agent.
 这是一个公开安全的六类 Codex 预设分工示例，也是支持 agent / skill 的详细索引：
 包含哪些 agent / skill、每个角色负责什么、每个 agent 推荐哪些 skills。
 
-It documents the relationship between agents, recommended skills, and suites without exposing private paths, private workflows, or real machine state.
+It documents the relationship between agents, recommended skills, plugin
+packaging, and optional suite compositions without exposing private paths,
+private workflows, or real machine state.
 
-它只说明 agents、recommended skills 和 suites 的关系，不暴露私有路径、私有工作流或真实本机状态。
+它只说明 agents、recommended skills、plugin packaging 和可选 suite 组合的关系，
+不暴露私有路径、私有工作流或真实本机状态。
 
 ## Rules / 规则
 
@@ -23,17 +26,20 @@ Skill
   CN: 可复用工作流、验证门槛、脚本、参考资料和资产。
 
 Suite
-  EN: Runtime-visible composition of agents and skills.
-  CN: 当前运行目录可见的 agent/skill 组合包。
+  EN: Optional legacy/local-development composition of agents and skills.
+  CN: 可选的 legacy/local-dev agent/skill 组合包。
 ```
 
 Recommended skills are hints in `developer_instructions`. They are not hard bundles.
 
 `Recommended skills` 是写在 `developer_instructions` 里的提示，不是强制捆绑。
 
-Actual availability is decided by runtime filesystem visibility:
+Production shared skills are available through the installed plugin. Custom
+agents and legacy/local-dev local skills are decided by runtime filesystem
+visibility:
 
-实际可用性由 runtime 文件结构决定：
+生产态共享 skills 通过已安装插件可用。custom agents 和 legacy/local-dev 本地
+skills 的可用性由 runtime 文件结构决定：
 
 ```text
 <runtime>/.codex/agents
@@ -126,7 +132,14 @@ Actual availability is decided by runtime filesystem visibility:
 | `research_gap_finder` | Find gaps, conflicts, weak assumptions, and follow-up questions | `research-evidence-table`, `research-synthesis` |
 | `research_synthesis_writer` | Draft research briefs and synthesis notes | `research-synthesis`, `research-evidence-table`, `office-briefing-note` |
 
-## Suite Examples / Suite 示例
+## Optional Suite Examples / 可选 Suite 示例
+
+These are legacy/local-development compositions. They are useful for custom
+agents, experiments, or machines that have not migrated shared skills to Codex
+Next. They are not the production path for plugin-packaged skills.
+
+这些是 legacy/local-dev 组合，适合 custom agents、实验，或尚未把共享 skills
+迁移到 Codex Next 的机器。它们不是 plugin-packaged skills 的生产路径。
 
 ```text
 user
@@ -154,9 +167,9 @@ all
   common + sdlc-manager + dev + data + office + research
 ```
 
-Runtime links should expose only:
+Runtime links should expose only the intended legacy/local-dev entries:
 
-runtime 只应暴露：
+runtime 只应暴露有意使用的 legacy/local-dev entries：
 
 ```text
 <runtime>/.codex/agents -> <suite>/agents

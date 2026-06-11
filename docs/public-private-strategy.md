@@ -8,23 +8,31 @@ This repository is the public layer. It should teach the system design and provi
 
 ```text
 public repository
-  EN: Dashboard, docs, sanitized production-derived examples, migration guides.
-  CN: 面板、文档、经过脱敏的 production-derived 示例、迁移说明。
+  EN: Dashboard, docs, sanitized production-derived examples, plugin package,
+      marketplace metadata, migration guides.
+  CN: 面板、文档、经过脱敏的 production-derived 示例、插件包、marketplace metadata、
+      迁移说明。
+
+plugin distribution
+  EN: Codex Next packages public-safe shared skills and is installed through
+      the repository marketplace.
+  CN: Codex Next 打包公开安全的共享 skills，并通过仓库 marketplace 安装。
 
 private production catalog
   EN: Real agents, real skills, private workflows, local business process.
   CN: 真实 agents、真实 skills、私有工作流、本地业务流程。
 
-local suite aggregation
-  EN: Machine-local symlink compositions that choose which agents and skills
-      are exposed to each runtime domain.
-  CN: 本机 symlink 聚合层，决定每个运行目录暴露哪些 agents / skills。
+legacy/local-dev suite aggregation
+  EN: Legacy or local-development symlink compositions for custom agents,
+      experiments, or machines that have not migrated to plugins.
+  CN: legacy 或 local-dev symlink 聚合层，用于 custom agents、实验，或尚未迁移到
+      plugin 的机器。
 
 runtime directories
   EN: Work directories where Codex runs. They expose repo-local `.codex`
-      entrypoints by linking to a suite or to a workspace aggregate.
+      entrypoints only when a local suite/custom-agent path is intentionally used.
   CN: Codex 实际运行的工作目录，通过 repo-local `.codex` entrypoints
-      连接到某个 suite 或工作区聚合层。
+      有意使用本地 suite/custom-agent 路径时才暴露入口。
 
 project overlays
   EN: Optional `.agents/skills` folders for project-specific skill extras.
@@ -40,6 +48,7 @@ The public repository may include:
 公开仓库可以包含：
 
 - Dashboard source code.
+- Codex Next plugin package and marketplace metadata.
 - Public-safe docs.
 - Sanitized public-safe agents and skills.
 - Production-derived examples after private content has been removed.
@@ -91,9 +100,12 @@ Private skills may point to private templates, scripts, and examples. Keep them 
 
 ## Suite Rules / Suite 规则
 
-Suites are local compositions, not source catalogs.
+Suites are local compositions, not source catalogs. They are legacy or
+local-development infrastructure after shared production skills move into the
+Codex Next plugin.
 
-suite 是本机组合层，不是素材源。
+suite 是本机组合层，不是素材源。在共享生产 skills 迁移到 Codex Next 插件后，
+它们属于 legacy 或 local-dev 基础设施。
 
 ```text
 ~/.codex/suites/
@@ -129,12 +141,16 @@ This supports one source item being reused by many suites.
 
 ## Runtime Rules / 运行目录规则
 
-Runtime directories should link only the exposed entries. A parent workspace
-`.codex` is not inherited automatically by child git repositories, so each repo
-that should opt in needs local entrypoints:
+Production shared skills should come from the installed plugin. Runtime
+directories should link exposed entries only for legacy suite setups,
+local-development experiments, or project-specific custom agents. A parent
+workspace `.codex` is not inherited automatically by child git repositories, so
+each repo that should opt in to this local path needs local entrypoints:
 
-运行目录只应连接暴露入口。父级工作区 `.codex` 不会被子 git repo 自动继承，
-所以每个需要 opt in 的 repo 都需要本地 entrypoints：
+生产态共享 skills 应来自已安装插件。运行目录只有在 legacy suite 设置、local-dev
+实验或项目专属 custom agents 场景下才应连接暴露入口。父级工作区 `.codex`
+不会被子 git repo 自动继承，所以每个需要 opt in 本地路径的 repo 都需要本地
+entrypoints：
 
 ```text
 <runtime>/.codex/agents -> ~/.codex/suites/<suite>/agents
@@ -149,12 +165,13 @@ Do not symlink the whole `.codex` folder. Other local files under `.codex` may n
 
 不要 symlink 整个 `.codex` 文件夹。`.codex` 下的其他本地文件可能需要保留运行目录自己的配置。
 
-For batch setup, use the entrypoint sync helper in dry-run mode first. Choose
-`--link-mode directories` for workspace aggregates unless the target repo needs
-real entry directories.
+For legacy/local-dev batch setup, use the entrypoint sync helper in dry-run mode
+first. Choose `--link-mode directories` for workspace aggregates unless the
+target repo needs real entry directories.
 
-批量设置时，先用 entrypoint sync helper 做 dry-run。对 workspace 聚合层优先选择
-`--link-mode directories`；只有目标 repo 需要保留真实入口目录时才用逐项模式。
+legacy/local-dev 批量设置时，先用 entrypoint sync helper 做 dry-run。对 workspace
+聚合层优先选择 `--link-mode directories`；只有目标 repo 需要保留真实入口目录时才用
+逐项模式。
 
 ```bash
 python3 scripts/sync_codex_entrypoints.py sync \
@@ -206,9 +223,12 @@ For user-level defaults across repositories, use Git's XDG ignore path
 
 ## Project-Specific Overlays / 项目专属叠加
 
-Shared suites are good for broad work domains. Project-specific skills can live in project-local overlays:
+Plugin-installed skills are the shared production layer. Legacy/local-dev
+suites can still serve broad work domains, and project-specific skills can live
+in project-local overlays:
 
-共享 suite 适合大任务域。项目专属技能可以放在项目本地叠加层：
+插件安装的 skills 是共享生产层。legacy/local-dev suites 仍可服务大任务域，
+项目专属技能可以放在项目本地叠加层：
 
 ```text
 <project>/
@@ -229,22 +249,23 @@ This gives two layers:
 这形成两层：
 
 ```text
-.codex = shared abstract capability plus repo-local custom agents
+.codex = legacy/local-dev shared capability plus repo-local custom agents
 .agents = project-specific skill capability
 ```
 
-Do not expand shared suite skills into `.agents/skills`. That directory is
+Do not expand shared plugin or suite skills into `.agents/skills`. That directory is
 reserved for user-owned or project-owned overlays. If a repo needs shared
-skills beside local `.codex` content, use entry links under `.codex/skills`
-instead.
+suite skills beside local `.codex` content, use entry links under
+`.codex/skills` instead. For production shared skills, install the plugin.
 
-不要把共享 suite skills 展开到 `.agents/skills`。这个目录应保留给用户或项目自有叠加层。
-如果某个 repo 需要在本地 `.codex` 内容旁边放共享 skills，应在 `.codex/skills` 下使用
-逐项链接。
+不要把共享 plugin 或 suite skills 展开到 `.agents/skills`。这个目录应保留给用户或项目自有叠加层。
+如果某个 repo 需要在本地 `.codex` 内容旁边放共享 suite skills，应在 `.codex/skills`
+下使用逐项链接。生产态共享 skills 应安装插件。
 
-The dashboard currently focuses on `.codex` suite connections. Project overlay discovery can be added later.
+The dashboard currently focuses on `.codex` suite connections for
+legacy/local-dev setups. Project overlay discovery can be added later.
 
-当前面板主要检查 `.codex` 的 suite 连接。项目叠加层发现能力可后续加入。
+当前面板主要检查 legacy/local-dev 设置中的 `.codex` suite 连接。项目叠加层发现能力可后续加入。
 
 ## Publish Checklist / 发布检查
 
@@ -256,4 +277,5 @@ Before publishing:
 - Confirm generated dashboard output is ignored.
 - Confirm example configs use placeholder paths only.
 - Confirm example agents and skills are public-safe and do not depend on unpublished private skills.
+- Confirm plugin package and marketplace metadata contain only public-safe skill content.
 - Confirm docs explain the public/private boundary.

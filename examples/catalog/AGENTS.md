@@ -23,8 +23,9 @@ Current groups are `common`, `sdlc-manager`, `dev`, `data`, `office`, and `resea
 - This catalog is a reusable public subset, not a dump of private runtime state.
 - Keep the architecture-first SDLC control plane centered on `sdlc-manager`;
   direct development fallback belongs in `dev`.
-- Runtime visibility is decided by filesystem placement and suites, not by
-  agent prose alone.
+- Production shared-skill visibility is provided by the Codex Next plugin when
+  packaged. Custom agent and legacy/local-dev local visibility is decided by
+  filesystem placement and suites, not by agent prose alone.
 
 ## Agent TOML Rules
 
@@ -32,7 +33,8 @@ Current groups are `common`, `sdlc-manager`, `dev`, `data`, `office`, and `resea
 - Use only public-safe `description`, `developer_instructions`, and `nickname_candidates`.
 - Do not set model policy fields by default; agents should inherit runtime configuration unless an override is explicitly justified.
 - Keep at most one `nickname_candidates` entry.
-- Recommended skills must reference public skills in this catalog or generic runtime-visible workflows.
+- Recommended skills must reference public skills in this catalog or generic
+  plugin-installed/runtime-visible workflows.
 
 ## Skill Rules
 

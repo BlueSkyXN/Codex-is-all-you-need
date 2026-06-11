@@ -1,15 +1,16 @@
 # dashboard navigation card
 
 This directory contains the stdlib Python generator for a read-only Codex preset
-dashboard. Read this card before modifying `build_dashboard.py`, templates,
-example config, or dashboard docs.
+dashboard focused on source catalogs and legacy/local-dev suite visibility.
+Read this card before modifying `build_dashboard.py`, templates, example
+config, or dashboard docs.
 Key files: `build_dashboard.py`, `templates/index.html`,
 `examples/config.example.toml`, and `README.md`.
 
 ## Local invariants
 
-- The dashboard is read-only with respect to source catalogs, suites, runtime
-  folders, `.codex`, `.agents`, agent TOML, and `SKILL.md`.
+- The dashboard is read-only with respect to source catalogs, legacy/local-dev
+  suites, runtime folders, `.codex`, `.agents`, agent TOML, and `SKILL.md`.
 - Generated dashboard state should normally be written outside this repository,
   for example under `~/.codex/dashboard/`.
 - Config examples must use placeholders and public-safe paths only.
@@ -32,8 +33,8 @@ Key files: `build_dashboard.py`, `templates/index.html`,
   local dashboard config.
 - Do not write private roots, internal URLs, or machine-specific absolute paths
   into `examples/config.example.toml`.
-- Do not treat dashboard warnings about local production state as proof of this
-  public repository's catalog health.
+- Do not treat dashboard warnings about local legacy suite state as proof of
+  this public repository's catalog health.
 
 ## Validation
 

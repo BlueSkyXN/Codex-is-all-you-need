@@ -7,9 +7,27 @@ agent / skill preset system.
 
 ## 1. Mental Model / 心智模型
 
-The system has three layers.
+The production path is plugin-first.
 
-这套系统分三层。
+生产路径是 plugin-first。
+
+```text
+source catalog
+  EN: The source of truth for public-safe skill folders and agent examples.
+  CN: 公开安全 skill folder 和 agent 示例的事实源。
+
+plugin package
+  EN: `plugins/codex-next`, the packaged shared-skill surface.
+  CN: `plugins/codex-next`，打包后的共享 skill surface。
+
+marketplace install
+  EN: `.agents/plugins/marketplace.json` exposes the checked-in plugin.
+  CN: `.agents/plugins/marketplace.json` 暴露仓库内插件。
+```
+
+The legacy/local-development suite path still has three layers.
+
+legacy/local-dev suite 路径仍然分三层。
 
 ```text
 source catalog
@@ -17,20 +35,22 @@ source catalog
   CN: agent TOML 和 skill folder 的事实源。
 
 local suites
-  EN: Machine-local symlink compositions that select which source entries are
-      exposed together.
-  CN: 本机 symlink 组合层，用来选择哪些 source entries 被一起暴露。
+  EN: Legacy or local-development symlink compositions that select which
+      source entries are exposed together.
+  CN: legacy 或 local-dev symlink 组合层，用来选择哪些 source entries 被一起暴露。
 
 runtime entrypoints
-  EN: The actual `.codex/agents` and `.codex/skills` entries visible from the
-      directory where Codex runs.
-  CN: Codex 启动目录实际可见的 `.codex/agents` 和 `.codex/skills`。
+  EN: Optional `.codex/agents` and legacy `.codex/skills` entries visible from
+      the directory where Codex runs.
+  CN: Codex 启动目录可选可见的 `.codex/agents` 和 legacy `.codex/skills`。
 ```
 
-The core rule is that source entries are reusable, suites are composed views,
-and runtime directories only expose entrypoints.
+The core rule is that shared production skills come from the plugin; suites are
+composed views for legacy/custom-agent/local-dev needs; runtime directories
+only expose entrypoints when that local path is intentionally used.
 
-核心规则是：source entries 可复用，suites 是组合视图，runtime directories 只暴露入口。
+核心规则是：生产态共享 skills 来自插件；suites 是 legacy/custom-agent/local-dev
+场景的组合视图；runtime directories 只有明确使用本地路径时才暴露入口。
 
 ## 2. What Codex Actually Discovers / Codex 实际发现什么
 
@@ -61,7 +81,8 @@ Important consequences:
 - Sibling subtrees are not scanned.
 - Nested git repos block outer repo-level discovery.
 - Repo-local custom agents belong in `.codex/agents/*.toml`.
-- Repo-local skills can be exposed from `.codex/skills/<skill>` or `.agents/skills/<skill>`.
+- Production shared skills should come from installed plugins.
+- Repo-local skills can be exposed from legacy `.codex/skills/<skill>` or project-specific `.agents/skills/<skill>`.
 
 This repository includes a sanitized public summary at
 [discovery-boundaries.md](discovery-boundaries.md). Keep machine-specific
@@ -84,6 +105,23 @@ without exposing private workflows.
 
 这个 catalog 是公开安全、经过脱敏的示例。它保留生产结构，但不暴露私有工作流。
 
+### Install Codex Next / 安装 Codex Next
+
+Codex Next is the production path for shared public skills from this repository.
+
+Codex Next 是本仓库公开共享 skills 的生产路径。
+
+```bash
+codex plugin marketplace add https://github.com/BlueSkyXN/Codex-is-all-you-need.git
+codex plugin list --marketplace codex-is-all-you-need --available --json
+codex plugin add codex-next@codex-is-all-you-need
+```
+
+After installation, start with `$codex-next:core-router` or ask Codex to use
+Codex Next for the task.
+
+安装后可以从 `$codex-next:core-router` 开始，或直接要求 Codex 使用 Codex Next。
+
 ### Generate the dashboard / 生成面板
 
 ```bash
@@ -104,12 +142,19 @@ python3 dashboard/build_dashboard.py \
   --json-only
 ```
 
-The dashboard is read-only. It reports source entries, suites, runtime
-connections, broken symlinks, and status issues.
+The dashboard is read-only. It reports source entries, legacy/local-dev suites,
+runtime connections, broken symlinks, and status issues.
 
-面板是只读的。它会报告 source entries、suites、runtime 连接、断链和状态问题。
+面板是只读的。它会报告 source entries、legacy/local-dev suites、runtime 连接、断链和状态问题。
 
-### Sync repo-local entrypoints / 同步 repo-local 入口
+### Optional: sync legacy/local-dev repo-local entrypoints / 可选：同步 legacy/local-dev repo-local 入口
+
+Use this only for legacy suite setups, local-development experiments, or
+project-specific custom agent exposure. Production shared skills should come
+from the installed plugin.
+
+只有 legacy suite 设置、local-dev 实验或项目专属 custom agent 暴露才需要使用这里。
+生产态共享 skills 应来自已安装插件。
 
 If your workspace aggregate is:
 
@@ -173,18 +218,18 @@ For cross-repository personal defaults, keep user-level rules in
 跨仓库个人默认规则应放在 `~/.config/git/ignore`；见
 [Global Git Ignore Profile](global-git-ignore.md)。
 
-Do not deploy shared suites into `.agents/skills`; keep `.agents/skills` for
-project-only skills.
+Do not deploy shared plugin or suite skills into `.agents/skills`; keep
+`.agents/skills` for project-only skills.
 
-不要把共享 suite 部署到 `.agents/skills`；`.agents/skills` 应留给项目专属 skills。
+不要把共享 plugin 或 suite skills 部署到 `.agents/skills`；`.agents/skills` 应留给项目专属 skills。
 
 ## 4. Sync, Update, Prune, Clean / 创建、更新、裁剪、清理
 
-The script supports two actions: `sync` and `clean`, and two link modes:
-`directories` and `entries`.
+For legacy/local-dev entrypoint management, the script supports two actions:
+`sync` and `clean`, and two link modes: `directories` and `entries`.
 
-脚本支持两个动作：`sync` 和 `clean`，以及两种链接模式：`directories` 和
-`entries`。
+对于 legacy/local-dev entrypoint 管理，脚本支持两个动作：`sync` 和 `clean`，
+以及两种链接模式：`directories` 和 `entries`。
 
 ```bash
 # Create missing entrypoints and update changed symlink targets.
@@ -315,7 +360,7 @@ Skill 是目录。`SKILL.md` 是入口，`scripts/`、`references/`、`examples/
 
 ```markdown
 ---
-name: python-quality
+name: dev-python-quality
 description: Use for Python implementation, modernization, typing, packaging, pytest, ruff/mypy checks, and maintainability work.
 ---
 
@@ -340,9 +385,17 @@ Recommended source location:
 <source-catalog>/dev/skills/dev-python-quality/SKILL.md
 ```
 
-Runtime-visible location:
+Plugin-installed production availability:
 
-runtime 可见位置：
+plugin 安装后的生产态可用性：
+
+```text
+$codex-next:dev-python-quality
+```
+
+Legacy/local-dev runtime-visible location:
+
+legacy/local-dev runtime 可见位置：
 
 ```text
 <repo>/.codex/skills/dev-python-quality/SKILL.md
@@ -356,11 +409,14 @@ Project-only overlay:
 <repo>/.agents/skills/project-only-skill/SKILL.md
 ```
 
-## 8. Building A Suite / 组合一个 Suite
+## 8. Building A Legacy Or Local-Dev Suite / 组合 legacy 或 local-dev Suite
 
-A suite is a directory with symlink entries:
+A suite is a directory with symlink entries. Use it for local-development
+composition, custom-agent exposure, or legacy machines. For production shared
+skills, prefer Codex Next.
 
-suite 是一个包含 symlink entries 的目录：
+suite 是一个包含 symlink entries 的目录。它适合 local-dev 组合、custom-agent
+暴露或 legacy 机器。生产态共享 skills 优先使用 Codex Next。
 
 ```bash
 mkdir -p ~/.codex/suites/demo-dev/agents
@@ -383,9 +439,9 @@ domain suites are easier to reason about.
 `all` suite 可以用同样模式把所有 source group 链接进同一个 suite。它只适合明确
 需要全能力的 runtime；更小的任务域 suite 更容易维护和审查。
 
-Expose the suite to a runtime:
+Expose the suite to a runtime only when this legacy/local-dev path is intended:
 
-暴露到 runtime：
+只有明确使用 legacy/local-dev 路径时才暴露到 runtime：
 
 ```bash
 mkdir -p /tmp/codex-demo/.codex
@@ -409,10 +465,11 @@ Before changing presets:
 1. Confirm the source catalog is the source of truth.
 2. Confirm agent TOML files parse.
 3. Confirm each skill folder has SKILL.md.
-4. Confirm suite symlinks point to the intended source entries.
-5. Confirm runtime entrypoints are repo-local or user-global as intended.
-6. Run the dashboard in json-only mode.
-7. Use Codex prompt-input or a real Codex run for visibility validation when needed.
+4. Confirm plugin package contents align with intended public skills.
+5. Confirm suite symlinks only exist for legacy/local-dev needs.
+6. Confirm runtime entrypoints are repo-local or user-global as intended.
+7. Run the dashboard in json-only mode when suites are involved.
+8. Use Codex plugin list, prompt-input, or a real Codex run for visibility validation when needed.
 ```
 
 Helpful commands:
@@ -420,6 +477,7 @@ Helpful commands:
 常用命令：
 
 ```bash
+codex plugin list --marketplace codex-is-all-you-need --available --json
 python3 dashboard/build_dashboard.py --config ~/.codex/dashboard/config.toml --json-only
 find -L ~/.codex/suites -type l -print
 git diff --check
@@ -432,12 +490,12 @@ python3 scripts/sync_codex_entrypoints.py sync --workspace /path/to/workspace --
 Mistake:
   Put one .codex under a parent workspace and expect child git repos to inherit it.
 Fix:
-  Sync repo-local .codex entrypoints into each child repo.
+  Install the plugin for shared skills, or sync repo-local .codex entrypoints only for legacy/local-dev suites.
 
 错误：
   在父级工作区放一个 .codex，然后期待所有子 git repo 自动继承。
 修正：
-  给每个子 repo 同步 repo-local .codex entrypoints。
+  共享 skills 安装插件；只有 legacy/local-dev suites 才给每个子 repo 同步 repo-local .codex entrypoints。
 ```
 
 ```text

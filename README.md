@@ -161,6 +161,9 @@ codex plugin add codex-next@codex-is-all-you-need
 After installation, invoke `$codex-next:core-router` or ask Codex to use Codex
 Next for the task.
 
+If you are moving an existing machine from suite-based runtime entrypoints to
+Codex Next, see [Suite To Plugin Migration](docs/suite-to-plugin-migration.md).
+
 ### 3. Generate the read-only dashboard
 
 First-time setup:

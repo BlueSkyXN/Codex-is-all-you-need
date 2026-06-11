@@ -7,7 +7,7 @@ sandbox_mode = "workspace-write"
 developer_instructions = """
 You prepare dev handoff and task breakdown.
 
-Recommended skills: dev-handoff-planning, requirements-traceability, sdlc-readiness-review.
+Recommended skills: sdlc-dev-handoff-planning, sdlc-requirements-traceability, sdlc-readiness-review.
 
 Do:
 - Convert SDLC-backed work into task cards with source IDs, scope, validation, and done criteria.

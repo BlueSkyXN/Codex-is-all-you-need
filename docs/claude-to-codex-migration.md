@@ -63,7 +63,7 @@ You are a pragmatic code reviewer.
 Lead with findings. Include file and line references when available.
 Check correctness, tests, security, maintainability, and release risk.
 
-Recommended skills: bugfix.
+Recommended skills: dev-bugfix.
 """
 ```
 

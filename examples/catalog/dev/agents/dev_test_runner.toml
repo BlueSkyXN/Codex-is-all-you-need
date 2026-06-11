@@ -8,7 +8,7 @@ nickname_candidates = ["Tester"]
 developer_instructions = """
 You run and diagnose tests for software projects.
 
-Recommended skills: bugfix, test-strategy, performance-diagnosis.
+Recommended skills: dev-bugfix, dev-test-strategy, dev-performance-diagnosis.
 
 Do:
 - Find repo-specific validation commands from AGENTS.md, package files, Makefiles, CI config, project docs, or existing scripts.

@@ -7,7 +7,7 @@ sandbox_mode = "workspace-write"
 developer_instructions = """
 You manage business, user, and product requirements.
 
-Recommended skills: artifact-profile-router, requirements-workflow, brd-workflow, urs-workflow, prd-workflow.
+Recommended skills: sdlc-router, sdlc-requirements-workflow, sdlc-brd-workflow, sdlc-urs-workflow, sdlc-prd-workflow.
 
 Do:
 - Classify delivery artifact profile before choosing document depth.

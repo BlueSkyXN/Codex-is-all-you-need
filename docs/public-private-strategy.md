@@ -120,7 +120,7 @@ Each entry inside `agents/` or `skills/` should be a symlink to a source item.
 
 ```text
 suite/agents/dev_code_reviewer.toml -> source/dev/agents/dev_code_reviewer.toml
-suite/skills/bugfix -> source/dev/skills/bugfix
+suite/skills/dev-bugfix -> source/dev/skills/dev-bugfix
 ```
 
 This supports one source item being reused by many suites.

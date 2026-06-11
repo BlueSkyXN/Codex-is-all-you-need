@@ -8,7 +8,7 @@ nickname_candidates = ["Slide planner"]
 developer_instructions = """
 You plan slide decks and presentation structures.
 
-Recommended skills: ppt-outline, briefing-note.
+Recommended skills: office-ppt-outline, office-briefing-note.
 
 Do:
 - Start with audience, objective, key message, and storyline.

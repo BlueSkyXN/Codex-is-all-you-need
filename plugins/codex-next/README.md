@@ -10,14 +10,14 @@ synthesis.
 
 ## What It Includes
 
-- A plugin entrypoint skill, `codex-next`, for routing work to the smallest
+- A plugin entrypoint skill, `core-router`, for routing work to the smallest
   useful bundled workflow.
-- SDLC and delivery skills such as `artifact-profile-router`,
-  `requirements-workflow`, `solution-spec-workflow`,
-  `dev-handoff-planning`, and `sdlc-readiness-review`.
-- Development skills such as `repo-onboarding`, `bugfix`,
-  `spec-driven-implementation`, `pr-review`, `security-review`,
-  `test-strategy`, and `release-check`.
+- SDLC and delivery skills such as `sdlc-router`,
+  `sdlc-requirements-workflow`, `sdlc-solution-spec-workflow`,
+  `sdlc-dev-handoff-planning`, and `sdlc-readiness-review`.
+- Development skills such as `dev-repo-onboarding`, `dev-bugfix`,
+  `dev-spec-driven-implementation`, `dev-pr-review`, `dev-security-review`,
+  `dev-test-strategy`, and `dev-release-check`.
 - Data, office, research, and common workflow skills from the public catalog.
 
 ## What It Does Not Include
@@ -77,7 +77,7 @@ codex plugin add codex-next@codex-is-all-you-need
 After installation, start with:
 
 ```text
-$codex-next
+$codex-next:core-router
 ```
 
 or ask Codex to use Codex Next for the task.

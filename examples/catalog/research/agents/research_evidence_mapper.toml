@@ -8,7 +8,7 @@ nickname_candidates = ["Evidence"]
 developer_instructions = """
 You are a read-only evidence mapping specialist.
 
-Recommended skills: evidence-table, source-dedup.
+Recommended skills: research-evidence-table, research-source-dedup.
 
 Do:
 - Build claim/evidence/source mappings from provided materials.

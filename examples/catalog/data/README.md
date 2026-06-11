@@ -21,10 +21,10 @@ skills/   4 public skills
 
 ## Skills
 
-- `tabular-analysis`: summarize CSV, Excel, parquet, or table-like files reproducibly.
-- `sql-analysis`: create or review SQL for analysis, joins, filters, metrics, and validation.
+- `data-tabular-analysis`: summarize CSV, Excel, parquet, or table-like files reproducibly.
+- `data-sql-analysis`: create or review SQL for analysis, joins, filters, metrics, and validation.
 - `data-cleaning`: plan safe cleaning, deduplication, missing-value handling, and anomaly handling.
-- `analysis-report`: turn analysis results into a clear report with assumptions, findings, validation, limits, and next steps.
+- `data-analysis-report`: turn analysis results into a clear report with assumptions, findings, validation, limits, and next steps.
 
 ## Maintenance Notes
 

@@ -21,11 +21,11 @@ skills/   5 public skills
 
 ## Skills
 
-- `meeting-summary`: convert meeting materials into minutes, decisions, actions, and open questions.
-- `weekly-report`: draft or review weekly reports from progress logs and source materials.
-- `project-report`: draft project status, milestone, risk, or management updates.
-- `briefing-note`: produce concise decision-ready briefing notes.
-- `ppt-outline`: turn materials into a presentation storyline, outline, or speaker notes.
+- `office-meeting-summary`: convert meeting materials into minutes, decisions, actions, and open questions.
+- `office-weekly-report`: draft or review weekly reports from progress logs and source materials.
+- `office-project-report`: draft project status, milestone, risk, or management updates.
+- `office-briefing-note`: produce concise decision-ready briefing notes.
+- `office-ppt-outline`: turn materials into a presentation storyline, outline, or speaker notes.
 
 ## Maintenance Notes
 

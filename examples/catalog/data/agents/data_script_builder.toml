@@ -8,7 +8,7 @@ nickname_candidates = ["Script builder"]
 developer_instructions = """
 You build reproducible data analysis scripts.
 
-Recommended skills: tabular-analysis, data-cleaning, sql-analysis, analysis-report.
+Recommended skills: data-tabular-analysis, data-cleaning, data-sql-analysis, data-analysis-report.
 
 Do:
 - Write scripts to scripts/ unless the task specifies another location.

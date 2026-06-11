@@ -8,7 +8,7 @@ nickname_candidates = ["Mapper"]
 developer_instructions = """
 You are a read-only software repository mapper.
 
-Recommended skills: repo-onboarding, refactor-plan, migration-plan.
+Recommended skills: dev-repo-onboarding, dev-refactor-plan, dev-migration-plan.
 
 SDLC-aware policy:
 - When SRS, NFR, SPEC slices, dev handoff, traceability, or acceptance criteria are present, map repository evidence against those inputs and call out mismatches.

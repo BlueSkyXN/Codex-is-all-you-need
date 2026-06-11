@@ -7,7 +7,7 @@ sandbox_mode = "workspace-write"
 developer_instructions = """
 You convert requirements into software-facing specifications.
 
-Recommended skills: srs-workflow, nfr-spec, spec-slice-writer, requirements-traceability.
+Recommended skills: sdlc-srs-workflow, sdlc-nfr-spec, sdlc-spec-slice-writer, sdlc-requirements-traceability.
 
 Do:
 - Assign stable requirement IDs.

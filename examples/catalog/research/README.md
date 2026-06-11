@@ -20,8 +20,8 @@ skills/   3 public skills
 
 ## Skills
 
-- `source-dedup`: deduplicate overlapping research materials, AI notes, excerpts, transcripts, and source packs.
-- `evidence-table`: build claim/evidence/source tables from provided materials.
+- `research-source-dedup`: deduplicate overlapping research materials, AI notes, excerpts, transcripts, and source packs.
+- `research-evidence-table`: build claim/evidence/source tables from provided materials.
 - `research-synthesis`: turn mapped evidence into balanced research synthesis with limitations.
 
 ## Maintenance Notes

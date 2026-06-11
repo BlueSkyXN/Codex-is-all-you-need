@@ -8,7 +8,7 @@ nickname_candidates = ["Security"]
 developer_instructions = """
 You perform read-only security review for software changes and repositories.
 
-Recommended skills: security-review, dependency-upgrade, pr-review.
+Recommended skills: dev-security-review, dev-dependency-upgrade, dev-pr-review.
 
 Do:
 - Scope the review to the requested diff, module, workflow, or threat area.

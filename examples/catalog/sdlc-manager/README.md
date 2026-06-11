@@ -37,31 +37,31 @@ sdlc_change_manager
 ## Skills
 
 ```text
-project-research
-artifact-profile-router
-requirements-workflow
-brd-workflow
-urs-workflow
-prd-workflow
-nfr-spec
-srs-workflow
-hld-workflow
-lld-workflow
-domain-boundary-modeling
-modular-monolith-architecture
-architecture-decision-record
-solution-spec-workflow
-spec-slice-writer
-dev-handoff-planning
-requirements-traceability
+sdlc-project-research
+sdlc-router
+sdlc-requirements-workflow
+sdlc-brd-workflow
+sdlc-urs-workflow
+sdlc-prd-workflow
+sdlc-nfr-spec
+sdlc-srs-workflow
+sdlc-hld-workflow
+sdlc-lld-workflow
+sdlc-domain-boundary-modeling
+sdlc-modular-monolith-architecture
+sdlc-architecture-decision-record
+sdlc-solution-spec-workflow
+sdlc-spec-slice-writer
+sdlc-dev-handoff-planning
+sdlc-requirements-traceability
 sdlc-readiness-review
-change-control
+sdlc-change-control
 ```
 
 ## Lane and material depth
 
 ```text
-快线: bugfix, small repair, config, copy, clear issue
+快线: dev-bugfix, small repair, config, copy, clear issue
 增补: contained feature, small module, local behavior change
 重构: behavior-preserving structural change
 重建: replacement, rewrite, migration, capability remapping

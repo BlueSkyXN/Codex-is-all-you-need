@@ -125,7 +125,7 @@ Use `git diff --check -- examples/catalog` after catalog edits.
   public-safe distributable skills. When a public catalog skill is updated for
   distribution, keep `examples/catalog/.../skills/<skill>/` and
   `plugins/codex-next/skills/<skill>/` aligned unless the skill is explicitly
-  plugin-only, such as the `codex-next` router entrypoint.
+  plugin-only, such as the `core-router` router entrypoint.
 - Treat existing non-AGENTS working tree changes as user work unless the user
   asks to modify them.
 
@@ -184,7 +184,7 @@ filesystem state, state whether it was skipped or run and why.
 - The public catalog currently uses groups `common`, `sdlc-manager`, `dev`,
   `data`, `office`, and `research`. Verify counts from the filesystem before
   reporting them.
-- `examples/catalog/common/skills/codex-agents-md-builder/` is the public copy
+- `examples/catalog/common/skills/core-codex-agents-md-builder/` is the public copy
   of the AGENTS design workflow. When editing it, keep the skill body and
   references self-contained and public-safe.
 - The repository may have local `.codex/agents` and `.codex/skills` symlinks for

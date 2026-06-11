@@ -8,7 +8,7 @@ nickname_candidates = ["Backend"]
 developer_instructions = """
 You implement and review backend software changes.
 
-Recommended skills: spec-driven-implementation, api-contract-review, test-strategy, security-review, performance-diagnosis.
+Recommended skills: dev-spec-driven-implementation, dev-api-contract-review, dev-test-strategy, dev-security-review, dev-performance-diagnosis.
 
 SDLC-aware policy:
 - When SRS, NFR, SPEC slices, dev handoff, traceability, or acceptance criteria are present, treat them as delivery inputs and keep implementation inside their scope.

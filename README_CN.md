@@ -58,7 +58,7 @@ docs/
   public-private-strategy.md
 
 plugins/
-  codex-next/                     # 可安装的 skills 插件
+  codex-next/                      # 可安装的 skills 插件
 
 examples/
   catalog/                        # 脱敏后的公开 agent / skill source catalog
@@ -72,7 +72,7 @@ examples/
 source catalog
   存放真实 agent TOML 和 skill folder。
   示例：examples/catalog/dev/agents/dev_python_engineer.toml
-       examples/catalog/dev/skills/python-quality/SKILL.md
+       examples/catalog/dev/skills/dev-python-quality/SKILL.md
 
 local suites
   本机组合层。每个 suite 通过 symlink 选择要暴露哪些 agents / skills。
@@ -114,7 +114,7 @@ find examples/catalog -maxdepth 3 \( -path '*/agents/*.toml' -o -path '*/skills/
 
 Codex Next 把公开安全的 skills 打包成一个可安装插件。它不打包
 `.codex/agents` custom agent TOML，也不打包本机 suite symlink。插件内包含
-`codex-next` 入口 skill，用来把任务路由到最小充分的内置工作流。
+`core-router` 入口 skill，用来把任务路由到最小充分的内置工作流。
 
 插件源码：
 
@@ -141,7 +141,7 @@ codex plugin marketplace add /path/to/Codex-is-all-you-need
 codex plugin add codex-next@codex-is-all-you-need
 ```
 
-安装后可以调用 `$codex-next`，或直接要求 Codex 使用 Codex Next 处理任务。
+安装后可以调用 `$codex-next:core-router`，或直接要求 Codex 使用 Codex Next 处理任务。
 
 ### 3. 生成只读 dashboard
 
@@ -287,32 +287,32 @@ dev
 常用 skills：
 
 ```text
-prd-workflow
-project-research
-srs-workflow
-nfr-spec
-hld-workflow
-lld-workflow
-domain-boundary-modeling
-architecture-decision-record
-solution-spec-workflow
-spec-slice-writer
-dev-handoff-planning
-requirements-traceability
+sdlc-prd-workflow
+sdlc-project-research
+sdlc-srs-workflow
+sdlc-nfr-spec
+sdlc-hld-workflow
+sdlc-lld-workflow
+sdlc-domain-boundary-modeling
+sdlc-architecture-decision-record
+sdlc-solution-spec-workflow
+sdlc-spec-slice-writer
+sdlc-dev-handoff-planning
+sdlc-requirements-traceability
 sdlc-readiness-review
-change-control
+sdlc-change-control
 
-repo-onboarding
-spec-driven-implementation
-bugfix
-pr-review
-test-strategy
-python-quality
-api-contract-review
-frontend-ui-implementation
-security-review
-performance-diagnosis
-release-check
+dev-repo-onboarding
+dev-spec-driven-implementation
+dev-bugfix
+dev-pr-review
+dev-test-strategy
+dev-python-quality
+dev-api-contract-review
+dev-frontend-ui-implementation
+dev-security-review
+dev-performance-diagnosis
+dev-release-check
 ```
 
 完整清单和推荐关系见 [docs/agent-skill-map.md](docs/agent-skill-map.md)，各 pack 的 README 在：
@@ -339,7 +339,7 @@ sandbox_mode = "workspace-write"
 developer_instructions = """
 You implement Python software using the project's actual conventions.
 
-Recommended skills: python-quality, test-strategy.
+Recommended skills: dev-python-quality, dev-test-strategy.
 
 Do:
 - Inspect project config and tests first.
@@ -373,7 +373,7 @@ runtime 可见位置：
 
 ```markdown
 ---
-name: python-quality
+name: dev-python-quality
 description: Use for Python implementation, modernization, typing, packaging, pytest, ruff/mypy checks, and maintainability work.
 ---
 
@@ -393,13 +393,13 @@ Use this workflow when Python code, packaging, tests, scripts, or modernization 
 放置位置：
 
 ```text
-<source>/dev/skills/python-quality/SKILL.md
+<source>/dev/skills/dev-python-quality/SKILL.md
 ```
 
 runtime 可见位置：
 
 ```text
-<repo>/.codex/skills/python-quality/SKILL.md
+<repo>/.codex/skills/dev-python-quality/SKILL.md
 ```
 
 项目专属 skill 也可以放在：

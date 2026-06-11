@@ -248,9 +248,9 @@ Route by verdict:
 
 | Verdict | Route |
 |---|---|
-| `ready-for-dev` | `dev-handoff-planning` or dev implementation skill |
-| `ready-for-direct-dev` | dev skill such as `bugfix`, `repo-onboarding`, or `spec-driven-implementation` |
-| `repo-onboarding-first` | `repo-onboarding` |
-| `revise` | relevant authoring skill: `srs-workflow`, `nfr-spec`, `spec-slice-writer`, `requirements-workflow` |
-| `change-control-needed` | `change-control` |
+| `ready-for-dev` | `sdlc-dev-handoff-planning` or dev implementation skill |
+| `ready-for-direct-dev` | dev skill such as `dev-bugfix`, `dev-repo-onboarding`, or `dev-spec-driven-implementation` |
+| `repo-onboarding-first` | `dev-repo-onboarding` |
+| `revise` | relevant authoring skill: `sdlc-srs-workflow`, `sdlc-nfr-spec`, `sdlc-spec-slice-writer`, `sdlc-requirements-workflow` |
+| `change-control-needed` | `sdlc-change-control` |
 | `blocked` | ask for required owner decision, missing input, or conflict resolution |

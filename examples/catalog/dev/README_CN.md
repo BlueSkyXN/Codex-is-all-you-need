@@ -21,14 +21,14 @@ skills/   20 个公开 skills
 ## Skills
 
 ```text
-accessibility-audit      api-contract-review      bugfix
-build-optimization       cli-tooling-workflow     dependency-upgrade
-frontend-ui-implementation
-fullstack-feature        git-workflow             migration-plan
-performance-diagnosis    pr-review                prompt-evaluation
-python-quality           refactor-plan            release-check
-repo-onboarding          security-review          spec-driven-implementation
-test-strategy
+dev-accessibility-audit      dev-api-contract-review      dev-bugfix
+dev-build-optimization       dev-cli-tooling-workflow     dev-dependency-upgrade
+dev-frontend-ui-implementation
+dev-fullstack-feature        dev-git-workflow             dev-migration-plan
+dev-performance-diagnosis    dev-pr-review                dev-prompt-evaluation
+dev-python-quality           dev-refactor-plan            dev-release-check
+dev-repo-onboarding          dev-security-review          dev-spec-driven-implementation
+dev-test-strategy
 ```
 
 ## 使用说明

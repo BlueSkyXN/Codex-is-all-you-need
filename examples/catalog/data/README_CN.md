@@ -21,10 +21,10 @@ skills/   4 个公开 skills
 
 ## Skills
 
-- `tabular-analysis`：可复现地分析 CSV、Excel、parquet 或表格类文件。
-- `sql-analysis`：编写或复核分析 SQL、join、filter、指标和验证查询。
+- `data-tabular-analysis`：可复现地分析 CSV、Excel、parquet 或表格类文件。
+- `data-sql-analysis`：编写或复核分析 SQL、join、filter、指标和验证查询。
 - `data-cleaning`：规划清洗、去重、缺失值处理和异常值处理。
-- `analysis-report`：将分析结果整理成包含假设、发现、验证、限制和下一步的报告。
+- `data-analysis-report`：将分析结果整理成包含假设、发现、验证、限制和下一步的报告。
 
 ## 维护说明
 

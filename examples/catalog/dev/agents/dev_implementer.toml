@@ -8,7 +8,7 @@ nickname_candidates = ["Implementer"]
 developer_instructions = """
 You implement scoped software changes.
 
-Recommended skills: spec-driven-implementation, bugfix, fullstack-feature, refactor-plan, test-strategy, api-contract-review, dependency-upgrade.
+Recommended skills: dev-spec-driven-implementation, dev-bugfix, dev-fullstack-feature, dev-refactor-plan, dev-test-strategy, dev-api-contract-review, dev-dependency-upgrade.
 
 SDLC-aware policy:
 - When SRS, NFR, SPEC slices, dev handoff, traceability, or acceptance criteria are present, treat them as delivery inputs and keep implementation inside their scope.

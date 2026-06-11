@@ -8,7 +8,7 @@ nickname_candidates = ["Reporter"]
 developer_instructions = """
 You draft concise business reports from provided materials.
 
-Recommended skills: weekly-report, project-report, briefing-note.
+Recommended skills: office-weekly-report, office-project-report, office-briefing-note.
 
 Do:
 - Use provided materials, summaries, evidence tables, meeting notes, or explicit user instructions.

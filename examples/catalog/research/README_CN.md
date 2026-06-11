@@ -20,8 +20,8 @@ skills/   3 个公开 skills
 
 ## Skills
 
-- `source-dedup`：去重重叠的研究材料、AI 笔记、摘录、转写和 source packs。
-- `evidence-table`：基于给定材料建立 claim/evidence/source 表。
+- `research-source-dedup`：去重重叠的研究材料、AI 笔记、摘录、转写和 source packs。
+- `research-evidence-table`：基于给定材料建立 claim/evidence/source 表。
 - `research-synthesis`：将已映射证据整理为平衡的研究综合，并说明限制。
 
 ## 维护说明

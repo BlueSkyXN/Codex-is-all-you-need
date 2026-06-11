@@ -68,13 +68,13 @@ baseline / scope / requirements / architecture change
 
 | Phase | Agent | Primary Skills |
 |---|---|---|
-| Existing-project research | `sdlc_project_researcher` | `project-research`, `requirements-traceability`, `sdlc-readiness-review` |
-| Requirements | `sdlc_requirements_manager` | `requirements-workflow`, `brd-workflow`, `urs-workflow`, `prd-workflow`, `artifact-profile-router` |
-| Software requirements | `sdlc_srs_specifier` | `srs-workflow`, `nfr-spec`, `requirements-traceability` |
-| Architecture and solution package | `sdlc_solution_spec_manager` | `solution-spec-workflow`, `hld-workflow`, `lld-workflow`, `domain-boundary-modeling`, `modular-monolith-architecture`, `architecture-decision-record`, `spec-slice-writer`, `nfr-spec` |
-| Delivery planning | `sdlc_delivery_planner` | `dev-handoff-planning`, `requirements-traceability`, `sdlc-readiness-review` |
-| Readiness review | `sdlc_readiness_reviewer` | `sdlc-readiness-review`, `requirements-traceability`, `dev-handoff-planning` |
-| Change control | `sdlc_change_manager` | `change-control`, `requirements-traceability`, `sdlc-readiness-review` |
+| Existing-project research | `sdlc_project_researcher` | `sdlc-project-research`, `sdlc-requirements-traceability`, `sdlc-readiness-review` |
+| Requirements | `sdlc_requirements_manager` | `sdlc-requirements-workflow`, `sdlc-brd-workflow`, `sdlc-urs-workflow`, `sdlc-prd-workflow`, `sdlc-router` |
+| Software requirements | `sdlc_srs_specifier` | `sdlc-srs-workflow`, `sdlc-nfr-spec`, `sdlc-requirements-traceability` |
+| Architecture and solution package | `sdlc_solution_spec_manager` | `sdlc-solution-spec-workflow`, `sdlc-hld-workflow`, `sdlc-lld-workflow`, `sdlc-domain-boundary-modeling`, `sdlc-modular-monolith-architecture`, `sdlc-architecture-decision-record`, `sdlc-spec-slice-writer`, `sdlc-nfr-spec` |
+| Delivery planning | `sdlc_delivery_planner` | `sdlc-dev-handoff-planning`, `sdlc-requirements-traceability`, `sdlc-readiness-review` |
+| Readiness review | `sdlc_readiness_reviewer` | `sdlc-readiness-review`, `sdlc-requirements-traceability`, `sdlc-dev-handoff-planning` |
+| Change control | `sdlc_change_manager` | `sdlc-change-control`, `sdlc-requirements-traceability`, `sdlc-readiness-review` |
 
 ## Lane and Material Depth / 车道与材料深度
 

@@ -269,7 +269,7 @@ nickname_candidates = ["Python"]
 developer_instructions = """
 You implement Python software using the project's actual conventions.
 
-Recommended skills: python-quality, test-strategy.
+Recommended skills: dev-python-quality, dev-test-strategy.
 
 Do:
 - Inspect project config, tests, and style tools first.
@@ -337,7 +337,7 @@ Recommended source location:
 推荐 source 位置：
 
 ```text
-<source-catalog>/dev/skills/python-quality/SKILL.md
+<source-catalog>/dev/skills/dev-python-quality/SKILL.md
 ```
 
 Runtime-visible location:
@@ -345,7 +345,7 @@ Runtime-visible location:
 runtime 可见位置：
 
 ```text
-<repo>/.codex/skills/python-quality/SKILL.md
+<repo>/.codex/skills/dev-python-quality/SKILL.md
 ```
 
 Project-only overlay:
@@ -372,8 +372,8 @@ ln -sfn "$PWD/examples/catalog/common/agents/common_task_planner.toml" \
 ln -sfn "$PWD/examples/catalog/dev/agents/dev_python_engineer.toml" \
   ~/.codex/suites/demo-dev/agents/dev_python_engineer.toml
 
-ln -sfn "$PWD/examples/catalog/dev/skills/python-quality" \
-  ~/.codex/suites/demo-dev/skills/python-quality
+ln -sfn "$PWD/examples/catalog/dev/skills/dev-python-quality" \
+  ~/.codex/suites/demo-dev/skills/dev-python-quality
 ```
 
 An `all` suite can be built with the same pattern by linking every source group

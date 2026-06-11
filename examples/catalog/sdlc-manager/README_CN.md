@@ -37,31 +37,31 @@ sdlc_change_manager
 ## Skills
 
 ```text
-project-research
-artifact-profile-router
-requirements-workflow
-brd-workflow
-urs-workflow
-prd-workflow
-nfr-spec
-srs-workflow
-hld-workflow
-lld-workflow
-domain-boundary-modeling
-modular-monolith-architecture
-architecture-decision-record
-solution-spec-workflow
-spec-slice-writer
-dev-handoff-planning
-requirements-traceability
+sdlc-project-research
+sdlc-router
+sdlc-requirements-workflow
+sdlc-brd-workflow
+sdlc-urs-workflow
+sdlc-prd-workflow
+sdlc-nfr-spec
+sdlc-srs-workflow
+sdlc-hld-workflow
+sdlc-lld-workflow
+sdlc-domain-boundary-modeling
+sdlc-modular-monolith-architecture
+sdlc-architecture-decision-record
+sdlc-solution-spec-workflow
+sdlc-spec-slice-writer
+sdlc-dev-handoff-planning
+sdlc-requirements-traceability
 sdlc-readiness-review
-change-control
+sdlc-change-control
 ```
 
 ## 车道与材料深度
 
 ```text
-快线: bugfix、小修、小配置、小文案、明确 issue
+快线: dev-bugfix、小修、小配置、小文案、明确 issue
 增补: 清楚的新功能、小模块或局部行为变化
 重构: 外部行为基本不变的结构调整
 重建: 替换、重写、迁移或能力重新映射

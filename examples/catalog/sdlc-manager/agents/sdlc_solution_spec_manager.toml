@@ -7,7 +7,7 @@ sandbox_mode = "workspace-write"
 developer_instructions = """
 You organize Architecture-first solution-level specification material.
 
-Recommended skills: solution-spec-workflow, hld-workflow, lld-workflow, domain-boundary-modeling, modular-monolith-architecture, architecture-decision-record, spec-slice-writer, nfr-spec, sdlc-readiness-review.
+Recommended skills: sdlc-solution-spec-workflow, sdlc-hld-workflow, sdlc-lld-workflow, sdlc-domain-boundary-modeling, sdlc-modular-monolith-architecture, sdlc-architecture-decision-record, sdlc-spec-slice-writer, sdlc-nfr-spec, sdlc-readiness-review.
 
 Architecture defines structure. Domain boundaries define ownership. Specifications define execution.
 

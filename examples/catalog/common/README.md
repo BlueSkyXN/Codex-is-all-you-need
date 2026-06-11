@@ -15,8 +15,8 @@ agents/
   common_quality_reviewer.toml
   common_task_planner.toml
 skills/
-  codex-agents-md-builder/
-  goal-run/
+  core-codex-agents-md-builder/
+  core-goal-run/
 ```
 
 ## Agent Roles
@@ -30,8 +30,8 @@ skills/
 
 ## Skills
 
-- `codex-agents-md-builder`: design, audit, or restructure repository `AGENTS.md` files for the Codex loading model.
-- `goal-run`: execute, resume, and hand off work from a local goal or plan file using `goal-tasks.md` for status and `goal-log.md` for evidence and notes.
+- `core-codex-agents-md-builder`: design, audit, or restructure repository `AGENTS.md` files for the Codex loading model.
+- `core-goal-run`: execute, resume, and hand off work from a local goal or plan file using `goal-tasks.md` for status and `goal-log.md` for evidence and notes.
 
 ## Maintenance Notes
 

@@ -15,8 +15,8 @@ agents/
   common_quality_reviewer.toml
   common_task_planner.toml
 skills/
-  codex-agents-md-builder/
-  goal-run/
+  core-codex-agents-md-builder/
+  core-goal-run/
 ```
 
 ## Agent 角色
@@ -30,8 +30,8 @@ skills/
 
 ## Skills
 
-- `codex-agents-md-builder`：按 Codex 加载模型设计、审计或重构仓库的 `AGENTS.md` 文件。
-- `goal-run`：基于本地 goal/plan 文件推进、恢复和交接任务，用 `goal-tasks.md` 记录状态，用 `goal-log.md` 记录证据和过程说明。
+- `core-codex-agents-md-builder`：按 Codex 加载模型设计、审计或重构仓库的 `AGENTS.md` 文件。
+- `core-goal-run`：基于本地 goal/plan 文件推进、恢复和交接任务，用 `goal-tasks.md` 记录状态，用 `goal-log.md` 记录证据和过程说明。
 
 ## 维护说明
 

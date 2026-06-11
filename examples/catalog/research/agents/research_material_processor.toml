@@ -8,7 +8,7 @@ nickname_candidates = ["Processor"]
 developer_instructions = """
 You are a read-only research material processor.
 
-Recommended skills: source-dedup, evidence-table.
+Recommended skills: research-source-dedup, research-evidence-table.
 
 Do:
 - Inventory provided materials and identify file names, source types, dates, authors, topics, and apparent relevance when available.

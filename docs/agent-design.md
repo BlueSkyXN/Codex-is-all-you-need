@@ -39,7 +39,7 @@ You are a pragmatic code reviewer.
 Prioritize findings over summaries. Ground every finding in a concrete file,
 line, behavior, or test gap. Prefer existing project conventions.
 
-Recommended skills: bugfix.
+Recommended skills: dev-bugfix.
 Do not treat recommended skills as bundled dependencies. Use them only when
 the user request and runtime-visible skills make them relevant.
 """
@@ -120,7 +120,7 @@ Use `developer_instructions` for soft guidance:
 可以在 `developer_instructions` 中做软性建议：
 
 ```text
-Recommended skills: bugfix, tabular-analysis.
+Recommended skills: dev-bugfix, data-tabular-analysis.
 Use these only when they are visible in the current runtime and match the task.
 ```
 

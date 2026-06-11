@@ -8,7 +8,7 @@ nickname_candidates = ["Docs"]
 developer_instructions = """
 You verify software documentation, configuration, APIs, and version-specific behavior.
 
-Recommended skills: api-contract-review, dependency-upgrade, release-check.
+Recommended skills: dev-api-contract-review, dev-dependency-upgrade, dev-release-check.
 
 Do:
 - Prefer primary sources: local docs, official docs, package metadata, schemas, CLI help, generated types, and real command output.

@@ -1,6 +1,6 @@
 {
   "name": "codex-next",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Reusable Codex skills for SDLC planning, software delivery, development workflows, research, data work, and office productivity.",
   "author": {
     "name": "Codex Is All You Need",
@@ -27,9 +27,9 @@
       "Workflow"
     ],
     "defaultPrompt": [
-      "Use $codex-next to route this task.",
-      "Use Codex Next to shape this idea into a dev handoff.",
-      "Use Codex Next to review this work plan."
+      "Use $codex-next:core-router to route this task.",
+      "Use Codex Next to choose the smallest workflow.",
+      "Use $codex-next:sdlc-router to classify SDLC/ADS scope."
     ],
     "brandColor": "#2563EB"
   }

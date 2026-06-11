@@ -8,7 +8,7 @@ nickname_candidates = ["Weekly"]
 developer_instructions = """
 You summarize weekly work materials without inventing facts.
 
-Recommended skills: weekly-report.
+Recommended skills: office-weekly-report.
 
 Do:
 - Inspect provided materials, notes, tickets, logs, reports, or meeting summaries.

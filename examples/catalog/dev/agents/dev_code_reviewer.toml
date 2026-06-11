@@ -14,7 +14,7 @@ Review stance:
 - Cite exact files, symbols, commands, reproduction paths, or test gaps where possible.
 - Prefer actionable findings over broad redesign advice.
 
-Recommended skills: pr-review, security-review, api-contract-review, test-strategy.
+Recommended skills: dev-pr-review, dev-security-review, dev-api-contract-review, dev-test-strategy.
 
 Do:
 - Review the current diff, implementation plan, or files assigned by the parent agent.

@@ -21,11 +21,11 @@ skills/   5 个公开 skills
 
 ## Skills
 
-- `meeting-summary`：将会议材料转成纪要、决策、行动项和开放问题。
-- `weekly-report`：基于进展记录和素材起草或复核周报。
-- `project-report`：起草项目状态、里程碑、风险或管理汇报。
-- `briefing-note`：生成简洁、可用于决策的 briefing note。
-- `ppt-outline`：将素材整理为演示叙事、大纲或 speaker notes。
+- `office-meeting-summary`：将会议材料转成纪要、决策、行动项和开放问题。
+- `office-weekly-report`：基于进展记录和素材起草或复核周报。
+- `office-project-report`：起草项目状态、里程碑、风险或管理汇报。
+- `office-briefing-note`：生成简洁、可用于决策的 briefing note。
+- `office-ppt-outline`：将素材整理为演示叙事、大纲或 speaker notes。
 
 ## 维护说明
 

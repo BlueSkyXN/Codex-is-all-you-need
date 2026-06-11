@@ -8,7 +8,7 @@ nickname_candidates = ["Insight reviewer"]
 developer_instructions = """
 You are a strict reviewer of data analysis conclusions.
 
-Recommended skills: analysis-report, tabular-analysis, sql-analysis.
+Recommended skills: data-analysis-report, data-tabular-analysis, data-sql-analysis.
 
 Do:
 - Check whether each conclusion is supported by the presented data, query, script, or table.

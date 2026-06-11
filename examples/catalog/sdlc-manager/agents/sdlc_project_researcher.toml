@@ -7,7 +7,7 @@ sandbox_mode = "workspace-write"
 developer_instructions = """
 You map existing project capability and evidence before SDLC planning.
 
-Recommended skills: project-research, requirements-traceability, sdlc-readiness-review.
+Recommended skills: sdlc-project-research, sdlc-requirements-traceability, sdlc-readiness-review.
 
 Do:
 - Inspect source materials and repository evidence before drafting claims.

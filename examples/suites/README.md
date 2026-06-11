@@ -18,7 +18,7 @@ suite 是本机 symlink 组合层。本目录只说明模式，不创建真实 s
       common_task_planner.toml -> <source>/common/agents/common_task_planner.toml
       dev_code_reviewer.toml -> <source>/dev/agents/dev_code_reviewer.toml
     skills/
-      bugfix -> <source>/dev/skills/bugfix
+      dev-bugfix -> <source>/dev/skills/dev-bugfix
 
   planning/
     agents/
@@ -26,8 +26,8 @@ suite 是本机 symlink 组合层。本目录只说明模式，不创建真实 s
       sdlc_requirements_manager.toml -> <source>/sdlc-manager/agents/sdlc_requirements_manager.toml
       sdlc_delivery_planner.toml -> <source>/sdlc-manager/agents/sdlc_delivery_planner.toml
     skills/
-      prd-workflow -> <source>/sdlc-manager/skills/prd-workflow
-      dev-handoff-planning -> <source>/sdlc-manager/skills/dev-handoff-planning
+      sdlc-prd-workflow -> <source>/sdlc-manager/skills/sdlc-prd-workflow
+      sdlc-dev-handoff-planning -> <source>/sdlc-manager/skills/sdlc-dev-handoff-planning
 
   nondev-all/
     agents/
@@ -36,8 +36,8 @@ suite 是本机 symlink 组合层。本目录只说明模式，不创建真实 s
       office_report_writer.toml -> <source>/office/agents/office_report_writer.toml
       research_synthesis_writer.toml -> <source>/research/agents/research_synthesis_writer.toml
     skills/
-      tabular-analysis -> <source>/data/skills/tabular-analysis
-      weekly-report -> <source>/office/skills/weekly-report
+      data-tabular-analysis -> <source>/data/skills/data-tabular-analysis
+      office-weekly-report -> <source>/office/skills/office-weekly-report
       research-synthesis -> <source>/research/skills/research-synthesis
 
   all/
@@ -49,10 +49,10 @@ suite 是本机 symlink 组合层。本目录只说明模式，不创建真实 s
       office_report_writer.toml -> <source>/office/agents/office_report_writer.toml
       research_synthesis_writer.toml -> <source>/research/agents/research_synthesis_writer.toml
     skills/
-      prd-workflow -> <source>/sdlc-manager/skills/prd-workflow
-      bugfix -> <source>/dev/skills/bugfix
-      tabular-analysis -> <source>/data/skills/tabular-analysis
-      weekly-report -> <source>/office/skills/weekly-report
+      sdlc-prd-workflow -> <source>/sdlc-manager/skills/sdlc-prd-workflow
+      dev-bugfix -> <source>/dev/skills/dev-bugfix
+      data-tabular-analysis -> <source>/data/skills/data-tabular-analysis
+      office-weekly-report -> <source>/office/skills/office-weekly-report
       research-synthesis -> <source>/research/skills/research-synthesis
 ```
 
@@ -96,7 +96,7 @@ For skills, the symlink points to the skill folder:
 skill 的 symlink 指向整个 skill 文件夹：
 
 ```text
-weekly-report -> <source>/office/skills/weekly-report
+office-weekly-report -> <source>/office/skills/office-weekly-report
 ```
 
 This keeps `SKILL.md`, `scripts/`, `references/`, and `assets/` together.

@@ -8,7 +8,7 @@ nickname_candidates = ["SQL analyst"]
 developer_instructions = """
 You are a read-only SQL and metric logic analyst.
 
-Recommended skills: sql-analysis, tabular-analysis.
+Recommended skills: data-sql-analysis, data-tabular-analysis.
 
 Do:
 - Review SQL for join cardinality, filtering order, grouping, window functions, date handling, null handling, and aggregation logic.

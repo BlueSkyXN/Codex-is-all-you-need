@@ -42,7 +42,8 @@ plugin-first model and with the architecture-first SDLC catalog shape.
 | `examples/catalog/` | Sanitized public agent and skill source catalog | Yes | Before changing agent TOML, skill folders, catalog group docs, or publication boundaries |
 | `examples/runtime/` | Public-safe example runtime `AGENTS.md` instructions | Yes | Before changing runtime instruction examples |
 | `examples/suites/` | Legacy/local-dev suite symlink pattern notes and examples | No | Read `examples/suites/README.md` before changing suite documentation |
-| `plugins/` | Installable Codex plugin packages built from public-safe skills | No | Before changing plugin manifests, bundled skills, or plugin documentation |
+| `plugins/` | Installable Codex plugin package parent directory | No | Read the specific plugin card when a plugin package has one |
+| `plugins/codex-next/` | Canonical packaged Codex Next plugin built from public-safe skills | Yes | Before changing the plugin manifest, README, bundled skills, package layout, or validation guidance |
 | `.agents/plugins/marketplace.json` | Repo marketplace that exposes checked-in plugins | No | Before changing plugin availability or marketplace metadata |
 | `.codex/` | Machine-local runtime entrypoint symlinks or project-owned local state | No | Do not edit unless the task explicitly targets runtime entrypoints and the user accepts local filesystem changes |
 
@@ -73,6 +74,7 @@ repository docs.
 | `open ~/.codex/dashboard/index.html` | Preview generated dashboard | local machine | macOS GUI command; not a sandbox validation step |
 | `python3 scripts/sync_codex_entrypoints.py --help` | Validate entrypoint sync CLI loads | `scripts/` | OK |
 | `python3 scripts/sync_codex_entrypoints.py sync --workspace <workspace> --source-root <workspace>/.codex --link-mode directories` | Dry-run legacy/local-dev repo-local `.codex` directory link sync | local workspace | Replace placeholders before running; dry-run by default; reads local workspace paths; do not add `--apply` without explicit user request |
+| `python3 ~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/codex-next` | Validate the Codex Next plugin manifest and package shape | `plugins/codex-next/` | Requires the local system `plugin-creator` validator path; if unavailable, state that it was skipped |
 | `git diff --check` | Check whitespace in the current diff | repo | OK; read-only |
 | `git status --short --branch` | Inspect current working tree | repo | OK; read-only |
 
@@ -168,13 +170,18 @@ Choose the smallest validation that matches the files changed:
 3. Catalog agent or skill change:
    run the catalog validation snippet above and
    `git diff --check -- examples/catalog`.
-4. `scripts/sync_codex_entrypoints.py` change:
+4. `plugins/codex-next/` plugin manifest, package layout, or bundled skill
+   change:
+   run the plugin validator if the local system validator is available:
+   `python3 ~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/codex-next`
+   and run `git diff --check -- plugins/codex-next`.
+5. `scripts/sync_codex_entrypoints.py` change:
    `python3 -m unittest discover -s tests -v` and
    `python3 scripts/sync_codex_entrypoints.py --help`.
-5. Documentation-only change:
+6. Documentation-only change:
    inspect affected links/headings and run `git diff --check` for the touched
    paths.
-6. AGENTS-only change:
+7. AGENTS-only change:
    confirm `find . -name AGENTS.override.md` is empty or does not affect the
    target, check file sizes, and run `git diff --check` with the actual touched
    `AGENTS.md` paths.

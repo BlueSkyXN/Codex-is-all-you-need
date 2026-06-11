@@ -1,11 +1,12 @@
 {
   "name": "codex-next",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Reusable Codex skills for SDLC planning, software delivery, development workflows, research, data work, and office productivity.",
   "author": {
-    "name": "Codex Is All You Need",
-    "url": "https://github.com/BlueSkyXN/Codex-is-all-you-need"
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
   },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
   "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
   "license": "GPL-3.0-only",
   "keywords": [
@@ -20,7 +21,7 @@
     "displayName": "Codex Next",
     "shortDescription": "A skill-powered upgrade pack for Codex workflows.",
     "longDescription": "Codex Next packages reusable skills for routing work, researching projects, shaping requirements, designing solutions, planning validation, implementing safely, reviewing changes, and producing delivery-ready artifacts.",
-    "developerName": "Codex Is All You Need",
+    "developerName": "BlueSkyXN",
     "category": "Productivity",
     "capabilities": [
       "Skills",
@@ -29,8 +30,9 @@
     "defaultPrompt": [
       "Use $codex-next:core-router to route this task.",
       "Use Codex Next to choose the smallest workflow.",
-      "Use $codex-next:sdlc-router to classify SDLC/ADS scope."
+      "Use $codex-next:sdlc-manager to manage SDLC/ADS work."
     ],
-    "brandColor": "#2563EB"
+    "brandColor": "#2563EB",
+    "websiteURL": "https://github.com/BlueSkyXN/Codex-is-all-you-need"
   }
 }

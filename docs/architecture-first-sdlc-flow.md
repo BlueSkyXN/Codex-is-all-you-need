@@ -66,8 +66,9 @@ baseline / scope / requirements / architecture change
 
 ## Role Split / 角色拆分
 
-| Phase | Agent | Primary Skills |
+| Phase | Agent / Entry | Primary Skills |
 |---|---|---|
+| SDLC intake and coordination | default Codex Next routing | `sdlc-manager`, `sdlc-router` |
 | Existing-project research | `sdlc_project_researcher` | `sdlc-project-research`, `sdlc-requirements-traceability`, `sdlc-readiness-review` |
 | Requirements | `sdlc_requirements_manager` | `sdlc-requirements-workflow`, `sdlc-brd-workflow`, `sdlc-urs-workflow`, `sdlc-prd-workflow`, `sdlc-router` |
 | Software requirements | `sdlc_srs_specifier` | `sdlc-srs-workflow`, `sdlc-nfr-spec`, `sdlc-requirements-traceability` |

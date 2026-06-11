@@ -3,6 +3,7 @@ name: office-ppt-outline
 description: Use when turning materials into a presentation storyline, slide outline, speaker notes, or sharing-session structure.
 ---
 
+# PPT outline workflow
 
 ## Purpose
 

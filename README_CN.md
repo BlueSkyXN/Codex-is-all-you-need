@@ -102,7 +102,7 @@ find examples/catalog -maxdepth 3 \( -path '*/agents/*.toml' -o -path '*/skills/
 | Pack | Agents | Skills | 用途 |
 |---|---:|---:|---|
 | `common` | 6 | 2 | 规划、编排、文档核查、质量复核、上下文压缩、文件整理 |
-| `sdlc-manager` | 7 | 20 | 架构先行 SDLC 控制：BRD/URS/PRD、SRS/NFR、HLD/LLD、ADR、领域边界、SPEC、交接 |
+| `sdlc-manager` | 7 | 21 | 架构先行 SDLC 控制：BRD/URS/PRD、SRS/NFR、HLD/LLD、ADR、领域边界、SPEC、交接 |
 | `dev` | 14 | 20 | 代码阅读、实现、测试、review、API、CLI、前端、Python、安全、性能 |
 | `data` | 5 | 4 | 数据画像、SQL、清洗、pipeline、分析报告 |
 | `office` | 5 | 5 | 会议纪要、周报、项目报告、briefing、PPT 大纲 |
@@ -288,6 +288,7 @@ dev
 
 ```text
 sdlc-prd-workflow
+sdlc-manager
 sdlc-project-research
 sdlc-srs-workflow
 sdlc-nfr-spec

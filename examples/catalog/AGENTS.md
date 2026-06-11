@@ -16,7 +16,7 @@ Each group follows the same layout:
   skills/<skill-name>/SKILL.md
 ```
 
-Current groups are `common`, `sdlc-manager`, `dev`, `data`, `office`, and `research`. Agent files use snake_case names such as `dev_python_engineer.toml`. Skill folders use kebab-case names such as `python-quality/`.
+Current groups are `common`, `sdlc-manager`, `dev`, `data`, `office`, and `research`. Agent files use snake_case names such as `dev_python_engineer.toml`. Skill folders use domain-prefixed kebab-case names such as `dev-python-quality/`.
 
 ## Local invariants
 

@@ -104,7 +104,7 @@ Public examples include:
 | Pack | Agents | Skills | Use Case |
 |---|---:|---:|---|
 | `common` | 6 | 2 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
-| `sdlc-manager` | 7 | 20 | Architecture-first SDLC control: BRD/URS/PRD, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
+| `sdlc-manager` | 7 | 21 | Architecture-first SDLC control: BRD/URS/PRD, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
 | `dev` | 14 | 20 | Code mapping, implementation, tests, reviews, APIs, CLI, frontend, Python, security, performance |
 | `data` | 5 | 4 | Data profiling, SQL, cleaning, pipelines, analysis reports |
 | `office` | 5 | 5 | Meeting minutes, weekly reports, project reports, briefing notes, deck outlines |
@@ -293,6 +293,7 @@ Commonly reused skills:
 
 ```text
 sdlc-prd-workflow
+sdlc-manager
 sdlc-project-research
 sdlc-srs-workflow
 sdlc-nfr-spec

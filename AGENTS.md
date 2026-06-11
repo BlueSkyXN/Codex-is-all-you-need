@@ -117,8 +117,8 @@ Use `git diff --check -- examples/catalog` after catalog edits.
 - Markdown should be concise. Keep bilingual content only where the surrounding
   document is already bilingual or the file is explicitly a bilingual reference.
 - Agent TOML files use snake_case names such as `dev_python_engineer.toml`.
-  Skill directories use kebab-case names such as `python-quality/`, with the
-  entrypoint named `SKILL.md`.
+  Skill directories use domain-prefixed kebab-case names such as
+  `dev-python-quality/`, with the entrypoint named `SKILL.md`.
 - For public catalog refreshes, verify current filesystem counts instead of
   copying older numbers from memory or docs.
 - Treat `plugins/codex-next` as the canonical packaged surface for

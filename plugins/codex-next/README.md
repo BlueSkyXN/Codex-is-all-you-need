@@ -12,7 +12,7 @@ synthesis.
 
 - A plugin entrypoint skill, `core-router`, for routing work to the smallest
   useful bundled workflow.
-- SDLC and delivery skills such as `sdlc-router`,
+- SDLC and delivery skills such as `sdlc-manager`, `sdlc-router`,
   `sdlc-requirements-workflow`, `sdlc-solution-spec-workflow`,
   `sdlc-dev-handoff-planning`, and `sdlc-readiness-review`.
 - Development skills such as `dev-repo-onboarding`, `dev-bugfix`,
@@ -46,9 +46,9 @@ plugins/codex-next/
 ```
 
 Only `.codex-plugin/plugin.json` belongs inside `.codex-plugin/`. Bundled
-components such as `skills/`, future `.mcp.json`, future `.app.json`, future
-`hooks/`, and future `assets/` belong at the plugin root and are referenced
-from the manifest with paths relative to this directory.
+components such as `skills/`, future `.mcp.json`, future `.app.json`, and
+future `assets/` belong at the plugin root and are referenced from the manifest
+with paths relative to this directory.
 
 The repo marketplace is outside this package:
 

@@ -18,7 +18,7 @@
   skills/<skill-name>/SKILL.md
 ```
 
-当前分组包括 `common`、`sdlc-manager`、`dev`、`data`、`office`、`research`。Agent 文件使用 snake_case，例如 `dev_python_engineer.toml`。Skill 目录使用 kebab-case，例如 `python-quality/`。
+当前分组包括 `common`、`sdlc-manager`、`dev`、`data`、`office`、`research`。Agent 文件使用 snake_case，例如 `dev_python_engineer.toml`。Skill 目录使用带领域前缀的 kebab-case，例如 `dev-python-quality/`。
 
 ## Agent TOML 规则
 

@@ -37,6 +37,7 @@ sdlc_change_manager
 ## Skills
 
 ```text
+sdlc-manager
 sdlc-project-research
 sdlc-router
 sdlc-requirements-workflow

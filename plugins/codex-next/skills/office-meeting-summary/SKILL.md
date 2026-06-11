@@ -3,6 +3,7 @@ name: office-meeting-summary
 description: Use when converting meeting notes, transcripts, or chat logs into minutes, decisions, action items, and open questions.
 ---
 
+# Meeting summary workflow
 
 ## Purpose
 

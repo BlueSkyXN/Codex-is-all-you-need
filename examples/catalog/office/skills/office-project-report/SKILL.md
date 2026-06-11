@@ -3,6 +3,7 @@ name: office-project-report
 description: Use when drafting project status reports, milestone reports, risk summaries, or management updates from provided materials.
 ---
 
+# Project report workflow
 
 ## Purpose
 

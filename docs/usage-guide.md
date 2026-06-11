@@ -240,7 +240,7 @@ Safety rules:
 | Pack | Agents | Skills | Best For |
 |---|---:|---:|---|
 | `common` | 6 | 2 | Planning, orchestration, context summaries, docs verification, quality review |
-| `sdlc-manager` | 7 | 20 | Architecture-first SDLC control: requirements, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
+| `sdlc-manager` | 7 | 21 | Architecture-first SDLC control: requirements, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
 | `dev` | 14 | 20 | SDLC-aware and direct-dev implementation, testing, API, CLI, frontend, Python, security, performance |
 | `data` | 5 | 4 | Data profiling, SQL, cleaning, pipelines, reports |
 | `office` | 5 | 5 | Meeting minutes, weekly reports, project reports, briefing notes, slide outlines |

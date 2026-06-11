@@ -3,7 +3,7 @@ name: sdlc-router
 description: Use to route SDLC/ADS work by scenario lane and choose the smallest sufficient materials for 重建、重构、增补、从头开发、bugfix、规则变更、发布、local/sdlc、交付卡、handoff, or direct-dev.
 ---
 
-# Artifact Profile Router
+# SDLC Router
 
 Use this skill when a request may need SDLC/ADS materials but the smallest safe path is unclear.
 

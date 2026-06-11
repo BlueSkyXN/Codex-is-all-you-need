@@ -38,7 +38,11 @@ Core contract:
    - External Web/GPT/AI discussion that must be normalized before execution.
 
 2. Choose the smallest route.
-   - If the path is unclear, use `sdlc-router`.
+   - If the request is SDLC/ADS, `local/sdlc`, handoff, architecture,
+     requirements, specification, validation, or external proposal intake work,
+     use `sdlc-manager`.
+   - If the request only needs lane, ADS, or minimum-material classification,
+     use `sdlc-router`.
    - If the request is clear and local, route to the relevant dev skill.
    - If the user asks to produce an artifact, route directly to that artifact
      skill.
@@ -57,7 +61,8 @@ Core contract:
 
 | User intent | First skill |
 |---|---|
-| Need lane, ADS, or minimum artifact decision | `sdlc-router` |
+| SDLC/ADS work, `local/sdlc`, handoff, or external proposal intake | `sdlc-manager` |
+| Need only lane, ADS, or minimum artifact decision | `sdlc-router` |
 | Existing repo capability map | `sdlc-project-research` |
 | Requirements package | `sdlc-requirements-workflow` |
 | SRS or software-facing requirements | `sdlc-srs-workflow` |

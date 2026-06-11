@@ -3,6 +3,7 @@ name: office-weekly-report
 description: Use when drafting or reviewing weekly reports from provided materials, progress logs, meeting notes, or team updates.
 ---
 
+# Weekly report workflow
 
 ## Purpose
 

@@ -1,6 +1,6 @@
 ---
 name: dev-git-workflow
-description: Use for branch strategy, isolated worktrees, commits, PR preparation, merge/rebase decisions, conflict handling, tags, and release-oriented Git hygiene.
+description: Use for branch strategy, worktrees, commits, PR prep, merge/rebase decisions, conflicts, tags, and release notes.
 ---
 
 # Git workflow

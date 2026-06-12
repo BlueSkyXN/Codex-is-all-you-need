@@ -1,6 +1,6 @@
 ---
 name: sdlc-prd-workflow
-description: Use to create or refine Product Requirements Documents covering product goal, scope, non-scope, features, priority, user flows, states, fields, copy, exceptions, acceptance criteria, and downstream SRS/SPEC handoff.
+description: Use to draft or refine PRDs covering product goals, scope, features, user flows, priorities, exceptions, and acceptance criteria.
 ---
 
 # PRD Workflow

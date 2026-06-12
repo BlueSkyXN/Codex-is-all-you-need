@@ -1,6 +1,6 @@
 ---
 name: sdlc-srs-workflow
-description: Use to convert approved BRD, URS, PRD, NFR inputs, scope baselines, and product requirements into a software-facing SRS with requirement IDs, acceptance criteria, traceability hooks, and dev-readable implementation constraints.
+description: Use to draft or audit SRS with requirement IDs, functional requirements, acceptance criteria, constraints, NFR hooks, and traceability.
 ---
 
 # SRS Workflow

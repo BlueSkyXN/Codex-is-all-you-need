@@ -1,6 +1,6 @@
 ---
 name: sdlc-lld-workflow
-description: "Use to create or refine Low-Level Design / detailed design for modules, interfaces, state machines, data structures, errors, transactions, and tests from HLD, SRS, SPEC, and repo evidence."
+description: Use to create or refine LLD for modules, interfaces, state machines, data structures, errors, transactions, and tests.
 ---
 
 # LLD Workflow

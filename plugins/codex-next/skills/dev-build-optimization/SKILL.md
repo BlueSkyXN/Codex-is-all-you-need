@@ -1,6 +1,6 @@
 ---
 name: dev-build-optimization
-description: Use for diagnosing or improving build speed, bundle size, cache behavior, monorepo task execution, packaging output, and reproducible builds.
+description: Use to diagnose or improve build speed, cache behavior, bundle size, packaging output, and monorepo task execution.
 ---
 
 # Build optimization workflow

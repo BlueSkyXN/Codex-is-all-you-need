@@ -1,6 +1,6 @@
 ---
 name: dev-cli-tooling-workflow
-description: Use for designing, implementing, reviewing, or testing CLI tools, command surfaces, flags, config precedence, terminal output, and exit behavior.
+description: Use to design, implement, review, or test CLI tools, flags, config precedence, terminal UX, errors, and docs.
 ---
 
 # CLI tooling workflow

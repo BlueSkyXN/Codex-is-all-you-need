@@ -1,6 +1,6 @@
 ---
 name: sdlc-readiness-review
-description: Use to evaluate whether SDLC materials, issue-backed tasks, specs, handoff packages, or direct-dev requests are ready to move to development, revision, change control, or blocker resolution.
+description: Use to assess whether SDLC materials, specs, handoffs, issues, or direct-dev requests are ready, need revision, or are blocked.
 ---
 
 # SDLC Readiness Review

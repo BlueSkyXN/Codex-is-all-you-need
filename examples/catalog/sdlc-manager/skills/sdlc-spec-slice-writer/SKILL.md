@@ -1,6 +1,6 @@
 ---
 name: sdlc-spec-slice-writer
-description: Use to produce focused UI, API, Data, Admin, Permission, Directory, Observability, Release, or other implementation-facing SPEC slices from SRS, NFR, HLD, LLD, Domain Boundary Map, PRD, and scope baseline materials.
+description: Use to write focused implementation SPEC slices for UI, API, data, admin, permissions, directory, observability, or release.
 ---
 
 # SPEC Slice Writer

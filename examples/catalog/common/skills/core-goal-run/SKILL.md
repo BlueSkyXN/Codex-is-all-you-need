@@ -1,6 +1,6 @@
 ---
 name: core-goal-run
-description: "Use when the user asks to execute, advance, track, resume, or hand off tasks from a local goal/plan file while keeping the original plan read-only and maintaining task status plus execution notes."
+description: Use to execute or resume a local goal plan while keeping the plan read-only and updating goal-tasks.md plus goal-log.md.
 ---
 
 # Goal Run

@@ -1,6 +1,6 @@
 ---
 name: sdlc-manager
-description: Use as the SDLC control-plane entrypoint for requirements, architecture, domain, specification, validation, handoff, local/sdlc state, external proposal intake, or deciding how SDLC work should proceed.
+description: Use as SDLC control plane for requirements, architecture, domain, specs, validation, RTM, readiness, change control, handoff, local/sdlc, and external proposal intake.
 ---
 
 # SDLC Manager

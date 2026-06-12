@@ -1,6 +1,6 @@
 ---
 name: sdlc-validation-plan-workflow
-description: Use to make Validation Plan a first-class SDLC artifact by defining how SRS, NFR, HLD, LLD, ADR, Domain Boundary Map, SPEC, RTM, issue evidence, or dev handoff will be proven correct before dev execution, review, or release.
+description: Use to create validation plans or behavior baselines linking requirements to checks, evidence, gaps, risks, and release gates.
 ---
 
 # Validation Plan Workflow

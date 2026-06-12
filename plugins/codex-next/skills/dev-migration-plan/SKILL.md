@@ -1,6 +1,6 @@
 ---
 name: dev-migration-plan
-description: Use for old-system modernization, framework upgrades, incremental rewrites, service extraction, schema migrations, and risky technical migration planning.
+description: Use to plan modernization, framework upgrades, service extraction, schema migrations, rewrites, and rollback paths.
 ---
 
 # Migration plan workflow

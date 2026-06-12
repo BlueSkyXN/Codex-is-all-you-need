@@ -1,6 +1,6 @@
 ---
 name: sdlc-requirements-traceability
-description: Use to map business, user, product, software, NFR, HLD, LLD, ADR, Domain Boundary, SPEC, Validation Plan, handoff, task, test, PR, commit, and release evidence into a requirements traceability matrix without turning traceability into a blocking ceremony for direct development.
+description: Use to build or audit RTM links across requirements, design, validation, tasks, PRs, commits, releases, and evidence gaps.
 ---
 
 # Requirements Traceability

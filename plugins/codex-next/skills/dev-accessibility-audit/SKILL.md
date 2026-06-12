@@ -1,6 +1,6 @@
 ---
 name: dev-accessibility-audit
-description: Use for accessibility review of web or app UI, including semantic structure, keyboard navigation, focus management, ARIA, labels, contrast, responsive behavior, and WCAG-oriented validation.
+description: Use to audit web/app accessibility, including semantics, keyboard flow, focus, labels, ARIA, contrast, and responsive behavior.
 ---
 
 # Accessibility audit workflow

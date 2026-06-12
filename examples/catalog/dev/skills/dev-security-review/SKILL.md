@@ -1,6 +1,6 @@
 ---
 name: dev-security-review
-description: Use for software security review of code, configs, workflows, auth, permissions, input validation, secrets, dependency risk, and supply-chain surfaces.
+description: Use to review software security across auth, permissions, input validation, secrets, dependencies, workflows, and config.
 ---
 
 # Security review workflow

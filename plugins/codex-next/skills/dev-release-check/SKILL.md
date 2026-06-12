@@ -1,6 +1,6 @@
 ---
 name: dev-release-check
-description: Use for pre-release validation, versioning, changelog/release notes, tags, build artifacts, smoke tests, rollback notes, and release readiness review.
+description: Use for pre-release validation, versioning, changelogs, artifacts, smoke tests, rollback notes, and release risk.
 ---
 
 # Release check workflow

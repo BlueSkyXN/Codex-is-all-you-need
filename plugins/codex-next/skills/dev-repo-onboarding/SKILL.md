@@ -1,6 +1,6 @@
 ---
 name: dev-repo-onboarding
-description: "Use for first-pass software repository onboarding: map structure, entry points, tech stack, commands, tests, risks, and the smallest safe next actions before editing."
+description: Use to map an unfamiliar repo structure, entrypoints, tech stack, commands, tests, risks, and safe next steps.
 ---
 
 # Repository onboarding workflow

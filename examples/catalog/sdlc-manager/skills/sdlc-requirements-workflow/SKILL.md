@@ -1,6 +1,6 @@
 ---
 name: sdlc-requirements-workflow
-description: Use to turn business, user, and product inputs into a scoped requirements package that may include BRD, URS, PRD, scope baseline, assumptions, success metrics, and handoff inputs.
+description: Use to turn business, user, and product inputs into scoped requirements, source baselines, assumptions, and downstream handoff.
 ---
 
 # Requirements Workflow

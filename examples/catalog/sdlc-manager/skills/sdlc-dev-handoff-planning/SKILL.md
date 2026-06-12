@@ -1,6 +1,6 @@
 ---
 name: sdlc-dev-handoff-planning
-description: Use to turn approved or clearly scoped SDLC materials, issues, SRS, NFR, SPEC slices, and constraints into a dev-readable implementation handoff with task cards, validation expectations, and blocker reporting rules.
+description: Use to create dev handoff packages and task cards from scoped SDLC materials, issues, specs, validation, and blockers.
 ---
 
 # Dev Handoff Planning

@@ -1,6 +1,6 @@
 ---
 name: dev-test-strategy
-description: Use for designing, improving, or validating software test plans, unit/integration/e2e coverage, automation, CI checks, flaky tests, and regression safety.
+description: Use to design or validate test plans, unit/integration/e2e coverage, automation, CI checks, fixtures, and regression scope.
 ---
 
 # Test strategy workflow

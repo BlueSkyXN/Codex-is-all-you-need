@@ -1,6 +1,6 @@
 ---
 name: sdlc-hld-workflow
-description: "Use to create or refine High-Level Design / high-level architecture design from SRS, NFR, domain boundaries, project evidence, and architecture goals before detailed design or implementation."
+description: Use to create or refine HLD from SRS, NFRs, domain boundaries, repo evidence, and architecture goals.
 ---
 
 # HLD Workflow

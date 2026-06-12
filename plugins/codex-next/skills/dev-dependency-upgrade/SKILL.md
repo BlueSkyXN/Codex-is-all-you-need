@@ -1,6 +1,6 @@
 ---
 name: dev-dependency-upgrade
-description: Use for dependency audits, vulnerability remediation, version conflicts, package manager migrations, lockfile updates, and safe upgrade plans.
+description: Use for dependency upgrades, vulnerability fixes, version conflicts, lockfiles, package managers, and migration risk.
 ---
 
 # Dependency upgrade workflow

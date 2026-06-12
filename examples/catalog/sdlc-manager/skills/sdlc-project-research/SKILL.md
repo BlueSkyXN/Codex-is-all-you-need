@@ -1,6 +1,6 @@
 ---
 name: sdlc-project-research
-description: "用于读取已有代码项目，结合真实代码、文档、local 材料和 git 记录，产出项目功能能力地图，并为后续 BRD/URS/PRD/SRS/SPEC、traceability 或 dev handoff 标出证据输入。默认不做工作分解、产品结构拆解、成熟度评估、卡点长分析、任务计划、排期或资源估算。"
+description: 用于读取真实代码、文档、local 材料和 git 记录，产出项目能力地图，为后续 SRS/SPEC/RTM/handoff 提供证据。
 ---
 
 # 项目功能能力地图

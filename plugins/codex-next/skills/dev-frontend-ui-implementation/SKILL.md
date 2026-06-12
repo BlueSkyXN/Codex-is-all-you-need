@@ -1,6 +1,6 @@
 ---
 name: dev-frontend-ui-implementation
-description: Use for implementing or reviewing frontend UI, components, routing, state, responsive layout, accessibility, browser behavior, and API integration.
+description: Use to implement/review frontend UI, routing, state, API integration, responsive layout, accessibility, and browser behavior.
 ---
 
 # Frontend UI implementation workflow

@@ -1,6 +1,6 @@
 ---
 name: core-router
-description: Use as the Codex Next plugin entrypoint when the user asks to use Codex Next, route a task, choose the smallest SDLC/dev workflow, migrate external discussion into executable work, or coordinate public-safe Codex workflow skills.
+description: Use as Codex Next plugin entrypoint to route SDLC/dev/data/office/research tasks, choose the smallest workflow, or normalize external discussion into executable work.
 ---
 
 # Codex Next Router

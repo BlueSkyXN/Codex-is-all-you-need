@@ -1,6 +1,6 @@
 ---
 name: sdlc-solution-spec-workflow
-description: Use to coordinate a solution package from SRS, NFR, HLD, LLD, ADR, Domain Boundary Map, SPEC slices, scope constraints, and repository evidence before dev implementation begins.
+description: Use to coordinate solution specs across HLD, LLD, domain, ADR, NFR, and SPEC slices; use leaf skills for details.
 ---
 
 # Solution Spec Workflow

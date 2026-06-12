@@ -1,6 +1,6 @@
 ---
 name: sdlc-router
-description: Use to route SDLC/ADS work by scenario lane and choose the smallest sufficient materials for 重建、重构、增补、从头开发、bugfix、规则变更、发布、local/sdlc、交付卡、handoff, or direct-dev.
+description: Use to route SDLC/ADS work by lane and choose minimum materials for 重建、重构、增补、从头开发、bugfix、规则变更、发布、local/sdlc、交付卡、handoff, or direct-dev.
 ---
 
 # SDLC Router

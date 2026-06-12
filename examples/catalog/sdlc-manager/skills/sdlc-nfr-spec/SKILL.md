@@ -1,6 +1,6 @@
 ---
 name: sdlc-nfr-spec
-description: Use to define measurable non-functional requirements for performance, reliability, availability, security, privacy, accessibility, compatibility, observability, maintainability, compliance, and operational readiness.
+description: Use to define measurable NFRs for performance, reliability, security, privacy, accessibility, observability, and operations.
 ---
 
 # NFR Spec

@@ -1,6 +1,6 @@
 ---
 name: sdlc-modular-monolith-architecture
-description: "Use to design a DDD-style modular monolith architecture, defining module layout, dependency rules, shared/platform boundaries, and future microservice extraction points."
+description: Use to design modular monolith boundaries, module layout, dependency rules, shared/platform seams, and extraction triggers.
 ---
 
 # Modular Monolith Architecture

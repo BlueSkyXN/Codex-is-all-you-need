@@ -1,6 +1,6 @@
 ---
 name: dev-spec-driven-implementation
-description: Use to implement software changes from SRS, NFR, SPEC slices, dev handoff, traceability, issues, bug reports, or direct user requests while preserving scope, validation, and blocker reporting.
+description: Use to implement scoped code changes from specs, handoff, issues, bugs, or direct requests with validation and blocker reporting.
 ---
 
 # Spec-driven Implementation

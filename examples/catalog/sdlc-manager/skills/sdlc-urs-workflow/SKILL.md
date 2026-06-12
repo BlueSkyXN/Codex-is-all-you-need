@@ -1,6 +1,6 @@
 ---
 name: sdlc-urs-workflow
-description: Use to create or refine User Requirements Specifications covering users, roles, jobs, scenarios, constraints, current alternatives, user value, and acceptance-relevant user outcomes.
+description: Use to draft or refine URS covering users, roles, jobs, scenarios, constraints, value, and acceptance-relevant outcomes.
 ---
 
 # URS Workflow

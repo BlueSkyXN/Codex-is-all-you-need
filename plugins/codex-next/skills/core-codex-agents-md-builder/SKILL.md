@@ -1,6 +1,6 @@
 ---
 name: core-codex-agents-md-builder
-description: "为 OpenAI Codex 设计、审计或重构仓库的 AGENTS.md 文件。当用户要求 '写 AGENTS.md'、'配置 AGENTS.md'、'为 Codex 准备项目指令'、'AGENTS 分层'、'按 Codex 加载模型整理仓库指令'、'审计 AGENTS.md' 时使用。前提是团队默认从仓库根目录启动 Codex。不适用于：CLAUDE.md、Cursor 规则、其他 agent 配置格式；也不要在用户只是问 'AGENTS.md 是什么' 时触发——只在要求写、改、审计时触发。"
+description: 为 Codex 仓库设计、审计或重构 AGENTS.md 层级；用于写/改/审计 AGENTS.md，不用于 CLAUDE.md 或 Cursor 规则。
 ---
 
 # Codex AGENTS.md 设计技能

@@ -1,6 +1,6 @@
 ---
 name: sdlc-brd-workflow
-description: Use to create or refine Business Requirements Documents covering business problem, goals, value, constraints, success metrics, risks, and investment rationale before product or software requirements.
+description: Use to draft or refine BRDs for business problem, goals, value, constraints, metrics, risks, and investment rationale.
 ---
 
 # BRD Workflow

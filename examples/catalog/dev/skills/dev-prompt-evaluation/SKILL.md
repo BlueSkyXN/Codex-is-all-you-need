@@ -1,6 +1,6 @@
 ---
 name: dev-prompt-evaluation
-description: Use for designing, testing, comparing, versioning, and validating prompts or LLM app behavior with measurable criteria, datasets, cost tracking, and safety constraints.
+description: Use to design, test, compare, version, and validate prompts or LLM behavior with measurable criteria and datasets.
 ---
 
 # Prompt evaluation workflow

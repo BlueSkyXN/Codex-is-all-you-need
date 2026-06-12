@@ -1,6 +1,6 @@
 ---
 name: sdlc-change-control
-description: Use to manage requirement baseline changes, scope changes, artifact updates, traceability impacts, and dev handoff revisions without forcing change control onto every direct development task.
+description: Use to manage baseline or scope changes, artifact updates, traceability impact, approvals, and handoff revisions.
 ---
 
 # Change Control

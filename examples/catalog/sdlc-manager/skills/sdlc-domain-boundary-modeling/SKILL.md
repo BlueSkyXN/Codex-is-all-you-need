@@ -1,6 +1,6 @@
 ---
 name: sdlc-domain-boundary-modeling
-description: "Use to identify DDD-style bounded contexts, business capabilities, module ownership, domain data, domain language, allowed interactions, and forbidden dependencies before architecture or implementation."
+description: Use to model bounded contexts, capabilities, ownership, domain data/language, allowed interactions, and forbidden dependencies.
 ---
 
 # Domain Boundary Modeling

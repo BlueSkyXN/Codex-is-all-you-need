@@ -32,7 +32,7 @@ Consequences:
 - Sibling subtrees are not scanned.
 - Nested git repositories block outer repo-level discovery.
 - Plugin-installed skills are the production path for shared workflows.
-- Repo-local skills can be exposed through `.agents/skills/<skill>` and legacy/local-dev `.codex/skills/<skill>`.
+- Repo-local skills can be exposed through `.agents/skills/<skill>` and V1 legacy/local-dev `.codex/skills/<skill>`.
 - Repo-local custom agents are discovered from `.codex/agents/*.toml`.
 - `.agents/agents` and `.agents/*.toml` are not repo-local custom-agent discovery paths.
 
@@ -41,7 +41,7 @@ Consequences:
 | Situation | Expected Discovery |
 |---|---|
 | CWD has `.agents/skills/<skill>` | Found |
-| CWD has `.codex/skills/<skill>` | Found, legacy/local-dev path |
+| CWD has `.codex/skills/<skill>` | Found, V1 legacy/local-dev path |
 | Git repo root has `.agents/skills/<skill>` and CWD is below it | Found |
 | Git repo root has `.codex/agents/<agent>.toml` and CWD is below it | Found |
 | Parent directory above git root has `.codex` | Not found |
@@ -52,10 +52,11 @@ Consequences:
 ## Practical Pattern / 实用模式
 
 For production shared skills, install the Codex Next plugin. Use a workspace
-aggregate as a legacy/local-dev symlink target, not as an inherited parent:
+aggregate only as a V1 legacy/local-dev symlink target, not as an inherited
+parent:
 
-生产态共享 skills 应安装 Codex Next 插件。工作区聚合层只应作为 legacy/local-dev
-symlink target，而不是继承式父目录：
+生产态共享 skills 应安装 Codex Next 插件。工作区聚合层只应作为 V1
+V1 legacy/local-dev symlink target，而不是继承式父目录：
 
 ```text
 <workspace>/.codex/agents
@@ -69,13 +70,13 @@ symlink target，而不是继承式父目录：
 <repo>/.codex/skills/<skill>      -> <workspace>/.codex/skills/<skill>
 ```
 
-Use directory links as the default only for legacy/local-dev workspace
+Use directory links as the default only for V1 legacy/local-dev workspace
 aggregates. Use entry links only when a repo needs real local `.codex/agents`
 or `.codex/skills` directories, selective opt-in, or local experiments beside
 shared entries. Keep `.agents/skills` for project-only skills instead of shared
 plugin or suite content.
 
-只对 legacy/local-dev workspace 聚合层默认使用目录级链接。只有当 repo 需要真实本地
+只对 V1 legacy/local-dev workspace 聚合层默认使用目录级链接。只有当 repo 需要真实本地
 `.codex/agents` 或 `.codex/skills` 目录、选择性 opt in，或需要把本地实验条目和共享
 条目并列时，才使用逐项链接。`.agents/skills` 应保留给 project-only skills，而不是
 共享 plugin 或 suite 内容。

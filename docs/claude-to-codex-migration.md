@@ -140,7 +140,7 @@ Large Claude agent libraries often have many categories. A compact Codex setup c
 7. Add only public-safe examples to this repository.
 8. Package public shared skills through Codex Next when they are meant for
    production reuse; keep private production versions in a private catalog.
-9. Use local suites only for legacy/local-development composition, custom
+9. Use V1 local suites only for legacy/local-development composition, custom
    agents, or experiments.
 
 ## Decision Table / 决策表
@@ -165,5 +165,5 @@ After migration:
 - Public repo has no private paths or sensitive names.
 - Codex Next plugin exposes the intended public shared skills when packaging is
   in scope.
-- Dashboard can scan the catalog and legacy/local-dev suites without parse errors when suites are in scope.
+- Dashboard can scan the catalog and V1 legacy/local-dev suites without parse errors when suites are in scope.
 - Generated local dashboard output stays outside the public repository.

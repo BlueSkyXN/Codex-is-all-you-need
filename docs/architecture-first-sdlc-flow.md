@@ -95,20 +95,20 @@ Small direct-dev tasks may only need a clear issue, repository evidence, and val
 
 小型 direct-dev 任务可能只需要明确 issue、仓库证据和验证路径。更大或风险更高的变更可能需要 SRS、NFR、HLD、LLD、ADR、Domain Boundary Map、SPEC 切片、RTM 和交接材料。
 
-## Plugin And Optional Suite Guidance / Plugin 和可选 Suite 建议
+## Plugin And V1 Suite Guidance / Plugin 和 V1 Suite 建议
 
-Codex Next is the production surface for SDLC skills. Start with
+Codex Next is the V2 production surface for SDLC skills. Start with
 `$codex-next:core-router` or `$codex-next:sdlc-manager` when the plugin is
-installed. Local suites are optional legacy/local-development compositions for
-custom agents, experiments, or machines that have not migrated.
+installed. Local suites are V1 legacy/local-development compositions for custom
+agents, experiments, or machines that have not migrated.
 
-Codex Next 是 SDLC skills 的生产 surface。已安装插件时，从
-`$codex-next:core-router` 或 `$codex-next:sdlc-manager` 开始。本机 suites 是可选的
+Codex Next 是 SDLC skills 的 V2 生产 surface。已安装插件时，从
+`$codex-next:core-router` 或 `$codex-next:sdlc-manager` 开始。本机 suites 是 V1
 legacy/local-dev 组合，用于 custom agents、实验，或尚未迁移的机器。
 
-Optional local suite shapes:
+V1 local suite shapes:
 
-可选本机 suite 形态：
+V1 本机 suite 形态：
 
 ```text
 planning
@@ -127,9 +127,9 @@ all
   common + sdlc-manager + dev + data + office + research
 ```
 
-For legacy/local-dev suites, use `planning` when a directory mainly holds requirements, architecture, specs, taskbooks, or handoff packages. Use `github` when a code workspace needs both SDLC control-plane and repo-aware development capabilities. Use `dev-only` only when planning artifacts are intentionally out of scope. Use `all` only for an explicit full-capability runtime that needs development, SDLC, data, office, and research groups together.
+For V1 legacy/local-dev suites, use `planning` when a directory mainly holds requirements, architecture, specs, taskbooks, or handoff packages. Use `github` when a code workspace needs both SDLC control-plane and repo-aware development capabilities. Use `dev-only` only when planning artifacts are intentionally out of scope. Use `all` only for an explicit full-capability runtime that needs development, SDLC, data, office, and research groups together.
 
-对于 legacy/local-dev suites，当目录主要放需求、架构、规格、任务书或交接包时，使用 `planning`。当代码工作区同时需要 SDLC 控制面和 repo-aware 开发能力时，使用 `github`。只有明确不需要规划材料时，才使用 `dev-only`。只有明确需要同时暴露开发、SDLC、数据、办公和研究能力的 runtime，才使用 `all`。
+对于 V1 legacy/local-dev suites，当目录主要放需求、架构、规格、任务书或交接包时，使用 `planning`。当代码工作区同时需要 SDLC 控制面和 repo-aware 开发能力时，使用 `github`。只有明确不需要规划材料时，才使用 `dev-only`。只有明确需要同时暴露开发、SDLC、数据、办公和研究能力的 runtime，才使用 `all`。
 
 ## Handoff Standard / 交接标准
 

@@ -8,10 +8,10 @@ is for, and which skills are recommended by each agent.
 包含哪些 agent / skill、每个角色负责什么、每个 agent 推荐哪些 skills。
 
 It documents the relationship between agents, recommended skills, plugin
-packaging, and optional suite compositions without exposing private paths,
+packaging, and V1 legacy suite compositions without exposing private paths,
 private workflows, or real machine state.
 
-它只说明 agents、recommended skills、plugin packaging 和可选 suite 组合的关系，
+它只说明 agents、recommended skills、plugin packaging 和 V1 legacy suite 组合的关系，
 不暴露私有路径、私有工作流或真实本机状态。
 
 ## Rules / 规则
@@ -26,8 +26,8 @@ Skill
   CN: 可复用工作流、验证门槛、脚本、参考资料和资产。
 
 Suite
-  EN: Optional legacy/local-development composition of agents and skills.
-  CN: 可选的 legacy/local-dev agent/skill 组合包。
+  EN: V1 legacy/local-development composition of agents and skills.
+  CN: V1 legacy/local-dev agent/skill 组合包。
 ```
 
 Recommended skills are hints in `developer_instructions`. They are not hard bundles.
@@ -35,10 +35,10 @@ Recommended skills are hints in `developer_instructions`. They are not hard bund
 `Recommended skills` 是写在 `developer_instructions` 里的提示，不是强制捆绑。
 
 Production shared skills are available through the installed plugin. Custom
-agents and legacy/local-dev local skills are decided by runtime filesystem
+agents and V1 legacy/local-dev local skills are decided by runtime filesystem
 visibility:
 
-生产态共享 skills 通过已安装插件可用。custom agents 和 legacy/local-dev 本地
+生产态共享 skills 通过已安装插件可用。custom agents 和 V1 legacy/local-dev 本地
 skills 的可用性由 runtime 文件结构决定：
 
 ```text
@@ -132,14 +132,16 @@ skills 的可用性由 runtime 文件结构决定：
 | `research_gap_finder` | Find gaps, conflicts, weak assumptions, and follow-up questions | `research-evidence-table`, `research-synthesis` |
 | `research_synthesis_writer` | Draft research briefs and synthesis notes | `research-synthesis`, `research-evidence-table`, `office-briefing-note` |
 
-## Optional Suite Examples / 可选 Suite 示例
+## V1 Legacy Suite Examples / V1 Legacy Suite 示例
 
-These are legacy/local-development compositions. They are useful for custom
+These are V1 legacy/local-development compositions. They are useful for custom
 agents, experiments, or machines that have not migrated shared skills to Codex
-Next. They are not the production path for plugin-packaged skills.
+Next. They are not the production path for plugin-packaged skills. Full V1 docs
+live in [v1/suite-composition.md](v1/suite-composition.md).
 
-这些是 legacy/local-dev 组合，适合 custom agents、实验，或尚未把共享 skills
-迁移到 Codex Next 的机器。它们不是 plugin-packaged skills 的生产路径。
+这些是 V1 legacy/local-dev 组合，适合 custom agents、实验，或尚未把共享 skills
+迁移到 Codex Next 的机器。它们不是 plugin-packaged skills 的生产路径。完整 V1 文档见
+[v1/suite-composition.md](v1/suite-composition.md)。
 
 ```text
 user
@@ -167,9 +169,9 @@ all
   common + sdlc-manager + dev + data + office + research
 ```
 
-Runtime links should expose only the intended legacy/local-dev entries:
+Runtime links should expose only the intended V1 legacy/local-dev entries:
 
-runtime 只应暴露有意使用的 legacy/local-dev entries：
+runtime 只应暴露有意使用的 V1 legacy/local-dev entries：
 
 ```text
 <runtime>/.codex/agents -> <suite>/agents

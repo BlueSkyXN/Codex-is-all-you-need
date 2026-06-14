@@ -7,10 +7,10 @@ skill catalog examples, an installable Codex Next plugin, architecture and
 migration documentation, a read-only dashboard generator, and legacy/local-dev
 scripts for managing repo-local Codex runtime entrypoints.
 
-The production storyline is "source catalog -> plugin package -> marketplace
-install". Local suites and repo-local `.codex` entrypoint symlinks are now a
-legacy or local-development composition path. Keep changes aligned with that
-plugin-first model and with the architecture-first SDLC catalog shape.
+The V2 production storyline is "source catalog -> plugin package ->
+marketplace install". Local suites and repo-local `.codex` entrypoint symlinks
+are V1 legacy or local-development compatibility paths. Keep changes aligned
+with that plugin-first model and with the architecture-first SDLC catalog shape.
 
 ## Codex startup behavior
 
@@ -41,7 +41,7 @@ plugin-first model and with the architecture-first SDLC catalog shape.
 | `tests/` | Unit tests for repository scripts | No | Follow `scripts/AGENTS.md` when changing tests for `scripts/` behavior |
 | `examples/catalog/` | Sanitized public agent and skill source catalog | Yes | Before changing agent TOML, skill folders, catalog group docs, or publication boundaries |
 | `examples/runtime/` | Public-safe example runtime `AGENTS.md` instructions | Yes | Before changing runtime instruction examples |
-| `examples/suites/` | Legacy/local-dev suite symlink pattern notes and examples | No | Read `examples/suites/README.md` before changing suite documentation |
+| `examples/suites/` | V1 legacy/local-dev suite symlink pattern notes and examples | No | Read `examples/suites/README.md` before changing suite documentation |
 | `plugins/` | Installable Codex plugin package parent directory | No | Read the specific plugin card when a plugin package has one |
 | `plugins/codex-next/` | Canonical packaged Codex Next plugin built from public-safe skills | Yes | Before changing the plugin manifest, README, bundled skills, package layout, or validation guidance |
 | `.agents/plugins/marketplace.json` | Repo marketplace that exposes checked-in plugins | No | Before changing plugin availability or marketplace metadata |
@@ -107,7 +107,7 @@ Use `git diff --check -- examples/catalog` after catalog edits.
 - Prefer placeholders such as `~/.codex`, `<workspace>`, `<repo>`, and
   `/path/to/...` in public docs and examples.
 - Preserve the separation between source catalog, plugin package, marketplace,
-  local suites, and runtime `.codex` entrypoints. Do not imply that suite
+  V1 local suites, and runtime `.codex` entrypoints. Do not imply that suite
   symlinks are the production default after Codex Next is installed, and do not
   imply that Codex automatically inherits a parent `.codex` directory across
   child git repositories.

@@ -131,7 +131,7 @@ Good pattern:
 Agent: "For table-heavy analysis, prefer tabular-analysis when visible."
 Skill: "When triggered, run the table profiling workflow and validation gates."
 Plugin: "Package tabular-analysis for production shared use."
-Suite: "Expose both the data agent and tabular-analysis skill only for legacy/local-dev data-heavy runtimes."
+Suite: "Expose both the data agent and tabular-analysis skill only for V1 legacy/local-dev data-heavy runtimes."
 ```
 
 ## Review Checklist / 检查清单

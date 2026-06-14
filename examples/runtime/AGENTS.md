@@ -32,14 +32,14 @@ This file is also a public-safe example of a runtime `AGENTS.md`.
 
 Production shared skills should come from the installed plugin. Runtime
 filesystem entries are for custom agents, project-specific overlays, or
-legacy/local-development suite exposure.
+V1 legacy/local-development suite exposure.
 
 生产态共享 skills 应来自已安装插件。runtime 文件系统入口用于 custom agents、项目专属
-overlays，或 legacy/local-dev suite 暴露。
+overlays，或 V1 legacy/local-dev suite 暴露。
 
 ```text
 .codex/agents = runtime-visible custom agents
-.codex/skills = legacy/local-dev runtime-visible workflows
+.codex/skills = V1 legacy/local-dev runtime-visible workflows
 .agents/skills = optional project-specific overlays
 ```
 
@@ -54,8 +54,8 @@ agent 可以推荐 skill，但实际是否可用由 plugin 安装状态和文件
   URLs to this example.
 - Do not imply that a parent `.codex` is automatically inherited by every child
   git repository.
-- Do not imply that plugin-packaged production skills need repo-local suite
+- Do not imply that plugin-packaged production skills need repo-local V1 suite
   symlinks.
 - 不要把真实本机路径、私有 suite 名称、凭据或内部 URL 写入本示例。
 - 不要暗示父级 `.codex` 会被每个子 git 仓库自动继承。
-- 不要暗示 plugin-packaged 生产 skills 需要 repo-local suite symlinks。
+- 不要暗示 plugin-packaged 生产 skills 需要 repo-local V1 suite symlinks。

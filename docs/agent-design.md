@@ -23,7 +23,7 @@ For Codex, keep the agent narrow and let skills carry repeatable workflows.
 ```text
 Agent = role, judgment, boundaries, delegation style
 Skill = reusable procedure, file-format workflow, deterministic helper scripts
-Suite = optional legacy/local-dev package of agents and skills for one runtime domain
+Suite = V1 legacy/local-dev package of agents and skills for one runtime domain
 ```
 
 ## Recommended TOML Shape / 推荐 TOML 形态
@@ -113,12 +113,12 @@ For a small and maintainable preset system, group agents by work domain.
 ## Skill Hints Are Not Bundles / Skill 提示不是捆绑
 
 Codex agents cannot force-load a private bundle of skills by TOML field alone.
-Production shared skills are discoverable through installed plugins; legacy or
-project-local skills are discoverable through runtime-visible filesystem
+Production shared skills are discoverable through installed plugins; V1 legacy
+or project-local skills are discoverable through runtime-visible filesystem
 entrypoints.
 
 Codex agent 不能单靠 TOML 字段强制捆绑某组 skills。生产态共享 skills 通过已安装插件
-发现；legacy 或 project-local skills 通过 runtime 可见文件入口发现。
+发现；V1 legacy 或 project-local skills 通过 runtime 可见文件入口发现。
 
 Use `developer_instructions` for soft guidance:
 

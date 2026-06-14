@@ -22,17 +22,17 @@ private production catalog
   EN: Real agents, real skills, private workflows, local business process.
   CN: 真实 agents、真实 skills、私有工作流、本地业务流程。
 
-legacy/local-dev suite aggregation
-  EN: Legacy or local-development symlink compositions for custom agents,
+V1 legacy/local-dev suite aggregation
+  EN: V1 legacy or local-development symlink compositions for custom agents,
       experiments, or machines that have not migrated to plugins.
-  CN: legacy 或 local-dev symlink 聚合层，用于 custom agents、实验，或尚未迁移到
+  CN: V1 legacy 或 local-dev symlink 聚合层，用于 custom agents、实验，或尚未迁移到
       plugin 的机器。
 
 runtime directories
   EN: Work directories where Codex runs. They expose repo-local `.codex`
-      entrypoints only when a local suite/custom-agent path is intentionally used.
+      entrypoints only when a V1 local suite/custom-agent path is intentionally used.
   CN: Codex 实际运行的工作目录，通过 repo-local `.codex` entrypoints
-      有意使用本地 suite/custom-agent 路径时才暴露入口。
+      有意使用 V1 本地 suite/custom-agent 路径时才暴露入口。
 
 project overlays
   EN: Optional `.agents/skills` folders for project-specific skill extras.
@@ -98,13 +98,13 @@ Private skills may point to private templates, scripts, and examples. Keep them 
 
 私有 skills 可以引用私有模板、脚本和示例。除非已经明确脱敏，否则不要放入公开仓库。
 
-## Suite Rules / Suite 规则
+## V1 Suite Rules / V1 Suite 规则
 
-Suites are local compositions, not source catalogs. They are legacy or
+Suites are V1 local compositions, not source catalogs. They are legacy or
 local-development infrastructure after shared production skills move into the
 Codex Next plugin.
 
-suite 是本机组合层，不是素材源。在共享生产 skills 迁移到 Codex Next 插件后，
+suite 是 V1 本机组合层，不是素材源。在共享生产 skills 迁移到 Codex Next 插件后，
 它们属于 legacy 或 local-dev 基础设施。
 
 ```text
@@ -142,12 +142,12 @@ This supports one source item being reused by many suites.
 ## Runtime Rules / 运行目录规则
 
 Production shared skills should come from the installed plugin. Runtime
-directories should link exposed entries only for legacy suite setups,
+directories should link exposed entries only for V1 legacy suite setups,
 local-development experiments, or project-specific custom agents. A parent
 workspace `.codex` is not inherited automatically by child git repositories, so
 each repo that should opt in to this local path needs local entrypoints:
 
-生产态共享 skills 应来自已安装插件。运行目录只有在 legacy suite 设置、local-dev
+生产态共享 skills 应来自已安装插件。运行目录只有在 V1 legacy suite 设置、local-dev
 实验或项目专属 custom agents 场景下才应连接暴露入口。父级工作区 `.codex`
 不会被子 git repo 自动继承，所以每个需要 opt in 本地路径的 repo 都需要本地
 entrypoints：
@@ -165,11 +165,11 @@ Do not symlink the whole `.codex` folder. Other local files under `.codex` may n
 
 不要 symlink 整个 `.codex` 文件夹。`.codex` 下的其他本地文件可能需要保留运行目录自己的配置。
 
-For legacy/local-dev batch setup, use the entrypoint sync helper in dry-run mode
+For V1 legacy/local-dev batch setup, use the entrypoint sync helper in dry-run mode
 first. Choose `--link-mode directories` for workspace aggregates unless the
 target repo needs real entry directories.
 
-legacy/local-dev 批量设置时，先用 entrypoint sync helper 做 dry-run。对 workspace
+V1 legacy/local-dev 批量设置时，先用 entrypoint sync helper 做 dry-run。对 workspace
 聚合层优先选择 `--link-mode directories`；只有目标 repo 需要保留真实入口目录时才用
 逐项模式。
 
@@ -223,11 +223,11 @@ For user-level defaults across repositories, use Git's XDG ignore path
 
 ## Project-Specific Overlays / 项目专属叠加
 
-Plugin-installed skills are the shared production layer. Legacy/local-dev
+Plugin-installed skills are the shared production layer. V1 legacy/local-dev
 suites can still serve broad work domains, and project-specific skills can live
 in project-local overlays:
 
-插件安装的 skills 是共享生产层。legacy/local-dev suites 仍可服务大任务域，
+插件安装的 skills 是共享生产层。V1 legacy/local-dev suites 仍可服务大任务域，
 项目专属技能可以放在项目本地叠加层：
 
 ```text
@@ -249,23 +249,23 @@ This gives two layers:
 这形成两层：
 
 ```text
-.codex = legacy/local-dev shared capability plus repo-local custom agents
+.codex = V1 legacy/local-dev shared capability plus repo-local custom agents
 .agents = project-specific skill capability
 ```
 
-Do not expand shared plugin or suite skills into `.agents/skills`. That directory is
+Do not expand shared plugin or V1 suite skills into `.agents/skills`. That directory is
 reserved for user-owned or project-owned overlays. If a repo needs shared
-suite skills beside local `.codex` content, use entry links under
+V1 suite skills beside local `.codex` content, use entry links under
 `.codex/skills` instead. For production shared skills, install the plugin.
 
-不要把共享 plugin 或 suite skills 展开到 `.agents/skills`。这个目录应保留给用户或项目自有叠加层。
-如果某个 repo 需要在本地 `.codex` 内容旁边放共享 suite skills，应在 `.codex/skills`
+不要把共享 plugin 或 V1 suite skills 展开到 `.agents/skills`。这个目录应保留给用户或项目自有叠加层。
+如果某个 repo 需要在本地 `.codex` 内容旁边放共享 V1 suite skills，应在 `.codex/skills`
 下使用逐项链接。生产态共享 skills 应安装插件。
 
 The dashboard currently focuses on `.codex` suite connections for
-legacy/local-dev setups. Project overlay discovery can be added later.
+V1 legacy/local-dev setups. Project overlay discovery can be added later.
 
-当前面板主要检查 legacy/local-dev 设置中的 `.codex` suite 连接。项目叠加层发现能力可后续加入。
+当前面板主要检查 V1 legacy/local-dev 设置中的 `.codex` suite 连接。项目叠加层发现能力可后续加入。
 
 ## Publish Checklist / 发布检查
 

@@ -27,10 +27,10 @@ research/
 
 The Codex Next plugin packages the public skills from this catalog for
 production use. The dashboard can also scan this directory as
-`source.codex_root` when paired with a local legacy/local-dev `suites_root`.
+`source.codex_root` when paired with a local V1 legacy/local-dev `suites_root`.
 
 Codex Next 插件会把本 catalog 中的公开 skills 打包成生产可用的插件。配合本机
-legacy/local-dev `suites_root` 时，dashboard 也可以把本目录作为 `source.codex_root`
+V1 legacy/local-dev `suites_root` 时，dashboard 也可以把本目录作为 `source.codex_root`
 扫描。
 
 Current public subset:

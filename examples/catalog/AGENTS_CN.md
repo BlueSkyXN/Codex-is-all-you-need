@@ -8,7 +8,7 @@
 
 本目录是从私有 Codex preset catalog 抽取并脱敏后的公开安全 source catalog。内容应保持通用、可复用，不包含机器特定信息或业务私有细节。
 
-生产态共享 skill 可见性由 Codex Next 插件打包提供。custom agent 与 legacy/local-dev
+生产态共享 skill 可见性由 Codex Next 插件打包提供。custom agent 与 V1 legacy/local-dev
 本地可见性由 filesystem placement 和 suites 决定，而不是由 agent prose 单独决定。
 
 ## 目录结构

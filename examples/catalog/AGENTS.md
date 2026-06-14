@@ -24,7 +24,7 @@ Current groups are `common`, `sdlc-manager`, `dev`, `data`, `office`, and `resea
 - Keep the architecture-first SDLC control plane centered on `sdlc-manager`;
   direct development fallback belongs in `dev`.
 - Production shared-skill visibility is provided by the Codex Next plugin when
-  packaged. Custom agent and legacy/local-dev local visibility is decided by
+  packaged. Custom agent and V1 legacy/local-dev local visibility is decided by
   filesystem placement and suites, not by agent prose alone.
 
 ## Agent TOML Rules

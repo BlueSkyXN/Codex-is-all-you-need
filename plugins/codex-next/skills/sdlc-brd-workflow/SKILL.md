@@ -17,7 +17,7 @@ A BRD explains why the work matters from a business or operating perspective. It
 - A feature idea is attractive but the business reason is unclear.
 - A project may need system/program-depth materials because business risk, compliance, launch, or multi-wave coordination is material.
 
-BRD is an incubation artifact. Do not require it for bugfix, clear small feature work, pure refactor, or direct-dev just because the SDLC suite contains this skill.
+BRD is an incubation artifact. Do not require it for bugfix, clear small feature work, pure refactor, or direct-dev just because the SDLC plugin bundle contains this skill.
 
 ## Inputs
 

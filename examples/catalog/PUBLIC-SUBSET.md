@@ -36,7 +36,7 @@ analysis, office reporting, and research synthesis.
 - Private symlinked skills.
 - Machine-specific paths.
 - Generated dashboard state.
-- Local suite symlink state.
+- V1 local suite symlink state.
 - Private templates, examples, scripts, or business process.
 - Unpublished skill names used only in the private production catalog.
 

@@ -2,7 +2,7 @@
 
 中文 | [English](README.md)
 
-`Codex Is All You Need` 是一套 Codex agent / skill 预设体系的公开安全版本。它不是一个“把某台机器完整复制出去”的私有配置仓库，而是把一套真实生产环境里的经验抽象成可学习、可仿照、可检查的目录结构、示例素材、管理脚本和只读面板。
+`Codex Is All You Need` 是一套公开安全的 V2 Codex plugin-first 预设体系。它不是一个“把某台机器完整复制出去”的私有配置仓库，而是把一套真实生产环境里的经验抽象成 source catalog、可安装插件包、示例素材、管理脚本和只读面板。
 
 一句话：
 
@@ -14,15 +14,15 @@ source catalog -> plugin package -> marketplace install
 
 1. 安装 Codex Next 插件，把公开 skills 打包成一套可复用工作流能力包。
 2. 复制公开示例，搭建自己的本地 agent / skill catalog。
-3. 学习如何设计 Codex agents、skills，以及可选的本机 suite 组合层。
-4. 用 dashboard 和同步脚本检查、维护 legacy 或 local-dev Codex 预设。
+3. 学习如何围绕 plugin-first 工作流设计 Codex agents 和 skills。
+4. 在需要时迁移或检查旧的 V1 suite / composition 设置。
 
 ## 适合谁
 
 - 想把常用工作流沉淀成 Codex skills 的开发者。
 - 想为不同任务域准备不同 custom agents 的团队或个人。
 - 想把 Claude Code 风格的 agent / skill 经验迁移到 Codex 的用户。
-- 想使用 plugin-first 共享 skills，同时为 custom agents 或实验保留可选本机 suite 组合层的人。
+- 想使用 plugin-first 共享 skills，并只在迁移或本机实验时查看 V1 suite 文档的人。
 - 想公开分享 agent / skill 结构，但又不想泄露私有 prompt、路径、模板或真实配置的人。
 
 ## 这不是
@@ -45,7 +45,7 @@ scripts/
 
 docs/
   usage-guide.md                  # 完整双语使用指南
-  architecture.md                 # plugin-first 架构和 legacy suite 说明
+  architecture.md                 # V2 plugin-first 架构
   agent-design.md                 # custom agent 设计
   skill-design.md                 # skill 设计
   agent-skill-map.md              # agent 与 skill 分工
@@ -53,7 +53,7 @@ docs/
   user-global-agents-example.md   # 公开安全的用户全局 AGENTS.md 示例
   model-catalog-override.md       # Codex 自定义模型 catalog override 教程
   global-git-ignore.md            # 用户级 Git ignore 配置
-  suite-to-plugin-migration.md    # 从 suites 迁移到 plugin 的生产清理流程
+  v1/                             # legacy suite / composition 文档和迁移说明
   architecture-first-sdlc-flow.md
   claude-to-codex-migration.md
   public-private-strategy.md
@@ -64,10 +64,10 @@ plugins/
 examples/
   catalog/                        # 脱敏后的公开 agent / skill source catalog
   runtime/                        # runtime AGENTS.md 示例
-  suites/                         # suite symlink 模式说明
+  suites/                         # V1 suite 示例入口
 ```
 
-## 核心概念
+## 当前 V2 模型
 
 ```text
 source catalog
@@ -80,20 +80,17 @@ plugin package
   示例：plugins/codex-next/skills/dev-python-quality/SKILL.md
        .agents/plugins/marketplace.json
 
-local suites
-  legacy 或 local-dev 组合层。每个 suite 通过 symlink 选择要暴露哪些 agents / skills。
-  示例：~/.codex/suites/github/agents/*.toml
-       ~/.codex/suites/github/skills/*
-       ~/.codex/suites/all/agents/*.toml
-       ~/.codex/suites/all/skills/*
-
-runtime entrypoints
-  Codex 启动目录可选发现的 .codex/agents 和 legacy .codex/skills。
-  示例：<repo>/.codex/agents/<agent>.toml
-       <repo>/.codex/skills/<skill>
+marketplace install
+  用户安装插件包的入口。
+  示例：codex plugin add codex-next@codex-is-all-you-need
 ```
 
-更详细解释见 [docs/usage-guide.md](docs/usage-guide.md) 和 [docs/architecture.md](docs/architecture.md)。
+V1 suite / composition 文档只用于迁移和兼容。只有当某台机器仍通过
+`~/.codex/suites` 或 repo-local `.codex/skills` 链接暴露共享 skills 时，才从
+[docs/v1/](docs/v1/) 开始看。
+
+V2 的更详细解释见 [docs/usage-guide.md](docs/usage-guide.md) 和
+[docs/architecture.md](docs/architecture.md)。
 
 ## 3 分钟快速用法
 
@@ -119,7 +116,7 @@ find examples/catalog -maxdepth 3 \( -path '*/agents/*.toml' -o -path '*/skills/
 ### 2. 安装 Codex Next
 
 Codex Next 把公开安全的 skills 打包成一个可安装插件。它不打包
-`.codex/agents` custom agent TOML，也不打包本机 suite symlink。插件内包含
+`.codex/agents` custom agent TOML，也不打包 V1 本机 suite symlink。插件内包含
 `core-router` 入口 skill，用来把任务路由到最小充分的内置工作流。
 
 插件源码：
@@ -163,8 +160,8 @@ codex plugin add codex-next@codex-is-all-you-need
 
 安装后可以调用 `$codex-next:core-router`，或直接要求 Codex 使用 Codex Next 处理任务。
 
-如果你要把已有机器从 suite-based runtime entrypoints 迁移到 Codex Next，见
-[Suite To Plugin Migration](docs/suite-to-plugin-migration.md)。
+如果你要把已有 V1 机器从 suite-based runtime entrypoints 迁移到 Codex Next，见
+[V1 To V2 Migration](docs/v1/suite-to-plugin-migration.md)。
 
 ### 3. 生成只读 dashboard
 
@@ -196,13 +193,15 @@ python3 dashboard/build_dashboard.py \
   --json-only
 ```
 
-Dashboard 是只读工具，主要用于 source catalog 检查和 legacy/local-dev suite 可见性检查。
-它不会创建、删除或修改 symlink。更多字段说明见 [dashboard/README.md](dashboard/README.md)。
+Dashboard 是只读工具。在 V2 中主要用于 source catalog 检查；如果配置了 V1
+兼容路径，它仍可报告 V1 legacy/local-dev suite 可见性。它不会创建、删除或修改
+symlink。更多字段说明见 [dashboard/README.md](dashboard/README.md)。
 
-### 4. 可选：同步 legacy/local-dev Git repo 入口
+### 4. 可选 V1 兼容：同步 legacy/local-dev Git repo 入口
 
-生产态共享 skills 应来自已安装的 Codex Next 插件。这个 helper 只用于 legacy suite
-设置、local-dev 实验，或项目专属 custom agent 暴露。
+生产态共享 skills 应来自已安装的 Codex Next 插件。这个 helper 只用于 V1 legacy suite
+设置、local-dev 实验，或项目专属 custom agent 暴露。旧 suite 模型见
+[V1 Suite Composition](docs/v1/suite-composition.md)。
 
 Codex 不会从子 git repo 自动继承父目录 `.codex`。如果你已经有一个聚合好的工作区入口，例如：
 
@@ -270,8 +269,8 @@ python3 scripts/sync_codex_entrypoints.py clean \
 
 脚本只处理指向当前 `--source-root` 的 symlink，不删除真实文件、真实目录或项目自定义 entrypoints。如果真实目录里有本地内容，目录模式会报告 conflict，而不是直接替换。
 
-`.agents/skills` 应保留给项目专属 skills。不要把共享 plugin 或 suite skills 部署到这里。
-生产态共享 skills 应安装插件；legacy/local-dev suite 可见性才通过 `.codex/skills`
+`.agents/skills` 应保留给项目专属 skills。不要把共享 plugin 或 V1 suite skills 部署到这里。
+生产态共享 skills 应安装插件；V1 legacy/local-dev suite 可见性才通过 `.codex/skills`
 的目录级或逐项链接实现。
 
 ## 支持的 Agents 和 Skills
@@ -433,8 +432,8 @@ runtime 可见位置：
 <repo>/.codex/skills/dev-python-quality/SKILL.md
 ```
 
-生产态共享 skills 优先使用已安装的 `codex-next` 插件，而不是 repo-local
-`.codex/skills` symlink。上面的路径用于 legacy、local-dev 或项目专属暴露。
+生产态共享 skills 应使用已安装的 `codex-next` 插件。上面的 repo-local
+`.codex/skills` 路径用于 V1 legacy、local-dev 或项目专属暴露。
 
 项目专属 skill 也可以放在：
 
@@ -449,8 +448,8 @@ runtime 可见位置：
 ```text
 1. 先维护 source catalog
 2. 保持 plugins/codex-next 这个 packaged skill surface 同步
-3. local suites 只用于 legacy/custom-agent/local-dev 组合
-4. 只有 plugin 路径不够时才暴露 runtime entrypoints
+3. V1 local suites 不进入默认生产路径
+4. runtime entrypoints 只用于迁移、custom agents 或项目专属 overlay
 5. 用 plugin、dashboard 和 Codex 可见性验证
 ```
 
@@ -469,7 +468,7 @@ runtime 可见位置：
 - 跨仓库个人 ignore 规则放在 `~/.config/git/ignore`；见
   [Global Git Ignore Profile](docs/global-git-ignore.md)。
 - 保持 plugin 打包的公开 skills 和 source catalog 对齐。
-- legacy/local-dev suite 里使用 symlink，source catalog 里保存真实文件。
+- V1 suite symlink 只用于迁移或明确的 local-development 设置。
 - 私有生产 catalog 和公开示例 catalog 分离。
 - 每次改 suite 后跑 `dashboard/build_dashboard.py --json-only`；每次改 plugin package 后使用
   Codex plugin list 命令验证。
@@ -481,7 +480,7 @@ runtime 可见位置：
 - dashboard 源码。
 - 脱敏后的 agent / skill 示例。
 - Codex Next plugin package 和 marketplace metadata。
-- legacy suite / runtime 管理模式。
+- V1 legacy suite / runtime 管理模式。
 - 脱敏后的 discovery 边界结论。
 - 可复用的 entrypoint 同步脚本。
 

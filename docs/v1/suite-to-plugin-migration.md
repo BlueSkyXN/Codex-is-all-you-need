@@ -1,10 +1,11 @@
-# Suite To Plugin Migration / 从 Suite 迁移到 Plugin
+# V1 To V2 Migration / 从 V1 Suite 迁移到 V2 Plugin
 
-This guide documents the production cleanup path after Codex Next has replaced
-machine-local suite exposure for shared skills.
+This guide documents the cleanup path from the V1 suite/composition model to
+the V2 plugin-first model after Codex Next has replaced machine-local suite
+exposure for shared skills.
 
 本文说明在 Codex Next 已经取代本机 suite 暴露共享 skills 后，如何把生产运行态从
-suite-first 迁移到 plugin-first。
+V1 suite-first 迁移到 V2 plugin-first。
 
 ## Target State / 目标状态
 
@@ -220,7 +221,7 @@ Run the preflight checks again after rollback.
 After a production migration, update public docs to make the active model clear:
 
 - Plugin-first production: installed plugin is the shared workflow surface.
-- Suites: legacy or local-development composition layer.
+- V1 suites: legacy or local-development composition layer.
 - Runtime `.codex/agents` and `.codex/skills`: only for project-specific
   needs, selective experiments, or legacy compatibility.
 - `.agents/plugins/marketplace.json`: plugin marketplace source, not obsolete

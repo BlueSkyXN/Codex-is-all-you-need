@@ -23,7 +23,7 @@ synthesis.
 ## What It Does Not Include
 
 - Custom agent TOML files from `.codex/agents`.
-- Machine-local suite symlinks or runtime `.codex` entrypoints.
+- V1 machine-local suite symlinks or runtime `.codex` entrypoints.
 - Private prompts, private paths, credentials, or unpublished skills.
 
 Custom agents remain a separate Codex subagent configuration layer. This plugin
@@ -96,8 +96,9 @@ $codex-next:core-router
 
 or ask Codex to use Codex Next for the task.
 
-If you are migrating an existing machine from suite-based runtime entrypoints,
-see [Suite To Plugin Migration](../../docs/suite-to-plugin-migration.md).
+If you are migrating an existing V1 machine from suite-based runtime
+entrypoints, see
+[V1 To V2 Migration](../../docs/v1/suite-to-plugin-migration.md).
 
 ## Local Development
 

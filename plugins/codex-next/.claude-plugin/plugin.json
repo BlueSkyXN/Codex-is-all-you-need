@@ -1,0 +1,19 @@
+{
+  "name": "codex-next",
+  "version": "0.3.2",
+  "description": "Reusable skills for SDLC planning, software delivery, development workflows, research, data work, and office productivity.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "codex",
+    "skills",
+    "sdlc",
+    "software-delivery",
+    "workflow"
+  ]
+}

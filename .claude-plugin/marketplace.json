@@ -1,0 +1,16 @@
+{
+  "name": "codex-is-all-you-need",
+  "description": "Cross-ecosystem workflow skill pack for Codex, Claude Code, and GitHub Copilot.",
+  "owner": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "plugins": [
+    {
+      "name": "codex-next",
+      "description": "Installable workflow pack with routing, SDLC, development, review, data, office, and research skills.",
+      "source": "./plugins/codex-next",
+      "category": "productivity"
+    }
+  ]
+}

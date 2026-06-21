@@ -26,6 +26,24 @@
       },
       "category": "Productivity",
       "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/codex-next"
+    },
+    {
+      "name": "github-publish-zip",
+      "description": "Package Git worktree files that would be publishable to GitHub into a local ZIP archive.",
+      "author": {
+        "name": "BlueSkyXN",
+        "url": "https://github.com/BlueSkyXN"
+      },
+      "source": {
+        "source": "local",
+        "path": "./plugins/github-publish-zip"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity",
+      "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/github-publish-zip"
     }
   ]
 }

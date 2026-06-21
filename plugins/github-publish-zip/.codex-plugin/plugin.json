@@ -1,0 +1,37 @@
+{
+  "name": "github-publish-zip",
+  "version": "0.1.0",
+  "description": "Package Git worktree files that would be publishable to GitHub into a local ZIP archive.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/github-publish-zip",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "codex",
+    "zip",
+    "github",
+    "archive",
+    "release"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "GitHub Publish Zip",
+    "shortDescription": "Package GitHub-publishable files as ZIP.",
+    "longDescription": "GitHub Publish Zip packages the tracked and non-ignored files from a Git worktree into a local ZIP archive, respecting Git ignore rules and excluding Git metadata plus local output artifacts.",
+    "developerName": "BlueSkyXN",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills",
+      "Workflow"
+    ],
+    "defaultPrompt": [
+      "Use $github-publish-zip:github-publish-zip to package this repo.",
+      "Create a GitHub-publishable ZIP for this project."
+    ],
+    "brandColor": "#2563EB",
+    "websiteURL": "https://github.com/BlueSkyXN/Codex-is-all-you-need"
+  }
+}

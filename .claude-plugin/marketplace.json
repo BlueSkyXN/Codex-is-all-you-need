@@ -11,6 +11,12 @@
       "description": "Installable workflow pack with routing, SDLC, development, review, data, office, and research skills.",
       "source": "./plugins/codex-next",
       "category": "productivity"
+    },
+    {
+      "name": "infoops",
+      "description": "Codex and OpenClaw compatible skill for turning workstream signals into structured operational awareness and action priorities.",
+      "source": "./plugins/infoops",
+      "category": "productivity"
     }
   ]
 }

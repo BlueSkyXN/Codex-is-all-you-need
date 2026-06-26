@@ -1,0 +1,39 @@
+{
+  "name": "infoops",
+  "version": "0.1.0",
+  "description": "Codex and OpenClaw compatible InfoOps skill for turning workstream signals into structured operational awareness and action priorities.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/infoops",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "codex",
+    "openclaw",
+    "infoops",
+    "signals",
+    "feishu",
+    "lark-cli",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "InfoOps",
+    "shortDescription": "Structure workstream signals into operational awareness.",
+    "longDescription": "InfoOps provides a Codex plugin and OpenClaw-compatible standalone skill for maintaining a workspace/infoops system: collecting and classifying workstream signals, refreshing a PULSE view, tracking sources and threads, and turning information flow into action priorities.",
+    "developerName": "BlueSkyXN",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills",
+      "Workflow"
+    ],
+    "defaultPrompt": [
+      "Use $infoops:infoops to review workspace/infoops status.",
+      "帮我看看 workspace/infoops 最近什么情况。"
+    ],
+    "brandColor": "#0F766E",
+    "websiteURL": "https://github.com/BlueSkyXN/Codex-is-all-you-need"
+  }
+}

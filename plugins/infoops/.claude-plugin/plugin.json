@@ -1,0 +1,21 @@
+{
+  "name": "infoops",
+  "version": "0.1.0",
+  "description": "Codex and OpenClaw compatible InfoOps skill for turning workstream signals into structured operational awareness and action priorities.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/infoops",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "codex",
+    "openclaw",
+    "infoops",
+    "signals",
+    "feishu",
+    "lark-cli",
+    "workflow"
+  ]
+}

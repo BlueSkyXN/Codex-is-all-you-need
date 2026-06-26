@@ -44,6 +44,24 @@
       },
       "category": "Productivity",
       "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/github-publish-zip"
+    },
+    {
+      "name": "infoops",
+      "description": "Codex and OpenClaw compatible skill for turning workstream signals into structured operational awareness and action priorities.",
+      "author": {
+        "name": "BlueSkyXN",
+        "url": "https://github.com/BlueSkyXN"
+      },
+      "source": {
+        "source": "local",
+        "path": "./plugins/infoops"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity",
+      "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/infoops"
     }
   ]
 }

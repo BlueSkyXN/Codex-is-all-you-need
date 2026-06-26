@@ -62,6 +62,24 @@
       },
       "category": "Productivity",
       "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/infoops"
+    },
+    {
+      "name": "expression-fixer",
+      "description": "Detect and fix unnatural Chinese workplace writing in reports, summaries, emails, and status updates.",
+      "author": {
+        "name": "BlueSkyXN",
+        "url": "https://github.com/BlueSkyXN"
+      },
+      "source": {
+        "source": "local",
+        "path": "./plugins/expression-fixer"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity",
+      "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/expression-fixer"
     }
   ]
 }

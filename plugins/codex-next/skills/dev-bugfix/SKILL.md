@@ -11,27 +11,28 @@ Before editing, if `local/sdlc` state exists, read the relevant domain or
 architecture notes to get a mental model of the modules in play, and check any
 decisions in the area.
 
+## Phase 0 - Define the Observed Failure
+
+Before anything else, pin down what is actually broken:
+
+- Error message or wrong output.
+- Reproduction steps the user gave or you inferred.
+- Affected file, feature, endpoint, CLI command, or behavior.
+
+Then explore before editing: map likely files and execution paths, identify
+existing tests, and identify the smallest validation command.
+
 ## Phase 1 - Build a Feedback Loop
 
 **This is the skill. Everything else is mechanical.** If you have a `tight`
 pass/fail signal that goes `red` on this bug, you will find the cause. If you
 do not, no amount of reading code will save you. Spend disproportionate effort
-here.
+here. **Be aggressive. Be creative. Refuse to give up.**
 
-Ways to build one - try in roughly this order. Read
-`references/feedback-loop-menu.md` when choosing the loop or when the obvious
-test seam is missing.
-
-1. Failing test at the seam that reaches the bug.
-2. `curl` or HTTP script against a running dev server.
-3. CLI invocation with a fixture, diffing stdout against a known-good snapshot.
-4. Headless browser script asserting on DOM, console, or network.
-5. Replay a captured trace or payload through the code path in isolation.
-6. Throwaway harness exercising the bug path with one function call.
-7. Property or fuzz loop for "sometimes wrong output".
-8. Bisection harness for "appeared between two known states".
-9. Differential loop: same input through old vs new, diff outputs.
-10. HITL bash script - last resort - via `scripts/hitl-loop.template.sh`.
+Consult `references/feedback-loop-menu.md` for the full menu of loop types and
+when each fits. Try them roughly in order: failing test, HTTP script, CLI
+fixture diff, headless browser, replay trace, throwaway harness, property/fuzz,
+bisection, differential, HITL script (last resort).
 
 ### Tighten the Loop
 
@@ -55,6 +56,13 @@ that is:
 If you catch yourself theorising before this command exists, stop. Jumping to a
 hypothesis is the exact failure this skill prevents. No red command, no Phase 2.
 
+### When You Genuinely Cannot Build a Loop
+
+Stop and say so explicitly. List what you tried. Ask the user for: (a) access to
+whatever environment reproduces it, (b) a captured artifact (HAR file, log dump,
+core dump, screen recording with timestamps), or (c) permission to add temporary
+production instrumentation. Do not proceed to hypothesise without a loop.
+
 ## Phase 2 - Reproduce and Minimise
 
 Run the loop and watch it go red. Confirm:
@@ -72,7 +80,8 @@ every remaining element is `load-bearing`: removing any one turns the loop green
 Generate 3-5 ranked, falsifiable hypotheses before testing any. Each states its
 prediction: "if X is the cause, changing Y makes it disappear." No prediction
 means it is only a vibe; discard or sharpen it. Show the ranked list to the user
-as a cheap checkpoint when useful. Proceed on your ranking if the user is AFK.
+before testing — cheap checkpoint, big time saver. Proceed on your ranking if
+the user is AFK.
 
 ## Phase 4 - Instrument
 

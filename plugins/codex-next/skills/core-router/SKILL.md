@@ -20,9 +20,6 @@ source of truth:
 ../sdlc-router/references/sdlc-operating-model.md
 ```
 
-Read it when lane, ADS, ID, or intake classification matters. Do not restate the
-contract here.
-
 ## Codex Next Flow Map
 
 - Direct-dev line: direct request -> relevant dev skill -> smallest validation
@@ -34,6 +31,8 @@ contract here.
 - Context line: `core-goal-run` executes an existing local goal plan. For session
   compaction or fork handoff, write the smallest durable handoff note needed by
   the next run; do not turn it into an SDLC artifact unless the task needs that.
+- Unknowns line: ambiguous or underspecified request -> `core-explore-unknowns`
+  quadrant walk -> hand the map to the relevant implementation skill.
 - Skill-quality line: authoring discipline -> surface check -> `core-skill-eval`
   for major behavior changes.
 
@@ -45,6 +44,7 @@ contract here.
    - Requirements, architecture, domain, spec, handoff, or release work.
    - Data, office, research, or prompt-evaluation work.
    - External Web/GPT/AI discussion that must be normalized before execution.
+   - Ambiguous or underspecified request that needs unknowns explored first.
 
 2. Choose the smallest route.
    - If the request is SDLC/ADS, `local/sdlc`, handoff, architecture,
@@ -52,6 +52,8 @@ contract here.
      use `sdlc-manager`.
    - If the request only needs lane, ADS, or minimum-material classification,
      use `sdlc-router`.
+   - If the request is ambiguous, underspecified, or the user will "know it when
+     they see it", use `core-explore-unknowns` to map the unknowns first.
    - If the request is clear and local, route to the relevant dev skill.
    - If the user asks to produce an artifact, route directly to that artifact
      skill.
@@ -72,6 +74,7 @@ contract here.
 
 | User intent | First skill |
 |---|---|
+| Ambiguous, underspecified, or "know it when I see it" request | `core-explore-unknowns` |
 | Stress-test or interrogate an ambiguous plan/design | `core-grilling` |
 | Evaluate a skill rewrite with golden cases | `core-skill-eval` |
 | SDLC/ADS work, `local/sdlc`, handoff, or external proposal intake | `sdlc-manager` |

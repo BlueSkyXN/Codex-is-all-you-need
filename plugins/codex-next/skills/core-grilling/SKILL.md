@@ -19,22 +19,8 @@ resolving dependencies between decisions one by one.
    them instead of asking.
 4. Do not enact the plan until the user confirms the shared understanding.
 
-## Composition
+## Done
 
-Other skills can reach for grilling at ambiguous points:
-
-- `sdlc-requirements-workflow` - after the three-perspective check
-- `sdlc-readiness-review` - before the verdict
-- `sdlc-prd-workflow` - when freezing the scope baseline
-- `sdlc-hld-workflow` - at solution trade-offs
-- `dev-migration-plan` - at strategy selection
-- `dev-refactor-plan` - when confirming the behavior contract
-
-## Output
-
-When the grilling loop ends, return:
-
-1. Confirmed understanding
-2. Decisions made
-3. Open questions
-4. Recommended next skill or action
+The grilling is done when the user confirms shared understanding. Return the
+confirmed understanding, decisions made, open questions, and the recommended
+next skill or action.

@@ -45,10 +45,16 @@ Optimize skills for predictable process, not verbose advice.
   been run" is.
 - Leading words: use compact behavior anchors such as `tight`, `red`, `seam`,
   `load-bearing`, `vertical slice`, and `deepening` when they carry real process
-  weight. Do not add weak slogans.
+  weight. A leading word too weak to beat the model's default is a no-op; the
+  fix is a stronger word, not more sentences.
+- Embargo escape valve: ordered workflows must never withhold information. A
+  finding that bears on a decision in flight is disclosed immediately, then filed
+  at its proper stage.
 - Failure-mode self-check: before shipping a substantial skill edit, look for
-  premature completion, duplicated rules, sediment, sprawl, and no-op `Do not`
-  bullets.
+  premature completion, duplicated rules, sediment, sprawl, no-op `Do not`
+  bullets, implementation indexes (file paths and line numbers that rot), and
+  war stories (play-by-play of one bug's trajectory instead of the transferable
+  principle).
 - Behavior eval: static validation only proves shape. For major new or rewritten
   skills, use `core-skill-eval` with golden cases, blind runs, and a separate
   judge when practical.

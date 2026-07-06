@@ -29,6 +29,30 @@ Key files: `.codex-plugin/plugin.json`, `README.md`, and `skills/*/SKILL.md`.
 - Keep README install instructions consistent with the repo marketplace path and
   root migration docs.
 
+## Skill authoring discipline
+
+Optimize skills for predictable process, not verbose advice.
+
+- Invocation: keep a skill model-invoked only when Codex must automatically
+  reach it or another skill must compose with it. Human-started, expensive, or
+  side-effect-heavy workflows should first prove their runtime invocation
+  semantics before using user-invoked frontmatter or moving in/out of `skills/`.
+- Information hierarchy: put load-bearing steps in `SKILL.md`, short lookup
+  material in `references/`, and deterministic repeat work in `scripts/`.
+  Avoid copying large reference content into the main skill body.
+- Completion criteria: prefer checkboxes for gates that must be satisfied before
+  moving on. "Summarize the work" is not a gate; "one red-capable command has
+  been run" is.
+- Leading words: use compact behavior anchors such as `tight`, `red`, `seam`,
+  `load-bearing`, `vertical slice`, and `deepening` when they carry real process
+  weight. Do not add weak slogans.
+- Failure-mode self-check: before shipping a substantial skill edit, look for
+  premature completion, duplicated rules, sediment, sprawl, and no-op `Do not`
+  bullets.
+- Behavior eval: static validation only proves shape. For major new or rewritten
+  skills, use `core-skill-eval` with golden cases, blind runs, and a separate
+  judge when practical.
+
 ## Do not
 
 - Do not add `.codex/agents`, suite symlinks, machine-local runtime state, or

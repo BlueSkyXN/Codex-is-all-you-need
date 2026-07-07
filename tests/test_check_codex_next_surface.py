@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import contextlib
 import importlib.util
+import io
 import json
 import sys
 import tempfile
@@ -197,6 +199,14 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
         self.assertEqual(summary["catalog_content_drift"], {})
         self.assertEqual(summary["errors"], [])
 
+    def test_junk_files_do_not_report_content_drift(self) -> None:
+        (self.plugin / "skills" / "alpha-skill" / ".DS_Store").write_bytes(b"local")
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertEqual(summary["catalog_content_drift"], {})
+        self.assertEqual(summary["errors"], [])
+
     def test_manifest_version_mismatch_is_hard_error(self) -> None:
         (self.plugin / ".claude-plugin" / "plugin.json").write_text(
             json.dumps({"name": "codex-next", "version": "0.9.0"}),
@@ -256,6 +266,92 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
         self.assertTrue(
             any("description exceeds 1024" in error for error in summary["errors"])
         )
+
+    def test_spec_body_line_budget_is_warning_only(self) -> None:
+        over_budget_body = "\n".join(f"line {index}" for index in range(501))
+        for root in (
+            self.plugin / "skills" / "alpha-skill",
+            self.catalog / "common" / "skills" / "alpha-skill",
+        ):
+            self.write_skill(root, "alpha-skill", body=over_budget_body)
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertEqual(summary["errors"], [])
+        self.assertTrue(
+            any(
+                "exceeds the spec's 500-line SKILL.md budget" in warning
+                for warning in summary["warnings"]
+            )
+        )
+        with contextlib.redirect_stdout(io.StringIO()):
+            exit_code = check_codex_next_surface.main(
+                [
+                    "--plugin-dir",
+                    str(self.plugin),
+                    "--catalog-dir",
+                    str(self.catalog),
+                ]
+            )
+        self.assertEqual(exit_code, 0)
+
+    def test_spec_overlong_compatibility_is_hard_error(self) -> None:
+        (self.plugin / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            "---\n"
+            "name: alpha-skill\n"
+            "description: Use for alpha-skill checks.\n"
+            f"compatibility: {'x' * 501}\n"
+            "---\n"
+            "# Alpha\n",
+            encoding="utf-8",
+        )
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any("compatibility exceeds 500" in error for error in summary["errors"])
+        )
+
+    def test_spec_invalid_compatibility_value_is_hard_error(self) -> None:
+        cases = ("compatibility: true\n", "compatibility:\n")
+        for compatibility_line in cases:
+            with self.subTest(compatibility_line=compatibility_line.strip()):
+                (self.plugin / "skills" / "alpha-skill" / "SKILL.md").write_text(
+                    "---\n"
+                    "name: alpha-skill\n"
+                    "description: Use for alpha-skill checks.\n"
+                    f"{compatibility_line}"
+                    "---\n"
+                    "# Alpha\n",
+                    encoding="utf-8",
+                )
+
+                summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+                self.assertTrue(
+                    any(
+                        "compatibility must be a non-empty string" in error
+                        for error in summary["errors"]
+                    )
+                )
+
+    def test_parse_frontmatter_strips_only_balanced_outer_quotes(self) -> None:
+        skill_file = self.plugin / "skills" / "alpha-skill" / "SKILL.md"
+        skill_file.write_text(
+            "---\n"
+            "name: alpha-skill\n"
+            "description: Supports users'\n"
+            'compatibility: "Codex runtime"\n'
+            "---\n"
+            "# Alpha\n",
+            encoding="utf-8",
+        )
+
+        frontmatter, errors, _ = check_codex_next_surface.parse_frontmatter(skill_file)
+
+        self.assertEqual(errors, [])
+        self.assertEqual(frontmatter["description"], "Supports users'")
+        self.assertEqual(frontmatter["compatibility"], "Codex runtime")
 
     def test_nested_metadata_mapping_is_not_flagged(self) -> None:
         content = (

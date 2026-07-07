@@ -103,7 +103,7 @@ rerun the original loop.
 
 ## Phase 6 - Cleanup and Post-mortem
 
-- [ ] Original repro no longer reproduces after re-running the Phase 1 loop
+- [ ] Initial repro command now returns the expected result for the reported symptom
 - [ ] Regression test passes, or the absence of a correct seam is documented
 - [ ] All `[DEBUG-...]` instrumentation is removed by grep
 - [ ] Throwaway harnesses are deleted or clearly kept as intentional tests

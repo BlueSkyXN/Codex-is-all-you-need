@@ -54,6 +54,9 @@ Before writing delivery requirements, diagnose the request from three perspectiv
    - What timeline, release, migration, or rollout constraint matters?
    - What must be proven before dev starts?
 
+After the three perspectives, if the trade-off set is still contested, run
+`core-grilling` on it before freezing the decision.
+
 ## Workflow
 
 1. Normalize source materials.

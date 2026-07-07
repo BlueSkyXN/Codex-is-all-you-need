@@ -40,6 +40,8 @@ Collect:
    - State what is out of scope.
    - State what may be future scope.
    - State what assumptions require confirmation.
+   - If the trade-off set is still contested, run `core-grilling` on it before
+     freezing the decision.
    - Do not proceed to detailed product requirements when core scope is unresolved.
 
 3. Define feature list and priority.

@@ -35,6 +35,8 @@ In the lightweight SDLC-ADS model, durable architecture knowledge should usually
 6. Define API/control flow between modules.
 7. Define trust boundaries, security/privacy constraints, and operational concerns.
 8. Record alternatives, trade-offs, and architecture decisions.
+   - If the trade-off set is still contested, run `core-grilling` on it before
+     freezing the decision.
 9. Route details to LLD or SPEC slices.
 10. Decide whether the output is a standalone HLD, an incremental `架构.md` update, or both.
 

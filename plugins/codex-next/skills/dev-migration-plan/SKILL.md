@@ -41,6 +41,8 @@ For pure refactor or migration, prefer behavior baseline, `as-built`, `to-be`, p
    - Feature flag rollout
    - Backward-compatible schema transition
    - Architecture/domain constraint preservation
+   - If the trade-off set is still contested, run `core-grilling` on it before
+     freezing the decision.
 
 4. Build safety rails.
    - Characterization tests

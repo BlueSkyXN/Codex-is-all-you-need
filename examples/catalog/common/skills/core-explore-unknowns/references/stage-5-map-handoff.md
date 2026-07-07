@@ -25,5 +25,5 @@ checks in their own list so implementation can start with explicit blockers.
 
 **Done when** the completed map is present and implementation can refer to it as
 the source of truth. Offer to continue with the appropriate implementation
-skill, and point at [after the walk](after-the-walk.md) for how the map is used
-during build, review, and merge.
+skill. Use [after the walk](after-the-walk.md) to keep the map current during
+build, review, and merge.

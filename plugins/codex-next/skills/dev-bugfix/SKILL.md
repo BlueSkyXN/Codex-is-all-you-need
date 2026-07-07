@@ -43,7 +43,7 @@ run copies in parallel, add load or stress, shrink timing windows, and inject
 delays at suspected races. A failure on half the runs is workable; one in a
 hundred is not yet a loop.
 
-### Completion Criterion - a Tight Loop That Goes Red
+### Completion Criterion - Red-Capable Tight Loop Evidence
 
 Name one command you have already run and show its decisive output. It must be:
 

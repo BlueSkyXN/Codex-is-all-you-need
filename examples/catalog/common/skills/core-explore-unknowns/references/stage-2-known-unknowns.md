@@ -1,4 +1,4 @@
-# Stage 2 — Known Unknowns: The Questions You Can Name
+# Stage 2 - Known Unknowns: Close Visible Questions
 
 This stage handles questions that are already visible. The missing answer may
 come from the user, from local evidence, or it may remain explicitly open.

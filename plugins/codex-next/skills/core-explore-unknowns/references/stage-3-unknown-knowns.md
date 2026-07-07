@@ -1,4 +1,4 @@
-# Stage 3 — Unknown Knowns: Extract What Was Never Articulated
+# Stage 3 - Unknown Knowns: Surface Implicit Context
 
 This stage extracts context that usually appears too late: taste, vocabulary,
 consumer expectations, deployment assumptions, and local conventions that nobody

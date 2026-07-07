@@ -27,16 +27,16 @@ Five stages run in order. **Open the reference file for the current stage before
 working that stage.** Name the quadrant you are in, close it visibly, then move
 on.
 
-1. **[Known knowns](references/stage-1-known-knowns.md)** — scan the territory,
-   then open with the settled ground.
-2. **[Known unknowns](references/stage-2-known-unknowns.md)** — the questions
-   you can name; resolve them one at a time.
-3. **[Unknown knowns](references/stage-3-unknown-knowns.md)** — extract the
-   taste and tacit context nobody has put into words.
-4. **[Unknown unknowns](references/stage-4-unknown-unknowns.md)** — sweep the
-   territory for landmines.
-5. **[Hand over the map](references/stage-5-hand-over-the-map.md)** — assemble
-   the complete map; this is the only finish line.
+1. **[Known knowns](references/stage-1-known-knowns.md)** — verify the fixed
+   ground before asking for choices.
+2. **[Known unknowns](references/stage-2-known-unknowns.md)** — line up visible
+   questions and close them by evidence or user decision.
+3. **[Unknown knowns](references/stage-3-unknown-knowns.md)** — make implicit
+   preferences, vocabulary, and local habits observable.
+4. **[Unknown unknowns](references/stage-4-unknown-unknowns.md)** — look for
+   hidden failure modes before a plan hardens.
+5. **[Map handoff](references/stage-5-map-handoff.md)** — package
+   decisions, open items, and blockers for the next workflow.
 
 When the mapped work moves into build, review, or merge, read
 [after the walk](references/after-the-walk.md): deviations found during

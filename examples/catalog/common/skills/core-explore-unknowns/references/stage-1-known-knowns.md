@@ -1,4 +1,4 @@
-# Stage 1 — Known Knowns: Open with the Settled Ground
+# Stage 1 - Known Knowns: Verify the Fixed Ground
 
 Open by separating settled facts from assumptions. The user should immediately
 see what does not need more discussion and what still does.

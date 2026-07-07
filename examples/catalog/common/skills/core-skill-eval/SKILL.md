@@ -22,19 +22,19 @@ Do not start until these inputs exist:
   the distinction is unclear.
 
 If the user only says "this skill often misses X", first help them turn that
-complaint into one or more cases and bars before spending agents.
+complaint into concrete cases and bars before assigning runners.
 
 ## Workflow
 
-1. **Validate inputs and surface first principles.** Read the target skill and
+1. **Validate inputs and state the governing standard.** Read the target skill and
    identify its purpose, trigger, done condition, and expected failure modes.
    Decide whether the eval is judgment-based or conformance-based. Continue only
    when each case has concrete input and a judgeable bar.
-2. **Run isolated cases.** For each case, start a fresh runner that sees only the
-   input and the instruction to use the target skill. Do not show the bar,
-   smells, other cases, or evaluation intent. If files must be written, restrict
-   the runner to a throwaway directory. After each run, inspect the live checkout
-   and clean accidental leaks.
+2. **Run isolated cases.** For each case, start a clean runner with only the case
+   material and the target-skill invocation. Keep the bar, smells, other cases,
+   and evaluation intent out of that run. If files must be written, restrict the
+   runner to a throwaway directory. After each run, inspect the live checkout and
+   clean accidental leaks.
 3. **Judge independently.** Give a separate judge the artifact, the bar, and the
    target skill's purpose. Do not ask the judge to "make it pass." Require
    evidence for every verdict, such as a quote or artifact pointer.

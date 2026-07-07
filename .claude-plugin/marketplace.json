@@ -13,9 +13,21 @@
       "category": "productivity"
     },
     {
+      "name": "github-publish-zip",
+      "description": "Package Git worktree files that would be publishable to GitHub into a local ZIP archive.",
+      "source": "./plugins/github-publish-zip",
+      "category": "productivity"
+    },
+    {
       "name": "infoops",
       "description": "Codex and OpenClaw compatible skill for turning workstream signals into structured operational awareness and action priorities.",
       "source": "./plugins/infoops",
+      "category": "productivity"
+    },
+    {
+      "name": "expression-fixer",
+      "description": "Detect and fix unnatural Chinese workplace writing in reports, summaries, emails, and status updates.",
+      "source": "./plugins/expression-fixer",
       "category": "productivity"
     }
   ]

@@ -74,6 +74,10 @@ PY
 git diff --check -- examples/catalog
 ```
 
+If the edited skill is mirrored into `plugins/codex-next/skills/`, also run
+`python3 scripts/check_codex_next_surface.py` from the repo root: catalog and
+plugin copies must stay content-identical file by file.
+
 For publication boundaries, compare changes with `PUBLIC-SUBSET.md`.
 
 ## Public-Safety Boundary

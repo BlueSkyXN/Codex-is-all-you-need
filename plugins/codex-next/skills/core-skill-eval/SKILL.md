@@ -43,7 +43,7 @@ complaint into concrete cases and bars before assigning runners.
 5. **Classify misses.** A miss can be a skill defect or a bad case/bar. Name the
    defect before editing: premature completion, vague done condition, missing
    rule, weak trigger, no-op instruction, duplication, sediment, sprawl, or
-   missing reference. Do not encode a bad bar into the skill.
+   missing reference split. Do not encode a bad bar into the skill.
 6. **Edit only for the observed defect.** Tighten the done condition, trigger,
    rule, behavior anchor, or reference split that caused the miss.
 7. **Re-run the suite.** A fix for one case must not regress another. Stop only

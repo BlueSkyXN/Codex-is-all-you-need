@@ -1,107 +1,100 @@
 ---
 name: dev-bugfix
-description: Use for hard bug fixes and regressions that need reproduction, root-cause analysis, and validation. Triggers when the user says "debug"/"diagnose"/"fix", or reports something broken/throwing/failing/flaky/slow.
+description: Use for difficult bug fixes and regressions that require a real reproduction loop, root-cause work, and validation. Triggers when the user says "debug"/"diagnose"/"fix", or reports broken, failing, flaky, throwing, or slow behavior.
 ---
 
 # Bugfix workflow
 
-A discipline for hard defects. Skip a phase only when explicitly justified.
+Use this for defects where guessing is likely to waste time. Move through the
+phases in order unless you can state why a phase is already satisfied.
 
-Before editing, if `local/sdlc` state exists, read the relevant domain or
-architecture notes to get a mental model of the modules in play, and check any
-decisions in the area.
+Before editing, read nearby repo instructions and any relevant `local/sdlc`
+architecture or domain notes if they exist.
 
 ## Phase 0 - Define the Observed Failure
 
-Before anything else, pin down what is actually broken:
+First pin the observed failure:
 
 - Error message or wrong output.
-- Reproduction steps the user gave or you inferred.
+- Reproduction steps from the user or current evidence.
 - Affected file, feature, endpoint, CLI command, or behavior.
 
-Then explore before editing: map likely files and execution paths, identify
-existing tests, and identify the smallest validation command.
+Then map likely code paths, nearby tests, and the smallest command that could
+prove the failure.
 
 ## Phase 1 - Build a Feedback Loop
 
-**This is the skill. Everything else is mechanical.** If you have a `tight`
-pass/fail signal that goes `red` on this bug, you will find the cause. If you
-do not, no amount of reading code will save you. Spend disproportionate effort
-here. **Be aggressive. Be creative. Refuse to give up.**
+The first job is a `tight` pass/fail loop that can go `red` for this exact bug.
+Without that signal, code reading turns into speculation. Spend more effort
+building the loop than feels comfortable.
 
-Consult `references/feedback-loop-menu.md` for the full menu of loop types and
-when each fits. Try them roughly in order: failing test, HTTP script, CLI
-fixture diff, headless browser, replay trace, throwaway harness, property/fuzz,
-bisection, differential, HITL script (last resort).
+Use `references/feedback-loop-menu.md` to choose the smallest loop that reaches
+the symptom: test, HTTP check, CLI fixture, browser assertion, replayed payload,
+temporary harness, property/fuzz run, bisect, differential comparison, or HITL
+script.
 
 ### Tighten the Loop
 
-Treat the loop as a product: make it faster, sharper, and more deterministic.
-Cache setup, narrow scope, assert the exact symptom rather than "did not crash",
-pin time, seed randomness, and isolate filesystem or network state. A 2-second
-deterministic loop is a superpower; a 30-second flaky one is barely a loop.
-For nondeterministic bugs, raise the reproduction rate until it is debuggable;
-do not wait for a perfect repro.
+Improve the loop before relying on it. Narrow setup, assert the exact symptom,
+cache slow prerequisites, pin time/randomness, and isolate filesystem or network
+state. For flaky failures, the target is a high reproduction rate, not a perfect
+single repro.
 
 ### Completion Criterion - a Tight Loop That Goes Red
 
-Name one command you have already run at least once, with invocation and output,
-that is:
+Name one command you have already run and show its decisive output. It must be:
 
-- [ ] **Red-capable** - drives the real bug path and asserts the user's exact symptom
-- [ ] **Deterministic** - same verdict every run, or a pinned high repro rate for flaky bugs
+- [ ] **Red-capable** - reaches the real bug path and checks the user's symptom
+- [ ] **Repeatable** - same verdict each run, or a pinned high repro rate for flaky bugs
 - [ ] **Fast** - seconds, not minutes
-- [ ] **Agent-runnable** - runs unattended, with human input only through the HITL template
+- [ ] **Agent-runnable** - runs unattended, except for encoded HITL prompts
 
-If you catch yourself theorising before this command exists, stop. Jumping to a
-hypothesis is the exact failure this skill prevents. No red command, no Phase 2.
+If you are forming a root-cause theory before this command exists, stop and
+build the loop first.
 
 ### When You Genuinely Cannot Build a Loop
 
-Stop and say so explicitly. List what you tried. Ask the user for: (a) access to
-whatever environment reproduces it, (b) a captured artifact (HAR file, log dump,
-core dump, screen recording with timestamps), or (c) permission to add temporary
-production instrumentation. Do not proceed to hypothesise without a loop.
+Say so directly, list the attempts, and ask for one missing input: access to a
+reproducing environment, a captured artifact such as logs/HAR/video/core dump,
+or permission for temporary instrumentation. Do not present a speculative fix as
+diagnosis.
 
 ## Phase 2 - Reproduce and Minimise
 
-Run the loop and watch it go red. Confirm:
+Run the loop and confirm:
 
-- [ ] It produces the failure the user described, not a nearby one
+- [ ] It produces the user-reported failure, not an adjacent failure
 - [ ] It is reproducible across runs, or flaky at a high enough rate to debug
 - [ ] The exact symptom is captured: message, wrong output, state, or timing
 
-Then shrink to the smallest scenario still going red: cut inputs, callers,
-configuration, and data one at a time, re-running after each cut. Done means
-every remaining element is `load-bearing`: removing any one turns the loop green.
+Then reduce the scenario. Remove inputs, callers, config, and data one at a
+time, re-running after each cut. Keep only pieces that are required for the
+failure.
 
 ## Phase 3 - Hypothesise
 
-Generate 3-5 ranked, falsifiable hypotheses before testing any. Each states its
-prediction: "if X is the cause, changing Y makes it disappear." No prediction
-means it is only a vibe; discard or sharpen it. Show the ranked list to the user
-before testing — cheap checkpoint, big time saver. Proceed on your ranking if
-the user is AFK.
+List 3-5 ranked hypotheses before probing. Each must predict what evidence or
+change would confirm or falsify it. Share the ranking before testing when the
+user can cheaply re-rank it; continue with your ranking if they are unavailable.
 
 ## Phase 4 - Instrument
 
-Each probe maps to one Phase-3 prediction. Change one variable at a time.
-Prefer debugger or REPL, then targeted logs at distinguishing boundaries. Never
-"log everything and grep". Tag every debug log with a unique prefix such as
-`[DEBUG-a4f2]` so cleanup is one grep.
+Each probe must test one prediction. Change one variable per run. Prefer a
+debugger or REPL when available; otherwise add targeted logs at the boundary
+that separates hypotheses. Tag temporary logs with a unique prefix for cleanup.
 
-Performance-flavoured symptoms such as slow, spike, latency regression, or
-memory growth should route to `dev-performance-diagnosis`; its
-baseline-and-bisect method lives there, not here.
+For slowdowns, spikes, latency regressions, or memory growth, use
+`dev-performance-diagnosis` for baseline-first measurement and bisection.
 
 ## Phase 5 - Fix and Regression Test
 
-Write the regression test before the fix, but only when a correct `seam` exists:
-one that exercises the real bug pattern at the call site. If the only seam is
-too shallow, that itself is the finding; note it and flag for Phase 6.
+Add a regression test before or alongside the fix when there is a valid `seam`:
+a test point that exercises the real failure pattern through the relevant call
+path. If every available seam is too shallow, record that as a testability
+finding.
 
-With a correct seam: red -> apply fix -> green -> re-run the Phase 1 loop
-against the original, un-minimised scenario.
+With a valid seam: watch the regression fail, apply the fix, watch it pass, then
+rerun the original loop.
 
 ## Phase 6 - Cleanup and Post-mortem
 
@@ -111,9 +104,9 @@ against the original, un-minimised scenario.
 - [ ] Throwaway harnesses are deleted or clearly kept as intentional tests
 - [ ] The correct hypothesis is stated in the commit, PR, or final report
 
-Then ask: what would have prevented this bug? If the answer is architectural
-(no good seam, tangled callers, hidden coupling), record a recommendation and
-hand off to `dev-refactor-plan` after the fix is in, not before.
+After the fix, name the prevention lesson. If the lesson is architectural, such
+as hidden coupling or no valid seam, record a follow-up and hand off to
+`dev-refactor-plan`.
 
 ## Output
 
@@ -125,7 +118,7 @@ hand off to `dev-refactor-plan` after the fix is in, not before.
 
 ## Do not
 
-- Do not theorise before a red-capable loop exists.
+- Do not assert a root cause before a red-capable loop exists.
 - Do not weaken tests to make them pass.
 - Do not hide failing or inconclusive validation.
 - Do not leave `[DEBUG-...]` tags or throwaway harnesses behind.

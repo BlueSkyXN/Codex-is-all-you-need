@@ -22,7 +22,8 @@ Key files: `.codex-plugin/plugin.json`, `README.md`, and `skills/*/SKILL.md`.
 - When updating a public catalog skill that is distributed through Codex Next,
   keep `examples/catalog/.../skills/<skill>/` and
   `plugins/codex-next/skills/<skill>/` aligned unless the skill is explicitly
-  plugin-only, such as `core-router`.
+  plugin-only. The current plugin-only allowlist is `core-router`; document and
+  validate any future addition.
 - Keep bundled skill names stable and domain-prefixed where applicable.
 - Preserve relative manifest paths; plugin manifest paths are resolved from
   `plugins/codex-next/`.
@@ -31,33 +32,30 @@ Key files: `.codex-plugin/plugin.json`, `README.md`, and `skills/*/SKILL.md`.
 
 ## Skill authoring discipline
 
-Optimize skills for predictable process, not verbose advice.
+Write skills as operational controls, not essays. The goal is repeatable agent
+process: the next run should follow the same useful path even if the wording of
+the user's task differs.
 
-- Invocation: keep a skill model-invoked only when Codex must automatically
-  reach it or another skill must compose with it. Human-started, expensive, or
-  side-effect-heavy workflows should first prove their runtime invocation
-  semantics before using user-invoked frontmatter or moving in/out of `skills/`.
-- Information hierarchy: put load-bearing steps in `SKILL.md`, short lookup
-  material in `references/`, and deterministic repeat work in `scripts/`.
-  Avoid copying large reference content into the main skill body.
-- Completion criteria: prefer checkboxes for gates that must be satisfied before
-  moving on. "Summarize the work" is not a gate; "one red-capable command has
-  been run" is.
-- Leading words: use compact behavior anchors such as `tight`, `red`, `seam`,
-  `load-bearing`, `vertical slice`, and `deepening` when they carry real process
-  weight. A leading word too weak to beat the model's default is a no-op; the
-  fix is a stronger word, not more sentences.
-- Embargo escape valve: ordered workflows must never withhold information. A
-  finding that bears on a decision in flight is disclosed immediately, then filed
-  at its proper stage.
-- Failure-mode self-check: before shipping a substantial skill edit, look for
-  premature completion, duplicated rules, sediment, sprawl, no-op `Do not`
-  bullets, implementation indexes (file paths and line numbers that rot), and
-  war stories (play-by-play of one bug's trajectory instead of the transferable
-  principle).
-- Behavior eval: static validation only proves shape. For major new or rewritten
-  skills, use `core-skill-eval` with golden cases, blind runs, and a separate
-  judge when practical.
+- Invocation: keep a skill model-invoked only when Codex should discover it
+  without the user naming it, or when another skill routes to it. Expensive or
+  human-started workflows need an explicit reason to be always visible.
+- Information hierarchy: keep the next required action in `SKILL.md`, move
+  conditional detail into `references/`, and place repeatable fragile operations
+  in `scripts/`.
+- Completion criteria: give stages observable finish lines. "Run one command
+  that can catch this bug" is useful; "be thorough" is not.
+- Behavior anchors: use compact terms such as `tight`, `red`, `seam`,
+  `load-bearing`, or `vertical slice` only when they change what the agent does.
+  If a word does not change behavior, replace the rule rather than padding it.
+- Ordered workflows: order controls presentation, not disclosure. If a fact
+  affects a decision the user is making now, disclose it now and then file it in
+  the appropriate stage.
+- Self-check: before shipping a substantial skill edit, remove duplicated rules,
+  stale layers, generic warnings, implementation breadcrumbs that will rot, and
+  bug-story narration that should be a durable principle instead.
+- Behavior eval: static checks only verify package shape. For major behavior
+  rewrites, prefer `core-skill-eval` with representative cases, isolated runs,
+  and independent judging when practical.
 
 ## Do not
 

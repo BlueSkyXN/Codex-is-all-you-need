@@ -13,10 +13,10 @@ synthesis.
 - A plugin entrypoint skill, `core-router`, for routing work to the smallest
   useful bundled workflow, now with a flow map for direct-dev, SDLC, bugfix,
   context, and skill-quality paths.
-- Core process skills: `core-grilling` for one-question-at-a-time plan
-  interrogation, `core-explore-unknowns` for quadrant-walk requirement
-  clarification when the user's request is ambiguous, and `core-skill-eval`
-  for golden-case skill behavior checks.
+- Core process skills from the common catalog: `core-grilling` for
+  one-question-at-a-time plan interrogation, `core-explore-unknowns` for
+  quadrant-walk requirement clarification when the user's request is ambiguous,
+  and `core-skill-eval` for golden-case skill behavior checks.
 - SDLC and delivery skills such as `sdlc-manager`, `sdlc-router`,
   `sdlc-requirements-workflow`, `sdlc-solution-spec-workflow`,
   `sdlc-dev-handoff-planning`, and `sdlc-readiness-review`.

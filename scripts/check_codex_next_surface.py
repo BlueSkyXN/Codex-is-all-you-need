@@ -20,6 +20,20 @@ CHECKBOX_RE = re.compile(r"(?m)^\s*-\s+\[[ xX]\]")
 DO_NOT_RE = re.compile(r"(?m)^## Do not\s*$")
 DO_NOT_USE_WHEN_RE = re.compile(r"(?m)^## Do not use when\s*$")
 
+# Agent Skills spec constraints (agentskills specification.md).
+SPEC_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+SPEC_NAME_MAX = 64
+SPEC_DESCRIPTION_MAX = 1024
+SPEC_COMPATIBILITY_MAX = 500
+SPEC_BODY_LINE_BUDGET = 500
+SPEC_FRONTMATTER_FIELDS = frozenset(
+    {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
+)
+# Runtime extensions this repo deliberately allows on top of the spec fields.
+FRONTMATTER_EXTENSIONS = frozenset({"disable-model-invocation"})
+PARENT_REF_RE = re.compile(r"(?<![\w./])(?:\.\./)+[A-Za-z0-9_\-./]+")
+MARKDOWN_LINK_RE = re.compile(r"\]\(([^)#\s]+)\)")
+
 
 def is_quoted_scalar(value: str) -> bool:
     return len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}
@@ -44,6 +58,10 @@ def parse_frontmatter(path: Path) -> tuple[dict[str, Any], list[str], str]:
     for raw in lines[1:end_index]:
         if not raw.strip() or raw.lstrip().startswith("#"):
             continue
+        if raw[0] in {" ", "\t"}:
+            # Nested value of a mapping field such as `metadata`; the spec
+            # allows these, and they are not top-level keys.
+            continue
         if ":" not in raw:
             errors.append(f"{path}: unsupported frontmatter line: {raw}")
             continue
@@ -60,6 +78,72 @@ def parse_frontmatter(path: Path) -> tuple[dict[str, Any], list[str], str]:
         else:
             data[key] = value.strip("'\"")
     return data, errors, text
+
+
+def check_spec_frontmatter(
+    skill_file: Path,
+    frontmatter: dict[str, Any],
+    errors: list[str],
+) -> None:
+    """Enforce Agent Skills spec frontmatter constraints."""
+    name = frontmatter.get("name")
+    if isinstance(name, str):
+        if len(name) > SPEC_NAME_MAX:
+            errors.append(f"{skill_file}: name exceeds {SPEC_NAME_MAX} characters")
+        if not SPEC_NAME_RE.fullmatch(name):
+            errors.append(
+                f"{skill_file}: name {name!r} violates spec charset "
+                "(lowercase a-z, 0-9, single hyphens, no edge hyphens)"
+            )
+
+    description = frontmatter.get("description")
+    if isinstance(description, str) and len(description) > SPEC_DESCRIPTION_MAX:
+        errors.append(
+            f"{skill_file}: description exceeds {SPEC_DESCRIPTION_MAX} characters"
+        )
+
+    compatibility = frontmatter.get("compatibility")
+    if compatibility is not None:
+        if not isinstance(compatibility, str) or not compatibility.strip():
+            errors.append(f"{skill_file}: compatibility must be a non-empty string")
+        elif len(compatibility) > SPEC_COMPATIBILITY_MAX:
+            errors.append(
+                f"{skill_file}: compatibility exceeds {SPEC_COMPATIBILITY_MAX} characters"
+            )
+
+    for key in frontmatter:
+        if key not in SPEC_FRONTMATTER_FIELDS and key not in FRONTMATTER_EXTENSIONS:
+            errors.append(
+                f"{skill_file}: frontmatter field {key!r} is neither an Agent Skills "
+                "spec field nor an allowlisted extension"
+            )
+
+
+def check_skill_references(skill_dir: Path, errors: list[str]) -> None:
+    """Require parent-path references and relative links to resolve on disk."""
+    for md_file in sorted(skill_dir.rglob("*.md")):
+        text = md_file.read_text(encoding="utf-8")
+        for match in PARENT_REF_RE.finditer(text):
+            target = md_file.parent / match.group(0)
+            try:
+                resolved = target.resolve().is_file()
+            except OSError:
+                resolved = False
+            if not resolved:
+                errors.append(
+                    f"{md_file}: parent-path reference does not resolve: {match.group(0)}"
+                )
+        for match in MARKDOWN_LINK_RE.finditer(text):
+            href = match.group(1)
+            if href.startswith(("http://", "https://", "mailto:", "/")):
+                continue
+            target = md_file.parent / href
+            try:
+                resolved = target.resolve().exists()
+            except OSError:
+                resolved = False
+            if not resolved:
+                errors.append(f"{md_file}: relative link does not resolve: {href}")
 
 
 def read_json(path: Path, errors: list[str]) -> dict[str, Any] | None:
@@ -160,20 +244,49 @@ def inspect_manifest_version_parity(
     return codex_version, claude_version
 
 
-def discover_catalog_skills(catalog_dir: Path, errors: list[str]) -> list[str]:
+def discover_catalog_skills(catalog_dir: Path, errors: list[str]) -> dict[str, Path]:
     if not catalog_dir.is_dir():
         errors.append(f"missing source catalog directory: {catalog_dir}")
-        return []
+        return {}
 
-    skill_names: list[str] = []
+    skill_paths: dict[str, Path] = {}
     for path in sorted(catalog_dir.glob("*/skills/*")):
         if not path.is_dir() or path.name.startswith("."):
             continue
         if not (path / "SKILL.md").is_file():
             errors.append(f"missing catalog SKILL.md: {path}")
             continue
-        skill_names.append(path.name)
-    return skill_names
+        if path.name in skill_paths:
+            errors.append(
+                f"duplicate catalog skill name: {path.name} "
+                f"({skill_paths[path.name]} and {path})"
+            )
+            continue
+        skill_paths[path.name] = path
+    return skill_paths
+
+
+def diff_skill_content(catalog_path: Path, plugin_path: Path) -> list[str]:
+    """List relative files whose presence or bytes differ between the copies."""
+    catalog_files = {
+        path.relative_to(catalog_path).as_posix(): path
+        for path in catalog_path.rglob("*")
+        if path.is_file()
+    }
+    plugin_files = {
+        path.relative_to(plugin_path).as_posix(): path
+        for path in plugin_path.rglob("*")
+        if path.is_file()
+    }
+    drifted: list[str] = []
+    for rel in sorted(set(catalog_files) | set(plugin_files)):
+        if rel not in catalog_files:
+            drifted.append(f"{rel} (only in plugin)")
+        elif rel not in plugin_files:
+            drifted.append(f"{rel} (only in catalog)")
+        elif catalog_files[rel].read_bytes() != plugin_files[rel].read_bytes():
+            drifted.append(f"{rel} (content differs)")
+    return drifted
 
 
 def run_check(
@@ -236,6 +349,15 @@ def run_check(
         else:
             errors.append(f"{skill_file}: disable-model-invocation must be true or false")
 
+        check_spec_frontmatter(skill_file, frontmatter, errors)
+        check_skill_references(skill_dir, errors)
+        body_lines = len(text.splitlines())
+        if body_lines > SPEC_BODY_LINE_BUDGET:
+            warnings.append(
+                f"{skill_file}: {body_lines} lines exceeds the spec's "
+                f"{SPEC_BODY_LINE_BUDGET}-line SKILL.md budget; move detail into references/"
+            )
+
         references_dirs += int((skill_dir / "references").is_dir())
         scripts_dirs += int((skill_dir / "scripts").is_dir())
         checkbox_markers += len(CHECKBOX_RE.findall(text))
@@ -254,8 +376,8 @@ def run_check(
         codex_manifest, claude_manifest, errors
     )
 
-    catalog_skill_names = discover_catalog_skills(catalog_dir, errors)
-    catalog_skill_set = set(catalog_skill_names)
+    catalog_skill_paths = discover_catalog_skills(catalog_dir, errors)
+    catalog_skill_set = set(catalog_skill_paths)
     plugin_skill_set = set(skill_names)
     plugin_only_skills = sorted(plugin_skill_set - catalog_skill_set)
     unexpected_plugin_only = [
@@ -272,6 +394,21 @@ def run_check(
             "source catalog skills missing from plugin package: "
             + ", ".join(missing_from_plugin)
         )
+
+    content_drift: dict[str, list[str]] = {}
+    for name in sorted(catalog_skill_set & plugin_skill_set):
+        drifted = diff_skill_content(catalog_skill_paths[name], skills_dir / name)
+        if drifted:
+            content_drift[name] = drifted
+            errors.append(
+                f"catalog/plugin content drift in skill {name}: "
+                + ", ".join(drifted)
+            )
+
+    # Cross-skill references resolve against sibling directories, so the
+    # catalog copies must be checked in their own bucket layout too.
+    for name in sorted(catalog_skill_paths):
+        check_skill_references(catalog_skill_paths[name], errors)
 
     readme = plugin_dir / "README.md"
     readme_mentions: list[str] = []
@@ -299,7 +436,8 @@ def run_check(
         "codex_manifest_version": codex_manifest_version,
         "claude_manifest_mode": claude_manifest_mode,
         "claude_manifest_version": claude_manifest_version,
-        "source_catalog_skills": len(catalog_skill_names),
+        "source_catalog_skills": len(catalog_skill_paths),
+        "catalog_content_drift": content_drift,
         "plugin_only_skills": plugin_only_skills,
         "allowed_plugin_only_skills": sorted(PLUGIN_ONLY_SKILLS),
         "unexpected_plugin_only_skills": unexpected_plugin_only,
@@ -329,6 +467,10 @@ def print_text(summary: dict[str, Any]) -> None:
     print(f"- claude manifest: {summary['claude_manifest_mode']}")
     print(f"- claude manifest version: {summary['claude_manifest_version']}")
     print(f"- source catalog skills: {summary['source_catalog_skills']}")
+    print(
+        "- catalog content drift: "
+        + (", ".join(sorted(summary["catalog_content_drift"])) or "none")
+    )
     print(
         "- plugin-only skills: "
         + (", ".join(summary["plugin_only_skills"]) or "none")

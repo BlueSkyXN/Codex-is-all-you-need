@@ -49,7 +49,10 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
             self.catalog / "common" / "skills" / "alpha-skill", "alpha-skill"
         )
         self.write_skill(
-            self.catalog / "common" / "skills" / "manual-skill", "manual-skill"
+            self.catalog / "common" / "skills" / "manual-skill",
+            "manual-skill",
+            disable_model_invocation=True,
+            body="# Manual\n",
         )
 
     def write_skill(
@@ -153,6 +156,47 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
             )
         )
 
+    def test_catalog_plugin_content_drift_is_hard_error(self) -> None:
+        skill_md = self.plugin / "skills" / "alpha-skill" / "SKILL.md"
+        skill_md.write_text(
+            skill_md.read_text(encoding="utf-8") + "\nplugin-only edit\n",
+            encoding="utf-8",
+        )
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertIn("alpha-skill", summary["catalog_content_drift"])
+        self.assertTrue(
+            any(
+                "catalog/plugin content drift in skill alpha-skill" in error
+                for error in summary["errors"]
+            )
+        )
+
+    def test_reference_file_missing_from_one_copy_is_hard_error(self) -> None:
+        references = self.plugin / "skills" / "manual-skill" / "references"
+        references.mkdir()
+        (references / "extra.md").write_text("# Extra\n", encoding="utf-8")
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertEqual(
+            summary["catalog_content_drift"].get("manual-skill"),
+            ["references/extra.md (only in plugin)"],
+        )
+        self.assertTrue(
+            any(
+                "catalog/plugin content drift in skill manual-skill" in error
+                for error in summary["errors"]
+            )
+        )
+
+    def test_identical_copies_report_no_content_drift(self) -> None:
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertEqual(summary["catalog_content_drift"], {})
+        self.assertEqual(summary["errors"], [])
+
     def test_manifest_version_mismatch_is_hard_error(self) -> None:
         (self.plugin / ".claude-plugin" / "plugin.json").write_text(
             json.dumps({"name": "codex-next", "version": "0.9.0"}),
@@ -163,6 +207,121 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
 
         self.assertTrue(
             any("manifest version mismatch" in error for error in summary["errors"])
+        )
+
+    def test_spec_invalid_name_charset_is_hard_error(self) -> None:
+        skill_dir = self.plugin / "skills" / "bad--name"
+        self.write_skill(skill_dir, "bad--name")
+        self.write_skill(self.catalog / "common" / "skills" / "bad--name", "bad--name")
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any("violates spec charset" in error for error in summary["errors"])
+        )
+
+    def test_spec_unknown_frontmatter_field_is_hard_error(self) -> None:
+        (self.plugin / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            "---\n"
+            "name: alpha-skill\n"
+            "description: Use for alpha-skill checks.\n"
+            "invoke-priority: high\n"
+            "---\n"
+            "# Alpha\n",
+            encoding="utf-8",
+        )
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any(
+                "neither an Agent Skills spec field nor an allowlisted extension"
+                in error
+                for error in summary["errors"]
+            )
+        )
+
+    def test_spec_overlong_description_is_hard_error(self) -> None:
+        (self.plugin / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            "---\n"
+            "name: alpha-skill\n"
+            f"description: {'x' * 1030}\n"
+            "---\n"
+            "# Alpha\n",
+            encoding="utf-8",
+        )
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any("description exceeds 1024" in error for error in summary["errors"])
+        )
+
+    def test_nested_metadata_mapping_is_not_flagged(self) -> None:
+        content = (
+            "---\n"
+            "name: alpha-skill\n"
+            "description: Use for alpha-skill checks.\n"
+            "metadata:\n"
+            "  author: example-org\n"
+            "  version: \"1.0\"\n"
+            "---\n"
+            "# Alpha\n"
+        )
+        (self.plugin / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            content, encoding="utf-8"
+        )
+        (self.catalog / "common" / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            content, encoding="utf-8"
+        )
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertEqual(summary["errors"], [])
+
+    def test_dangling_relative_link_is_hard_error(self) -> None:
+        content = (
+            "---\n"
+            "name: alpha-skill\n"
+            "description: Use for alpha-skill checks.\n"
+            "---\n"
+            "# Alpha\n\nSee [missing](references/missing.md).\n"
+        )
+        (self.plugin / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            content, encoding="utf-8"
+        )
+        (self.catalog / "common" / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            content, encoding="utf-8"
+        )
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any("relative link does not resolve" in error for error in summary["errors"])
+        )
+
+    def test_dangling_parent_path_reference_is_hard_error(self) -> None:
+        content = (
+            "---\n"
+            "name: alpha-skill\n"
+            "description: Use for alpha-skill checks.\n"
+            "---\n"
+            "# Alpha\n\nUse ../missing-skill/references/model.md for definitions.\n"
+        )
+        (self.plugin / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            content, encoding="utf-8"
+        )
+        (self.catalog / "common" / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            content, encoding="utf-8"
+        )
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any(
+                "parent-path reference does not resolve" in error
+                for error in summary["errors"]
+            )
         )
 
 

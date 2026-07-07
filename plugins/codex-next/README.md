@@ -56,6 +56,12 @@ components such as `skills/`, future `.mcp.json`, future `.app.json`, and
 future `assets/` belong at the plugin root and are referenced from the manifest
 with paths relative to this directory.
 
+The package also carries `.claude-plugin/plugin.json` as compatibility metadata
+for Claude-compatible runtimes. It mirrors the Codex manifest version, but it
+is not the 0.4.0 runtime contract: `codex plugin add` installs against the
+Codex manifest and this package layout. Claude runtime skill semantics are
+tracked separately and stay a checker warning, not a release gate.
+
 The repo marketplace is outside this package:
 
 ```text

@@ -38,6 +38,11 @@ on.
 5. **[Hand over the map](references/stage-5-hand-over-the-map.md)** — assemble
    the complete map; this is the only finish line.
 
+When the mapped work moves into build, review, or merge, read
+[after the walk](references/after-the-walk.md): deviations found during
+implementation are filed back into the map, reviewers get a buy-in package,
+and long diffs get a merge-readiness check.
+
 ## Rules
 
 - Preserve stage order, but do not hide useful information because "its stage"

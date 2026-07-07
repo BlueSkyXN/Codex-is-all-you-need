@@ -24,4 +24,6 @@ checks in their own list so implementation can start with explicit blockers.
   the next workflow.
 
 **Done when** the completed map is present and implementation can refer to it as
-the source of truth. Offer to continue with the appropriate implementation skill.
+the source of truth. Offer to continue with the appropriate implementation
+skill, and point at [after the walk](after-the-walk.md) for how the map is used
+during build, review, and merge.

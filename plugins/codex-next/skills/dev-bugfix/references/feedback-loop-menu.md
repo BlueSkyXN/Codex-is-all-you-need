@@ -3,6 +3,11 @@
 Use this when the obvious test seam is missing or the loop is too slow, broad,
 or flaky. Pick the smallest loop that goes red on the user's exact symptom.
 
+Rows are ordered by preference: take the highest row that reaches the symptom.
+A failing test doubles as the Phase 5 regression asset; lower rows cost more to
+keep and prove less once the fix lands. Treat the HITL script as the last
+resort when no automated seam exists yet.
+
 | Loop | Use When | Minimal Shape | Tighten It |
 |---|---|---|---|
 | Failing test at the seam | The bug crosses a stable unit, integration, or e2e boundary. | Add one test that sets up the smallest failing case and asserts the exact symptom. | Avoid asserting implementation details. Keep setup data minimal. |

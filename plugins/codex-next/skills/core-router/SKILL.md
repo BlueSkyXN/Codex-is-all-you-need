@@ -32,7 +32,9 @@ source of truth:
   compaction or fork handoff, write the smallest durable handoff note needed by
   the next run; do not turn it into an SDLC artifact unless the task needs that.
 - Unknowns line: ambiguous or underspecified request -> `core-explore-unknowns`
-  quadrant walk -> hand the map to the relevant implementation skill.
+  quadrant walk -> hand the map to the planning, spec, or implementation skill;
+  run `core-grilling` when the drafted plan still needs interrogation before
+  build.
 - Skill-quality line: authoring discipline -> surface check -> `core-skill-eval`
   for major behavior changes.
 
@@ -75,7 +77,7 @@ source of truth:
 | User intent | First skill |
 |---|---|
 | Ambiguous, underspecified, or "know it when I see it" request | `core-explore-unknowns` |
-| Stress-test or interrogate an ambiguous plan/design | `core-grilling` |
+| Stress-test an existing plan or design before build | `core-grilling` |
 | Evaluate a skill rewrite with golden cases | `core-skill-eval` |
 | SDLC/ADS work, `local/sdlc`, handoff, or external proposal intake | `sdlc-manager` |
 | Need only lane, ADS, or minimum artifact decision | `sdlc-router` |

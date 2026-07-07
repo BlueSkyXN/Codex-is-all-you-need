@@ -38,7 +38,10 @@ script.
 Improve the loop before relying on it. Narrow setup, assert the exact symptom,
 cache slow prerequisites, pin time/randomness, and isolate filesystem or network
 state. For flaky failures, the target is a high reproduction rate, not a perfect
-single repro.
+single repro. Raise the rate until it is debuggable: repeat the trigger in bulk,
+run copies in parallel, add load or stress, shrink timing windows, and inject
+delays at suspected races. A failure on half the runs is workable; one in a
+hundred is not yet a loop.
 
 ### Completion Criterion - a Tight Loop That Goes Red
 
@@ -68,8 +71,10 @@ Run the loop and confirm:
 - [ ] The exact symptom is captured: message, wrong output, state, or timing
 
 Then reduce the scenario. Remove inputs, callers, config, and data one at a
-time, re-running after each cut. Keep only pieces that are required for the
-failure.
+time, re-running after each cut. Minimisation is done when every remaining
+piece is load-bearing: removing any one of them turns the loop green. The
+minimised scenario shrinks the Phase 3 hypothesis space and becomes the Phase 5
+regression test.
 
 ## Phase 3 - Hypothesise
 
@@ -119,6 +124,8 @@ as hidden coupling or no valid seam, record a follow-up and hand off to
 ## Do not
 
 - Do not assert a root cause before a red-capable loop exists.
+- Do not blanket-log a whole path and search the noise afterwards; every probe
+  maps to one hypothesis boundary.
 - Do not weaken tests to make them pass.
 - Do not hide failing or inconclusive validation.
 - Do not leave `[DEBUG-...]` tags or throwaway harnesses behind.

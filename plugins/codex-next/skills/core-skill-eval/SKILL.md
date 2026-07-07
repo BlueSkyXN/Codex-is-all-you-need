@@ -45,7 +45,7 @@ complaint into one or more cases and bars before spending agents.
    rule, weak trigger, no-op instruction, duplication, sediment, sprawl, or
    missing reference. Do not encode a bad bar into the skill.
 6. **Edit only for the observed defect.** Tighten the done condition, trigger,
-   rule, leading word, or reference split that caused the miss.
+   rule, behavior anchor, or reference split that caused the miss.
 7. **Re-run the suite.** A fix for one case must not regress another. Stop only
    when the cases clear their bars or when you can explain why the skill cannot
    support a case.

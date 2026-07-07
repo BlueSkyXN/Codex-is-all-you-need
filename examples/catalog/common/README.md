@@ -16,7 +16,10 @@ agents/
   common_task_planner.toml
 skills/
   core-codex-agents-md-builder/
+  core-explore-unknowns/
   core-goal-run/
+  core-grilling/
+  core-skill-eval/
 ```
 
 ## Agent Roles
@@ -31,7 +34,10 @@ skills/
 ## Skills
 
 - `core-codex-agents-md-builder`: design, audit, or restructure repository `AGENTS.md` files for the Codex loading model.
+- `core-explore-unknowns`: map knowns and unknowns before implementation when a request is ambiguous, underspecified, or unfamiliar.
 - `core-goal-run`: execute, resume, and hand off work from a local goal or plan file using `goal-tasks.md` for status and `goal-log.md` for evidence and notes.
+- `core-grilling`: interrogate a plan or design one question at a time until assumptions, tradeoffs, and edge cases are explicit.
+- `core-skill-eval`: evaluate skill behavior against golden cases with blind runs, evidence-backed judging, and targeted improvements.
 
 ## Maintenance Notes
 

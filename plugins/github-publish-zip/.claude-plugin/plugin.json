@@ -1,0 +1,19 @@
+{
+  "name": "github-publish-zip",
+  "version": "0.1.0",
+  "description": "Package Git worktree files that would be publishable to GitHub into a local ZIP archive.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/github-publish-zip",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "codex",
+    "zip",
+    "github",
+    "archive",
+    "release"
+  ]
+}

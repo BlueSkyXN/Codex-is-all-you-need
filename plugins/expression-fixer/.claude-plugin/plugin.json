@@ -1,0 +1,19 @@
+{
+  "name": "expression-fixer",
+  "version": "0.1.0",
+  "description": "Detect and fix unnatural Chinese workplace writing in reports, summaries, emails, and status updates.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/expression-fixer",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "codex",
+    "writing",
+    "chinese",
+    "editing",
+    "workplace"
+  ]
+}

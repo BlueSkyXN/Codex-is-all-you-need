@@ -1,7 +1,7 @@
 {
   "name": "codex-next",
-  "version": "0.3.2",
-  "description": "Reusable skills for SDLC planning, software delivery, development workflows, research, data work, and office productivity.",
+  "version": "0.4.0",
+  "description": "Reusable Codex skills for SDLC planning, software delivery, development workflows, research, data work, and office productivity.",
   "author": {
     "name": "BlueSkyXN",
     "url": "https://github.com/BlueSkyXN"

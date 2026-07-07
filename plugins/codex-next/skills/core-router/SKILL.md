@@ -13,20 +13,30 @@ This skill routes. It does not replace the underlying skills.
 
 ## Operating Model
 
-For SDLC/ADS work, use:
+For SDLC/ADS lane, artifact, ID, and dev-path definitions, use the single
+source of truth:
 
 ```text
 ../sdlc-router/references/sdlc-operating-model.md
 ```
 
-Core contract:
+## Codex Next Flow Map
 
-- Lanes: 快线, 增补, 重构, 重建, 从头.
-- Modifiers: 规则变更, 发布.
-- ADS: Architecture, Domain, Specification.
-- IDs: `REQ`, `TASK`, `VAL`, `ARCH`, `DOM`, `DEC`, `Q`, `ITEM`.
-- Dev paths: `direct-read`, `direct-dev`, `handoff-lite`,
-  `handoff-full`, `blocked`.
+- Direct-dev line: direct request -> relevant dev skill -> smallest validation
+  -> review or release check when risk requires it.
+- SDLC line: project research -> requirements/SRS/NFR -> architecture/domain ->
+  spec slice or handoff -> implementation -> validation/readiness.
+- Bug line: feedback loop -> reproduce/minimise -> hypothesis/probe -> fix ->
+  regression -> refactor or architecture recommendation if the seam is poor.
+- Context line: `core-goal-run` executes an existing local goal plan. For session
+  compaction or fork handoff, write the smallest durable handoff note needed by
+  the next run; do not turn it into an SDLC artifact unless the task needs that.
+- Unknowns line: ambiguous or underspecified request -> `core-explore-unknowns`
+  quadrant walk -> hand the map to the planning, spec, or implementation skill;
+  run `core-grilling` when the drafted plan still needs interrogation before
+  build.
+- Skill-quality line: authoring discipline -> surface check -> `core-skill-eval`
+  for major behavior changes.
 
 ## Workflow
 
@@ -36,6 +46,7 @@ Core contract:
    - Requirements, architecture, domain, spec, handoff, or release work.
    - Data, office, research, or prompt-evaluation work.
    - External Web/GPT/AI discussion that must be normalized before execution.
+   - Ambiguous or underspecified request that needs unknowns explored first.
 
 2. Choose the smallest route.
    - If the request is SDLC/ADS, `local/sdlc`, handoff, architecture,
@@ -43,6 +54,8 @@ Core contract:
      use `sdlc-manager`.
    - If the request only needs lane, ADS, or minimum-material classification,
      use `sdlc-router`.
+   - If the request is ambiguous, underspecified, or the user will "know it when
+     they see it", use `core-explore-unknowns` to map the unknowns first.
    - If the request is clear and local, route to the relevant dev skill.
    - If the user asks to produce an artifact, route directly to that artifact
      skill.
@@ -56,11 +69,16 @@ Core contract:
    - `.codex/agents/*.toml` custom agents are not bundled by this plugin.
    - Plugin skills are workflow instructions; they do not automatically install
      MCP servers, apps/connectors, hooks, or custom agents.
+   - Draft or experimental notes are not packaged until a corresponding skill
+     directory exists under this plugin's `skills/` surface.
 
 ## Route Table
 
 | User intent | First skill |
 |---|---|
+| Ambiguous, underspecified, or "know it when I see it" request | `core-explore-unknowns` |
+| Stress-test an existing plan or design before build | `core-grilling` |
+| Evaluate a skill rewrite with golden cases | `core-skill-eval` |
 | SDLC/ADS work, `local/sdlc`, handoff, or external proposal intake | `sdlc-manager` |
 | Need only lane, ADS, or minimum artifact decision | `sdlc-router` |
 | Existing repo capability map | `sdlc-project-research` |
@@ -84,6 +102,18 @@ Core contract:
 | Data cleaning or tabular analysis | `data-cleaning`, `data-tabular-analysis`, or `data-sql-analysis` |
 | Office writing | `office-meeting-summary`, `office-weekly-report`, `office-project-report`, `office-briefing-note`, or `office-ppt-outline` |
 | Research synthesis | `research-synthesis`, `research-source-dedup`, or `research-evidence-table` |
+
+## Manual or Expensive Helpers
+
+Some workflows are intentionally expensive or human-started. Prefer explicit
+user confirmation before running them at scale:
+
+- `core-skill-eval` - use golden cases and blind runs before shipping major
+  skill behavior rewrites.
+- `core-goal-run` - resume or execute an existing local goal plan, without
+  rewriting the plan unless asked.
+- Surface governance - run `scripts/check_codex_next_surface.py` after changing
+  this plugin's skills or manifests.
 
 ## Output
 

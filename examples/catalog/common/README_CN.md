@@ -16,7 +16,10 @@ agents/
   common_task_planner.toml
 skills/
   core-codex-agents-md-builder/
+  core-explore-unknowns/
   core-goal-run/
+  core-grilling/
+  core-skill-eval/
 ```
 
 ## Agent 角色
@@ -31,7 +34,10 @@ skills/
 ## Skills
 
 - `core-codex-agents-md-builder`：按 Codex 加载模型设计、审计或重构仓库的 `AGENTS.md` 文件。
+- `core-explore-unknowns`：在需求含糊、信息不足或领域不熟悉时，先梳理已知和未知，再进入实现。
 - `core-goal-run`：基于本地 goal/plan 文件推进、恢复和交接任务，用 `goal-tasks.md` 记录状态，用 `goal-log.md` 记录证据和过程说明。
+- `core-grilling`：围绕计划或设计逐问追问，把假设、取舍和边界条件问清楚。
+- `core-skill-eval`：用 golden cases、blind runs 和有证据的 judging 评估并改进 skill 行为。
 
 ## 维护说明
 

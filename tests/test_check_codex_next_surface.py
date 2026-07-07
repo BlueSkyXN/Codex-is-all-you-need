@@ -300,6 +300,49 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
             any("relative link does not resolve" in error for error in summary["errors"])
         )
 
+    def test_dangling_relative_link_with_fragment_is_hard_error(self) -> None:
+        content = (
+            "---\n"
+            "name: alpha-skill\n"
+            "description: Use for alpha-skill checks.\n"
+            "---\n"
+            "# Alpha\n\nSee [missing](references/missing.md#anchor).\n"
+        )
+        (self.plugin / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            content, encoding="utf-8"
+        )
+        (self.catalog / "common" / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            content, encoding="utf-8"
+        )
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any("relative link does not resolve" in error for error in summary["errors"])
+        )
+
+    def test_existing_relative_link_with_fragment_is_allowed(self) -> None:
+        content = (
+            "---\n"
+            "name: alpha-skill\n"
+            "description: Use for alpha-skill checks.\n"
+            "---\n"
+            "# Alpha\n\nSee [guide](references/guide.md#anchor).\n"
+        )
+        for root in (
+            self.plugin / "skills" / "alpha-skill",
+            self.catalog / "common" / "skills" / "alpha-skill",
+        ):
+            root.joinpath("references").mkdir()
+            root.joinpath("references", "guide.md").write_text(
+                "# Guide\n", encoding="utf-8"
+            )
+            root.joinpath("SKILL.md").write_text(content, encoding="utf-8")
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertEqual(summary["errors"], [])
+
     def test_dangling_parent_path_reference_is_hard_error(self) -> None:
         content = (
             "---\n"
@@ -320,6 +363,30 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
         self.assertTrue(
             any(
                 "parent-path reference does not resolve" in error
+                for error in summary["errors"]
+            )
+        )
+
+    def test_parent_path_reference_outside_skill_root_is_hard_error(self) -> None:
+        content = (
+            "---\n"
+            "name: alpha-skill\n"
+            "description: Use for alpha-skill checks.\n"
+            "---\n"
+            "# Alpha\n\nDo not rely on ../../README.md for runtime behavior.\n"
+        )
+        (self.plugin / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            content, encoding="utf-8"
+        )
+        (self.catalog / "common" / "skills" / "alpha-skill" / "SKILL.md").write_text(
+            content, encoding="utf-8"
+        )
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any(
+                "parent-path reference escapes skill root" in error
                 for error in summary["errors"]
             )
         )

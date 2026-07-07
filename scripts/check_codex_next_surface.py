@@ -32,7 +32,7 @@ SPEC_FRONTMATTER_FIELDS = frozenset(
 # Runtime extensions this repo deliberately allows on top of the spec fields.
 FRONTMATTER_EXTENSIONS = frozenset({"disable-model-invocation"})
 PARENT_REF_RE = re.compile(r"(?<![\w./])(?:\.\./)+[A-Za-z0-9_\-./]+")
-MARKDOWN_LINK_RE = re.compile(r"\]\(([^)#\s]+)\)")
+MARKDOWN_LINK_RE = re.compile(r"\]\(([^)\s]+)\)")
 
 
 def is_quoted_scalar(value: str) -> bool:
@@ -120,16 +120,17 @@ def check_spec_frontmatter(
 
 
 def check_skill_references(skill_dir: Path, errors: list[str]) -> None:
-    """Require parent-path references and relative links to resolve on disk."""
+    """Require relative references to resolve within the publishable skill root."""
+    reference_root = skill_dir.parent.resolve()
     for md_file in sorted(skill_dir.rglob("*.md")):
         text = md_file.read_text(encoding="utf-8")
         for match in PARENT_REF_RE.finditer(text):
             target = md_file.parent / match.group(0)
-            try:
-                resolved = target.resolve().is_file()
-            except OSError:
-                resolved = False
-            if not resolved:
+            if reference_escapes_root(target, reference_root):
+                errors.append(
+                    f"{md_file}: parent-path reference escapes skill root: {match.group(0)}"
+                )
+            elif not reference_exists(target, require_file=True):
                 errors.append(
                     f"{md_file}: parent-path reference does not resolve: {match.group(0)}"
                 )
@@ -137,13 +138,30 @@ def check_skill_references(skill_dir: Path, errors: list[str]) -> None:
             href = match.group(1)
             if href.startswith(("http://", "https://", "mailto:", "/")):
                 continue
-            target = md_file.parent / href
-            try:
-                resolved = target.resolve().exists()
-            except OSError:
-                resolved = False
-            if not resolved:
+            path_part = href.split("#", 1)[0].split("?", 1)[0]
+            if not path_part:
+                continue
+            target = md_file.parent / path_part
+            if reference_escapes_root(target, reference_root):
+                errors.append(f"{md_file}: relative link escapes skill root: {href}")
+            elif not reference_exists(target, require_file=False):
                 errors.append(f"{md_file}: relative link does not resolve: {href}")
+
+
+def reference_escapes_root(target: Path, reference_root: Path) -> bool:
+    try:
+        target.resolve(strict=False).relative_to(reference_root)
+    except (OSError, ValueError):
+        return True
+    return False
+
+
+def reference_exists(target: Path, *, require_file: bool) -> bool:
+    try:
+        resolved = target.resolve(strict=False)
+    except OSError:
+        return False
+    return resolved.is_file() if require_file else resolved.exists()
 
 
 def read_json(path: Path, errors: list[str]) -> dict[str, Any] | None:

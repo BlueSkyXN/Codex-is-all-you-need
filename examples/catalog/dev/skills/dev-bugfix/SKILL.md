@@ -93,10 +93,10 @@ For slowdowns, spikes, latency regressions, or memory growth, use
 
 ## Phase 5 - Fix and Regression Test
 
-Add a regression test before or alongside the fix when there is a valid `seam`:
-a test point that exercises the real failure pattern through the relevant call
-path. If every available seam is too shallow, record that as a testability
-finding.
+Add the regression test before the fix whenever there is a valid `seam`: a test
+point that exercises the real failure pattern through the relevant call path.
+Only write it alongside the fix when the first safe step is creating or exposing
+that seam; record the constraint as a testability finding.
 
 With a valid seam: watch the regression fail, apply the fix, watch it pass, then
 rerun the original loop.

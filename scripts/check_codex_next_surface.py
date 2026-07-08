@@ -15,6 +15,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PLUGIN_DIR = REPO_ROOT / "plugins" / "codex-next"
 DEFAULT_CATALOG_DIR = REPO_ROOT / "examples" / "catalog"
 PLUGIN_ONLY_SKILLS = frozenset({"core-router"})
+JUNK_FILES = frozenset({".DS_Store", "Thumbs.db", "desktop.ini"})
 WORD_RE = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_'-]*")
 CHECKBOX_RE = re.compile(r"(?m)^\s*-\s+\[[ xX]\]")
 DO_NOT_RE = re.compile(r"(?m)^## Do not\s*$")
@@ -76,7 +77,9 @@ def parse_frontmatter(path: Path) -> tuple[dict[str, Any], list[str], str]:
         if value.lower() in {"true", "false"}:
             data[key] = value.lower() == "true"
         else:
-            data[key] = value.strip("'\"")
+            if is_quoted_scalar(value):
+                value = value[1:-1]
+            data[key] = value
     return data, errors, text
 
 
@@ -289,12 +292,12 @@ def diff_skill_content(catalog_path: Path, plugin_path: Path) -> list[str]:
     catalog_files = {
         path.relative_to(catalog_path).as_posix(): path
         for path in catalog_path.rglob("*")
-        if path.is_file()
+        if path.is_file() and path.name not in JUNK_FILES
     }
     plugin_files = {
         path.relative_to(plugin_path).as_posix(): path
         for path in plugin_path.rglob("*")
-        if path.is_file()
+        if path.is_file() and path.name not in JUNK_FILES
     }
     drifted: list[str] = []
     for rel in sorted(set(catalog_files) | set(plugin_files)):

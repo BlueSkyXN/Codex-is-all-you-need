@@ -166,6 +166,9 @@ If traceability is absent but the task is safe for direct dev, mark it as an acc
 
 ### 7. Decide readiness verdict
 
+If the trade-off set is still contested, run `core-grilling` on it before
+freezing the decision.
+
 Use one verdict only:
 
 | Verdict | Meaning |

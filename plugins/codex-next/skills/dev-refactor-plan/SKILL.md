@@ -24,6 +24,8 @@ Use this workflow when the task is to refactor code while preserving behavior.
    - Database schema
    - External integrations
    - User-visible behavior
+   - If the behavior contract or trade-off set is still contested, run
+     `core-grilling` on it before freezing the decision.
 
 4. Propose an incremental plan.
    - Step 1

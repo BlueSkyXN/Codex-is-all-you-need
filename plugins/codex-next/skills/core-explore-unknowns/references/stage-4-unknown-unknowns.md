@@ -1,4 +1,4 @@
-# Stage 4 — Unknown Unknowns: Hunt the Landmines
+# Stage 4 - Unknown Unknowns: Hunt the Landmines
 
 This stage searches for risks that did not show up as questions. Inspect the
 area the task will touch and turn hidden constraints into explicit map entries.

@@ -47,7 +47,6 @@ the user's task differs.
   Every such path must resolve in both the plugin package and the source
   catalog bucket; the surface checker fails on dangling parent-path references
   and dangling relative links.
-
 - Invocation: keep a skill model-invoked only when Codex should discover it
   without the user naming it, or when another skill routes to it. Expensive or
   human-started workflows need an explicit reason to be always visible.
@@ -80,6 +79,9 @@ the user's task differs.
 
 ## Validation
 
+- `python3 scripts/check_codex_next_surface.py` (from the repo root) - hard gate
+  for catalog/plugin content parity, manifest version parity, Agent Skills spec
+  frontmatter, and reference resolution.
 - `python3 ~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/codex-next` - plugin manifest/package validation; requires the local system validator path.
 - `git diff --check -- plugins/codex-next` - whitespace check for plugin package diffs.
 - For bundled skill content mirrored from `examples/catalog/`, also run the root

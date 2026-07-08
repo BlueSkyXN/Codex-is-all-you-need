@@ -1,4 +1,4 @@
-# Stage 5 — Hand Over the Map
+# Stage 5 - Hand Over the Map
 
 Close the walk by producing a durable map the next workflow can consume without
 reconstructing the conversation.

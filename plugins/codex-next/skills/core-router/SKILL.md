@@ -25,7 +25,8 @@ source of truth:
 - Direct-dev line: direct request -> relevant dev skill -> smallest validation
   -> review or release check when risk requires it.
 - Delivery line: branch/diff evidence -> reviewer-facing PR metadata -> publish
-  or update -> remote readback -> review or merge.
+  or update -> remote readback -> diff and metadata review -> gated merge when
+  requested.
 - SDLC line: project research -> requirements/SRS/NFR -> architecture/domain ->
   spec slice or handoff -> implementation -> validation/readiness.
 - Bug line: feedback loop -> reproduce/minimise -> hypothesis/probe -> fix ->
@@ -64,6 +65,10 @@ source of truth:
      rewriting PR title/body, use `dev-git-workflow`.
    - If the request is a code/diff review, use `dev-pr-review`; include metadata
      alignment when PR title/body exists.
+   - If the request combines improving or reviewing a PR with publishing or
+     merging it, use `dev-git-workflow` to lock Git and remote state, then
+     `dev-pr-review` for the full diff and metadata, then return to
+     `dev-git-workflow` for push, merge gates, and final readback.
    - If the user asks to produce an artifact, route directly to that artifact
      skill.
    - If the user asks to implement, continue past routing and perform the work

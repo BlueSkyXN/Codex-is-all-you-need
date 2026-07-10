@@ -1,6 +1,6 @@
 ---
 name: dev-pr-review
-description: Use for reviewing a branch, pull request, local diff, implementation plan, or PR metadata before merge.
+description: Use for reviewing a branch, pull request, local diff, or implementation plan before merge, including alignment of existing PR metadata with the diff and delivery state.
 ---
 
 # PR review workflow
@@ -10,8 +10,15 @@ for correctness, regressions, security, compatibility, and test coverage.
 
 ## Review checklist
 
-1. PR metadata alignment, when a PR or draft metadata exists
-   - Read `../dev-git-workflow/references/pr-metadata-contract.md`.
+1. Remote PR context, when a PR exists
+   - Resolve the base/head branches and current head SHA.
+   - Read the draft/state, mergeability, checks, review decision, requested
+     changes, and unresolved review conversations when available.
+   - Treat absent checks or reviews as none reported until applicable repository
+     rules confirm that no gate is required.
+
+2. PR metadata alignment, when a PR or draft metadata exists
+   - Read `../dev-git-workflow/references/pr-metadata-contract.md` completely.
    - Does the title summarize the complete diff in the required language and
      repository convention?
    - Can a reviewer understand the purpose, impact, boundaries, validation, and
@@ -21,30 +28,30 @@ for correctness, regressions, security, compatibility, and test coverage.
    - Does the copy avoid internal traces, private data, and implementation-diary
      narration?
 
-2. Scope
+3. Scope
    - What changed?
    - Is the diff limited to the stated goal?
    - Are unrelated files modified?
 
-3. Correctness
+4. Correctness
    - Does the implementation satisfy the requirement?
    - Are edge cases handled?
    - Are error paths correct?
 
-4. Contracts and compatibility
+5. Contracts and compatibility
    - Public API behavior
    - CLI flags and exit behavior
    - Database schema and migration risk
    - Auth and permission semantics
    - Backward compatibility
 
-5. Tests
+6. Tests
    - Existing coverage
    - Missing tests
    - Test commands run
    - Flaky or inconclusive results
 
-6. Security and data integrity
+7. Security and data integrity
    - Input validation
    - Secrets and sensitive data
    - Race conditions
@@ -55,11 +62,12 @@ for correctness, regressions, security, compatibility, and test coverage.
 Return:
 
 1. Blocking findings
-2. PR metadata or scope-alignment findings
-3. Important non-blocking findings
-4. Test gaps
-5. Contract or compatibility risks
-6. Verdict: block / proceed / proceed with notes
+2. Existing review or merge-gate state
+3. PR metadata or scope-alignment findings
+4. Important non-blocking findings
+5. Test gaps
+6. Contract or compatibility risks
+7. Verdict: block / proceed / proceed with notes
 
 ## Do not
 

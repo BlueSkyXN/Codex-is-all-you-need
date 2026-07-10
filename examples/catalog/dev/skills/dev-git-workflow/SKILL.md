@@ -51,18 +51,26 @@ reviewer-facing PR preparation, merge strategy, or release history.
    - If the user only asks for a draft, return the draft without writing remote
      state.
 
-6. Publish and read back remote state when requested.
+6. Publish, gate, and read back remote state when requested.
    - Use the available GitHub connector or CLI after the branch is pushed.
-   - Re-read the remote title, body, base, head, draft/state, mergeability, and
-     checks after creation or update.
+   - Re-read the remote title, body, base/head branches, head SHA, draft/state,
+     mergeability, and checks after creation or update.
+   - When review or merge is in scope, also read the review decision, requested
+     changes, unresolved review conversations, and applicable repository gates,
+     including required approvals/checks and the allowed merge method or queue.
+   - Treat absent checks or reviews as none reported, not as passed; confirm
+     whether repository rules require them.
    - Compare the remote copy with the current head and the metadata contract;
      repair stale or unclear copy before declaring the PR complete.
+   - Immediately before merge, confirm the remote head SHA still matches the
+     validated head. After merge, read back the merged state and target branch.
 
 7. Communicate exact boundaries.
    - Local commit only
    - Pushed branch
    - PR opened or updated against a base branch
    - Draft or ready for review
+   - Review and approval state
    - Merged or not merged
    - Checks passed/pending/failed
    - Released or deployed
@@ -88,4 +96,6 @@ Return:
   `main`.
 - Do not expose memory citations, agent process notes, private local paths,
   temporary files, or internal session links in PR-facing copy.
+- Do not treat missing checks or reviews as successful gates without confirming
+  the applicable repository rules.
 - Do not claim a push, PR, or check result without reading it back.

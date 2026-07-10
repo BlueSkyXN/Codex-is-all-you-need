@@ -24,6 +24,8 @@ Build PR metadata from current evidence:
 - the complete commit range, not only the latest commit subject;
 - tests and checks actually run, including failures, pending checks, and skips;
 - the current remote PR title, body, head SHA, state, and checks when updating;
+- review decisions and unresolved conversations when readiness or merge claims
+  are in scope;
 - release, deployment, and runtime readback when those states are mentioned.
 
 Do not use stale handoff notes or an implementation diary as the source of truth
@@ -91,6 +93,9 @@ Use state language that cannot be confused with a later delivery stage:
 | Branch pushed | branch pushed; no PR unless one is confirmed |
 | PR opened with base `main` | PR opened against `main`; not merged |
 | Draft PR | draft; not ready for review unless explicitly changed |
+| Ready for review | marked ready; not necessarily approved or merge-ready |
+| No checks reported | no checks reported; verify whether checks are required |
+| No reviews reported | no reviews reported; verify whether approval is required |
 | Checks passed | checks passed for the reported head; not proof of merge |
 | PR merged | merged only after remote state confirms it |
 | Release created | released only after the release/artifact is read back |
@@ -110,6 +115,10 @@ After creating or editing a PR, read back at least:
 - open/closed/merged state and draft status;
 - mergeability or merge state when available;
 - checks and their status.
+- review decision, requested changes, and unresolved conversations when
+  readiness or merge is in scope;
+- applicable required approvals/checks and merge rules before claiming the PR
+  is merge-ready.
 
 Confirm that the remote copy matches the current head and passes two tests:
 
@@ -129,4 +138,6 @@ again.
   checklist before explaining the user-visible or maintainer-visible result.
 - Do not include memory citations, private absolute paths, temporary body files,
   agent process labels, internal session URLs, credentials, or private data.
+- Do not equate absent checks or reviews with passed gates without confirming
+  the repository rules that apply.
 - Do not describe commands as passed when they were not run in the reported tree.

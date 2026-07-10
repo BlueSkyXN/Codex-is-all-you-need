@@ -24,7 +24,7 @@ synthesis.
   `dev-spec-driven-implementation`, `dev-git-workflow`, `dev-pr-review`,
   `dev-security-review`, `dev-test-strategy`, and `dev-release-check`.
   `dev-git-workflow` prepares reviewer-facing PR metadata and verifies remote
-  delivery state; `dev-bugfix` requires a tight red-capable loop before
+  review and merge gates; `dev-bugfix` requires a tight red-capable loop before
   root-cause work.
 - Data, office, research, and common workflow skills from the public catalog.
 

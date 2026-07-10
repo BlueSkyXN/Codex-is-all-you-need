@@ -24,6 +24,9 @@ source of truth:
 
 - Direct-dev line: direct request -> relevant dev skill -> smallest validation
   -> review or release check when risk requires it.
+- Delivery line: branch/diff evidence -> reviewer-facing PR metadata -> publish
+  or update -> remote readback -> diff and metadata review -> gated merge when
+  requested.
 - SDLC line: project research -> requirements/SRS/NFR -> architecture/domain ->
   spec slice or handoff -> implementation -> validation/readiness.
 - Bug line: feedback loop -> reproduce/minimise -> hypothesis/probe -> fix ->
@@ -43,6 +46,7 @@ source of truth:
 1. Identify the user intent.
    - Read-only explanation or fact check.
    - Direct implementation, bugfix, review, or validation.
+   - Branch, commit, push, PR creation/update, or title/body rewriting.
    - Requirements, architecture, domain, spec, handoff, or release work.
    - Data, office, research, or prompt-evaluation work.
    - External Web/GPT/AI discussion that must be normalized before execution.
@@ -57,6 +61,14 @@ source of truth:
    - If the request is ambiguous, underspecified, or the user will "know it when
      they see it", use `core-explore-unknowns` to map the unknowns first.
    - If the request is clear and local, route to the relevant dev skill.
+   - If the request involves branch/commit history, opening or updating a PR, or
+     rewriting PR title/body, use `dev-git-workflow`.
+   - If the request is a code/diff review, use `dev-pr-review`; include metadata
+     alignment when PR title/body exists.
+   - If the request combines improving or reviewing a PR with publishing or
+     merging it, use `dev-git-workflow` to lock Git and remote state, then
+     `dev-pr-review` for the full diff and metadata, then return to
+     `dev-git-workflow` for push, merge gates, and final readback.
    - If the user asks to produce an artifact, route directly to that artifact
      skill.
    - If the user asks to implement, continue past routing and perform the work
@@ -95,7 +107,8 @@ source of truth:
 | Change control | `sdlc-change-control` |
 | Clear implementation | `dev-spec-driven-implementation` or the relevant dev skill |
 | Bugfix | `dev-bugfix` |
-| PR or diff review | `dev-pr-review` |
+| Branch/worktree/commit, PR creation/update, or PR title/body | `dev-git-workflow` |
+| PR code/diff review | `dev-pr-review` |
 | Security review | `dev-security-review` |
 | Test planning or validation strategy | `dev-test-strategy` |
 | Release readiness | `dev-release-check` |

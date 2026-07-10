@@ -11,8 +11,8 @@ synthesis.
 ## What It Includes
 
 - A plugin entrypoint skill, `core-router`, for routing work to the smallest
-  useful bundled workflow, now with a flow map for direct-dev, SDLC, bugfix,
-  context, and skill-quality paths.
+  useful bundled workflow, now with a flow map for direct-dev, PR delivery,
+  SDLC, bugfix, context, and skill-quality paths.
 - Core process skills from the common catalog: `core-grilling` for
   one-question-at-a-time plan interrogation, `core-explore-unknowns` for
   quadrant-walk requirement clarification when the user's request is ambiguous,
@@ -21,9 +21,11 @@ synthesis.
   `sdlc-requirements-workflow`, `sdlc-solution-spec-workflow`,
   `sdlc-dev-handoff-planning`, and `sdlc-readiness-review`.
 - Development skills such as `dev-repo-onboarding`, `dev-bugfix`,
-  `dev-spec-driven-implementation`, `dev-pr-review`, `dev-security-review`,
-  `dev-test-strategy`, and `dev-release-check`. `dev-bugfix` is feedback-loop
-  first: it requires a tight red-capable loop before root-cause work.
+  `dev-spec-driven-implementation`, `dev-git-workflow`, `dev-pr-review`,
+  `dev-security-review`, `dev-test-strategy`, and `dev-release-check`.
+  `dev-git-workflow` prepares reviewer-facing PR metadata and verifies remote
+  review and merge gates; `dev-bugfix` requires a tight red-capable loop before
+  root-cause work.
 - Data, office, research, and common workflow skills from the public catalog.
 
 ## What It Does Not Include
@@ -58,7 +60,7 @@ with paths relative to this directory.
 
 The package also carries `.claude-plugin/plugin.json` as compatibility metadata
 for Claude-compatible runtimes. It mirrors the Codex manifest version, but it
-is not the 0.4.0 runtime contract: `codex plugin add` installs against the
+is not the 0.4.1 runtime contract: `codex plugin add` installs against the
 Codex manifest and this package layout. Claude runtime skill semantics are
 tracked separately and stay a checker warning, not a release gate.
 

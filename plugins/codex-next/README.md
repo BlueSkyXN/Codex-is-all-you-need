@@ -16,16 +16,20 @@ synthesis.
 - Core process skills from the common catalog: `core-grilling` for
   one-question-at-a-time plan interrogation, `core-explore-unknowns` for
   quadrant-walk requirement clarification when the user's request is ambiguous,
-  and `core-skill-eval` for golden-case skill behavior checks.
+  `core-skill-eval` for golden-case skill behavior checks, and `core-goal-run`
+  which halts autonomous loops when no externally-anchored tasks remain.
 - SDLC and delivery skills such as `sdlc-manager`, `sdlc-router`,
   `sdlc-requirements-workflow`, `sdlc-solution-spec-workflow`,
   `sdlc-dev-handoff-planning`, and `sdlc-readiness-review`.
+  `sdlc-readiness-review` includes a necessity check with `not-needed` and
+  `reduce-scope` verdicts so proposed work can be rejected before build.
 - Development skills such as `dev-repo-onboarding`, `dev-bugfix`,
   `dev-spec-driven-implementation`, `dev-git-workflow`, `dev-pr-review`,
   `dev-security-review`, `dev-test-strategy`, and `dev-release-check`.
   `dev-git-workflow` prepares reviewer-facing PR metadata and verifies remote
   review and merge gates; `dev-bugfix` requires a tight red-capable loop before
-  root-cause work.
+  root-cause work; `dev-pr-review` reports simplification findings for
+  over-engineered diffs.
 - Data, office, research, and common workflow skills from the public catalog.
 
 ## What It Does Not Include

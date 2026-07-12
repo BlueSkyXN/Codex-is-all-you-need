@@ -162,6 +162,11 @@ Do not invent compound statuses such as `DONE_BUT_NEEDS_CI`. Put that detail in
 4. If they already exist, resume from them instead of re-deriving status from
    the source goal file.
 5. Extract only actionable items. Do not turn every paragraph into a task.
+   New tasks discovered during execution must cite an external anchor: a
+   failing test, an observed error, a user request, or a REQ/issue ID. A task
+   whose only source is "improvement idea from the previous iteration" is not
+   actionable — record it in `goal-log.md` notes for user review but do not
+   add it to `goal-tasks.md`.
 6. Mark human-only tasks as `HUMAN_PENDING` or `SKIPPED_HUMAN`; do not mark them
    `DONE` unless the user actually completed the human action and evidence is
    available.
@@ -205,6 +210,9 @@ matching row in `goal-tasks.md`.
 
 Stop and report clearly when:
 
+- No remaining TODO or DOING task has an external anchor (failing test,
+  observed error, user request, REQ/issue ID). This is the halting condition:
+  do not invent work to extend the loop.
 - The source goal file and existing `goal-tasks.md` contradict each other.
 - A task requires a business decision, credential, permission, or irreversible
   action.

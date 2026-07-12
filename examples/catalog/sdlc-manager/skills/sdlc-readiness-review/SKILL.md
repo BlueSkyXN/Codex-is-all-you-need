@@ -1,6 +1,6 @@
 ---
 name: sdlc-readiness-review
-description: Use to assess whether SDLC materials, specs, handoffs, issues, or direct-dev requests are ready, need revision, or are blocked.
+description: Use to assess whether SDLC materials, specs, handoffs, issues, or direct-dev requests are ready, need revision, are not needed, or are blocked.
 ---
 
 # SDLC Readiness Review
@@ -14,7 +14,9 @@ ready-for-dev
 ready-for-direct-dev
 repo-onboarding-first
 revise
+reduce-scope
 change-control-needed
+not-needed
 blocked
 ```
 
@@ -72,7 +74,24 @@ Classify the review target:
 
 State the delivery profile and risk level if known.
 
-### 2. Check source authority
+### 2. Check necessity
+
+Before judging whether the work is specified well enough to build, judge
+whether it should be built at all.
+
+- Name the external anchor that requires this work: a failing test, an
+  observed error, a user request, or a REQ/issue ID. A plan, handoff, or
+  previous iteration proposing the work is not an anchor for itself.
+- State what breaks or stays broken if the work is not done.
+- Look for a smaller alternative that satisfies the same need: a config
+  change, a documentation fix, reuse of an existing capability, or a smaller
+  slice of the proposed work.
+
+If no external anchor exists, stop with `not-needed` and report the missing
+anchor. If a smaller alternative satisfies the need, stop with `reduce-scope`
+and name the alternative. Otherwise record the anchor and continue.
+
+### 3. Check source authority
 
 Determine which source controls the work:
 
@@ -94,7 +113,7 @@ repo-evidence-only
 
 If sources conflict, do not choose silently. Report the conflict and recommend a resolution path.
 
-### 3. Check scope and non-scope
+### 4. Check scope and non-scope
 
 A ready item must identify:
 
@@ -112,7 +131,7 @@ Do not refactor unrelated architecture.
 Do not change public behavior outside the stated path.
 ```
 
-### 4. Check software-facing completeness
+### 5. Check software-facing completeness
 
 For SDLC-backed work, check:
 
@@ -135,7 +154,7 @@ For direct-dev work, check:
 | risk | Is risk acceptable without formal SDLC artifacts? |
 | fallback | Can dev report blocker if repo evidence contradicts the request? |
 
-### 5. Check acceptance and validation
+### 6. Check acceptance and validation
 
 Ready work must have at least one validation path.
 
@@ -151,7 +170,7 @@ Acceptable validation sources:
 
 Do not require a full test plan for every direct-dev task. Require enough validation for the risk.
 
-### 6. Check traceability level
+### 7. Check traceability level
 
 Use the appropriate traceability depth:
 
@@ -164,7 +183,7 @@ Use the appropriate traceability depth:
 
 If traceability is absent but the task is safe for direct dev, mark it as an accepted direct-dev gap rather than blocking.
 
-### 7. Decide readiness verdict
+### 8. Decide readiness verdict
 
 If the trade-off set is still contested, run `core-grilling` on it before
 freezing the decision.
@@ -177,12 +196,14 @@ Use one verdict only:
 | `ready-for-direct-dev` | Formal SDLC materials are absent or unnecessary, but the task can proceed safely |
 | `repo-onboarding-first` | Dev can proceed after read-only repo mapping |
 | `revise` | Materials need revision before dev should start |
+| `reduce-scope` | A smaller alternative satisfies the need; rescope before build |
 | `change-control-needed` | Scope or baseline change requires change-control first |
+| `not-needed` | No external anchor requires this work; report instead of building |
 | `blocked` | Critical missing information or contradiction prevents safe execution |
 
 Avoid vague results such as “mostly okay.”
 
-### 8. Provide next action
+### 9. Provide next action
 
 The review must end with a concrete route:
 
@@ -201,20 +222,21 @@ Return a readiness review:
 # SDLC Readiness Review: <Subject>
 
 ## 1. Review Subject
-## 2. Source Authority
-## 3. Scope and Non-scope Check
-## 4. Completeness Check
-## 5. Validation Check
-## 6. Traceability Check
-## 7. Risks and Gaps
-## 8. Verdict
-## 9. Next Action
+## 2. Necessity Check
+## 3. Source Authority
+## 4. Scope and Non-scope Check
+## 5. Completeness Check
+## 6. Validation Check
+## 7. Traceability Check
+## 8. Risks and Gaps
+## 9. Verdict
+## 10. Next Action
 ```
 
 Use this verdict block:
 
 ```text
-Verdict: ready-for-dev | ready-for-direct-dev | repo-onboarding-first | revise | change-control-needed | blocked
+Verdict: ready-for-dev | ready-for-direct-dev | repo-onboarding-first | revise | reduce-scope | change-control-needed | not-needed | blocked
 Reason:
 Required before next step:
 Can proceed without:
@@ -231,6 +253,7 @@ Before returning the verdict, check:
 - The verdict matches the evidence.
 - Required and optional gaps are separated.
 - Direct-dev readiness is allowed when scope and validation are sufficient.
+- `not-needed` and `reduce-scope` are used when the necessity check fails.
 - Missing SDLC artifacts are not automatically treated as blockers.
 - High-risk gaps are clearly marked.
 - Change-control needs are called out when baseline or scope changes.
@@ -241,6 +264,7 @@ Before returning the verdict, check:
 - Do not approve business strategy, legal acceptance, security exception, or production release.
 - Do not write replacement artifacts inside the review unless asked.
 - Do not block safe dev work solely because BRD, URS, PRD, SRS, or RTM is absent.
+- Do not pass work whose only justification is the plan that proposed it.
 - Do not claim tests passed or validation succeeded without evidence.
 - Do not let readiness review become project management overhead.
 - Do not let dev own SDLC artifacts; dev may report implementation blockers and contradictions.
@@ -255,5 +279,7 @@ Route by verdict:
 | `ready-for-direct-dev` | dev skill such as `dev-bugfix`, `dev-repo-onboarding`, or `dev-spec-driven-implementation` |
 | `repo-onboarding-first` | `dev-repo-onboarding` |
 | `revise` | relevant authoring skill: `sdlc-srs-workflow`, `sdlc-nfr-spec`, `sdlc-spec-slice-writer`, `sdlc-requirements-workflow` |
+| `reduce-scope` | return to requesting skill or direct-dev with the smaller alternative named |
 | `change-control-needed` | `sdlc-change-control` |
+| `not-needed` | report the missing external anchor to the user; do not route to build |
 | `blocked` | ask for required owner decision, missing input, or conflict resolution |

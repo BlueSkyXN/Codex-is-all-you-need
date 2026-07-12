@@ -89,6 +89,7 @@ source of truth:
 | User intent | First skill |
 |---|---|
 | Ambiguous, underspecified, or "know it when I see it" request | `core-explore-unknowns` |
+| Proposed work has no clear external anchor or its necessity is challenged | `sdlc-readiness-review` |
 | Stress-test an existing plan or design before build | `core-grilling` |
 | Evaluate a skill rewrite with golden cases | `core-skill-eval` |
 | SDLC/ADS work, `local/sdlc`, handoff, or external proposal intake | `sdlc-manager` |
@@ -152,6 +153,9 @@ with the selected skill and report the actual result.
 
 ## Boundaries
 
+- Do not route work that lacks an external anchor (user request, failing test,
+  observed error, requirement ID) into a build skill; route it to
+  `sdlc-readiness-review` for the necessity check first.
 - Do not inflate a clear direct-dev task into a full SDLC package.
 - Do not skip needed artifacts when scope, Architecture, Domain, release risk,
   or validation is unclear.

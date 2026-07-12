@@ -220,19 +220,65 @@ def inspect_claude_manifest(
 
     skills = manifest.get("skills")
     if skills is None:
-        warnings.append("claude manifest has no explicit skills field; runtime semantics unverified")
-        return "implicit_or_unverified", warnings, manifest
+        # Codex Next is a multi-skill package whose cross-runtime surface lives
+        # in the standard root-level skills/ directory.
+        default_skills = plugin_dir / "skills"
+        if not default_skills.is_dir():
+            errors.append("codex-next Claude default skills directory does not exist: ./skills/")
+            return "missing_default_directory", warnings, manifest
+        return "default_directory", warnings, manifest
+    if isinstance(skills, str):
+        check_codex_next_claude_skill_path(plugin_dir, skills, errors)
+        return "explicit", warnings, manifest
     if isinstance(skills, list):
         for item in skills:
             if not isinstance(item, str):
                 errors.append("claude manifest skills array contains non-string item")
                 continue
-            if not (plugin_dir / item).exists():
-                errors.append(f"claude manifest skill path does not exist: {item}")
+            check_codex_next_claude_skill_path(plugin_dir, item, errors)
         return "explicit", warnings, manifest
 
-    errors.append("claude manifest skills field is not an array")
+    errors.append("claude manifest skills field is not a string or array")
     return "unsupported", warnings, manifest
+
+
+def check_codex_next_claude_skill_path(
+    plugin_dir: Path, item: str, errors: list[str]
+) -> None:
+    """Keep Claude paths inside Codex Next's canonical packaged skill surface."""
+    if not item.startswith("./"):
+        errors.append(f"claude manifest skill path must start with './': {item}")
+        return
+
+    target = plugin_dir / item
+    if reference_escapes_root(target, plugin_dir.resolve()):
+        errors.append(f"claude manifest skill path escapes plugin root: {item}")
+        return
+    if not target.exists():
+        errors.append(f"claude manifest skill path does not exist: {item}")
+        return
+    if not target.is_dir():
+        errors.append(f"claude manifest skill path is not a directory: {item}")
+        return
+
+    # Codex Next keeps one cross-runtime skill surface under skills/; custom
+    # Claude paths must not introduce a second, Claude-only package surface.
+    packaged_skills = (plugin_dir / "skills").resolve(strict=False)
+    if reference_escapes_root(target, packaged_skills):
+        errors.append(
+            "codex-next Claude skill path is outside the packaged skills directory: "
+            f"{item}"
+        )
+        return
+
+    has_direct_skill = (target / "SKILL.md").is_file()
+    has_nested_skill = any(
+        (child / "SKILL.md").is_file()
+        for child in target.iterdir()
+        if child.is_dir() and not child.name.startswith(".")
+    )
+    if not has_direct_skill and not has_nested_skill:
+        errors.append(f"claude manifest skill path contains no SKILL.md: {item}")
 
 
 def inspect_manifest_version_parity(

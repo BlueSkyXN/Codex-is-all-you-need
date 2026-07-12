@@ -57,6 +57,16 @@ for correctness, regressions, security, compatibility, and test coverage.
    - Race conditions
    - Data loss or corruption risk
 
+8. Minimality
+   - Abstractions, layers, or indirection not required by the stated goal
+   - Speculative features, config, flags, or extension points nobody requested
+   - Whether the same goal could be achieved with a materially smaller diff
+   - Treat repository-mandated mirrors, generated artifacts, tests, migrations,
+     version updates, and compatibility docs as constraints rather than
+     overhead by default
+   - Confirm that a smaller alternative still satisfies the repository contract
+   - Name a concrete smaller alternative for each finding
+
 ## Output
 
 Return:
@@ -65,9 +75,10 @@ Return:
 2. Existing review or merge-gate state
 3. PR metadata or scope-alignment findings
 4. Important non-blocking findings
-5. Test gaps
-6. Contract or compatibility risks
-7. Verdict: block / proceed / proceed with notes
+5. Simplification findings
+6. Test gaps
+7. Contract or compatibility risks
+8. Verdict: block / proceed / proceed with notes
 
 ## Do not
 
@@ -75,4 +86,6 @@ Return:
   style issue.
 - Do not focus on prose style that does not affect reviewer understanding.
 - Do not suggest unrelated redesigns.
+- Simplification findings must name a concrete smaller alternative within the
+  current scope; do not use them to propose redesigns.
 - Do not assume tests passed if they were not run.

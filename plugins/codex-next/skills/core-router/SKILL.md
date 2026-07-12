@@ -36,8 +36,9 @@ source of truth:
   the next run; do not turn it into an SDLC artifact unless the task needs that.
 - Unknowns line: ambiguous or underspecified request -> `core-explore-unknowns`
   quadrant walk -> hand the map to the planning, spec, or implementation skill;
-  run `core-grilling` when the drafted plan still needs interrogation before
-  build.
+  if the mapped work still lacks a task-specific anchor or its necessity is
+  challenged, run `sdlc-readiness-review` before build. Run `core-grilling` when
+  the drafted plan still needs interrogation before build.
 - Skill-quality line: authoring discipline -> surface check -> `core-skill-eval`
   for major behavior changes.
 
@@ -53,14 +54,27 @@ source of truth:
    - Ambiguous or underspecified request that needs unknowns explored first.
 
 2. Choose the smallest route.
-   - If the request is SDLC/ADS, `local/sdlc`, handoff, architecture,
-     requirements, specification, validation, or external proposal intake work,
-     use `sdlc-manager`.
-   - If the request only needs lane, ADS, or minimum-material classification,
-     use `sdlc-router`.
    - If the request is ambiguous, underspecified, or the user will "know it when
      they see it", use `core-explore-unknowns` to map the unknowns first.
-   - If the request is clear and local, route to the relevant dev skill.
+     Ambiguity takes precedence over SDLC/ADS lane classification.
+   - A clear user request tied to an explicit outcome is an external anchor; do
+     not add readiness overhead merely because no formal REQ or issue exists.
+   - After the problem and outcome are clear, use `sdlc-readiness-review` when
+     the work still lacks a task-specific external anchor or its necessity is
+     challenged.
+   - If the clarified, anchored request only needs lane, ADS, or minimum-material
+     classification, use `sdlc-router`.
+   - When several routes match, choose the most specific intent in the Route
+     Table. Broad SDLC/ADS and clear-implementation routes are fallbacks.
+   - If multiple equally specific SDLC artifact intents remain, use
+     `sdlc-solution-spec-workflow` when they form one HLD, LLD, domain, ADR, NFR,
+     or SPEC solution package; otherwise use `sdlc-manager` to coordinate them.
+     Do not choose one leaf workflow arbitrarily.
+   - Otherwise, if the clarified request is SDLC/ADS, `local/sdlc`, handoff,
+     architecture, requirements, specification, validation, or external
+     proposal intake work, use `sdlc-manager`.
+   - If the request is clear, anchored, and local, route to the relevant dev
+     skill.
    - If the request involves branch/commit history, opening or updating a PR, or
      rewriting PR title/body, use `dev-git-workflow`.
    - If the request is a code/diff review, use `dev-pr-review`; include metadata
@@ -86,9 +100,16 @@ source of truth:
 
 ## Route Table
 
+When more than one row matches, choose the most specific intent. Treat broad
+SDLC/ADS and clear-implementation rows as fallbacks, not overrides.
+When multiple equally specific SDLC artifact rows remain, use
+`sdlc-solution-spec-workflow` for one combined solution package or
+`sdlc-manager` as the coordinator for other multi-artifact work.
+
 | User intent | First skill |
 |---|---|
-| Ambiguous, underspecified, or "know it when I see it" request | `core-explore-unknowns` |
+| Ambiguous, underspecified, or "know it when I see it" request | `core-explore-unknowns` before lane classification; then `sdlc-readiness-review` if the mapped work remains unanchored |
+| Clear proposed work has no task-specific external anchor or its necessity is challenged | `sdlc-readiness-review` |
 | Stress-test an existing plan or design before build | `core-grilling` |
 | Evaluate a skill rewrite with golden cases | `core-skill-eval` |
 | SDLC/ADS work, `local/sdlc`, handoff, or external proposal intake | `sdlc-manager` |
@@ -152,6 +173,16 @@ with the selected skill and report the actual result.
 
 ## Boundaries
 
+- Do not route ambiguous work directly to `sdlc-manager`, readiness review, or a
+  build skill. Use `core-explore-unknowns` first; ambiguity takes precedence
+  over lane classification even when a possible anchor already exists.
+- After the subject is clear, do not route unanchored work into a build skill;
+  use `sdlc-readiness-review` for the necessity check first.
+- Treat a clear user request tied to an explicit outcome as an anchor; do not
+  manufacture process overhead for an already-ready direct-dev task.
+- Do not arbitrarily select one leaf when multiple equally specific SDLC
+  artifact intents remain. Use `sdlc-solution-spec-workflow` for one combined
+  solution package or `sdlc-manager` for other multi-artifact coordination.
 - Do not inflate a clear direct-dev task into a full SDLC package.
 - Do not skip needed artifacts when scope, Architecture, Domain, release risk,
   or validation is unclear.

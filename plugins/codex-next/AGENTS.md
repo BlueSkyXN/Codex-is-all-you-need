@@ -83,6 +83,9 @@ the user's task differs.
   for catalog/plugin content parity, manifest version parity, Agent Skills spec
   frontmatter, and reference resolution.
 - `python3 ~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/codex-next` - plugin manifest/package validation; requires the local system validator path.
+- `claude plugin validate --strict plugins/codex-next` - validate the Claude
+  compatibility manifest and its default root-level component discovery when
+  the Claude CLI is available.
 - `git diff --check -- plugins/codex-next` - whitespace check for plugin package diffs.
 - For bundled skill content mirrored from `examples/catalog/`, also run the root
   catalog validation command when the source catalog changed.

@@ -17,8 +17,9 @@ synthesis.
   one-question-at-a-time plan interrogation, `core-explore-unknowns` for
   quadrant-walk requirement clarification when the user's request is ambiguous,
   `core-skill-eval` for golden-case skill behavior checks, and `core-goal-run`
-  which persists task-specific anchors and halts only when no anchored active
-  tasks remain.
+  which tracks task-specific anchor state and uses it, with one safe-unit
+  exception for legacy `DOING` or `VERIFYING` rows, to govern automatic
+  continuation.
 - SDLC and delivery skills such as `sdlc-manager`, `sdlc-router`,
   `sdlc-requirements-workflow`, `sdlc-solution-spec-workflow`,
   `sdlc-dev-handoff-planning`, and `sdlc-readiness-review`.

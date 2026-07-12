@@ -87,18 +87,35 @@ Allowed status:
 `Source` identifies where the task came from. `Anchor` identifies why that
 specific task is justified. Use concise values such as `REQ-123`, `issue#7`,
 `test:path::name`, `error:<summary>`, or `user:<explicit outcome>`.
+Use `pending` for an actionable task awaiting anchor confirmation and
+`legacy-unresolved` for an inactive historical row whose original anchor cannot
+be recovered. Neither value is a confirmed anchor.
 
 When an existing `goal-tasks.md` has no `Anchor` column:
 
 - Add the column on the next update without rewriting the source goal file.
 - Recover task-specific anchors from explicit REQ/issue/test/error references,
   the execution log, or a user request tied to the task's outcome.
-- Write `pending` when the anchor cannot be confirmed, keep the task `TODO`, and
-  report the missing confirmation before starting it.
+- For a task that has not started, write `pending` when the anchor cannot be
+  confirmed, keep the task `TODO`, and report the missing confirmation before
+  starting it.
+- For an existing `DONE`, `BLOCKED`, `HUMAN_PENDING`, or `SKIPPED_HUMAN` row
+  whose anchor cannot be recovered, write `legacy-unresolved`, preserve its
+  status, and record the provenance gap in `Notes` or `goal-log.md`. Confirm an
+  anchor before reopening or resuming the task.
 - Do not treat a generic resume request such as "continue the plan" as the
   anchor for newly discovered work.
-- If a legacy task is already `DOING` or `VERIFYING`, finish its current safe
-  work or verification unit before requiring the anchor for further work.
+- If a legacy task is already `DOING` or `VERIFYING` and its anchor cannot be
+  confirmed, set `Anchor` to `pending` and allow exactly its current safe work
+  or verification unit to finish. This one-unit migration exception takes
+  precedence over the normal halting condition.
+- Before writing a terminal `DONE` or `BLOCKED` status after that unit, replace
+  `pending` with any task-specific anchor established during the unit. If none
+  was established, set `Anchor=legacy-unresolved`.
+- After that unit, mark the task `DONE` only if the task is complete with
+  evidence. If further work remains, return it to `TODO` with `Anchor=pending`
+  and request confirmation. If the unit cannot finish because of a concrete
+  blocker, mark it `BLOCKED` and record the blocker.
 
 Do not put long command output, long rationale, PR bodies, screenshots, or full
 logs in `goal-tasks.md`.
@@ -230,9 +247,11 @@ matching row in `goal-tasks.md`.
 
 Stop and report clearly when:
 
-- No active task (`TODO`, `DOING`, or `VERIFYING`) has a confirmed task-specific
-  `Anchor`. This is the halting condition: report `pending` anchors and do not
-  invent work to extend the loop.
+- After applying the one-unit legacy migration exception, no active task
+  (`TODO`, `DOING`, or `VERIFYING`) has a confirmed task-specific `Anchor`, and
+  no legacy `DOING` or `VERIFYING` task is finishing that allowed unit. This is
+  the halting condition: report `pending` anchors and do not invent work to
+  extend the loop.
 - A `VERIFYING` task cannot complete its current verification. Finish the
   verification or record a concrete blocker before stopping for lack of other
   active work.

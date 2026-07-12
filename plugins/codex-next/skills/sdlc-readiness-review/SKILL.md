@@ -218,6 +218,23 @@ Use one verdict only:
 
 Avoid vague results such as “mostly okay.”
 
+When more than one verdict candidate applies, resolve them in this order:
+
+1. `change-control-needed` when a known approved baseline must change.
+2. `not-needed` only when sufficient evidence shows no unmet need remains and
+   no controlling baseline conflicts.
+3. `revise` when justification, impact, scope, or validation material is
+   insufficient but can be corrected.
+4. `repo-onboarding-first` when the work is justified but repository evidence
+   or the implementation area still needs read-only mapping.
+5. `reduce-scope` when the smaller baseline-compatible alternative is
+   established and the remaining readiness checks are sufficient.
+6. `ready-for-dev` or `ready-for-direct-dev` according to the controlling
+   artifact profile.
+
+Use `blocked` only when a critical contradiction or missing owner decision
+prevents selecting any safe route above.
+
 Missing justification is `revise`, not `not-needed`. Use `reduce-scope` only
 when the smaller alternative stays within the controlling baseline; otherwise
 use `change-control-needed`. If evidence suggests `not-needed` but the
@@ -278,6 +295,7 @@ Before returning the verdict, check:
 - `not-needed` is supported by evidence that no unmet need remains.
 - `not-needed` does not override a controlling baseline.
 - `reduce-scope` does not bypass source authority or change control.
+- Competing verdict candidates follow the documented resolution order.
 - Missing SDLC artifacts are not automatically treated as blockers.
 - High-risk gaps are clearly marked.
 - Change-control needs are called out when baseline or scope changes.

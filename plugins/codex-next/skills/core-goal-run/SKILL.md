@@ -55,6 +55,7 @@ It should answer:
 - What tasks exist?
 - What is each task's current status?
 - Is the task automatic or human-only?
+- What task-specific external anchor justifies the task?
 - Where is the evidence or note?
 
 Use this compact structure:
@@ -76,12 +77,28 @@ Allowed status:
 - HUMAN_PENDING
 - SKIPPED_HUMAN
 
-| ID | Source | Task | Status | Auto | Evidence | Notes |
-|---|---|---|---|---|---|---|
-| T001 | goal-plan-list.md §47 | Review current state | DONE | yes | goal-log.md#t001 | current authority confirmed |
-| T002 | goal-plan-list.md §8 | Implement frontend task X | DOING | yes | pending | small reversible diff |
-| T003 | goal-plan-list.md §12 | Manual credential validation | SKIPPED_HUMAN | no | goal-log.md#t003 | requires credential |
+| ID | Source | Anchor | Task | Status | Auto | Evidence | Notes |
+|---|---|---|---|---|---|---|---|
+| T001 | goal-plan-list.md §47 | user:confirm current authority | Review current state | DONE | yes | goal-log.md#t001 | current authority confirmed |
+| T002 | goal-plan-list.md §8 | REQ-UI-X | Implement frontend task X | DOING | yes | pending | small reversible diff |
+| T003 | goal-plan-list.md §12 | user:validate credentials | Manual credential validation | SKIPPED_HUMAN | no | goal-log.md#t003 | requires credential |
 ```
+
+`Source` identifies where the task came from. `Anchor` identifies why that
+specific task is justified. Use concise values such as `REQ-123`, `issue#7`,
+`test:path::name`, `error:<summary>`, or `user:<explicit outcome>`.
+
+When an existing `goal-tasks.md` has no `Anchor` column:
+
+- Add the column on the next update without rewriting the source goal file.
+- Recover task-specific anchors from explicit REQ/issue/test/error references,
+  the execution log, or a user request tied to the task's outcome.
+- Write `pending` when the anchor cannot be confirmed, keep the task `TODO`, and
+  report the missing confirmation before starting it.
+- Do not treat a generic resume request such as "continue the plan" as the
+  anchor for newly discovered work.
+- If a legacy task is already `DOING` or `VERIFYING`, finish its current safe
+  work or verification unit before requiring the anchor for further work.
 
 Do not put long command output, long rationale, PR bodies, screenshots, or full
 logs in `goal-tasks.md`.
@@ -162,11 +179,12 @@ Do not invent compound statuses such as `DONE_BUT_NEEDS_CI`. Put that detail in
 4. If they already exist, resume from them instead of re-deriving status from
    the source goal file.
 5. Extract only actionable items. Do not turn every paragraph into a task.
-   New tasks discovered during execution must cite an external anchor: a
-   failing test, an observed error, a user request, or a REQ/issue ID. A task
-   whose only source is "improvement idea from the previous iteration" is not
-   actionable — record it in `goal-log.md` notes for user review but do not
-   add it to `goal-tasks.md`.
+   Every task must carry a task-specific `Anchor`. New tasks discovered during
+   execution must cite a failing test, observed error, explicit user outcome,
+   REQ/issue ID, or equivalent repository or external evidence. A task whose
+   only source is "improvement idea from the previous iteration" is not
+   actionable — record it in `goal-log.md` suggestions for user review but do
+   not add it to `goal-tasks.md`.
 6. Mark human-only tasks as `HUMAN_PENDING` or `SKIPPED_HUMAN`; do not mark them
    `DONE` unless the user actually completed the human action and evidence is
    available.
@@ -197,6 +215,8 @@ Good evidence:
 Do not treat `goal-tasks.md` itself as proof of completion. It is a tracker, not
 the evidence source.
 
+An `Anchor` explains why a task exists. It is not proof that the task is done.
+
 ## Subagent Rule
 
 Subagents may investigate, implement, test, or review scoped work. The main
@@ -210,9 +230,14 @@ matching row in `goal-tasks.md`.
 
 Stop and report clearly when:
 
-- No remaining TODO or DOING task has an external anchor (failing test,
-  observed error, user request, REQ/issue ID). This is the halting condition:
-  do not invent work to extend the loop.
+- No active task (`TODO`, `DOING`, or `VERIFYING`) has a confirmed task-specific
+  `Anchor`. This is the halting condition: report `pending` anchors and do not
+  invent work to extend the loop.
+- A `VERIFYING` task cannot complete its current verification. Finish the
+  verification or record a concrete blocker before stopping for lack of other
+  active work.
+- Only unanchored suggestions remain. Keep them in `goal-log.md`; do not promote
+  them into tasks merely to continue the run.
 - The source goal file and existing `goal-tasks.md` contradict each other.
 - A task requires a business decision, credential, permission, or irreversible
   action.

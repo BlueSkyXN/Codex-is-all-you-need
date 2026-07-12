@@ -36,8 +36,9 @@ source of truth:
   the next run; do not turn it into an SDLC artifact unless the task needs that.
 - Unknowns line: ambiguous or underspecified request -> `core-explore-unknowns`
   quadrant walk -> hand the map to the planning, spec, or implementation skill;
-  run `core-grilling` when the drafted plan still needs interrogation before
-  build.
+  if the mapped work still lacks a task-specific anchor or its necessity is
+  challenged, run `sdlc-readiness-review` before build. Run `core-grilling` when
+  the drafted plan still needs interrogation before build.
 - Skill-quality line: authoring discipline -> surface check -> `core-skill-eval`
   for major behavior changes.
 
@@ -60,7 +61,13 @@ source of truth:
      use `sdlc-router`.
    - If the request is ambiguous, underspecified, or the user will "know it when
      they see it", use `core-explore-unknowns` to map the unknowns first.
-   - If the request is clear and local, route to the relevant dev skill.
+   - After the problem and outcome are clear, use `sdlc-readiness-review` when
+     the work still lacks a task-specific external anchor or its necessity is
+     challenged.
+   - A clear user request tied to an explicit outcome is an external anchor; do
+     not add readiness overhead merely because no formal REQ or issue exists.
+   - If the request is clear, anchored, and local, route to the relevant dev
+     skill.
    - If the request involves branch/commit history, opening or updating a PR, or
      rewriting PR title/body, use `dev-git-workflow`.
    - If the request is a code/diff review, use `dev-pr-review`; include metadata
@@ -88,8 +95,8 @@ source of truth:
 
 | User intent | First skill |
 |---|---|
-| Ambiguous, underspecified, or "know it when I see it" request | `core-explore-unknowns` |
-| Proposed work has no clear external anchor or its necessity is challenged | `sdlc-readiness-review` |
+| Ambiguous, underspecified, or "know it when I see it" request | `core-explore-unknowns`; then `sdlc-readiness-review` if the mapped work remains unanchored |
+| Clear proposed work has no task-specific external anchor or its necessity is challenged | `sdlc-readiness-review` |
 | Stress-test an existing plan or design before build | `core-grilling` |
 | Evaluate a skill rewrite with golden cases | `core-skill-eval` |
 | SDLC/ADS work, `local/sdlc`, handoff, or external proposal intake | `sdlc-manager` |
@@ -153,9 +160,12 @@ with the selected skill and report the actual result.
 
 ## Boundaries
 
-- Do not route work that lacks an external anchor (user request, failing test,
-  observed error, requirement ID) into a build skill; route it to
-  `sdlc-readiness-review` for the necessity check first.
+- Do not send ambiguous, unanchored work directly to readiness review; use
+  `core-explore-unknowns` to establish the problem and outcome first.
+- After the subject is clear, do not route unanchored work into a build skill;
+  use `sdlc-readiness-review` for the necessity check first.
+- Treat a clear user request tied to an explicit outcome as an anchor; do not
+  manufacture process overhead for an already-ready direct-dev task.
 - Do not inflate a clear direct-dev task into a full SDLC package.
 - Do not skip needed artifacts when scope, Architecture, Domain, release risk,
   or validation is unclear.

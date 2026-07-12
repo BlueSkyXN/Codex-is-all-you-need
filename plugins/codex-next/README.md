@@ -17,19 +17,22 @@ synthesis.
   one-question-at-a-time plan interrogation, `core-explore-unknowns` for
   quadrant-walk requirement clarification when the user's request is ambiguous,
   `core-skill-eval` for golden-case skill behavior checks, and `core-goal-run`
-  which halts autonomous loops when no externally-anchored tasks remain.
+  which persists task-specific anchors and halts only when no anchored active
+  tasks remain.
 - SDLC and delivery skills such as `sdlc-manager`, `sdlc-router`,
   `sdlc-requirements-workflow`, `sdlc-solution-spec-workflow`,
   `sdlc-dev-handoff-planning`, and `sdlc-readiness-review`.
-  `sdlc-readiness-review` includes a necessity check with `not-needed` and
-  `reduce-scope` verdicts so proposed work can be rejected before build.
+  `sdlc-readiness-review` checks source authority before necessity and separates
+  missing justification, unnecessary work, scope reduction, and baseline
+  change.
 - Development skills such as `dev-repo-onboarding`, `dev-bugfix`,
   `dev-spec-driven-implementation`, `dev-git-workflow`, `dev-pr-review`,
   `dev-security-review`, `dev-test-strategy`, and `dev-release-check`.
   `dev-git-workflow` prepares reviewer-facing PR metadata and verifies remote
   review and merge gates; `dev-bugfix` requires a tight red-capable loop before
   root-cause work; `dev-pr-review` reports simplification findings for
-  over-engineered diffs.
+  over-engineered diffs without treating repository-required artifacts as
+  overhead.
 - Data, office, research, and common workflow skills from the public catalog.
 
 ## What It Does Not Include
@@ -63,10 +66,11 @@ future `assets/` belong at the plugin root and are referenced from the manifest
 with paths relative to this directory.
 
 The package also carries `.claude-plugin/plugin.json` as compatibility metadata
-for Claude-compatible runtimes. It mirrors the Codex manifest version, but it
-is not the 0.4.1 runtime contract: `codex plugin add` installs against the
-Codex manifest and this package layout. Claude runtime skill semantics are
-tracked separately and stay a checker warning, not a release gate.
+for Claude-compatible runtimes. It mirrors the Codex manifest version. The
+Claude compatibility manifest is not the Codex runtime contract: `codex plugin
+add` installs against the Codex manifest and this package layout. Claude runtime
+skill semantics are tracked separately and stay a checker warning, not a
+release gate.
 
 The repo marketplace is outside this package:
 

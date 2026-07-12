@@ -74,24 +74,7 @@ Classify the review target:
 
 State the delivery profile and risk level if known.
 
-### 2. Check necessity
-
-Before judging whether the work is specified well enough to build, judge
-whether it should be built at all.
-
-- Name the external anchor that requires this work: a failing test, an
-  observed error, a user request, or a REQ/issue ID. A plan, handoff, or
-  previous iteration proposing the work is not an anchor for itself.
-- State what breaks or stays broken if the work is not done.
-- Look for a smaller alternative that satisfies the same need: a config
-  change, a documentation fix, reuse of an existing capability, or a smaller
-  slice of the proposed work.
-
-If no external anchor exists, stop with `not-needed` and report the missing
-anchor. If a smaller alternative satisfies the need, stop with `reduce-scope`
-and name the alternative. Otherwise record the anchor and continue.
-
-### 3. Check source authority
+### 2. Check source authority
 
 Determine which source controls the work:
 
@@ -112,6 +95,38 @@ repo-evidence-only
 ```
 
 If sources conflict, do not choose silently. Report the conflict and recommend a resolution path.
+
+### 3. Check necessity and smallest sufficient alternative
+
+After source authority is known, judge whether the work is justified and
+whether a smaller change can satisfy the same approved outcome.
+
+Name a task-specific external anchor:
+
+- an explicit user request tied to the requested outcome
+- a failing test, reproducible error, or observed incorrect behavior
+- a stable REQ, issue, change, incident, or equivalent ID
+- repository evidence or an external constraint such as a security advisory,
+  deprecation, compatibility break, SLO/NFR, or compliance deadline
+
+A plan, handoff, or previous iteration may carry an anchor by linking to one,
+but it is not self-justifying. Also state what breaks, stays broken, or remains
+at risk if the work is not done.
+
+Look for a smaller alternative such as a config change, documentation fix,
+reuse of an existing capability, or a smaller implementation slice. Compare it
+with the authority established in step 2:
+
+- If the anchor or impact is insufficient, record a `revise` candidate.
+- If evidence shows there is no remaining unmet need, record a `not-needed`
+  candidate.
+- If the smaller alternative satisfies the same approved outcome without
+  changing the baseline, record a `reduce-scope` candidate.
+- If the smaller alternative changes approved scope, REQ, acceptance criteria,
+  or another baseline, record a `change-control-needed` candidate.
+
+Do not stop at this step. Continue through scope, validation, traceability, and
+risk checks, then select the final verdict in step 8.
 
 ### 4. Check scope and non-scope
 
@@ -195,13 +210,19 @@ Use one verdict only:
 | `ready-for-dev` | SDLC-backed package is sufficient for dev execution |
 | `ready-for-direct-dev` | Formal SDLC materials are absent or unnecessary, but the task can proceed safely |
 | `repo-onboarding-first` | Dev can proceed after read-only repo mapping |
-| `revise` | Materials need revision before dev should start |
-| `reduce-scope` | A smaller alternative satisfies the need; rescope before build |
-| `change-control-needed` | Scope or baseline change requires change-control first |
-| `not-needed` | No external anchor requires this work; report instead of building |
+| `revise` | Materials, necessity evidence, or impact need revision before dev should start |
+| `reduce-scope` | A smaller alternative satisfies the same approved outcome without changing the baseline |
+| `change-control-needed` | The proposed scope or smaller alternative changes an approved baseline |
+| `not-needed` | Evidence confirms there is no remaining unmet need or the outcome is already satisfied |
 | `blocked` | Critical missing information or contradiction prevents safe execution |
 
 Avoid vague results such as “mostly okay.”
+
+Missing justification is `revise`, not `not-needed`. Use `reduce-scope` only
+when the smaller alternative stays within the controlling baseline; otherwise
+use `change-control-needed`. If evidence suggests `not-needed` but the
+controlling baseline still requires the work, report the source conflict or use
+`change-control-needed`; never bypass source authority.
 
 ### 9. Provide next action
 
@@ -222,8 +243,8 @@ Return a readiness review:
 # SDLC Readiness Review: <Subject>
 
 ## 1. Review Subject
-## 2. Necessity Check
-## 3. Source Authority
+## 2. Source Authority
+## 3. Necessity and Smallest Sufficient Alternative
 ## 4. Scope and Non-scope Check
 ## 5. Completeness Check
 ## 6. Validation Check
@@ -253,7 +274,10 @@ Before returning the verdict, check:
 - The verdict matches the evidence.
 - Required and optional gaps are separated.
 - Direct-dev readiness is allowed when scope and validation are sufficient.
-- `not-needed` and `reduce-scope` are used when the necessity check fails.
+- Missing necessity evidence produces `revise`, not `not-needed`.
+- `not-needed` is supported by evidence that no unmet need remains.
+- `not-needed` does not override a controlling baseline.
+- `reduce-scope` does not bypass source authority or change control.
 - Missing SDLC artifacts are not automatically treated as blockers.
 - High-risk gaps are clearly marked.
 - Change-control needs are called out when baseline or scope changes.
@@ -264,7 +288,8 @@ Before returning the verdict, check:
 - Do not approve business strategy, legal acceptance, security exception, or production release.
 - Do not write replacement artifacts inside the review unless asked.
 - Do not block safe dev work solely because BRD, URS, PRD, SRS, or RTM is absent.
-- Do not pass work whose only justification is the plan that proposed it.
+- Do not pass work whose only justification is the plan that proposed it; a
+  plan may carry but may not create its own external anchor.
 - Do not claim tests passed or validation succeeded without evidence.
 - Do not let readiness review become project management overhead.
 - Do not let dev own SDLC artifacts; dev may report implementation blockers and contradictions.
@@ -279,7 +304,7 @@ Route by verdict:
 | `ready-for-direct-dev` | dev skill such as `dev-bugfix`, `dev-repo-onboarding`, or `dev-spec-driven-implementation` |
 | `repo-onboarding-first` | `dev-repo-onboarding` |
 | `revise` | relevant authoring skill: `sdlc-srs-workflow`, `sdlc-nfr-spec`, `sdlc-spec-slice-writer`, `sdlc-requirements-workflow` |
-| `reduce-scope` | return to requesting skill or direct-dev with the smaller alternative named |
+| `reduce-scope` | return to the requesting skill or direct-dev with the baseline-compatible smaller alternative named |
 | `change-control-needed` | `sdlc-change-control` |
-| `not-needed` | report the missing external anchor to the user; do not route to build |
+| `not-needed` | report the evidence that no unmet need remains; do not route to build |
 | `blocked` | ask for required owner decision, missing input, or conflict resolution |

@@ -61,6 +61,10 @@ for correctness, regressions, security, compatibility, and test coverage.
    - Abstractions, layers, or indirection not required by the stated goal
    - Speculative features, config, flags, or extension points nobody requested
    - Whether the same goal could be achieved with a materially smaller diff
+   - Treat repository-mandated mirrors, generated artifacts, tests, migrations,
+     version updates, and compatibility docs as constraints rather than
+     overhead by default
+   - Confirm that a smaller alternative still satisfies the repository contract
    - Name a concrete smaller alternative for each finding
 
 ## Output

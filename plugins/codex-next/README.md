@@ -69,9 +69,13 @@ with paths relative to this directory.
 The package also carries `.claude-plugin/plugin.json` as compatibility metadata
 for Claude-compatible runtimes. It mirrors the Codex manifest version. The
 Claude compatibility manifest is not the Codex runtime contract: `codex plugin
-add` installs against the Codex manifest and this package layout. Claude runtime
-skill semantics are tracked separately and stay a checker warning, not a
-release gate.
+add` installs against the Codex manifest and this package layout. Claude Code
+auto-discovers the root `skills/` directory as documented in the
+[Claude Code plugin reference](https://code.claude.com/docs/en/plugins-reference);
+this package intentionally uses that standard multi-skill layout. Its surface
+checker enforces the repository-specific rule that Claude paths stay within the
+same packaged `skills/` surface used by Codex. Use the Claude CLI for general
+Claude plugin layouts and for compatibility-manifest validation.
 
 The repo marketplace is outside this package:
 
@@ -136,6 +140,12 @@ Check the packaged skill surface with:
 
 ```bash
 python3 scripts/check_codex_next_surface.py
+```
+
+Validate the Claude compatibility manifest and its discovered components with:
+
+```bash
+claude plugin validate --strict plugins/codex-next
 ```
 
 ## License

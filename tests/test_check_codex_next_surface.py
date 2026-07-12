@@ -79,6 +79,14 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
             encoding="utf-8",
         )
 
+    def write_claude_manifest(self, skills: object) -> None:
+        (self.plugin / ".claude-plugin" / "plugin.json").write_text(
+            json.dumps(
+                {"name": "codex-next", "version": "1.0.0", "skills": skills}
+            ),
+            encoding="utf-8",
+        )
+
     def tearDown(self) -> None:
         self.tmp.cleanup()
 
@@ -92,12 +100,55 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
         self.assertEqual(summary["do_not_sections"], 1)
         self.assertEqual(summary["codex_manifest_mode"], "directory")
         self.assertEqual(summary["codex_manifest_version"], "1.0.0")
-        self.assertEqual(summary["claude_manifest_mode"], "implicit_or_unverified")
+        self.assertEqual(summary["claude_manifest_mode"], "default_directory")
         self.assertEqual(summary["claude_manifest_version"], "1.0.0")
         self.assertEqual(summary["source_catalog_skills"], 2)
         self.assertEqual(summary["plugin_only_skills"], [])
         self.assertEqual(summary["errors"], [])
-        self.assertTrue(summary["warnings"])
+        self.assertEqual(summary["warnings"], [])
+
+    def test_claude_manifest_explicit_packaged_skills_paths_are_supported(self) -> None:
+        cases = (
+            "./skills/",
+            ["./skills/alpha-skill", "./skills/manual-skill"],
+        )
+        for skills in cases:
+            with self.subTest(skills=skills):
+                self.write_claude_manifest(skills)
+
+                summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+                self.assertEqual(summary["claude_manifest_mode"], "explicit")
+                self.assertEqual(summary["errors"], [])
+                self.assertEqual(summary["warnings"], [])
+
+    def test_claude_manifest_rejects_invalid_codex_next_skills_contract(self) -> None:
+        skill_file = self.plugin / "skills" / "single-skill.md"
+        skill_file.write_text("# Not a skill directory\n", encoding="utf-8")
+        outside = self.plugin.parent / "outside-skills" / "outside"
+        self.write_skill(outside, "outside")
+        custom = self.plugin / "custom-skills" / "custom"
+        self.write_skill(custom, "custom")
+        (self.plugin / "skills" / "empty-skills").mkdir()
+        cases = (
+            ("./missing", "skill path does not exist"),
+            ("skills/", "skill path must start with './'"),
+            ("./skills/single-skill.md", "skill path is not a directory"),
+            ("./../outside-skills", "skill path escapes plugin root"),
+            ("./custom-skills", "outside the packaged skills directory"),
+            ("./skills/empty-skills", "skill path contains no SKILL.md"),
+            (42, "skills field is not a string or array"),
+        )
+        for skills, expected_error in cases:
+            with self.subTest(skills=skills):
+                self.write_claude_manifest(skills)
+
+                summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+                self.assertTrue(
+                    any(expected_error in error for error in summary["errors"]),
+                    summary["errors"],
+                )
 
     def test_name_mismatch_is_hard_error(self) -> None:
         (self.plugin / "skills" / "manual-skill" / "SKILL.md").write_text(

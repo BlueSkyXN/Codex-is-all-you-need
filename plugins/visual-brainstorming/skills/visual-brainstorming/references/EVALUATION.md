@@ -117,6 +117,7 @@ python3 -I -S scripts/companion.py demo --project-dir /tmp/vb-demo --open
 13. `/api/latest` 返回非空 per-screen bridge，`/screen/` 注入相同 bridge，切屏后 bridge 改变，外壳拒绝 stale/wrong bridge。
 14. `server.log` 不含 session key，routine 轮询/拒绝请求不让日志线性增长，诊断日志不超过 256 KiB。
 15. 远程 URL 不能使用公网、hostname 或另一台内网主机的地址；旧版健康服务显示 `compatible: false`，必须 `--new` 才替换；Cookie 即使包含正确 key 也不能通过认证。
+16. wildcard remote bind 不调用反向 DNS；正确 key 搭配错误或缺失 Host 端口仍返回 403；path-capability POST 缺失 exact Origin 返回 403，而 loopback query-key CLI shutdown 可在没有 Origin 时正常停止。
 
 ## 6. 输出验收
 

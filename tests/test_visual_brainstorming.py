@@ -423,6 +423,15 @@ class VisualBrainstormingPackageTest(unittest.TestCase):
 
     def test_url_host_contract_rejects_external_or_unassigned_addresses(self) -> None:
         COMPANION.validate_url_host("127.0.0.1", allow_remote=False)
+        self.assertEqual(
+            COMPANION.parse_http_authority("[::1]:54321"),
+            ("::1", 54321),
+        )
+        self.assertEqual(
+            COMPANION.parse_http_origin("http://[::1]:54321"),
+            ("::1", 54321),
+        )
+        self.assertIsNone(COMPANION.parse_http_authority("::1:54321"))
         with self.assertRaisesRegex(COMPANION.CompanionError, "loopback"):
             COMPANION.validate_url_host("10.0.0.5", allow_remote=False)
 
@@ -469,6 +478,33 @@ class VisualBrainstormingPackageTest(unittest.TestCase):
             COMPANION.validate_url_host("example.com", allow_remote=True)
         with self.assertRaisesRegex(COMPANION.CompanionError, "literal IP"):
             COMPANION.validate_url_host("localhost", allow_remote=True)
+
+    def test_wildcard_server_bind_does_not_resolve_hostname(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            session = COMPANION.prepare_session(Path(temporary))
+            context = COMPANION.ServerContext(
+                session=session,
+                host="0.0.0.0",
+                url_host="127.0.0.1",
+                port=0,
+                allow_remote=True,
+                idle_timeout_seconds=30,
+            )
+            with mock.patch.object(
+                COMPANION.socket,
+                "getfqdn",
+                side_effect=AssertionError("reverse DNS must not run during bind"),
+            ):
+                server = COMPANION.CompanionHTTPServer(
+                    ("0.0.0.0", 0),
+                    COMPANION.Handler,
+                    context,
+                )
+            try:
+                self.assertEqual(server.server_name, "127.0.0.1")
+                self.assertEqual(server.server_port, server.server_address[1])
+            finally:
+                server.server_close()
 
     def test_control_requests_ignore_proxy_environment(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -736,6 +772,136 @@ class VisualBrainstormingPackageTest(unittest.TestCase):
                     timeout=10,
                 )
                 self.assertFalse(json.loads(status_output)["running"])
+
+    def test_host_authority_requires_the_actual_server_port(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            with RunningCompanion(Path(temporary)) as running:
+                wrong_port = (
+                    running.port - 1
+                    if running.port == 65535
+                    else running.port + 1
+                )
+                wrong_authority = f"{running.host}:{wrong_port}"
+
+                status, _, _ = running.request(
+                    running.capability("/api/session"),
+                    headers={"Host": wrong_authority},
+                )
+                self.assertEqual(status, 403)
+
+                status, _, _ = running.request(
+                    running.capability("/api/session"),
+                    headers={"Host": running.host},
+                )
+                self.assertEqual(status, 403)
+
+                payload = json.dumps(
+                    {"type": "choice", "choice": "wrong-authority"}
+                ).encode()
+                status, _, _ = running.request(
+                    running.capability("/api/events"),
+                    method="POST",
+                    headers={
+                        "Host": wrong_authority,
+                        "Origin": f"http://{wrong_authority}",
+                        "X-VB-Client": "1",
+                        "Content-Type": "application/json",
+                    },
+                    body=payload,
+                )
+                self.assertEqual(status, 403)
+
+                asset = Path(running.info["screen_dir"]) / "legacy.txt"
+                asset.write_text("legacy", encoding="utf-8")
+                status, _, _ = running.request(
+                    "/files/legacy.txt",
+                    headers={
+                        "Host": wrong_authority,
+                        "Referer": (
+                            f"http://{wrong_authority}"
+                            f"{running.capability('/screen/legacy.html')}"
+                        ),
+                    },
+                )
+                self.assertEqual(status, 403)
+
+                status, _, _ = running.request(
+                    running.capability("/api/session"),
+                    headers={"Host": f"::1:{running.port}"},
+                )
+                self.assertEqual(status, 403)
+
+    def test_capability_posts_require_origin_but_cli_shutdown_does_not(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            with RunningCompanion(Path(temporary)) as running:
+                headers = {
+                    "X-VB-Client": "1",
+                    "Content-Type": "application/json",
+                }
+                event = json.dumps(
+                    {"type": "choice", "choice": "origin-required"}
+                ).encode()
+
+                status, _, _ = running.request(
+                    running.capability("/api/events"),
+                    method="POST",
+                    headers=headers,
+                    body=event,
+                )
+                self.assertEqual(status, 403)
+
+                status, _, _ = running.request(
+                    running.capability("/api/shutdown"),
+                    method="POST",
+                    headers=headers,
+                    body=b"{}",
+                )
+                self.assertEqual(status, 403)
+
+                exact_origin = f"http://{running.host}:{running.port}"
+                status, _, _ = running.request(
+                    running.capability("/api/events"),
+                    method="POST",
+                    headers={**headers, "Origin": exact_origin},
+                    body=event,
+                )
+                self.assertEqual(status, 201)
+
+                status, _, _ = running.request(
+                    running.capability("/api/shutdown"),
+                    method="POST",
+                    headers={**headers, "Origin": exact_origin},
+                    body=b"{}",
+                )
+                self.assertEqual(status, 200)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            with RunningCompanion(Path(temporary)) as running:
+                invalid_query = (
+                    "/api/shutdown?key="
+                    f"{urllib.parse.quote(running.key)}&unexpected=1"
+                )
+                status, _, _ = running.request(
+                    invalid_query,
+                    method="POST",
+                    headers={
+                        "X-VB-Client": "1",
+                        "Content-Type": "application/json",
+                    },
+                    body=b"{}",
+                )
+                self.assertEqual(status, 403)
+
+                status, _, _ = running.request(
+                    running.keyed("/api/shutdown"),
+                    method="POST",
+                    headers={
+                        "X-VB-Client": "1",
+                        "Content-Type": "application/json",
+                    },
+                    body=b"{}",
+                )
+                self.assertEqual(status, 200)
 
     def test_event_count_and_size_limits_do_not_consume_ids_on_rejection(self) -> None:
         self.assertEqual(COMPANION.MAX_EVENTS_PER_SESSION, 10_000)
@@ -1142,6 +1308,25 @@ finally:
                 self.assertEqual(current["pid"], running.info["pid"])
                 self.assertTrue(current["allow_remote"])
 
+    def test_remote_wildcard_start_stop_is_repeatable(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            project = Path(temporary)
+            for _ in range(10):
+                with RunningCompanion(
+                    project,
+                    extra_arguments=[
+                        "--host",
+                        "0.0.0.0",
+                        "--url-host",
+                        "127.0.0.1",
+                        "--allow-remote",
+                    ],
+                ) as running:
+                    status = json.loads(run_cli(project, "status").stdout)
+                    self.assertTrue(status["running"])
+                    self.assertTrue(status["compatible"])
+                    self.assertTrue(running.info["allow_remote"])
+
     def test_old_server_status_requires_new_before_replacement(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             project = Path(temporary)
@@ -1210,11 +1395,12 @@ finally:
                 status, _, _ = running.request(running.keyed("/api/events"))
                 self.assertEqual(status, 409)
                 status, _, _ = running.request(
-                    running.keyed("/api/events"),
+                    running.capability("/api/events"),
                     method="POST",
                     headers={
                         "Content-Type": "application/json",
                         "X-VB-Client": "1",
+                        "Origin": f"http://{running.host}:{running.port}",
                     },
                     body=b'{"type":"choice","choice":"blocked"}',
                 )
@@ -1242,11 +1428,12 @@ finally:
                 status, _, _ = running.request(running.keyed("/api/events"))
                 self.assertEqual(status, 409)
                 status, _, _ = running.request(
-                    running.keyed("/api/events"),
+                    running.capability("/api/events"),
                     method="POST",
                     headers={
                         "Content-Type": "application/json",
                         "X-VB-Client": "1",
+                        "Origin": f"http://{running.host}:{running.port}",
                     },
                     body=b'{"type":"choice","choice":"must-not-escape"}',
                 )

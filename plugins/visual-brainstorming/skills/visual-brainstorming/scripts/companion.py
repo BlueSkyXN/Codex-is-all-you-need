@@ -24,6 +24,7 @@ import secrets
 import signal
 import shutil
 import socket
+import socketserver
 import stat as stat_module
 import subprocess
 import sys
@@ -1305,6 +1306,13 @@ class CompanionHTTPServer(ThreadingHTTPServer):
         self.address_family = socket.AF_INET6 if ":" in server_address[0] else socket.AF_INET
         super().__init__(server_address, handler)
 
+    def server_bind(self) -> None:
+        # HTTPServer.server_bind() performs a reverse-DNS lookup via getfqdn().
+        # Wildcard remote binds must not depend on resolver availability.
+        socketserver.TCPServer.server_bind(self)
+        self.server_name = self.context.url_host
+        self.server_port = int(self.server_address[1])
+
     def process_request(self, request: Any, client_address: Any) -> None:
         if not self.request_semaphore.acquire(blocking=False):
             with contextlib.suppress(OSError):
@@ -1384,15 +1392,24 @@ def shell_document() -> str:
         .replace("__SHELL_JS__", javascript)
     )
 
-def host_only(raw_host: str) -> str:
-    raw = raw_host.strip()
+def parse_http_authority(raw_authority: str) -> Optional[Tuple[str, int]]:
+    raw = raw_authority.strip()
     if not raw or any(char.isspace() for char in raw):
-        return ""
+        return None
+    if raw.startswith("["):
+        closing = raw.find("]")
+        if closing <= 1:
+            return None
+        suffix = raw[closing + 1 :]
+        if suffix and (not suffix.startswith(":") or len(suffix) == 1):
+            return None
+    elif raw.count(":") > 1 or (":" in raw and not raw.rsplit(":", 1)[1]):
+        return None
     try:
         parsed = urllib.parse.urlsplit(f"http://{raw}")
-        _ = parsed.port
+        parsed_port = parsed.port
     except ValueError:
-        return ""
+        return None
     if (
         parsed.scheme != "http"
         or not parsed.hostname
@@ -1402,8 +1419,31 @@ def host_only(raw_host: str) -> str:
         or parsed.query
         or parsed.fragment
     ):
-        return ""
-    return normalize_host(parsed.hostname)
+        return None
+    return (
+        normalize_host(parsed.hostname),
+        parsed_port if parsed_port is not None else 80,
+    )
+
+
+def parse_http_origin(raw_origin: str) -> Optional[Tuple[str, int]]:
+    if not raw_origin or any(char.isspace() for char in raw_origin):
+        return None
+    try:
+        parsed = urllib.parse.urlsplit(raw_origin)
+    except ValueError:
+        return None
+    if (
+        parsed.scheme != "http"
+        or not parsed.netloc
+        or parsed.path not in {"", "/"}
+        or parsed.query
+        or parsed.fragment
+        or parsed.username
+        or parsed.password
+    ):
+        return None
+    return parse_http_authority(parsed.netloc)
 
 
 def split_browser_capability_path(raw_path: str) -> Tuple[str, str]:
@@ -1687,30 +1727,41 @@ class Handler(BaseHTTPRequestHandler):
     def _query(self) -> Dict[str, List[str]]:
         return urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query, keep_blank_values=True)
 
+    def _query_key(self) -> str:
+        try:
+            return single_url_key(
+                urllib.parse.urlsplit(self.path).query,
+                optional=True,
+            )
+        except ValueError:
+            return ""
+
     def _provided_key(self, path_key: str, *, allow_referer: bool = False) -> str:
         if path_key:
             return path_key
-        query_keys = self._query().get("key", [])
-        if len(query_keys) == 1 and query_keys[0]:
-            return query_keys[0]
+        query_key = self._query_key()
+        if query_key:
+            return query_key
         if allow_referer:
             return self._referer_key()
         return ""
 
     def _referer_key(self) -> str:
         raw = self.headers.get("Referer", "")
-        host = self.headers.get("Host", "")
-        if not raw or not host:
+        request_authority = self._request_authority()
+        if not raw or request_authority is None:
             return ""
         try:
             parsed = urllib.parse.urlsplit(raw)
         except ValueError:
             return ""
+        referer_authority = parse_http_authority(parsed.netloc)
         if (
             parsed.scheme != "http"
-            or parsed.netloc.lower() != host.lower()
+            or referer_authority != request_authority
             or parsed.username
             or parsed.password
+            or parsed.fragment
         ):
             return ""
         route, key = split_browser_capability_path(parsed.path)
@@ -1718,11 +1769,16 @@ class Handler(BaseHTTPRequestHandler):
             return ""
         return key
 
+    def _request_authority(self) -> Optional[Tuple[str, int]]:
+        return parse_http_authority(self.headers.get("Host", ""))
+
     def _host_allowed(self) -> bool:
-        raw = self.headers.get("Host", "")
-        if not raw:
-            return False
-        return host_only(raw) in self.context.allowed_hosts
+        authority = self._request_authority()
+        return bool(
+            authority
+            and authority[0] in self.context.allowed_hosts
+            and authority[1] == self.context.port
+        )
 
     def _authenticate(self, path_key: str, *, allow_referer: bool = False) -> bool:
         if not self._host_allowed():
@@ -1782,12 +1838,19 @@ class Handler(BaseHTTPRequestHandler):
             return False
         return True
 
-    def _origin_allowed(self) -> bool:
+    def _origin_allowed(self, route: str, path_key: str) -> bool:
+        request_authority = self._request_authority()
+        if request_authority is None:
+            return False
         origin = self.headers.get("Origin")
-        if not origin:
-            return True
-        host = self.headers.get("Host", "")
-        return origin == f"http://{host}"
+        if origin:
+            return parse_http_origin(origin) == request_authority
+        return bool(
+            not path_key
+            and route == "/api/shutdown"
+            and self._query_key()
+            and is_loopback_host(request_authority[0])
+        )
 
     def _require_content_root(self) -> bool:
         if content_root_is_valid(self.context.session):
@@ -2008,7 +2071,7 @@ class Handler(BaseHTTPRequestHandler):
         route, path_key = split_browser_capability_path(parsed.path)
         if not self._require_auth(path_key):
             return
-        if not self._origin_allowed():
+        if not self._origin_allowed(route, path_key):
             self._reject(403, "origin rejected")
             return
         if self.headers.get("X-VB-Client") != "1":

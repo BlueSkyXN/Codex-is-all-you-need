@@ -1,6 +1,6 @@
 {
   "name": "codex-is-all-you-need",
-  "description": "A public-safe Codex marketplace for installing Codex Next, an all-in-one workflow skill pack for software delivery, SDLC, research, data, and office work.",
+  "description": "A public-safe Codex marketplace for installing Codex Next and focused standalone workflow plugins.",
   "owner": {
     "name": "BlueSkyXN",
     "url": "https://github.com/BlueSkyXN"
@@ -80,6 +80,24 @@
       },
       "category": "Productivity",
       "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/expression-fixer"
+    },
+    {
+      "name": "visual-brainstorming",
+      "description": "Compare UI, architecture, process, state, data-flow, and routing alternatives in a local browser and record structured choices.",
+      "author": {
+        "name": "BlueSkyXN",
+        "url": "https://github.com/BlueSkyXN"
+      },
+      "source": {
+        "source": "local",
+        "path": "./plugins/visual-brainstorming"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity",
+      "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/visual-brainstorming"
     }
   ]
 }

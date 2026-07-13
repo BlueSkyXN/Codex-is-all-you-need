@@ -1,0 +1,36 @@
+<section class="vb-page">
+  <header class="vb-hero">
+    <p class="vb-eyebrow">流程策略</p>
+    <h1>所有任务走固定审批，还是按风险分级？</h1>
+    <p class="vb-lead">两套流程都保留退回、拒绝与异常升级；只比较分流策略。</p>
+  </header>
+
+  <div class="vb-grid vb-grid-2">
+    <article class="vb-option" data-choice="serial" data-label="固定串行审批">
+      <div class="vb-option-head"><span class="vb-index">A</span><span class="vb-tag">一致性优先</span></div>
+      <h2>固定串行</h2>
+      <div class="vb-visual">
+        <div class="vb-diagram vb-flow-column">
+          <span class="vb-node">提交</span><span class="vb-arrow">↓</span>
+          <span class="vb-node primary">审核 A</span><span class="vb-arrow">↓</span>
+          <span class="vb-node primary">审核 B</span><span class="vb-arrow">↓</span>
+          <span class="vb-node green">完成</span>
+        </div>
+      </div>
+      <p>规则简单、路径稳定；低风险任务也承担完整等待时间。</p>
+    </article>
+
+    <article class="vb-option" data-choice="risk-tiered" data-label="风险分级审批">
+      <div class="vb-option-head"><span class="vb-index">B</span><span class="vb-tag">吞吐优先</span></div>
+      <h2>风险分级</h2>
+      <div class="vb-visual">
+        <div class="vb-diagram">
+          <div class="vb-flow-row"><span class="vb-node">提交</span><span class="vb-arrow">→</span><span class="vb-node amber">风险分类</span></div>
+          <div class="vb-branch"><span class="vb-node small green">低风险：抽检</span><span class="vb-node small primary">高风险：完整审批</span></div>
+          <div class="vb-flow-row"><span class="vb-arrow">↓</span><span class="vb-node green">完成</span></div>
+        </div>
+      </div>
+      <p>降低低风险等待时间，但分类规则需要治理和复盘。</p>
+    </article>
+  </div>
+</section>

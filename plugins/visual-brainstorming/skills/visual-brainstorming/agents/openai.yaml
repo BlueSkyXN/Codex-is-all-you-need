@@ -1,0 +1,9 @@
+interface:
+  display_name: "Visual Brainstorming"
+  short_description: "在本地浏览器中比较并点选视觉方案"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#5B5CE2"
+  default_prompt: "请把当前明确待决策的视觉问题整理成 2–3 个结构不同的方案，在本地浏览器并排展示并记录选择；其他变量保持一致。"
+policy:
+  allow_implicit_invocation: true

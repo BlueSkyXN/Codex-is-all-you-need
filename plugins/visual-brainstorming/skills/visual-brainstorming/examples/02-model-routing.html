@@ -1,0 +1,65 @@
+<section class="vb-page">
+  <header class="vb-hero">
+    <p class="vb-eyebrow">模型系统 · 请求路由</p>
+    <h1>采用统一强模型、规则路由，还是置信度级联？</h1>
+    <p class="vb-lead">图中指标仅为结构示意，用于比较治理复杂度和资源弹性，不代表任何具体模型的实测表现。</p>
+    <div class="vb-decision-strip">
+      <span class="vb-decision-icon">1</span>
+      <div><strong>本屏只决定：</strong>请求如何分流。业务能力、提示词与最终输出契约保持一致。</div>
+    </div>
+  </header>
+
+  <div class="vb-grid vb-grid-3">
+    <article class="vb-option" data-choice="single-strong-model" data-label="统一强模型" data-detail="最少路由逻辑">
+      <div class="vb-option-head"><span class="vb-index">A</span><span class="vb-tag">运维简单</span></div>
+      <h2>统一强模型</h2>
+      <div class="vb-visual">
+        <div class="vb-diagram">
+          <div class="vb-flow-row"><span class="vb-node">请求</span><span class="vb-arrow">→</span><span class="vb-node primary">强模型</span><span class="vb-arrow">→</span><span class="vb-node green">响应</span></div>
+          <div class="vb-flow-row"><span class="vb-node small">同一提示词</span><span class="vb-node small">同一监控</span></div>
+        </div>
+      </div>
+      <p>实现和排障最直接，但不能针对简单任务主动节省资源。</p>
+      <div class="vb-metrics">
+        <div class="vb-metric"><span>系统复杂度</span><div class="vb-meter"><span style="--value:23%"></span></div><strong>低</strong></div>
+        <div class="vb-metric"><span>资源弹性</span><div class="vb-meter"><span style="--value:34%"></span></div><strong>低</strong></div>
+      </div>
+    </article>
+
+    <article class="vb-option" data-choice="rule-routing" data-label="规则路由" data-detail="按已知任务类型分流">
+      <div class="vb-option-head"><span class="vb-index">B</span><span class="vb-tag">治理可解释</span></div>
+      <h2>规则路由</h2>
+      <div class="vb-visual">
+        <div class="vb-diagram">
+          <div class="vb-flow-row"><span class="vb-node">请求</span><span class="vb-arrow">→</span><span class="vb-node amber">任务分类规则</span></div>
+          <div class="vb-branch"><span class="vb-node small cyan">摘要 / 分类</span><span class="vb-node small primary">规划 / 推理</span></div>
+          <div class="vb-branch"><span class="vb-node small">快速模型</span><span class="vb-node small">强模型</span></div>
+        </div>
+      </div>
+      <p>路径清楚、便于解释，但任务类型增加后规则容易膨胀。</p>
+      <div class="vb-metrics">
+        <div class="vb-metric"><span>系统复杂度</span><div class="vb-meter"><span style="--value:58%"></span></div><strong>中</strong></div>
+        <div class="vb-metric"><span>可解释性</span><div class="vb-meter"><span style="--value:86%"></span></div><strong>高</strong></div>
+      </div>
+    </article>
+
+    <article class="vb-option" data-choice="confidence-cascade" data-label="置信度级联" data-detail="低置信度时升级">
+      <div class="vb-option-head"><span class="vb-index">C</span><span class="vb-tag">资源弹性</span></div>
+      <h2>置信度级联</h2>
+      <div class="vb-visual">
+        <div class="vb-diagram">
+          <div class="vb-flow-row"><span class="vb-node">请求</span><span class="vb-arrow">→</span><span class="vb-node cyan">小模型预筛</span></div>
+          <div class="vb-branch"><span class="vb-node small green">高置信：直接返回</span><span class="vb-node small amber">低置信：升级</span></div>
+          <div class="vb-flow-row"><span class="vb-node primary">强模型 + 工具</span><span class="vb-arrow">→</span><span class="vb-node green">响应</span></div>
+        </div>
+      </div>
+      <p>可按难度分配资源，但阈值、误判和回退需要持续治理。</p>
+      <div class="vb-metrics">
+        <div class="vb-metric"><span>系统复杂度</span><div class="vb-meter"><span style="--value:79%"></span></div><strong>高</strong></div>
+        <div class="vb-metric"><span>资源弹性</span><div class="vb-meter"><span style="--value:91%"></span></div><strong>高</strong></div>
+      </div>
+    </article>
+  </div>
+
+  <div class="vb-callout warn"><strong>关键前提：</strong>必须先定义“误判简单请求”的业务代价、可接受升级率和失败回退；没有这些约束时，不应根据示意条形图直接决策。</div>
+</section>

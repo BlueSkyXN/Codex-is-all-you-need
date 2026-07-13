@@ -15,7 +15,7 @@ source catalog -> plugin package -> marketplace install
 
 Use this repository to:
 
-1. Install Codex Next as a plugin that bundles the public skills into one reusable workflow pack.
+1. Install Codex Next or focused standalone plugins from the repository marketplace.
 2. Copy public-safe examples to build your own local agent / skill catalog.
 3. Learn how to design Codex agents and skills around a plugin-first workflow.
 4. Migrate or inspect old V1 suite/composition setups when needed.
@@ -63,6 +63,7 @@ docs/
 
 plugins/
   codex-next/                      # installable skills plugin
+  visual-brainstorming/            # opt-in local visual comparison plugin
 
 examples/
   catalog/                        # sanitized public agent / skill source catalog
@@ -164,6 +165,17 @@ codex plugin add codex-next@codex-is-all-you-need
 
 After installation, invoke `$codex-next:core-router` or ask Codex to use Codex
 Next for the task.
+
+The same marketplace also exposes focused standalone plugins that remain
+separate from Codex Next. Visual Brainstorming is an explicit opt-in because it
+starts a project-local HTTP companion and opens a browser:
+
+```bash
+codex plugin add visual-brainstorming@codex-is-all-you-need
+```
+
+See [plugins/visual-brainstorming/README.md](plugins/visual-brainstorming/README.md)
+for its runtime boundary and sparse-marketplace upgrade instructions.
 
 If you are moving an existing V1 machine from suite-based runtime entrypoints
 to Codex Next, see [V1 To V2 Migration](docs/v1/suite-to-plugin-migration.md).
@@ -487,7 +499,7 @@ This repository is the public-safe layer. It may contain:
 
 - Dashboard source code.
 - Sanitized agent / skill examples.
-- Codex Next plugin packaging and marketplace metadata.
+- Codex plugin packages and marketplace metadata.
 - V1 legacy suite / runtime management patterns.
 - Sanitized discovery boundary conclusions.
 - Reusable entrypoint sync scripts.

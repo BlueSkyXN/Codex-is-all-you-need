@@ -29,6 +29,12 @@
       "description": "Detect and fix unnatural Chinese workplace writing in reports, summaries, emails, and status updates.",
       "source": "./plugins/expression-fixer",
       "category": "productivity"
+    },
+    {
+      "name": "visual-brainstorming",
+      "description": "Compare visual alternatives in a local browser and record structured choices.",
+      "source": "./plugins/visual-brainstorming",
+      "category": "productivity"
     }
   ]
 }

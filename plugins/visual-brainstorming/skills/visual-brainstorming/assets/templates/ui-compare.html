@@ -1,0 +1,57 @@
+<section class="vb-page">
+  <header class="vb-hero">
+    <p class="vb-eyebrow">UI 结构对比</p>
+    <h1>同一内容应该采用哪一种页面骨架？</h1>
+    <p class="vb-lead">保持内容、字体与配色一致，只改变导航和信息层级。</p>
+  </header>
+
+  <div class="vb-grid vb-grid-3">
+    <article class="vb-option" data-choice="top-nav" data-label="顶部导航">
+      <div class="vb-option-head"><span class="vb-index">A</span><span class="vb-tag">低学习成本</span></div>
+      <h2>顶部导航</h2>
+      <div class="vb-visual">
+        <div class="vb-browser">
+          <div class="vb-browser-bar"><i class="vb-window-dot"></i><i class="vb-window-dot"></i><i class="vb-window-dot"></i></div>
+          <div class="vb-browser-body">
+            <div class="vb-wire dark medium"></div>
+            <div class="vb-wire primary button"></div>
+            <div class="vb-wire-block"></div>
+            <div class="vb-wire-card-grid"><div class="vb-wire-card"></div><div class="vb-wire-card"></div><div class="vb-wire-card"></div></div>
+          </div>
+        </div>
+      </div>
+      <p>适合一级入口少、页面跨度大的产品。</p>
+    </article>
+
+    <article class="vb-option" data-choice="side-nav" data-label="侧边导航">
+      <div class="vb-option-head"><span class="vb-index">B</span><span class="vb-tag">高频切换</span></div>
+      <h2>侧边导航</h2>
+      <div class="vb-visual">
+        <div class="vb-browser">
+          <div class="vb-browser-bar"><i class="vb-window-dot"></i><i class="vb-window-dot"></i><i class="vb-window-dot"></i></div>
+          <div class="vb-browser-body" style="grid-template-columns:76px 1fr">
+            <div class="vb-wire-block" style="min-height:150px"></div>
+            <div style="display:grid;gap:9px"><div class="vb-wire dark medium"></div><div class="vb-wire primary button"></div><div class="vb-wire-block"></div><div class="vb-wire-card-grid"><div class="vb-wire-card"></div><div class="vb-wire-card"></div></div></div>
+          </div>
+        </div>
+      </div>
+      <p>适合模块多、用户需要频繁横向切换的工具。</p>
+    </article>
+
+    <article class="vb-option" data-choice="workspace" data-label="工作区式导航">
+      <div class="vb-option-head"><span class="vb-index">C</span><span class="vb-tag">任务沉浸</span></div>
+      <h2>工作区式</h2>
+      <div class="vb-visual">
+        <div class="vb-browser">
+          <div class="vb-browser-bar"><i class="vb-window-dot"></i><i class="vb-window-dot"></i><i class="vb-window-dot"></i></div>
+          <div class="vb-browser-body" style="grid-template-columns:42px 1fr 70px">
+            <div class="vb-wire-block" style="min-height:150px"></div>
+            <div style="display:grid;gap:9px"><div class="vb-wire dark medium"></div><div class="vb-wire-block" style="min-height:112px"></div></div>
+            <div class="vb-wire-block" style="min-height:150px"></div>
+          </div>
+        </div>
+      </div>
+      <p>适合编辑、编排和多面板协作型任务。</p>
+    </article>
+  </div>
+</section>

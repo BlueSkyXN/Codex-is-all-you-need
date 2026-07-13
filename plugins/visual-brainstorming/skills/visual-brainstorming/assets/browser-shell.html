@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Visual Brainstorming · Local</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>__SHELL_CSS__</style>
+</head>
+<body>
+<header>
+  <div class="brand-mark" aria-hidden="true"></div>
+  <div class="brand-copy">
+    <div class="brand">Visual Brainstorming</div>
+    <div class="subbrand">Local companion</div>
+  </div>
+  <div class="local-badge">LOCAL</div>
+  <div class="session" title="__SESSION_LABEL__">会话 __SESSION_LABEL__</div>
+  <div class="status" role="status">
+    <span id="dot" class="dot"></span>
+    <span id="statusText" class="status-text">连接中</span>
+  </div>
+</header>
+<main>
+  <iframe id="screen" sandbox="allow-scripts" title="可视化方案"></iframe>
+  <section id="waiting" class="waiting">
+    <div class="waiting-card">
+      <p class="waiting-eyebrow">Local visual companion</p>
+      <h1>等待第一张视觉画面</h1>
+      <p>Agent 发布页面后会自动出现。你可以在页面中点击方案或提交备注，也可以随时回到聊天中直接回答。</p>
+      <div class="preview-grid" aria-hidden="true">
+        <div class="preview"><div class="preview-head"><i class="preview-dot"></i><i class="preview-dot"></i><i class="preview-dot"></i></div><div class="skeleton primary"></div><div class="skeleton"></div><div class="skeleton short"></div><div class="skeleton-block"></div></div>
+        <div class="preview"><div class="preview-head"><i class="preview-dot"></i><i class="preview-dot"></i><i class="preview-dot"></i></div><div class="skeleton primary"></div><div class="skeleton short"></div><div class="skeleton"></div><div class="skeleton-block"></div></div>
+        <div class="preview"><div class="preview-head"><i class="preview-dot"></i><i class="preview-dot"></i><i class="preview-dot"></i></div><div class="skeleton primary"></div><div class="skeleton"></div><div class="skeleton short"></div><div class="skeleton-block"></div></div>
+      </div>
+      <div class="waiting-foot">页面与选择仅保存在当前项目的本地临时目录。</div>
+    </div>
+  </section>
+</main>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>__SHELL_JS__</script>
+</body>
+</html>

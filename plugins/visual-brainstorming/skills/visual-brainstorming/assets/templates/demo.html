@@ -1,0 +1,54 @@
+<section class="vb-page">
+  <header class="vb-hero">
+    <p class="vb-eyebrow">Visual Brainstorming · Demo</p>
+    <h1>请求应该怎样进入模型系统？</h1>
+    <p class="vb-lead">以下仅表达结构差异，不包含真实延迟、成本或质量数据。请选择更适合“多数请求简单、少数请求复杂”的方向。</p>
+    <div class="vb-decision-strip">
+      <span class="vb-decision-icon">1</span>
+      <div><strong>本屏只决定：</strong>请求的分流逻辑。模型、业务范围和输出格式保持不变。</div>
+    </div>
+  </header>
+
+  <div class="vb-grid vb-grid-3">
+    <article class="vb-option" data-choice="single-model" data-label="单模型直连" data-detail="结构最简单">
+      <div class="vb-option-head"><span class="vb-index">A</span><span class="vb-tag">最低系统复杂度</span></div>
+      <h2>单模型直连</h2>
+      <div class="vb-visual"><div class="vb-diagram"><div class="vb-flow-row"><span class="vb-node">请求</span><span class="vb-arrow">→</span><span class="vb-node primary">统一模型</span><span class="vb-arrow">→</span><span class="vb-node green">结果</span></div></div></div>
+      <p>所有任务走同一路径，易于实现和观察。</p>
+      <div class="vb-metrics">
+        <div class="vb-metric"><span>实现复杂度</span><div class="vb-meter"><span style="--value:24%"></span></div><strong>低</strong></div>
+        <div class="vb-metric"><span>资源弹性</span><div class="vb-meter"><span style="--value:34%"></span></div><strong>低</strong></div>
+      </div>
+    </article>
+
+    <article class="vb-option" data-choice="rule-router" data-label="规则路由" data-detail="按任务类型分流">
+      <div class="vb-option-head"><span class="vb-index">B</span><span class="vb-tag">可解释分流</span></div>
+      <h2>规则路由</h2>
+      <div class="vb-visual"><div class="vb-diagram"><div class="vb-flow-row"><span class="vb-node">请求</span><span class="vb-arrow">→</span><span class="vb-node amber">规则</span></div><div class="vb-branch"><span class="vb-node small cyan">快速模型</span><span class="vb-node small primary">强模型</span></div></div></div>
+      <p>按已知任务类型分流，路径明确但规则会累积。</p>
+      <div class="vb-metrics">
+        <div class="vb-metric"><span>实现复杂度</span><div class="vb-meter"><span style="--value:58%"></span></div><strong>中</strong></div>
+        <div class="vb-metric"><span>可解释性</span><div class="vb-meter"><span style="--value:84%"></span></div><strong>高</strong></div>
+      </div>
+    </article>
+
+    <article class="vb-option" data-choice="confidence-cascade" data-label="置信度级联" data-detail="低置信度时升级">
+      <div class="vb-option-head"><span class="vb-index">C</span><span class="vb-tag">按难度升级</span></div>
+      <h2>置信度级联</h2>
+      <div class="vb-visual"><div class="vb-diagram"><div class="vb-flow-row"><span class="vb-node">请求</span><span class="vb-arrow">→</span><span class="vb-node cyan">小模型预筛</span></div><div class="vb-branch"><span class="vb-node small green">高置信：直接结果</span><span class="vb-node small primary">低置信：升级强模型</span></div></div></div>
+      <p>适合复杂度分布不均的任务，但需治理升级阈值。</p>
+      <div class="vb-metrics">
+        <div class="vb-metric"><span>实现复杂度</span><div class="vb-meter"><span style="--value:78%"></span></div><strong>高</strong></div>
+        <div class="vb-metric"><span>资源弹性</span><div class="vb-meter"><span style="--value:89%"></span></div><strong>高</strong></div>
+      </div>
+    </article>
+  </div>
+
+  <div class="vb-callout warn"><strong>选择前仍需确认：</strong>把复杂请求误判为简单请求的代价，是否高于额外延迟。</div>
+
+  <div class="vb-note-box">
+    <label for="demo-note">补充约束</label>
+    <textarea id="demo-note" data-vb-note placeholder="例如：错误升级比额外延迟更不能接受。"></textarea>
+    <button type="button" data-vb-submit-note data-label="提交补充约束">提交备注</button>
+  </div>
+</section>

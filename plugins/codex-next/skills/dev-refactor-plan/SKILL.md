@@ -1,6 +1,9 @@
 ---
 name: dev-refactor-plan
 description: Use for planning software refactors before editing files, especially when behavior must be preserved.
+metadata:
+  version: "0.3"
+  updated: "2026-07-08"
 ---
 
 # Refactor plan workflow

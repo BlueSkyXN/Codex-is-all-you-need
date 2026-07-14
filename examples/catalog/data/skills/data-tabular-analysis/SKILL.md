@@ -1,6 +1,9 @@
 ---
 name: data-tabular-analysis
 description: Use when analyzing CSV, Excel, parquet, or table-like files and producing reproducible summaries.
+metadata:
+  version: "0.3"
+  updated: "2026-06-11"
 ---
 
 # Tabular Analysis Skill

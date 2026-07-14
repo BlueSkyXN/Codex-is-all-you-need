@@ -1,6 +1,9 @@
 ---
 name: sdlc-lld-workflow
 description: Use to create or refine LLD for modules, interfaces, state machines, data structures, errors, transactions, and tests.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # LLD Workflow

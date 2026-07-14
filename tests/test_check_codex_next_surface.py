@@ -74,6 +74,9 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
             f"name: {name}\n"
             f"description: Use for {name} checks.\n"
             f"{invocation_line}"
+            "metadata:\n"
+            '  version: "0.1"\n'
+            '  updated: "2026-01-01"\n'
             "---\n"
             f"{body}",
             encoding="utf-8",
@@ -412,6 +415,7 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
             "metadata:\n"
             "  author: example-org\n"
             "  version: \"1.0\"\n"
+            "  updated: \"2026-01-01\"\n"
             "---\n"
             "# Alpha\n"
         )
@@ -473,6 +477,9 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
             "---\n"
             "name: alpha-skill\n"
             "description: Use for alpha-skill checks.\n"
+            "metadata:\n"
+            "  version: \"0.1\"\n"
+            "  updated: \"2026-01-01\"\n"
             "---\n"
             "# Alpha\n\nSee [guide](references/guide.md#anchor).\n"
         )

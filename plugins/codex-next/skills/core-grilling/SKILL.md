@@ -1,6 +1,9 @@
 ---
 name: core-grilling
 description: Stress-test a plan or design through a focused one-question-at-a-time interrogation. Use when the user asks to grill a plan, wants assumptions challenged before build, or another workflow needs a plan clarified before it can proceed.
+metadata:
+  version: "0.1"
+  updated: "2026-07-07"
 ---
 
 # Grilling

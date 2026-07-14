@@ -1,6 +1,9 @@
 ---
 name: dev-python-quality
 description: Use for Python implementation, typing, async, packaging, pytest, ruff/mypy checks, scripts, and performance cleanup.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # Python quality workflow

@@ -38,7 +38,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, List, Optional, Tuple
 
-VERSION = "2.4.0"
+VERSION = "0.1.0"
 RUNTIME_DIR = ".visual-brainstorming"
 BROWSER_PATH_PREFIX = "/_vb/"
 MAX_SCREEN_BYTES = 5 * 1024 * 1024

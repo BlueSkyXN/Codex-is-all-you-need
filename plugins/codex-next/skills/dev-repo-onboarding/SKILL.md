@@ -1,6 +1,9 @@
 ---
 name: dev-repo-onboarding
 description: Use to map an unfamiliar repo structure, entrypoints, tech stack, commands, tests, risks, and safe next steps.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # Repository onboarding workflow

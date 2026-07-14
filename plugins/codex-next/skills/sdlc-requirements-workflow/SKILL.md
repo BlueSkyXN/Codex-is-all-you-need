@@ -1,6 +1,9 @@
 ---
 name: sdlc-requirements-workflow
 description: Use to turn business, user, and product inputs into scoped requirements, source baselines, assumptions, and downstream handoff.
+metadata:
+  version: "0.5"
+  updated: "2026-07-08"
 ---
 
 # Requirements Workflow

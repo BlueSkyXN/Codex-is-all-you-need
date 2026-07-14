@@ -1,6 +1,9 @@
 ---
 name: sdlc-prd-workflow
 description: Use to draft or refine PRDs covering product goals, scope, features, user flows, priorities, exceptions, and acceptance criteria.
+metadata:
+  version: "0.4"
+  updated: "2026-07-08"
 ---
 
 # PRD Workflow

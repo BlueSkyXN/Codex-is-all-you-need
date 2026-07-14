@@ -1,6 +1,9 @@
 ---
 name: dev-pr-review
 description: Use for reviewing a branch, pull request, local diff, or implementation plan before merge, including alignment of existing PR metadata with the diff and delivery state.
+metadata:
+  version: "0.4"
+  updated: "2026-07-12"
 ---
 
 # PR review workflow

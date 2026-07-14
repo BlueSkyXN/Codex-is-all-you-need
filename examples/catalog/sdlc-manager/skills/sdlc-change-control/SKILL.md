@@ -1,6 +1,9 @@
 ---
 name: sdlc-change-control
 description: Use to manage baseline or scope changes, artifact updates, traceability impact, approvals, and handoff revisions.
+metadata:
+  version: "0.4"
+  updated: "2026-06-12"
 ---
 
 # Change Control

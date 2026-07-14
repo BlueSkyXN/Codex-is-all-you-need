@@ -1,6 +1,9 @@
 ---
 name: sdlc-project-research
 description: 用于读取真实代码、文档、local 材料和 git 记录，产出项目能力地图，为后续 SRS/SPEC/RTM/handoff 提供证据。
+metadata:
+  version: "0.9"
+  updated: "2026-06-12"
 ---
 
 # 项目功能能力地图

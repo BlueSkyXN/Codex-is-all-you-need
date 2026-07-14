@@ -1,6 +1,9 @@
 ---
 name: dev-frontend-ui-implementation
 description: Use to implement/review frontend UI, routing, state, API integration, responsive layout, accessibility, and browser behavior.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # Frontend UI implementation workflow

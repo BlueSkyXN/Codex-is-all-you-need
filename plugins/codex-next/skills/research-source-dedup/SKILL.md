@@ -1,6 +1,9 @@
 ---
 name: research-source-dedup
 description: Use when deduplicating overlapping research materials, AI notes, excerpts, transcripts, and source packs.
+metadata:
+  version: "0.2"
+  updated: "2026-06-11"
 ---
 
 # Source deduplication workflow

@@ -1,6 +1,9 @@
 ---
 name: office-briefing-note
 description: Use when producing concise decision-ready briefing notes from processed research materials.
+metadata:
+  version: "0.2"
+  updated: "2026-06-11"
 ---
 
 # Briefing note workflow

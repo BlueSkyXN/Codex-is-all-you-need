@@ -1,6 +1,9 @@
 ---
 name: sdlc-dev-handoff-planning
 description: Use to create dev handoff packages and task cards from scoped SDLC materials, issues, specs, validation, and blockers.
+metadata:
+  version: "0.4"
+  updated: "2026-06-12"
 ---
 
 # Dev Handoff Planning

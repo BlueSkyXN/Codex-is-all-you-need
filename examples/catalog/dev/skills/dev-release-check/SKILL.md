@@ -1,6 +1,9 @@
 ---
 name: dev-release-check
 description: Use for pre-release validation, versioning, changelogs, artifacts, smoke tests, rollback notes, and release risk.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # Release check workflow

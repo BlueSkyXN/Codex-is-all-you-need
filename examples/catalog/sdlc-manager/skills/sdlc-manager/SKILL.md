@@ -1,6 +1,9 @@
 ---
 name: sdlc-manager
 description: Use as SDLC control plane for requirements, architecture, domain, specs, validation, RTM, readiness, change control, handoff, local/sdlc, and external proposal intake.
+metadata:
+  version: "0.2"
+  updated: "2026-06-12"
 ---
 
 # SDLC Manager

@@ -19,7 +19,7 @@ The skill asks for consent before an implicit invocation opens a browser. It
 falls back to Mermaid, ASCII, a static image, or structured text when the local
 browser cannot reach the companion.
 
-The packaged release is `2.4.0`. It is not only a directory move: the release
+The packaged release is `0.1.0`. It is not only a directory move: the release
 adds the standalone marketplace surface plus runtime locking, version-aware
 reuse, bounded events and logs, per-screen bridge binding, exact-plan pruning,
 remote URL validation, and live runtime path checks.

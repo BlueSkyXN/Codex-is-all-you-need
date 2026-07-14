@@ -1,6 +1,9 @@
 ---
 name: office-weekly-report
 description: Use when drafting or reviewing weekly reports from provided materials, progress logs, meeting notes, or team updates.
+metadata:
+  version: "0.4"
+  updated: "2026-06-11"
 ---
 
 # Weekly report workflow

@@ -1,6 +1,9 @@
 ---
 name: research-evidence-table
 description: Use when building a claim/evidence/source table from provided research materials.
+metadata:
+  version: "0.2"
+  updated: "2026-06-11"
 ---
 
 # Evidence table workflow

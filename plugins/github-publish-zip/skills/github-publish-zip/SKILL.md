@@ -1,6 +1,9 @@
 ---
 name: github-publish-zip
 description: Create a ZIP archive from the files in a Git worktree that would be publishable to GitHub, using configurable compression backend priority. Use when the user asks to package, archive, zip, or prepare a repository for GitHub publication while respecting project and user ignore rules, excluding .git metadata, and writing the archive to the project's local directory.
+metadata:
+  version: "0.1"
+  updated: "2026-06-21"
 ---
 
 # GitHub Publish Zip

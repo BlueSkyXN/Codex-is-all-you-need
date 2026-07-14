@@ -1,6 +1,9 @@
 ---
 name: office-project-report
 description: Use when drafting project status reports, milestone reports, risk summaries, or management updates from provided materials.
+metadata:
+  version: "0.3"
+  updated: "2026-06-11"
 ---
 
 # Project report workflow

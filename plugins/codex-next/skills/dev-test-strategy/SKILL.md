@@ -1,6 +1,9 @@
 ---
 name: dev-test-strategy
 description: Use to design or validate test plans, unit/integration/e2e coverage, automation, CI checks, fixtures, and regression scope.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # Test strategy workflow

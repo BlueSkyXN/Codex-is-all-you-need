@@ -1,6 +1,9 @@
 ---
 name: sdlc-architecture-decision-record
 description: Use to record ADRs covering choices, tradeoffs, alternatives, consequences, status, and links to requirements/design evidence.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # Architecture Decision Record

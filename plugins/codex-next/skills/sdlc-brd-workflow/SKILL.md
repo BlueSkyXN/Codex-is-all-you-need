@@ -1,6 +1,9 @@
 ---
 name: sdlc-brd-workflow
 description: Use to draft or refine BRDs for business problem, goals, value, constraints, metrics, risks, and investment rationale.
+metadata:
+  version: "0.5"
+  updated: "2026-06-14"
 ---
 
 # BRD Workflow

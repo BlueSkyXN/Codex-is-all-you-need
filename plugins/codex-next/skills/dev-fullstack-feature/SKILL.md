@@ -1,6 +1,9 @@
 ---
 name: dev-fullstack-feature
 description: Use for planning and implementing features that span frontend, backend, API, database, scripts, or tests.
+metadata:
+  version: "0.2"
+  updated: "2026-06-11"
 ---
 
 # Full-stack feature workflow

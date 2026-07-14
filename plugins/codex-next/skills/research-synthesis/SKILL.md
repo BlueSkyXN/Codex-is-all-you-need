@@ -1,6 +1,9 @@
 ---
 name: research-synthesis
 description: Use when turning mapped evidence and provided materials into a balanced research synthesis.
+metadata:
+  version: "0.2"
+  updated: "2026-05-11"
 ---
 
 # Research synthesis workflow

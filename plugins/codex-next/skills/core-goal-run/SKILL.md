@@ -1,6 +1,9 @@
 ---
 name: core-goal-run
 description: Use to execute or resume a local goal plan while keeping the plan read-only and updating goal-tasks.md plus goal-log.md.
+metadata:
+  version: "0.4"
+  updated: "2026-07-12"
 ---
 
 # Goal Run

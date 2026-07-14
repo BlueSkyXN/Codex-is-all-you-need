@@ -1,6 +1,9 @@
 ---
 name: dev-api-contract-review
 description: Use to design or review API contracts, auth, pagination, versioning, errors, compatibility, and OpenAPI/GraphQL shape.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # API contract review workflow

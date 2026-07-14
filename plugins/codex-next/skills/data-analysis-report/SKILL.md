@@ -1,6 +1,9 @@
 ---
 name: data-analysis-report
 description: Use when converting data analysis results into a clear report with assumptions, findings, validation, limitations, and next steps.
+metadata:
+  version: "0.2"
+  updated: "2026-06-11"
 ---
 
 # Analysis Report Skill

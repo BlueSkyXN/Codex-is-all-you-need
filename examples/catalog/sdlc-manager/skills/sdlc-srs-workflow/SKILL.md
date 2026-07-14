@@ -1,6 +1,9 @@
 ---
 name: sdlc-srs-workflow
 description: Use to draft or audit SRS with requirement IDs, functional requirements, acceptance criteria, constraints, NFR hooks, and traceability.
+metadata:
+  version: "0.4"
+  updated: "2026-06-12"
 ---
 
 # SRS Workflow

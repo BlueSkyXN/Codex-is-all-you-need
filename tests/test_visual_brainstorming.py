@@ -374,11 +374,28 @@ class VisualBrainstormingPackageTest(unittest.TestCase):
             "./plugins/visual-brainstorming",
         )
 
+        publishable = subprocess.check_output(
+            [
+                "git",
+                "ls-files",
+                "--cached",
+                "--others",
+                "--exclude-standard",
+                "-z",
+                "--",
+                str(PLUGIN_ROOT.relative_to(REPO_ROOT)),
+            ],
+            cwd=REPO_ROOT,
+        ).decode().split("\0")
         junk = [
-            path
-            for path in PLUGIN_ROOT.rglob("*")
-            if path.name in {".DS_Store", "Thumbs.db", "desktop.ini", "__pycache__"}
-            or path.suffix == ".pyc"
+            Path(path)
+            for path in publishable
+            if path
+            and (
+                Path(path).name
+                in {".DS_Store", "Thumbs.db", "desktop.ini", "__pycache__"}
+                or Path(path).suffix == ".pyc"
+            )
         ]
         self.assertEqual(junk, [])
 

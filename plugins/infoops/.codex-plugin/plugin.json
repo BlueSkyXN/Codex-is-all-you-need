@@ -1,6 +1,6 @@
 {
   "name": "infoops",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Codex and OpenClaw compatible InfoOps skill for turning workstream signals into structured operational awareness and action priorities.",
   "author": {
     "name": "BlueSkyXN",

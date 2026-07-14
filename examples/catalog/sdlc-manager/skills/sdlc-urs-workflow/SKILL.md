@@ -1,6 +1,9 @@
 ---
 name: sdlc-urs-workflow
 description: Use to draft or refine URS covering users, roles, jobs, scenarios, constraints, value, and acceptance-relevant outcomes.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # URS Workflow

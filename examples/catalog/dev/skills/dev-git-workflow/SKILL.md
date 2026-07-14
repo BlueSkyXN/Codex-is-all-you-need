@@ -1,6 +1,9 @@
 ---
 name: dev-git-workflow
 description: Use for branch strategy, worktrees, commits, opening or updating PRs, reviewer-facing PR titles and bodies, merge/rebase decisions, conflicts, tags, and release notes.
+metadata:
+  version: "0.4"
+  updated: "2026-07-10"
 ---
 
 # Git workflow

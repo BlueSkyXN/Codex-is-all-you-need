@@ -1,6 +1,9 @@
 ---
 name: data-cleaning
 description: Use when planning safe data cleaning, deduplication, missing-value handling, anomaly handling, and reproducible cleaned outputs.
+metadata:
+  version: "0.1"
+  updated: "2026-05-11"
 ---
 
 # Data Cleaning Skill

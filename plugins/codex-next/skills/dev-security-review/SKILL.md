@@ -1,6 +1,9 @@
 ---
 name: dev-security-review
 description: Use to review software security across auth, permissions, input validation, secrets, dependencies, workflows, and config.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # Security review workflow

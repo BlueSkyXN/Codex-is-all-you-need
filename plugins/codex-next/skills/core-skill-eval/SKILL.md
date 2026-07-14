@@ -1,6 +1,9 @@
 ---
 name: core-skill-eval
 description: Test and improve a Codex skill with representative cases, isolated runs, independent judging, and edits driven by observed misses. Use when a skill repeatedly misses behavior, before shipping a major skill rewrite, or when the user supplies cases and quality bars.
+metadata:
+  version: "0.2"
+  updated: "2026-07-08"
 ---
 
 # Skill Eval

@@ -1,6 +1,9 @@
 ---
 name: sdlc-nfr-spec
 description: Use to define measurable NFRs for performance, reliability, security, privacy, accessibility, observability, and operations.
+metadata:
+  version: "0.4"
+  updated: "2026-06-12"
 ---
 
 # NFR Spec

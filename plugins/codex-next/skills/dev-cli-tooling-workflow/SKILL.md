@@ -1,6 +1,9 @@
 ---
 name: dev-cli-tooling-workflow
 description: Use to design, implement, review, or test CLI tools, flags, config precedence, terminal UX, errors, and docs.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # CLI tooling workflow

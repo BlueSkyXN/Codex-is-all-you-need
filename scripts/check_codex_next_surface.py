@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import re
 import sys
@@ -12,6 +13,16 @@ from typing import Any
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+_METADATA_SPEC = importlib.util.spec_from_file_location(
+    "check_skill_metadata", REPO_ROOT / "scripts" / "check_skill_metadata.py"
+)
+assert _METADATA_SPEC is not None and _METADATA_SPEC.loader is not None
+_METADATA_MODULE = sys.modules.get(_METADATA_SPEC.name)
+if _METADATA_MODULE is None:
+    _METADATA_MODULE = importlib.util.module_from_spec(_METADATA_SPEC)
+    sys.modules[_METADATA_SPEC.name] = _METADATA_MODULE
+    _METADATA_SPEC.loader.exec_module(_METADATA_MODULE)
+read_skill_metadata = _METADATA_MODULE.read_metadata
 DEFAULT_PLUGIN_DIR = REPO_ROOT / "plugins" / "codex-next"
 DEFAULT_CATALOG_DIR = REPO_ROOT / "examples" / "catalog"
 PLUGIN_ONLY_SKILLS = frozenset({"core-router"})
@@ -394,6 +405,8 @@ def run_check(
 
         frontmatter, fm_errors, text = parse_frontmatter(skill_file)
         errors.extend(fm_errors)
+        metadata = read_skill_metadata(text)
+        errors.extend(f"{skill_file}: {error}" for error in metadata.errors)
 
         name = frontmatter.get("name")
         if name != skill_dir.name:

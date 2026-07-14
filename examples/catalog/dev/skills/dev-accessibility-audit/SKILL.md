@@ -1,6 +1,9 @@
 ---
 name: dev-accessibility-audit
 description: Use to audit web/app accessibility, including semantics, keyboard flow, focus, labels, ARIA, contrast, and responsive behavior.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # Accessibility audit workflow

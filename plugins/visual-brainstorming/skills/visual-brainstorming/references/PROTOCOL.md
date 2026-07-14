@@ -141,7 +141,7 @@ python3 -I -S scripts/companion.py paths  --project-dir /project
 {
   "running": true,
   "compatible": true,
-  "server_version": "2.4.0",
+  "server_version": "0.1.0",
   "project_dir": "/project",
   "url": "http://127.0.0.1:54321/#key=...",
   "pid": 12345,
@@ -317,7 +317,7 @@ python3 -I -S scripts/companion.py prune \
 ```json
 {
   "type": "server-started",
-  "version": "2.4.0",
+  "version": "0.1.0",
   "pid": 12345,
   "host": "127.0.0.1",
   "url_host": "127.0.0.1",

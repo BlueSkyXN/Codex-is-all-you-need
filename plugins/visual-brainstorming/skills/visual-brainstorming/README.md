@@ -1,6 +1,6 @@
 # Visual Brainstorming Skill
 
-**发布版本：2.4.0**
+**发布版本：0.1.0**
 
 一个可独立使用、也可放入插件 `skills/` 目录的**单个 Skill**。本仓库通过 `plugins/visual-brainstorming/` 将它包装成独立 marketplace Plugin。它让 Agent 把 UI 样稿、架构图、流程图、模型路由等候选方案写成 HTML，在本地浏览器中并排展示，并把点击与备注记录为结构化事件。
 

@@ -37,7 +37,7 @@ with that plugin-first model and with the architecture-first SDLC catalog shape.
 | `AGENTS_CN.md` | Chinese reference for repository guidelines, not a Codex-loaded instruction file | No | Only when the user asks to sync Chinese guidance |
 | `docs/` | Architecture, usage, discovery, migration, public/private, and model catalog documentation | No | Read the specific doc being changed and adjacent docs that reference the same public model |
 | `dashboard/` | Stdlib Python read-only dashboard generator, HTML template, and example config | Yes | Before editing `build_dashboard.py`, dashboard templates, config examples, or dashboard docs |
-| `scripts/` | Legacy/local-dev filesystem automation for repo-local `.codex` entrypoint symlinks, plus the read-only Codex Next surface checker | Yes | Before editing symlink management behavior, CLI flags, cleanup logic, surface-check gates, or related tests |
+| `scripts/` | Legacy/local-dev filesystem automation, the Codex Next surface checker, and repo-wide public skill metadata governance | Yes | Before editing symlink behavior, CLI flags, skill metadata history/checking, surface gates, or related tests |
 | `tests/` | Unit tests for repository scripts | No | Follow `scripts/AGENTS.md` when changing tests for `scripts/` behavior |
 | `examples/catalog/` | Sanitized public agent and skill source catalog | Yes | Before changing agent TOML, skill folders, catalog group docs, or publication boundaries |
 | `examples/runtime/` | Public-safe example runtime `AGENTS.md` instructions | Yes | Before changing runtime instruction examples |
@@ -74,6 +74,8 @@ repository docs.
 | `open ~/.codex/dashboard/index.html` | Preview generated dashboard | local machine | macOS GUI command; not a sandbox validation step |
 | `python3 scripts/sync_codex_entrypoints.py --help` | Validate entrypoint sync CLI loads | `scripts/` | OK |
 | `python3 scripts/check_codex_next_surface.py` | Validate the packaged Codex Next skill surface: catalog/plugin content parity, manifest version parity, Agent Skills frontmatter gates, and reference resolution | `plugins/codex-next/`, `examples/catalog/` | OK; read-only, exits 1 on gate failure |
+| `python3 scripts/check_skill_metadata.py audit --history-ref HEAD` | Audit independent public skill versions from normalized Git history | tracked public skills | OK; read-only unless `backfill --apply` is explicitly used |
+| `python3 scripts/check_skill_metadata.py check --base-ref origin/main` | Validate skill metadata schema, mirror parity, and version transitions | tracked public skills | Requires the selected Git base ref |
 | `python3 scripts/sync_codex_entrypoints.py sync --workspace <workspace> --source-root <workspace>/.codex --link-mode directories` | Dry-run legacy/local-dev repo-local `.codex` directory link sync | local workspace | Replace placeholders before running; dry-run by default; reads local workspace paths; do not add `--apply` without explicit user request |
 | `python3 ~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/codex-next` | Validate the Codex Next plugin manifest and package shape | `plugins/codex-next/` | Requires the local system `plugin-creator` validator path; if unavailable, state that it was skipped |
 | `git diff --check` | Check whitespace in the current diff | repo | OK; read-only |
@@ -132,6 +134,9 @@ Use `git diff --check -- examples/catalog` after catalog edits.
   distribution, keep `examples/catalog/.../skills/<skill>/` and
   `plugins/codex-next/skills/<skill>/` aligned unless the skill is explicitly
   plugin-only, such as the `core-router` router entrypoint.
+- Every tracked public plugin skill must carry quoted `metadata.version` and
+  `metadata.updated` values following `docs/skill-versioning.md`. Skill versions
+  are independent from plugin manifest SemVer.
 - Treat existing non-AGENTS working tree changes as user work unless the user
   asks to modify them.
 
@@ -175,7 +180,8 @@ Choose the smallest validation that matches the files changed:
    `python3 scripts/check_codex_next_surface.py`.
 4. `plugins/codex-next/` plugin manifest, package layout, or bundled skill
    change:
-   run `python3 scripts/check_codex_next_surface.py`, then the plugin validator
+   run `python3 scripts/check_skill_metadata.py check --base-ref origin/main`,
+   `python3 scripts/check_codex_next_surface.py`, then the plugin validator
    if the local system validator is available:
    `python3 ~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/codex-next`
    and run `git diff --check -- plugins/codex-next`.

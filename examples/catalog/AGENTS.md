@@ -39,7 +39,9 @@ Current groups are `common`, `sdlc-manager`, `dev`, `data`, `office`, and `resea
 ## Skill Rules
 
 - Every skill directory must contain `SKILL.md`.
-- Use concise frontmatter with `name` and `description` when present.
+- Use concise frontmatter with `name`, `description`, and quoted
+  `metadata.version` / `metadata.updated` values governed by
+  `docs/skill-versioning.md`.
 - Do not add private scripts, proprietary templates, private examples, or
   symlinks to private skill libraries.
 - Keep examples abstract unless they are safe to publish.
@@ -77,6 +79,9 @@ git diff --check -- examples/catalog
 If the edited skill is mirrored into `plugins/codex-next/skills/`, also run
 `python3 scripts/check_codex_next_surface.py` from the repo root: catalog and
 plugin copies must stay content-identical file by file.
+
+Run `python3 scripts/check_skill_metadata.py check --base-ref origin/main` after
+any public skill behavior or metadata change.
 
 For publication boundaries, compare changes with `PUBLIC-SUBSET.md`.
 

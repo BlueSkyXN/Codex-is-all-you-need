@@ -42,6 +42,11 @@ the user's task differs.
   the allowlisted runtime extension `disable-model-invocation`. Spec `name` and
   `description` constraints, unknown-field rejection, and the 500-line SKILL.md
   budget are enforced by `scripts/check_codex_next_surface.py`.
+- Versioning: every bundled skill carries quoted `metadata.version` and
+  `metadata.updated` values governed by `docs/skill-versioning.md`. A compatible
+  substantive change increments the second component; a breaking contract
+  change increments the first component and resets the second. Plugin manifest
+  SemVer remains a separate package contract.
 - Cross-skill references: a skill may point at a sibling skill's reference file
   (for example the shared SDLC operating model) with a `../<skill>/...` path.
   Every such path must resolve in both the plugin package and the source
@@ -82,6 +87,8 @@ the user's task differs.
 - `python3 scripts/check_codex_next_surface.py` (from the repo root) - hard gate
   for catalog/plugin content parity, manifest version parity, Agent Skills spec
   frontmatter, and reference resolution.
+- `python3 scripts/check_skill_metadata.py check --base-ref origin/main` - hard
+  gate for independent skill metadata and version transitions.
 - `python3 ~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/codex-next` - plugin manifest/package validation; requires the local system validator path.
 - `claude plugin validate --strict plugins/codex-next` - validate the Claude
   compatibility manifest and its default root-level component discovery when

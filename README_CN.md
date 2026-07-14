@@ -48,6 +48,7 @@ docs/
   architecture.md                 # V2 plugin-first 架构
   agent-design.md                 # custom agent 设计
   skill-design.md                 # skill 设计
+  skill-versioning.md             # skill 独立版本治理
   agent-skill-map.md              # agent 与 skill 分工
   discovery-boundaries.md         # 脱敏后的 discovery 边界结论
   user-global-agents-example.md   # 公开安全的用户全局 AGENTS.md 示例

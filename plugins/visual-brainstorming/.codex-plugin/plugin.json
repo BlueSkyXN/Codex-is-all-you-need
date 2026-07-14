@@ -1,0 +1,38 @@
+{
+  "name": "visual-brainstorming",
+  "version": "2.4.0",
+  "description": "Compare visual alternatives in a local browser and record user choices as structured events.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/visual-brainstorming",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "visual",
+    "brainstorming",
+    "design",
+    "architecture",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Visual Brainstorming",
+    "shortDescription": "Compare and select visual alternatives locally.",
+    "longDescription": "Visual Brainstorming generates offline HTML comparisons for UI, architecture, process, state, data-flow, and model-routing decisions. It opens a loopback-only browser companion by default and records choices and notes as project-local structured events.",
+    "developerName": "BlueSkyXN",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills",
+      "Workflow"
+    ],
+    "defaultPrompt": [
+      "Use $visual-brainstorming:visual-brainstorming to compare visual alternatives.",
+      "用 $visual-brainstorming:visual-brainstorming 把当前视觉决策整理成可点选方案。"
+    ],
+    "brandColor": "#5B5CE2",
+    "websiteURL": "https://github.com/BlueSkyXN/Codex-is-all-you-need"
+  }
+}

@@ -1,0 +1,41 @@
+<section class="vb-page">
+  <header class="vb-hero">
+    <p class="vb-eyebrow">SaaS 文档问答 · 系统边界</p>
+    <h1>RAG 能力应该内嵌在主应用，还是作为独立服务？</h1>
+    <p class="vb-lead">两图保持上传、解析、索引、检索与推理能力一致，只比较部署边界、租户隔离位置和故障影响面。</p>
+  </header>
+
+  <div class="vb-grid vb-grid-2">
+    <article class="vb-option" data-choice="embedded-rag" data-label="主应用内嵌 RAG" data-detail="一个部署单元">
+      <div class="vb-option-head"><span class="vb-index">A</span><span class="vb-tag">短调用链</span></div>
+      <h2>主应用内嵌</h2>
+      <div class="vb-visual">
+        <div class="vb-diagram">
+          <div class="vb-panel" style="padding:14px;border-style:dashed">
+            <div class="vb-caption" style="margin-bottom:12px;font-weight:750;color:var(--vb-ink)">现有 SaaS 部署单元</div>
+            <div class="vb-flow-row"><span class="vb-node">Web / API</span><span class="vb-arrow">→</span><span class="vb-node cyan">解析与切片</span><span class="vb-arrow">→</span><span class="vb-node primary">推理编排</span></div>
+            <div class="vb-flow-row" style="margin-top:12px"><span class="vb-node small">业务数据库</span><span class="vb-node small">租户向量索引</span><span class="vb-node small">队列 / 作业</span></div>
+          </div>
+        </div>
+      </div>
+      <p>部署、鉴权和调用路径简单；索引任务、模型调用和主业务共享扩缩容与故障边界。</p>
+      <ul class="vb-facts"><li>适合团队较小、规模和租户模式稳定</li><li>主应用发布会同时影响 RAG 能力</li></ul>
+    </article>
+
+    <article class="vb-option" data-choice="rag-service" data-label="独立 RAG 服务" data-detail="独立部署和存储边界">
+      <div class="vb-option-head"><span class="vb-index">B</span><span class="vb-tag">隔离与复用</span></div>
+      <h2>独立 RAG 服务</h2>
+      <div class="vb-visual">
+        <div class="vb-diagram">
+          <div class="vb-flow-row"><span class="vb-node">现有 SaaS</span><span class="vb-arrow">→</span><span class="vb-node amber">内部服务接口</span><span class="vb-arrow">→</span><span class="vb-node primary">RAG 服务</span></div>
+          <div class="vb-flow-row"><span class="vb-node small cyan">解析 / 索引</span><span class="vb-node small cyan">检索 / 重排</span><span class="vb-node small cyan">推理编排</span></div>
+          <div class="vb-flow-row"><span class="vb-node small">租户向量索引</span><span class="vb-node small">作业队列</span><span class="vb-node small">独立监控</span></div>
+        </div>
+      </div>
+      <p>可独立扩容、复用和隔离故障；增加服务接口、版本兼容和跨团队运维成本。</p>
+      <ul class="vb-facts"><li>适合多个产品复用或索引负载独立增长</li><li>需要定义鉴权、幂等、超时和降级契约</li></ul>
+    </article>
+  </div>
+
+  <div class="vb-callout"><strong>观察重点：</strong>未来 12 个月内，RAG 的扩缩容曲线、发布节奏和复用范围是否会明显偏离主应用。</div>
+</section>

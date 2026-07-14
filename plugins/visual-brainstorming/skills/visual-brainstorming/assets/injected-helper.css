@@ -1,0 +1,9 @@
+[data-choice][role="button"] { cursor: pointer; }
+[data-choice][role="button"]:focus-visible {
+  outline: 3px solid var(--vb-primary-soft, rgba(91, 92, 226, .24));
+  outline-offset: 4px;
+}
+[data-choice].vb-selected:not(.vb-option) {
+  outline: 3px solid var(--vb-primary, #5b5ce2) !important;
+  outline-offset: 3px !important;
+}

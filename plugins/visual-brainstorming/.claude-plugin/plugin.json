@@ -1,0 +1,20 @@
+{
+  "name": "visual-brainstorming",
+  "version": "2.4.0",
+  "description": "Compare visual alternatives in a local browser and record user choices as structured events.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/visual-brainstorming",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "visual",
+    "brainstorming",
+    "design",
+    "architecture",
+    "workflow"
+  ]
+}

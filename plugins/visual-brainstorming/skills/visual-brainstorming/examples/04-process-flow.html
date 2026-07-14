@@ -1,0 +1,44 @@
+<section class="vb-page">
+  <header class="vb-hero">
+    <p class="vb-eyebrow">内容发布 · 审批策略</p>
+    <h1>采用固定串行审批，还是按内容风险分级？</h1>
+    <p class="vb-lead">两套流程都允许退回、拒绝和超时提醒；只比较低风险内容是否跳过部分人工审批。</p>
+  </header>
+
+  <div class="vb-grid vb-grid-2">
+    <article class="vb-option" data-choice="serial-approval" data-label="固定串行审批" data-detail="所有内容走同一路径">
+      <div class="vb-option-head"><span class="vb-index">A</span><span class="vb-tag">规则稳定</span></div>
+      <h2>固定串行审批</h2>
+      <div class="vb-visual">
+        <div class="vb-diagram vb-flow-column">
+          <span class="vb-node">提交</span><span class="vb-arrow">↓</span>
+          <span class="vb-node primary">编辑审核</span><span class="vb-arrow">↓</span>
+          <span class="vb-node primary">法务审核</span><span class="vb-arrow">↓</span>
+          <span class="vb-node primary">品牌审核</span><span class="vb-arrow">↓</span>
+          <span class="vb-node green">发布</span>
+        </div>
+      </div>
+      <p>审批标准一致、易于解释；所有内容承担同样的等待时间和人工成本。</p>
+      <ul class="vb-facts"><li>任一审核可退回提交人或终止</li><li>超时只提醒，不自动跳过</li></ul>
+    </article>
+
+    <article class="vb-option" data-choice="risk-tiered-approval" data-label="风险分级审批" data-detail="低风险走短路径">
+      <div class="vb-option-head"><span class="vb-index">B</span><span class="vb-tag">吞吐优化</span></div>
+      <h2>风险分级审批</h2>
+      <div class="vb-visual">
+        <div class="vb-diagram">
+          <div class="vb-flow-row"><span class="vb-node">提交</span><span class="vb-arrow">→</span><span class="vb-node amber">自动风险分类</span></div>
+          <div class="vb-swimlanes">
+            <div class="vb-lane"><div class="vb-lane-label">低风险</div><div class="vb-lane-body"><span class="vb-node small">编辑抽检</span><span class="vb-arrow">→</span><span class="vb-node small green">发布</span></div></div>
+            <div class="vb-lane"><div class="vb-lane-label">中风险</div><div class="vb-lane-body"><span class="vb-node small">编辑</span><span class="vb-arrow">→</span><span class="vb-node small">品牌</span></div></div>
+            <div class="vb-lane"><div class="vb-lane-label">高风险</div><div class="vb-lane-body"><span class="vb-node small">编辑</span><span class="vb-arrow">→</span><span class="vb-node small">法务</span><span class="vb-arrow">→</span><span class="vb-node small">品牌</span></div></div>
+          </div>
+        </div>
+      </div>
+      <p>降低低风险等待时间，但风险分类规则本身成为需要监控和复盘的新系统。</p>
+      <ul class="vb-facts"><li>分类不确定或异常时自动升级高风险</li><li>需要抽检、误分率和规则版本治理</li></ul>
+    </article>
+  </div>
+
+  <div class="vb-callout warn"><strong>决策前必须补齐：</strong>内容风险定义、误分代价、人工抽检比例以及自动分类不可用时的默认路径。</div>
+</section>

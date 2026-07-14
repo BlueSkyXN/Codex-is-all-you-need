@@ -1,0 +1,33 @@
+<section class="vb-page">
+  <header class="vb-hero">
+    <p class="vb-eyebrow">架构边界</p>
+    <h1>能力应该内嵌在主应用，还是拆成独立服务？</h1>
+    <p class="vb-lead">两图使用相同功能范围，只比较部署边界、调用路径与故障隔离。</p>
+  </header>
+
+  <div class="vb-grid vb-grid-2">
+    <article class="vb-option" data-choice="embedded" data-label="主应用内嵌">
+      <div class="vb-option-head"><span class="vb-index">A</span><span class="vb-tag">短调用链</span></div>
+      <h2>主应用内嵌</h2>
+      <div class="vb-visual">
+        <div class="vb-diagram">
+          <div class="vb-flow-row"><span class="vb-node">入口</span><span class="vb-arrow">→</span><span class="vb-node primary">主应用</span><span class="vb-arrow">→</span><span class="vb-node">存储</span></div>
+          <div class="vb-flow-row"><span class="vb-node small cyan">能力 A</span><span class="vb-node small cyan">能力 B</span><span class="vb-node small cyan">能力 C</span></div>
+        </div>
+      </div>
+      <p>部署和调用简单，但扩缩容与故障边界跟随主应用。</p>
+    </article>
+
+    <article class="vb-option" data-choice="service" data-label="独立服务">
+      <div class="vb-option-head"><span class="vb-index">B</span><span class="vb-tag">清晰隔离</span></div>
+      <h2>独立服务</h2>
+      <div class="vb-visual">
+        <div class="vb-diagram">
+          <div class="vb-flow-row"><span class="vb-node">入口</span><span class="vb-arrow">→</span><span class="vb-node">主应用</span><span class="vb-arrow">→</span><span class="vb-node primary">独立服务</span></div>
+          <div class="vb-flow-row"><span class="vb-node small cyan">能力 A</span><span class="vb-node small cyan">能力 B</span><span class="vb-arrow">→</span><span class="vb-node small">专用存储</span></div>
+        </div>
+      </div>
+      <p>边界和扩缩容更清晰，但增加网络、版本与运维协调。</p>
+    </article>
+  </div>
+</section>

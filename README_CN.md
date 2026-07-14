@@ -12,7 +12,7 @@ source catalog -> plugin package -> marketplace install
 
 你可以用它做这些事：
 
-1. 安装 Codex Next 插件，把公开 skills 打包成一套可复用工作流能力包。
+1. 从仓库 marketplace 安装 Codex Next 或边界清晰的独立插件。
 2. 复制公开示例，搭建自己的本地 agent / skill catalog。
 3. 学习如何围绕 plugin-first 工作流设计 Codex agents 和 skills。
 4. 在需要时迁移或检查旧的 V1 suite / composition 设置。
@@ -60,6 +60,7 @@ docs/
 
 plugins/
   codex-next/                      # 可安装的 skills 插件
+  visual-brainstorming/            # 显式 opt-in 的本地视觉比较插件
 
 examples/
   catalog/                        # 脱敏后的公开 agent / skill source catalog
@@ -159,6 +160,16 @@ codex plugin add codex-next@codex-is-all-you-need
 ```
 
 安装后可以调用 `$codex-next:core-router`，或直接要求 Codex 使用 Codex Next 处理任务。
+
+同一个 marketplace 也提供与 Codex Next 分离的独立插件。Visual Brainstorming
+会启动项目本地 HTTP companion 并打开浏览器，因此保持显式 opt-in：
+
+```bash
+codex plugin add visual-brainstorming@codex-is-all-you-need
+```
+
+运行边界和 sparse marketplace 升级说明见
+[plugins/visual-brainstorming/README.md](plugins/visual-brainstorming/README.md)。
 
 如果你要把已有 V1 机器从 suite-based runtime entrypoints 迁移到 Codex Next，见
 [V1 To V2 Migration](docs/v1/suite-to-plugin-migration.md)。
@@ -479,7 +490,7 @@ runtime 可见位置：
 
 - dashboard 源码。
 - 脱敏后的 agent / skill 示例。
-- Codex Next plugin package 和 marketplace metadata。
+- Codex plugin packages 和 marketplace metadata。
 - V1 legacy suite / runtime 管理模式。
 - 脱敏后的 discovery 边界结论。
 - 可复用的 entrypoint 同步脚本。

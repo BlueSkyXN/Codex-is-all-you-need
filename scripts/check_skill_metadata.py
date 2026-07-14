@@ -323,6 +323,9 @@ def history_plan(
 ) -> tuple[str, str, int, str]:
     if skill.name == "visual-brainstorming":
         evidence = git(repo, "log", "-1", "--format=%H", history_ref, "--", skill.directory.as_posix()).strip()
+        current = read_metadata(read_worktree_skill(repo, skill))
+        if not current.errors and current.version and current.updated:
+            return current.version, current.updated, 1, evidence
         return (*VISUAL_BRAINSTORMING, 1, evidence)
     directories = lineage_directories(repo, history_ref, skill)
     commits = git(
@@ -447,9 +450,13 @@ def backfill(repo: Path, history_ref: str, *, apply: bool) -> dict[str, Any]:
     records: list[dict[str, Any]] = []
     for skill in skills:
         source = skill.mirror_of or skill.path
-        version, updated, states, evidence = proposals[source]
+        proposed_version, proposed_updated, states, evidence = proposals[source]
         old = read_metadata(read_worktree_skill(repo, skill))
-        changed = old.version != version or old.updated != updated or bool(old.errors)
+        if old.errors:
+            version, updated = proposed_version, proposed_updated
+        else:
+            version, updated = old.version or proposed_version, old.updated or proposed_updated
+        changed = bool(old.errors)
         if apply and changed:
             path = repo / skill.path
             path.write_text(replace_metadata(path.read_text(encoding="utf-8"), version, updated), encoding="utf-8")
@@ -457,6 +464,8 @@ def backfill(repo: Path, history_ref: str, *, apply: bool) -> dict[str, Any]:
             "path": skill.path.as_posix(), "version": version, "updated": updated,
             "states": states, "changed": changed,
             "evidence": evidence,
+            "historical_version": proposed_version,
+            "historical_updated": proposed_updated,
             "mirror_of": skill.mirror_of.as_posix() if skill.mirror_of else None,
         })
     return {"command": "backfill", "history_ref": history_ref, "apply": apply, "skills": records, "errors": []}
@@ -552,7 +561,11 @@ def main(argv: list[str] | None = None) -> int:
         sub = subparsers.add_parser(command)
         sub.add_argument(f"--{ref_name.replace('_', '-')}", required=True)
         if command == "backfill":
-            sub.add_argument("--apply", action="store_true", help="Write proposed metadata (default is dry-run).")
+            sub.add_argument(
+                "--apply",
+                action="store_true",
+                help="Fill missing or invalid metadata without resetting valid versions (default is dry-run).",
+            )
         sub.add_argument("--json", type=Path, help="Write the auditable JSON report; use - for stdout.")
     args = parser.parse_args(argv)
     repo = args.repo.resolve()

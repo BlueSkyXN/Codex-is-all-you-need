@@ -154,6 +154,18 @@ class SkillMetadataTest(unittest.TestCase):
         second = metadata.backfill(self.repo, "HEAD", apply=False)
         self.assertFalse(any(item["changed"] for item in second["skills"]))
 
+    def test_backfill_never_overwrites_valid_independent_versions(self) -> None:
+        self.write_skill("alpha", version="2.3", updated="2026-01-01")
+        result = metadata.backfill(self.repo, "HEAD", apply=True)
+        alpha = next(
+            item
+            for item in result["skills"]
+            if item["path"].endswith("/alpha/SKILL.md") and item["mirror_of"] is None
+        )
+        self.assertFalse(alpha["changed"])
+        self.assertEqual(alpha["version"], "2.3")
+        self.assertIn('version: "2.3"', self.skill_dir("alpha").joinpath("SKILL.md").read_text())
+
     def test_core_router_is_canonical_not_a_catalog_mirror(self) -> None:
         self.write_skill("core-router", version="0.1", updated="2026-01-01", catalog=False)
         self.commit("add core router")

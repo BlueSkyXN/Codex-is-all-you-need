@@ -90,8 +90,10 @@ python3 scripts/check_skill_metadata.py check --base-ref origin/main
 ```
 
 `audit` and the default `backfill` mode are read-only. `backfill --apply` is the
-only mode that writes `SKILL.md`. `check` validates schema, mirror parity, and
-version transitions relative to the selected base ref.
+only mode that writes `SKILL.md`, and it fills only missing or invalid metadata;
+it never resets an already valid independent version. `check` validates schema,
+mirror parity, and version transitions relative to the selected base ref.
 
 `audit` 和默认的 `backfill` 都是只读模式。只有 `backfill --apply` 会写入
-`SKILL.md`。`check` 会相对指定 base ref 校验 schema、镜像一致性和版本转换。
+`SKILL.md`，且只补齐缺失或非法的元信息，不会重置已经合法的独立版本。
+`check` 会相对指定 base ref 校验 schema、镜像一致性和版本转换。

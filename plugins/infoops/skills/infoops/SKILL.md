@@ -1,6 +1,9 @@
 ---
 name: infoops
 description: "Use for maintaining a workspace/infoops operating system: signal collection and classification, thread management, source profiles, and PULSE dashboard refresh. Triggers when working with the workspace/infoops directory, refreshing PULSE, managing threads, or tracking source profiles."
+metadata:
+  version: "0.1"
+  updated: "2026-06-26"
 ---
 
 # InfoOps — 信息运营系统

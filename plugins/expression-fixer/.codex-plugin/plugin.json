@@ -1,6 +1,6 @@
 {
   "name": "expression-fixer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Detect and fix unnatural Chinese workplace writing in reports, summaries, emails, and status updates.",
   "author": {
     "name": "BlueSkyXN",

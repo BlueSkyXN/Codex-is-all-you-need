@@ -4,6 +4,8 @@ description: 用本地浏览器并排展示并点选 2–4 个结构不同的 UI
 license: MIT. See LICENSE.txt.
 metadata:
   short-description: 本地浏览器可视化方案比较与选择
+  version: "0.1"
+  updated: "2026-07-14"
 ---
 
 # Visual Brainstorming

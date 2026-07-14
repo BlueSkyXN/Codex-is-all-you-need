@@ -1,6 +1,9 @@
 ---
 name: sdlc-requirements-traceability
 description: Use to build or audit RTM links across requirements, design, validation, tasks, PRs, commits, releases, and evidence gaps.
+metadata:
+  version: "0.4"
+  updated: "2026-06-12"
 ---
 
 # Requirements Traceability

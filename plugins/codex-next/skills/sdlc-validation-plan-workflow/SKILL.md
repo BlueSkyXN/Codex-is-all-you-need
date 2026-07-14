@@ -1,6 +1,9 @@
 ---
 name: sdlc-validation-plan-workflow
 description: Use to create validation plans or behavior baselines linking requirements to checks, evidence, gaps, risks, and release gates.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # Validation Plan Workflow

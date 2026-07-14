@@ -1,6 +1,9 @@
 ---
 name: dev-dependency-upgrade
 description: Use for dependency upgrades, vulnerability fixes, version conflicts, lockfiles, package managers, and migration risk.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # Dependency upgrade workflow

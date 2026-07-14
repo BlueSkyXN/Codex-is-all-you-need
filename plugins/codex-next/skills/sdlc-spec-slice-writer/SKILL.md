@@ -1,6 +1,9 @@
 ---
 name: sdlc-spec-slice-writer
 description: Use to write focused implementation SPEC slices for UI, API, data, admin, permissions, directory, observability, or release.
+metadata:
+  version: "0.4"
+  updated: "2026-06-12"
 ---
 
 # SPEC Slice Writer

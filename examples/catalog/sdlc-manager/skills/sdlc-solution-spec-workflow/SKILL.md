@@ -1,6 +1,9 @@
 ---
 name: sdlc-solution-spec-workflow
 description: Use to coordinate solution specs across HLD, LLD, domain, ADR, NFR, and SPEC slices; use leaf skills for details.
+metadata:
+  version: "0.4"
+  updated: "2026-06-12"
 ---
 
 # Solution Spec Workflow

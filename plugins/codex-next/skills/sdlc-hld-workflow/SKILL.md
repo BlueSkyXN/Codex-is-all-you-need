@@ -1,6 +1,9 @@
 ---
 name: sdlc-hld-workflow
 description: Use to create or refine HLD from SRS, NFRs, domain boundaries, repo evidence, and architecture goals.
+metadata:
+  version: "0.5"
+  updated: "2026-07-08"
 ---
 
 # HLD Workflow

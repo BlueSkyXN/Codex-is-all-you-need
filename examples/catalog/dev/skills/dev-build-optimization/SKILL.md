@@ -1,6 +1,9 @@
 ---
 name: dev-build-optimization
 description: Use to diagnose or improve build speed, cache behavior, bundle size, packaging output, and monorepo task execution.
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # Build optimization workflow

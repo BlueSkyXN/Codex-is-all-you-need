@@ -239,7 +239,6 @@ def fingerprint_worktree(repo: Path, skill: Skill) -> str:
     return fingerprint_files(files)
 
 
-@functools.lru_cache(maxsize=None)
 def tree_files(repo: Path, ref: str, directory: PurePosixPath) -> tuple[tuple[PurePosixPath, bytes], ...]:
     prefix = directory.as_posix() + "/"
     names = git(repo, "ls-tree", "-r", "--name-only", ref, "--", directory.as_posix()).splitlines()
@@ -267,9 +266,12 @@ def fingerprint_tree(repo: Path, ref: str, directory: PurePosixPath) -> str | No
     return fingerprint_files(files)
 
 
-def aliases_for_skill(repo: Path, history_ref: str, skill: Skill) -> set[str]:
-    """Follow SKILL.md renames; catalog paths share the resulting skill names."""
-    aliases = {skill.name}
+@functools.lru_cache(maxsize=None)
+def followed_directories(
+    repo: Path, history_ref: str, skill_path: PurePosixPath
+) -> tuple[PurePosixPath, ...]:
+    """Return every skill directory reached by Git rename/copy following."""
+    directories = {skill_path.parent}
     output = git(
         repo,
         "log",
@@ -279,49 +281,36 @@ def aliases_for_skill(repo: Path, history_ref: str, skill: Skill) -> set[str]:
         "--format=",
         history_ref,
         "--",
-        skill.path.as_posix(),
+        skill_path.as_posix(),
     )
     for line in output.splitlines():
         fields = line.split("\t")
-        if not fields or fields[0][:1] not in {"R", "C"} or len(fields) != 3:
+        if len(fields) < 2:
             continue
         for candidate in fields[1:]:
             parts = PurePosixPath(candidate).parts
             if len(parts) >= 2 and parts[-1] == "SKILL.md":
-                aliases.add(parts[-2])
-    return aliases
+                directories.add(PurePosixPath(candidate).parent)
+    return tuple(sorted(directories))
 
 
-def history_directories(skill: Skill, aliases: set[str]) -> list[PurePosixPath]:
-    dirs = {
-        PurePosixPath("plugins") / (skill.plugin or "codex-next") / "skills" / alias
-        for alias in aliases
-    }
+def lineage_directories(repo: Path, history_ref: str, skill: Skill) -> tuple[PurePosixPath, ...]:
+    seeds = [skill.path]
     if skill.plugin == "codex-next":
-        # Catalog group is intentionally a wildcard; it is expanded per commit.
-        dirs.update(PurePosixPath("examples/catalog") / group / "skills" / alias for group in ())
-    return sorted(dirs)
-
-
-@functools.lru_cache(maxsize=None)
-def commit_catalog_dirs(
-    repo: Path, ref: str, aliases: tuple[str, ...]
-) -> tuple[PurePosixPath, ...]:
-    all_paths = tracked_paths(repo, ref)
-    result: set[PurePosixPath] = set()
-    for path in all_paths:
-        parts = path.parts
-        if (
-            len(parts) == 6
-            and parts[:2] == ("examples", "catalog")
-            and parts[3] == "skills"
-            and parts[5] == "SKILL.md"
-            and parts[3] not in {"local"}
-            and parts[2] != "local"
-            and parts[4] in aliases
-        ):
-            result.add(path.parent)
-    return tuple(sorted(result))
+        for path in tracked_paths(repo, history_ref):
+            parts = path.parts
+            if (
+                len(parts) == 6
+                and parts[:2] == ("examples", "catalog")
+                and parts[3] == "skills"
+                and parts[4] == skill.name
+                and parts[5] == "SKILL.md"
+            ):
+                seeds.append(path)
+    directories: set[PurePosixPath] = set()
+    for seed in seeds:
+        directories.update(followed_directories(repo, history_ref, seed))
+    return tuple(sorted(directories))
 
 
 @functools.lru_cache(maxsize=None)
@@ -335,17 +324,20 @@ def history_plan(
     if skill.name == "visual-brainstorming":
         evidence = git(repo, "log", "-1", "--format=%H", history_ref, "--", skill.directory.as_posix()).strip()
         return (*VISUAL_BRAINSTORMING, 1, evidence)
-    aliases = aliases_for_skill(repo, history_ref, skill)
-    commits = git(repo, "rev-list", "--reverse", history_ref).splitlines()
+    directories = lineage_directories(repo, history_ref, skill)
+    commits = git(
+        repo,
+        "log",
+        "--reverse",
+        "--format=%H",
+        history_ref,
+        "--",
+        *(directory.as_posix() for directory in directories),
+    ).splitlines()
     ordered: list[tuple[str, str, str]] = []
     for commit in commits:
-        plugin_dirs = [
-            PurePosixPath("plugins") / (skill.plugin or "codex-next") / "skills" / alias
-            for alias in sorted(aliases)
-        ]
-        catalog_dirs: list[PurePosixPath] = []
-        if skill.plugin == "codex-next":
-            catalog_dirs.extend(commit_catalog_dirs(repo, commit, tuple(sorted(aliases))))
+        plugin_dirs = [directory for directory in directories if directory.parts[0] == "plugins"]
+        catalog_dirs = [directory for directory in directories if directory.parts[:2] == ("examples", "catalog")]
         candidates = [
             fp
             for directory in plugin_dirs

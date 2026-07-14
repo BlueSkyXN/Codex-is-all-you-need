@@ -1,6 +1,9 @@
 ---
 name: dev-spec-driven-implementation
 description: Use to implement scoped code changes from specs, handoff, issues, bugs, or direct requests with validation and blocker reporting.
+metadata:
+  version: "0.4"
+  updated: "2026-06-12"
 ---
 
 # Spec-driven Implementation

@@ -1,6 +1,9 @@
 ---
 name: dev-performance-diagnosis
 description: Use for diagnosing slow code, APIs, queries, memory growth, frontend load, build regressions, resource bottlenecks, and scalability limits.
+metadata:
+  version: "0.2"
+  updated: "2026-06-11"
 ---
 
 # Performance diagnosis workflow

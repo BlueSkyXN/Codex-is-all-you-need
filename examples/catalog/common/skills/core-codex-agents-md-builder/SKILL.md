@@ -1,6 +1,9 @@
 ---
 name: core-codex-agents-md-builder
 description: 为 Codex 仓库设计、审计或重构 AGENTS.md 层级；用于写/改/审计 AGENTS.md，不用于 CLAUDE.md 或 Cursor 规则。
+metadata:
+  version: "0.3"
+  updated: "2026-06-12"
 ---
 
 # Codex AGENTS.md 设计技能

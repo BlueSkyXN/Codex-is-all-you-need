@@ -1,6 +1,9 @@
 ---
 name: sdlc-readiness-review
 description: Use to assess whether SDLC materials, specs, handoffs, issues, or direct-dev requests are ready, need revision, are not needed, or are blocked.
+metadata:
+  version: "0.5"
+  updated: "2026-07-12"
 ---
 
 # SDLC Readiness Review

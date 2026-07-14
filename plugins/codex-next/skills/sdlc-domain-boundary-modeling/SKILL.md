@@ -1,6 +1,9 @@
 ---
 name: sdlc-domain-boundary-modeling
 description: Use to model bounded contexts, capabilities, ownership, domain data/language, allowed interactions, and forbidden dependencies.
+metadata:
+  version: "0.4"
+  updated: "2026-06-12"
 ---
 
 # Domain Boundary Modeling

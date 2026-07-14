@@ -1,6 +1,9 @@
 ---
 name: dev-migration-plan
 description: Use to plan modernization, framework upgrades, service extraction, schema migrations, rewrites, and rollback paths.
+metadata:
+  version: "0.5"
+  updated: "2026-07-08"
 ---
 
 # Migration plan workflow

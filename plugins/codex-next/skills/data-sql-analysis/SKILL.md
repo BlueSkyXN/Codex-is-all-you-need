@@ -1,6 +1,9 @@
 ---
 name: data-sql-analysis
 description: Use when reviewing or creating SQL for analysis, metric definitions, joins, filters, aggregation, and validation queries.
+metadata:
+  version: "0.2"
+  updated: "2026-06-11"
 ---
 
 # SQL Analysis Skill

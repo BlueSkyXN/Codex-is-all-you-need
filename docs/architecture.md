@@ -85,6 +85,8 @@ namespace available for user or project-defined skills.
 - [Agent Design / Agent 设计](agent-design.md)
 - [Agent Skill Map / Agent 与 Skill 分工](agent-skill-map.md)
 - [Skill Design / Skill 设计](skill-design.md)
+- [Skill Spec / Skill 开发规范](skill-spec/SPEC.md)
+- [Skill platform research / 平台调研](skill-spec/research/README.md)
 - [SDLC Manager Flow / SDLC 管理流程](architecture-first-sdlc-flow.md)
 - [Claude To Codex Migration / Claude 到 Codex 迁移](claude-to-codex-migration.md)
 - [Public And Private Strategy / 公开与私有分层](public-private-strategy.md)

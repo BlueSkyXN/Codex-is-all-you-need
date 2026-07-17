@@ -7,8 +7,8 @@
 | Product | CodeBuddy Code (Tencent Cloud coding assistant) |
 | Primary docs | https://www.codebuddy.cn/docs/cli/skills |
 | Shape affinity | Very close to Claude Code skills UX/fields |
-| WorkBuddy note | Site nav mentions WorkBuddy surfaces; **this page does not define a separate WorkBuddy skill API** |
-| Extracted | 2026-07-16 from public CLI skills docs |
+| WorkBuddy note | Site nav mentions WorkBuddy surfaces; **this page does not define a separate WorkBuddy skill API**. Local WorkBuddy evidence is now captured in [workbuddy.md](workbuddy.md) (app-bundled creators + `~/.workbuddy`). |
+| Extracted | 2026-07-16 from public CLI skills docs; WorkBuddy cross-link updated 2026-07-17 |
 
 ## 2. What a skill is
 
@@ -193,6 +193,8 @@ bypass the gate. `Stop` rewrites to `SubagentStop` in fork lifecycle.
 
 - Primary source: https://www.codebuddy.cn/docs/cli/skills  
 - Field model is largely Claude-compatible.  
-- **WorkBuddy** appears in navigation only; do not assume identical packaging or
-  upload rules without a WorkBuddy-specific document.  
-- Progressive disclosure is implied more than specified.
+- **WorkBuddy** shares CodeBuddy packaging DNA (`.codebuddy-plugin`, creator text
+  still says CodeBuddy paths) but has its own config root (`~/.workbuddy`) and an
+  expert-package layer. See [workbuddy.md](workbuddy.md).  
+- Progressive disclosure is implied more than specified on the CLI page; WorkBuddy’s
+  bundled `skill-creator` states the three-level model explicitly.

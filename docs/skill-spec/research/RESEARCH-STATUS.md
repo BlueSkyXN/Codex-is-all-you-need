@@ -1,6 +1,6 @@
 # Research Status / 调查状态与缺口清单
 
-Last updated: **2026-07-17**
+Last updated: **2026-07-17**（本地创建路径补强后）
 
 This file tracks how complete the multi-vendor skill-spec research is, what was
 already extracted, what can still be investigated from public docs/local samples,
@@ -16,12 +16,13 @@ and what is blocked on missing official sources or runtime verification.
 | Claude Code | High | [claude-code.md](claude-code.md) | Main page closed; some subpages open |
 | OpenAI / Codex | Medium-High | [openai-codex.md](openai-codex.md) | Multi-source closed enough for design; authority still migrating |
 | OpenClaw | Medium-High | [openclaw.md](openclaw.md) | Main + ClawHub format improved; some subpages open |
-| CodeBuddy | Medium | [codebuddy.md](codebuddy.md) | CLI skills page closed; WorkBuddy packaging open |
-| Qoder | Medium-Low | [qoder.md](qoder.md) | Partial; path/precedence conflicts unresolved |
-| WorkBuddy | Low | _(none yet)_ | No first-party skill package spec found |
+| CodeBuddy | Medium | [codebuddy.md](codebuddy.md) | CLI skills page closed; marketplace package details still thin |
+| WorkBuddy | Medium-High | [workbuddy.md](workbuddy.md) | **Unblocked by local app assets** (skill-creator + expert-manager); public web spec still missing |
+| Qoder / QoderWork | Medium | [qoder.md](qoder.md) | Public CLI thin + **local QoderWork creators/plugins captured**; precedence still open |
+| GitHub Copilot CLI | Medium | [copilot-cli.md](copilot-cli.md) | **New**: local install layout + agents/plugins samples; full official schema open |
 
-**Design-ready now:** open standard + Claude + Codex + OpenClaw core.  
-**Not freeze-ready:** WorkBuddy upload package, Qoder conflict rules, full runtime matrix.
+**Design-ready now:** open standard + Claude + Codex + OpenClaw core + WorkBuddy skill/expert shape + QoderWork plugin shape.  
+**Not freeze-ready:** full public SkillHub upload whitepaper, Qoder collision precedence, complete Copilot official plugin schema, full runtime matrix.
 
 ---
 
@@ -40,10 +41,27 @@ and what is blocked on missing official sources or runtime verification.
 | Style | Who | Mechanism |
 |---|---|---|
 | Sidecar file | Codex | `agents/openai.yaml` |
-| Frontmatter runtime fields | Claude, CodeBuddy | `disable-model-invocation`, `allowed-tools`, `context: fork`, … |
+| Frontmatter runtime fields | Claude, CodeBuddy, some Copilot skills | `disable-model-invocation`, `allowed-tools`, `context: fork`, `user-invocable`, … |
 | Frontmatter vendor namespace | OpenClaw | `metadata.openclaw` |
-| Thin standard only | Qoder (as documented) | mainly `name`/`description` + optional files |
-| Package manifests | All distribution layers | `.codex-plugin/plugin.json`, `.claude-plugin/plugin.json`, ClawHub, etc. |
+| Product lifecycle flag | WorkBuddy | `agent_created: true` |
+| Bilingual / UI-first naming | QoderWork plugins | Chinese `name` + `name_en` / `description_en` |
+| Thin standard only | Qoder public CLI docs | mainly `name`/`description` + optional files |
+| Package manifests | Distribution layers | `.codex-plugin/`, `.claude-plugin/`, `.codebuddy-plugin/`, `.qoder-plugin/`, Copilot `plugin.json`, ClawHub, etc. |
+
+### Creation capability styles (local path survey 2026-07-17)
+
+| Style | Who | Mechanism |
+|---|---|---|
+| Engineering scaffold scripts | Codex, WorkBuddy | init / validate / package / register scripts |
+| Conversational creator skills | QoderWork CN | `create-skill`, `plugin-creator`, `create-command` |
+| Slash command families + bundled defs | Claude Code, Copilot CLI | `/plugin`, `/agents`; Copilot also ships `definitions/*.agent.yaml` |
+
+### Agent abstraction split
+
+| Family | Who | Abstraction |
+|---|---|---|
+| Business role packages | WorkBuddy, QoderWork | Expert / 角色套件（plugin）面向业务用户 |
+| Developer subagent configs | Codex, Claude Code, Copilot CLI | TOML / markdown / `.agent.yaml` 偏开发者 |
 
 ### Local evidence already collected
 
@@ -59,7 +77,19 @@ and what is blocked on missing official sources or runtime verification.
   - `scripts/generate_openai_yaml.py`
   - `scripts/init_skill.py`
   - `scripts/quick_validate.py`
-- Machine has OpenClaw / CodeBuddy traces, but **no WorkBuddy skill package sample** was found in the quick local search
+- **WorkBuddy (2026-07-17):**
+  - App bundled `skill-creator`, `expert-manager`, `marketplace-skill-installer`
+  - User skills root `~/.workbuddy/skills/` with real skill sample (`agent_created: true`)
+  - Expert package schema via `references/plugin-json-spec.md` + agent/team specs
+  - Manifest dir name `.codebuddy-plugin/`
+- **QoderWork CN (2026-07-17):**
+  - `~/.qoderworkcn/skills/{create-skill,plugin-creator,...}`
+  - Role plugins under `~/.qoderworkcn/plugins/{产品管理,市场营销,data}/`
+  - `.qoder-plugin/plugin.json` + `.mcp.json` + Chinese skill names
+- **Copilot CLI (2026-07-17):**
+  - `~/.copilot/skills/`, `~/.copilot/agents/*.md`
+  - `~/.copilot/pkg/darwin-arm64/1.0.64-1/definitions/*.agent.yaml`
+  - `installed-plugins/_direct/plugin.json` sample
 
 ---
 
@@ -128,9 +158,9 @@ Legend:
 | E1 | CLI skills page | DONE | Claude-like frontmatter captured |
 | E2 | Plugin marketplace package format | OPEN | not fully specified on skills page |
 | E3 | Hooks trust model details | PARTIAL | known gate `allowUntrustedFrontmatterHooks` |
-| E4 | Relation to WorkBuddy | BLOCKED/PARTIAL | nav only on CodeBuddy page; no first-party joint package spec found |
+| E4 | Relation to WorkBuddy | DONE enough for design | Local WorkBuddy extract shows shared `.codebuddy-plugin` DNA + separate `~/.workbuddy` root; see G* |
 
-### F. Qoder
+### F. Qoder / QoderWork
 
 | ID | Item | Status | Notes / next action |
 |---|---|---|---|
@@ -139,77 +169,94 @@ Legend:
 | F3 | Project vs user name collision precedence | OPEN | docs conflict; needs runtime test |
 | F4 | Newer CLI skills URL variants | OPEN | search found `/cli/using-qodercli/skills` (404 on one fetch) — re-resolve live IA |
 | F5 | Security/versioning/package limits | OPEN | not documented on pages read |
+| F6 | QoderWork creator skills + role plugins | DONE enough | local `create-skill` / `plugin-creator` / plugin samples captured in `qoder.md` |
+| F7 | Whether Chinese `name` is accepted outside QoderWork UI plugins | OPEN | portable guidance: prefer kebab-case ASCII |
 
-### G. WorkBuddy (adjacent, high product relevance)
+### G. WorkBuddy
 
 | ID | Item | Status | Notes / next action |
 |---|---|---|---|
-| G1 | First-party skill authoring spec | BLOCKED | no stable official package spec page found in search |
-| G2 | SkillHub upload package format | BLOCKED | community articles only; need official doc or exported package |
-| G3 | “专家/Expert” vs skill relationship | PARTIAL | product marketing/community materials; not normative |
-| G4 | Compatibility with CodeBuddy / Agent Skills | PARTIAL | community claims SKILL.md-shaped; not verified |
+| G1 | First-party skill authoring shape | DONE enough | app-bundled `skill-creator` + local user skill sample |
+| G2 | SkillHub / BuiltinMarket upload package format | PARTIAL | installer + package_skill flow known; still no public whitepaper |
+| G3 | Expert vs skill relationship | DONE enough | `expert-manager` + plugin-json/agent-md/team specs |
+| G4 | Compatibility with CodeBuddy / Agent Skills | DONE enough for design | shared progressive disclosure + `.codebuddy-plugin`; live root `~/.workbuddy` |
+| G5 | Project skill path precedence vs CodeBuddy template paths | PARTIAL | creator text still says `~/.codebuddy`; live survey uses `~/.workbuddy` |
+
+### I. GitHub Copilot CLI
+
+| ID | Item | Status | Notes / next action |
+|---|---|---|---|
+| I1 | User skill / agent / plugin paths | DONE enough | local install captured in `copilot-cli.md` |
+| I2 | Bundled `.agent.yaml` schema | DONE enough for observed keys | richer than user markdown agents |
+| I3 | Official public plugin schema page | OPEN | currently inferred from samples + path survey |
+| I4 | Skill discovery precedence across `.agents`/`.claude`/`.github`/user roots | OPEN | needs runtime matrix |
+| I5 | Whether Claude dual-manifest install remains green on latest CLI | PARTIAL | previously verified on v1.0.62; re-check on current package |
 
 ### H. Cross-cutting verification (not docs)
 
 | ID | Item | Status | Notes / next action |
 |---|---|---|---|
-| H1 | Same minimal skill installed on 5 runtimes | OPEN | discovery/trigger/explicit invoke matrix |
+| H1 | Same minimal skill installed on 5+ runtimes | OPEN | discovery/trigger/explicit invoke matrix (now includes WorkBuddy/QoderWork/Copilot more clearly) |
 | H2 | Whether unknown frontmatter is ignored or rejected | OPEN | critical for strict-superset strategy |
 | H3 | Whether `agents/openai.yaml` is ignored harmlessly outside Codex | OPEN | expected yes; verify |
 | H4 | Whether `metadata.openclaw` is ignored harmlessly outside OpenClaw | OPEN | expected yes; verify |
 | H5 | Dual Claude+Codex plugin manifests interoperability | PARTIAL | this repo already ships dual manifests; formal matrix not run |
+| H6 | Whether WorkBuddy `agent_created` / QoderWork Chinese `name` break other clients | OPEN | expected ignore/soft-fail; verify |
 
 ---
 
 ## Newly gathered facts this pass / 本轮补充到的事实
 
-### OpenClaw / ClawHub skill-format (public docs)
+### Terminology / SKILL.md / directory matrix (2026-07-17)
 
-Source: [ClawHub skill format](https://docs.openclaw.ai/clawhub/skill-format)
+- 新增横表文档：[comparison.md](comparison.md)
+- 开放标准复核（live spec）：
+  - Skill = folder + required `SKILL.md`
+  - `name`/`description` required with hard limits；`name` must match directory
+  - optional dirs: `scripts/` `references/` `assets/` + explicit `...`
+  - progressive disclosure: metadata → body → resources
+- 名词分层：Skill（本体）/ Plugin（分发）/ Agent（角色）/ Expert|Team（WorkBuddy 上架壳）
+- `name` 最大冲突：开放标准 kebab-case vs QoderWork UI 中文 name
+- Codex 调用策略在 sidecar，不在 frontmatter；Claude 家族在 frontmatter
 
-- Required: skill folder + `SKILL.md` (`skill.md` / legacy `skills.md` accepted)
-- Publish accepts **text-based files only**
-- Bundle size limit: **50MB**
-- Embedding text: `SKILL.md` + up to ~40 non-`.md` files (best-effort)
-- `metadata.openclaw` supports requires/install/os/emoji/homepage/primaryEnv/envVars/…
-- Install kinds documented: `brew`, `node`, `go`, `uv` (download appears in other OpenClaw pages)
-- Published skills license policy on ClawHub: **MIT-0**, no paid skills
-- Local install metadata: `.clawhub/origin.json`; workdir lock `.clawhub/lock.json`
+### Source path overview (local, 2026-07-17)
 
-### OpenClaw creating-skills notes
+Primary input: local machine path survey across WorkBuddy / QoderWork CN / Codex / Claude Code / Copilot CLI creation roots (see workspace note `AI工具创建能力路径总览.md`).
 
-Source: [Creating skills](https://docs.openclaw.ai/tools/creating-skills)
+### WorkBuddy (local first-party assets)
 
-- Product guidance may say description “under 160 characters” for discovery UI
-- Portable Agent Skills max remains **1024**
-- Treat 160 as **product recommendation**, not open-standard hard limit
-- Emphasizes concise instructions and safety around `exec`
+- Bundled creators:
+  - `skill-creator` (Agent Skills progressive disclosure + `agent_created: true`)
+  - `expert-manager` (agent/team experts, init/validate/register/package)
+  - `marketplace-skill-installer` (host tool `workbuddy_marketplace_skill`)
+- Skill package shape: `SKILL.md` + optional `scripts/` `references/` `assets/`
+- Live user skill root: `~/.workbuddy/skills/`
+- Expert fixed root: `$WORKBUDDY_CONFIG_DIR/plugins/marketplaces/my-experts/plugins/`
+- Manifest dir: `.codebuddy-plugin/plugin.json`
+- Expert display contracts: bilingual fields, 3 tags, 3 quick prompts, categoryId
+- Agent MD forbids frontmatter `tools` (system assigns tools)
 
-### Agent Skills secondary docs map
+### QoderWork CN (local creators/plugins)
 
-Source index: https://agentskills.io/llms.txt
+- Creators: `create-skill`, `plugin-creator` (v1.7.1), `create-command`
+- Plugin = role toolbox; Skill = single tool inside it
+- Plugin layout: `.qoder-plugin/plugin.json` + `.mcp.json` + `skills/` + README/CONNECTORS
+- UI-first Chinese skill directory/`name` inside plugins; `plugin.json.name` stays English kebab-case
+- No independent subagent/team framework; role plugin approximates “agent”
 
-- Spec
-- Quickstart
-- Best practices
-- Optimizing descriptions
-- Using scripts
-- Evaluating skills
-- Client implementation / showcase
+### Copilot CLI (local install `1.0.64-1`)
 
-Best-practices themes already confirmed: real expertise grounding, context thrift, progressive disclosure, calibrate control, gotchas, templates, validation loops, bundle scripts when repeated.
+- Roots: `~/.copilot/skills`, `~/.copilot/agents`, `~/.copilot/plugins`, `installed-plugins/`
+- Bundled agents: `definitions/*.agent.yaml` with `tools`, `model`, `promptParts`, `prompt`
+- User agents: markdown + frontmatter (`name`, `description`, `tools`, `model`)
+- Skills are Agent Skills-shaped; bundled skill uses `user-invocable: false`
+- Plugin sample fields: `name`, `description`, `version`, `author`, `license`, `keywords`, `category`, `commands`, `hooks`
 
-### WorkBuddy
+### Creation-style taxonomy (cross-tool)
 
-- Public web search did **not** yield a stable first-party package specification comparable to Claude/Codex/OpenClaw docs
-- Community/secondary articles describe SKILL.md-shaped skills and SkillHub install/import
-- Status remains **blocked on official source or a real exported package**
-
-### Qoder
-
-- Additional candidate URLs appeared in search (`/cli/using-qodercli/skills`, rules/config hierarchy)
-- At least one candidate path 404’d on fetch
-- Precedence conflict (user vs project) still unresolved without runtime test
+1. Scripted engineering scaffolds (Codex / WorkBuddy)  
+2. Conversational creator skills (QoderWork)  
+3. Slash command families + bundled definitions (Claude / Copilot)
 
 ---
 
@@ -219,15 +266,14 @@ Not urgent freeze; when continuing, do this order for highest value:
 
 1. **A2–A5** open-standard creation/eval guides  
    → improves portable authoring doctrine without product politics  
-2. **D2–D6** OpenClaw format/config/CLI pages  
-   → closest “Codex-like ecosystem” with public docs  
-3. **C6/C8** Codex current canonical skill-creator/plugin examples  
-   → keep openai.yaml guidance current  
-4. **B2–B4** Claude plugin/hooks/eval details  
-   → needed if dual Claude+Codex packaging is a hard requirement  
-5. **F3 + H1** Qoder precedence + 5-runtime smoke matrix  
-   → turns docs into verified compatibility claims  
-6. **G1/G2** WorkBuddy only when an official doc or real package is available  
+2. **H1/H2/H6** minimal skill + unknown frontmatter smoke across Claude/Codex/Copilot/WorkBuddy/QoderWork  
+   → turns packaging hypotheses into compatibility claims  
+3. **I3/I4** Copilot official plugin schema + discovery precedence  
+4. **D4–D7** OpenClaw config/CLI/security pages  
+5. **C6/C8** Codex current canonical skill-creator/plugin examples / openai.yaml schema  
+6. **B2–B4** Claude plugin/hooks/eval details  
+7. **F3** Qoder precedence runtime test  
+8. **G2** WorkBuddy public SkillHub whitepaper only if/when published
 
 ---
 
@@ -236,11 +282,13 @@ Not urgent freeze; when continuing, do this order for highest value:
 1. Design portable skills against **Agent Skills open standard**.  
 2. Treat product fields as **adapters**:
    - Codex → `agents/openai.yaml`
-   - Claude/CodeBuddy → frontmatter runtime fields
+   - Claude/CodeBuddy/Copilot-ish → frontmatter runtime fields
    - OpenClaw → `metadata.openclaw`
-3. Do not freeze WorkBuddy-specific packaging rules yet.  
-4. Do not claim cross-runtime behavior that has not been smoke-tested (H1–H4).  
-5. When docs conflict (Qoder precedence, OpenClaw description length guidance), mark as **unresolved** instead of picking silently.
+   - WorkBuddy → `agent_created` + expert package cosmetics
+   - QoderWork → bilingual UI fields + `.qoder-plugin` role suites
+3. Do not put WorkBuddy expert marketplace cosmetics or QoderWork Chinese UI names into the portable core.  
+4. Do not claim cross-runtime behavior that has not been smoke-tested (H1–H6).  
+5. When docs conflict (Qoder precedence, OpenClaw description length guidance, WorkBuddy creator text saying `~/.codebuddy`), mark as **unresolved** instead of picking silently.
 
 ---
 
@@ -250,12 +298,15 @@ Not urgent freeze; when continuing, do this order for highest value:
 docs/skill-spec/research/
   README.md
   RESEARCH-STATUS.md          ← this file
+  comparison.md               ← terminology / SKILL.md / dirs matrix
   agent-skills-open-standard.md
   claude-code.md
   openai-codex.md
   openclaw.md
   codebuddy.md
-  qoder.md
+  workbuddy.md                ← added 2026-07-17
+  qoder.md                    ← expanded with QoderWork local evidence
+  copilot-cli.md              ← added 2026-07-17
 
 规范正文（勿与调研混淆）：
 docs/skill-spec/SPEC.md
@@ -264,8 +315,13 @@ docs/skill-spec/SPEC.md
 Optional future files (not created yet):
 
 ```text
-comparison.md                 # cross-vendor matrix
-platform-extensions.md        # sidecar/frontmatter extension map
-workbuddy.md                  # only after official source exists
+platform-extensions.md        # deeper sidecar/frontmatter-only deep dive (comparison.md already covers matrix)
 compatibility-matrix.md       # runtime smoke results
+creation-paths.md             # optional distilled create-path matrix from local survey
+```
+
+Added this pass:
+
+```text
+comparison.md                 # terminology + SKILL.md + directory structure cross-vendor matrix
 ```

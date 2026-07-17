@@ -12,12 +12,15 @@ docs/skill-spec/
   research/           # 各平台 Skill 规范调研（证据，非规范正文）
     README.md
     RESEARCH-STATUS.md
+    comparison.md     # 名词 / SKILL.md / 目录结构横表
     agent-skills-open-standard.md
     claude-code.md
     openai-codex.md
     openclaw.md
     codebuddy.md
+    workbuddy.md
     qoder.md
+    copilot-cli.md
 ```
 
 ## 怎么用
@@ -25,7 +28,8 @@ docs/skill-spec/
 | 目的 | 打开 |
 |---|---|
 | 写/审 skill、定目录与形态 | [SPEC.md](SPEC.md) |
-| 查五家平台差异与调研缺口 | [research/README.md](research/README.md) |
+| 查名词 / SKILL.md / 目录横表 | [research/comparison.md](research/comparison.md) |
+| 查各平台差异与调研缺口 | [research/README.md](research/README.md) |
 | 查还没查清什么 | [research/RESEARCH-STATUS.md](research/RESEARCH-STATUS.md) |
 
 ## 规范 30 秒摘要

@@ -32,16 +32,13 @@ docs/skill-spec/
 
 ```text
 最小 / 标准 / 集合 = 一个目录、一个 name、一个 SKILL.md
-群 = 数十个独立 skill 的平级编队 + 可选 router（量感参考 ~30）
+群 = 数十个独立 skill 的平级编队 + 可选 router（参考线约 30）
 
-单包顶层白名单：
-  SKILL.md + 按需 references/, examples/, scripts/,
-  assets/, evals/, agents/
-（另可有 README/LICENSE 等分发文件；结构按需生长，不预建空目录）
+三层加载：触发写 description（L1），主工作流写正文（L2），
+细节按需读（L3：references/, examples/, scripts/, assets/）
+evals/ 为回归材料，运行时不读；结构按需生长，不预建空目录
 
-references = 怎么做对（执行说明；默认平铺语义名）
-examples   = 长什么样 / 这种情形怎么走
-evals      = 触发/质量回归（默认运行时不读；形态自由）
+references = 怎么做对   examples = 长什么样   evals = 测过了吗
 大知识放包外，包内只写怎么查；Git 是真源，上传是发布
 ```
 

@@ -9,7 +9,7 @@
 | 分发 | **自包含单文件**：执行本文不依赖任何外部文件 |
 | 适用对象 | Skill 作者、评审者、AI Agent |
 
-本规范定义 Agent Skill 的分类体系、包结构、`SKILL.md` 写法、多 skill 组织、评测与版本协作规则，适用于任何兼容 [Agent Skills 开放标准](https://agentskills.io) 的运行时（Claude Code、Codex、OpenClaw、CodeBuddy、Qoder 等）。
+本规范定义 Agent Skill 的分类体系、包结构、`SKILL.md` 写法、多 skill 组织、评测与版本协作规则，适用于任何兼容 [Agent Skills 开放标准](https://agentskills.io) 的运行时（Claude Code、Codex、Copilot CLI、OpenClaw、CodeBuddy、WorkBuddy、Qoder 等）。
 
 条款以三个来源校准，不设立缺乏依据的约定：
 
@@ -30,6 +30,8 @@
 | 组织多个 skill / 建 router | 第 3、7 章 |
 | 定版本、多人协作 | 第 9 章 |
 | 生成或校验 skill（AI Agent） | 1.2 节 + 全部「必须 / 禁止」条款 |
+
+本规范分两级适用：**可移植合规**（第 2～6 章与第 10～11 章清单），任何 skill 都适用；**协作治理**（第 9 章与 6.1 治理层字段），多人协作或公开发布时为必须，纯个人自用降为建议。
 
 ### 1.2 Agent 执行规则
 
@@ -77,7 +79,7 @@ Skill 内容按三层加载，各层预算不同。**本规范的全部内容落
 
 四条推论：
 
-1. 触发条件**必须**写进 `description`——L1 是运行时决定是否触发的唯一依据。
+1. 触发条件**必须**写进 `description`——L1 是可移植层中自动发现的主依据；运行时私有的触发字段、门控开关与显式调用属平台扩展，不能替代 `description`。
 2. 主工作流**必须**写在正文——L2 是触发后唯一保证加载的内容。
 3. 执行中才需要的细节放 L3，正文只留链接与使用时机。
 4. 运行时不读的内容与超出包尺度的内容不占任何层：评测材料进 `evals/`，中央知识放包外。
@@ -102,23 +104,25 @@ Skill 内容按三层加载，各层预算不同。**本规范的全部内容落
 |---|---|---|
 | **单文件**（single-file） | 只需 `SKILL.md` 即可完整执行 | 仅 `SKILL.md` |
 | **标准**（standard） | 单文件容纳不下，出现配套文件 | + `references/` / `scripts/` / `examples/` 中任意 |
-| **套件**（suite） | 一包内多条**同一意图族**路线 | 正文含路线选择；配套目录成型 |
+| **套件**（multi-route） | 一包内多条**同一意图族**路线 | 正文含路线选择；配套目录成型 |
 | **群**（fleet） | 数十个独立 skill 的平级组织 | 多包平级 + 可选 router |
 
 判定顺序：先分单包（前三种形态）与多包（群）；单包内再看文件形态与路线数。
+
+术语提示：本规范的「套件」（multi-route）指单包多路线，不同于 Codex 生态中编排 agent 的 suite，也不同于 QoderWork 等产品中打包多个 skill 的角色 plugin——那些属于 agent 编排与分发概念，不是单个 skill 包的形态。
 
 ### 3.2 套件规则
 
 1. **必须**仍是一个包：一个 `name`、一个 `SKILL.md`；**禁止**包内嵌套子 `SKILL.md`。
 2. **必须**多条路线同属一个意图族；不同意图族的工作流拆为独立 skill。
-3. 意图族（intent family）判定：多条路线能被同一条 `description` 自然覆盖、无需用「或」并列互不相干的场景，即属同一意图族；反之应拆为独立 skill。该判定源自三层加载模型——套件的全部路线共用一条发现层描述（见 2.2）。
+3. 意图族（intent family）判定：多条路线能被同一条 `description` 自然覆盖、无需用「或」并列互不相干的场景，即属同一意图族；反之应拆为独立 skill。该判定源自三层加载模型——套件的全部路线共用一条发现层描述（见 2.2）。判例：「提取 PDF 文本、填写表单、合并文件，处理 PDF 时使用」属同一意图族（同一对象与场景入口，开放标准的示例 description 即此写法）；「生成周报或初始化数据库」不属（场景互不相干，只能靠「或」并列）。
 4. **必须**在正文写清路线选择规则：何种输入或场景走哪条路线。
 
 ### 3.3 群规则
 
 1. 群内每个叶子（leaf，即群内单个 skill）独立满足单包规则（第 5～6 章），平级排列。
 2. Router（引导 skill）是可选件，不是标配：实践参考线约 30 个以上独立可触发 skill、且入口多样到需要引导时才值得建；叶子数量达数十时才需要两级 router。
-3. 规模未达参考线时，靠 `description` 区分 + 文档级地图（README / docs）即可；**禁止**提前建 router。
+3. 规模未达参考线时，**建议**不建 router：靠 `description` 区分 + 文档级地图（README / docs）即可；因产品入口等原因提前建的，须说明理由，且 router 仍须满足 7.2。
 4. **禁止**把同一 workflow 拆成 Phase 1…N 伪装成多个独立 skill。
 
 ---
@@ -184,6 +188,8 @@ evals      = 测过了吗（回归；运行时不读）
 └── README.md / LICENSE*     # 可选：分发说明，不承载工序
 ```
 
+目录出处：`references/`、`scripts/`、`assets/` 是开放标准点名的推荐可选目录；`examples/`、`evals/` 与平台 adapter 为本规范的工程补充，落在开放标准「允许额外文件与目录」的范围内。
+
 结构规则：
 
 1. **必须**：有且仅有一个 `SKILL.md`；目录名与 `name` 一致。
@@ -205,6 +211,8 @@ evals      = 测过了吗（回归；运行时不读）
 
 1. 目录名 = `name`，匹配 `^[a-z0-9]+(?:-[a-z0-9]+)*$`（kebab-case），长度不超过 64 字符（开放标准上限）。
 2. 入口文件名固定为 `SKILL.md`。
+
+部分产品 UI 允许本地化命名（如中文 skill 名、展示名）或省略 `name` 回退目录名，均属产品私有行为，不构成可移植包的例外：跨运行时分发仍按上述规则命名，UI 展示名放平台扩展字段（见 6.1）。
 
 **建议**：
 
@@ -261,19 +269,22 @@ metadata:
 2. `description`：**必须**；写法规则见 6.2。
 3. `metadata.version`：行为版本，两段式字符串；契约见第 9 章。
 4. `metadata.updated`：`YYYY-MM-DD`，取最后一次实质变更日期。
-5. **可以**使用 `license`、`compatibility` 等自由字段；开放标准要求解析器忽略未知字段，但跨运行时行为未必一致，混投多平台前先做冒烟验证。
+5. **可以**使用 `license`、`compatibility` 等开放标准可选字段；私有属性放 `metadata` 键下，开放标准建议客户端忽略不认识的 `metadata` 键。顶层未知字段被忽略还是拒绝，跨运行时行为未经验证，混投多平台前先做冒烟验证。
 
-平台扩展的三种落点（互不污染，按目标平台选用）：
+平台扩展的常见落点（互不污染，按目标平台选用）：
 
 | 扩展方式 | 典型平台 | 形态 |
 |---|---|---|
 | Sidecar 文件 | Codex | `agents/openai.yaml` |
 | Frontmatter 运行时字段 | Claude Code、CodeBuddy | `allowed-tools`、`context` 等 |
 | Frontmatter 厂商命名空间 | OpenClaw | `metadata.openclaw.*` |
+| Frontmatter 生命周期 / UI 字段 | WorkBuddy、QoderWork | `agent_created`、双语展示名等 |
+
+第四类是无命名空间的顶层私有字段，跨运行时兼容性最弱（见上方字段规则 5），仅面向对应产品发布时保留。
 
 ### 6.2 触发设计（description）
 
-`description` 是发现层（L1）的唯一内容，独自决定该不该触发：
+`description` 是发现层（L1）中唯一可移植的内容，自动发现的主依据；运行时叠加的私有触发字段、门控与显式调用均属平台扩展，不可移植，也不改变以下规则：
 
 1. **必须**同时包含「做什么」与「何时用」；触发信息**禁止**只写在正文。
 2. 「何时用」使用用户的真实说法（关键词、动词、场景），不用抽象概括。
@@ -356,9 +367,11 @@ skills/
 1. `metadata.version` 是**两段式字符串**（`主.次`，字符串序列而非十进制数），首个实质状态为 `"0.1"`。
 2. 向后兼容的实质变化升次段：`0.9 -> 0.10`、`1.0 -> 1.1`。适用：工作流增补、规则修正、验证增强、输出改进。
 3. 破坏性变化升主段并归零次段：`0.10 -> 1.0`。适用：破坏公开调用名、必需输入输出契约、产物 schema、脚本 CLI、核心默认流程，或其他 skill 消费的契约。
-4. **实质内容**（版本指纹范围）= 正文（不含 `version` / `updated` 两行）+ `references/` + `scripts/` + `assets/` + `examples/` + 平台 adapter。`README*`、`LICENSE*`、系统垃圾、纯元信息修改不算实质变更。
+4. **实质内容**（版本指纹范围）= 正文（不含 `version` / `updated` 两行）+ `references/` + `scripts/` + `assets/` + `examples/` + 平台 adapter。`README*`、`LICENSE*`、`evals/`、系统垃圾、纯元信息修改不算实质变更——仅评测材料变化不构成行为变更，不升版。
 5. `metadata.updated` 取最后一次实质变更的日期（Git committer date，`YYYY-MM-DD`）。
 6. 发布包（plugin / bundle）的版本与 skill 行为版本**分开**管理。
+
+两段式版本、指纹范围与日期取值是**本规范的治理约定**，非开放标准要求：开放标准仅把 `metadata.version` 作为可选自由字符串；插件市场普遍另用三段式 semver，故发布包版本按第 6 条分开管理。
 
 **建议**配 CI 门禁（gate），至少校验：目录名 = `name`；version 两段式、updated 格式合法；实质内容变更时版本与日期已同步更新。
 
@@ -421,7 +434,7 @@ skills/
 ### 11.4 群追加
 
 - [ ] 叶子平级、各自独立合格；router（若有）只选路
-- [ ] 规模未到参考线时未建 router
+- [ ] 规模未到参考线时未建 router（提前建的有理由说明）
 
 ---
 
@@ -469,7 +482,7 @@ example-standard/
 ### 12.3 套件
 
 ```text
-example-suite/
+example-multi-route/
   SKILL.md                  # 2～3 条同意图族路线 + 路线选择
   references/
     ops-protocol.md

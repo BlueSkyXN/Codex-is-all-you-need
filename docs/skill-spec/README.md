@@ -2,8 +2,8 @@
 
 本目录只保留：
 
-1. **一份规范长文**：[SPEC.md](SPEC.md)  
-2. **调研结果**：[research/](research/)
+1. **一份规范长文**：[SPEC.md](SPEC.md) —— **自包含单文件**，可直接分发给任何人 / 任何团队执行，不依赖本仓库其他文件
+2. **调研结果**：[research/](research/) —— 证据库，可选阅读
 
 ```text
 docs/skill-spec/

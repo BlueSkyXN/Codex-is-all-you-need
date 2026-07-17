@@ -225,5 +225,3 @@ ClawHub publish constraints worth remembering:
 - published skills under MIT-0 policy on ClawHub
 
 See [RESEARCH-STATUS.md](RESEARCH-STATUS.md) for the full gap board.
-
-> 路径说明：本调研目录现位于 `docs/skill-spec/research/`（由 `docs/skill-platform-specs/` 迁入）。

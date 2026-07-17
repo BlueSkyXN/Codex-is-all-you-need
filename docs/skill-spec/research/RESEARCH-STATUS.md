@@ -1,6 +1,6 @@
 # Research Status / 调查状态与缺口清单
 
-Last updated: **2026-07-16**
+Last updated: **2026-07-17**
 
 This file tracks how complete the multi-vendor skill-spec research is, what was
 already extracted, what can still be investigated from public docs/local samples,

@@ -3,8 +3,6 @@
 本目录是 **调研证据**，不是 Skill 开发规范正文。  
 规范请读上一级 **[../SPEC.md](../SPEC.md)**。
 
-原路径 `docs/skill-platform-specs/` 已迁入 `docs/skill-spec/research/`。
-
 ## 文档列表
 
 | 文件 | 内容 |

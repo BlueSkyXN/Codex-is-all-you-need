@@ -8,7 +8,7 @@
 ```text
 docs/skill-spec/
   README.md           # 本说明
-  SPEC.md             # 规范唯一长文（最小/标准/集合/群 + 目录 + 清单）
+  SPEC.md             # 规范唯一长文（单文件/标准/套件/群 + 目录 + 清单）
   research/           # 各平台 Skill 规范调研（证据，非规范正文）
     README.md
     RESEARCH-STATUS.md
@@ -24,15 +24,15 @@ docs/skill-spec/
 
 | 目的 | 打开 |
 |---|---|
-| 写/审 skill、定目录与分档 | [SPEC.md](SPEC.md) |
+| 写/审 skill、定目录与形态 | [SPEC.md](SPEC.md) |
 | 查五家平台差异与调研缺口 | [research/README.md](research/README.md) |
 | 查还没查清什么 | [research/RESEARCH-STATUS.md](research/RESEARCH-STATUS.md) |
 
 ## 规范 30 秒摘要
 
 ```text
-最小 / 标准 / 集合 = 一个目录、一个 name、一个 SKILL.md
-群 = 数十个独立 skill 的平级编队 + 可选 router（参考线约 30）
+单文件 / 标准 / 套件 = 一个目录、一个 name、一个 SKILL.md
+群 = 数十个独立 skill 的平级组织 + 可选 router（参考线约 30）
 
 三层加载：触发写 description（L1），主工作流写正文（L2），
 细节按需读（L3：references/, examples/, scripts/, assets/）

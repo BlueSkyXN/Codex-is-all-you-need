@@ -2,8 +2,8 @@
 name: sdlc-validation-plan-workflow
 description: Use to create validation plans or behavior baselines linking requirements to checks, evidence, gaps, risks, and release gates.
 metadata:
-  version: "0.3"
-  updated: "2026-06-12"
+  version: "0.4"
+  updated: "2026-07-23"
 ---
 
 # Validation Plan Workflow
@@ -85,6 +85,21 @@ Choose the smallest sufficient validation depth.
 | `release` | release-bound, compliance, launch, rollback, or operations risk | release validation notes and evidence gate |
 
 Do not force system-level validation on every change.
+
+For `system` and `release`, read
+[Engineering Completion Evidence](references/engineering-completion-evidence.md).
+For other depths, read it only when the change has material cross-layer risk.
+
+### 1a. Select applicable completion dimensions
+
+Choose the smallest affected set of requirement, architecture, code, API, data,
+test, build, release, runtime, and documentation dimensions. Mark each included
+dimension `required`, `not-applicable`, or `deferred`; keep validation status in
+the existing status set. A deferred dimension must name its owner and risk.
+
+Do not enumerate unrelated lifecycle layers for a narrow `seed`. For `system`,
+assess every affected layer. For `release`, always assess build, release,
+runtime, and rollback or forward recovery.
 
 ### 2. Identify proof questions
 
@@ -236,6 +251,19 @@ Required safeguard:
 
 Return or write one of these artifacts.
 
+For every validation depth, include the selected completion dimensions using:
+
+```markdown
+## Applicable completion dimensions
+
+| Dimension | Applicability | Method | Evidence | Status |
+|---|---|---|---|---|
+```
+
+Use only the existing validation status values. Keep a `seed` table limited to
+the dimensions affected by the narrow change instead of generating a full
+lifecycle matrix.
+
 ### Behavior Baseline
 
 ```markdown
@@ -295,6 +323,12 @@ Before returning the plan, check:
 - Architecture/domain constraints have validation where they affect implementation.
 - Smoke and regression scope are explicit.
 - Evidence expectations are reviewable.
+- Required and not-applicable dimensions are distinguished where a completion
+  dimension was considered.
+- Deferred dimensions identify an owner and risk.
+- Local test, PR, artifact, or process-state evidence is not used as proof for
+  an unverified release, runtime, or business-behavior layer.
+- Small tasks are not expanded into full lifecycle plans without affected risk.
 - Direct-dev remains allowed when the task is clear and bounded.
 - Pure refactor has a behavior baseline before structural changes proceed.
 - The plan does not claim tests passed before dev executes them.

@@ -2,8 +2,8 @@
 name: sdlc-domain-boundary-modeling
 description: Use to model bounded contexts, capabilities, ownership, domain data/language, allowed interactions, and forbidden dependencies.
 metadata:
-  version: "0.4"
-  updated: "2026-06-12"
+  version: "0.5"
+  updated: "2026-07-23"
 ---
 
 # Domain Boundary Modeling
@@ -26,19 +26,23 @@ In the lightweight SDLC-ADS model, durable domain knowledge should usually land 
 - Existing project capability map.
 - Current modules, routes, APIs, schemas, and terminology.
 - Business workflows, roles, states, and rules.
+- Git history and co-change evidence when available and relevant to a disputed boundary.
 - Existing `local/sdlc/_资产.md`, `local/sdlc/架构.md`, `local/sdlc/领域.md`, and current `00-状态.md` when present.
 
 ## Workflow
 
 1. Extract business capabilities.
-2. Identify candidate domains and bounded contexts.
-3. Define each domain's responsibility.
-4. Define data ownership.
-5. Define exposed interfaces.
-6. Define allowed dependencies and forbidden access.
-7. Build a shared domain glossary.
-8. Identify ambiguous concepts that need owner decisions.
-9. Decide whether the output is a standalone boundary map, an incremental `领域.md` update, or both.
+2. Identify candidate domains and bounded contexts using business capability,
+   data ownership and invariants, shared language, ownership, and reasons to change.
+3. Use co-change only as corroborating evidence for a candidate seam; do not let
+   repository history alone decide a bounded context.
+4. Define each domain's responsibility.
+5. Define data ownership and the invariants each owner protects.
+6. Define exposed interfaces.
+7. Define allowed dependencies and forbidden access.
+8. Build a shared domain glossary.
+9. Identify ambiguous concepts that need owner decisions.
+10. Decide whether the output is a standalone boundary map, an incremental `领域.md` update, or both.
 
 ## Validation
 
@@ -47,6 +51,9 @@ Check:
 - Each domain has one clear business responsibility.
 - Data ownership is not duplicated without reason.
 - Cross-domain calls are explicit.
+- An ordinary business change does not require edits across unrelated domains.
+- Cross-domain data and semantic dependencies are explicit, including the owner
+  of shared terms and invariants.
 - Shared concepts are named consistently.
 - Forbidden dependencies are documented.
 - The model supports modular monolith first unless microservices are justified.

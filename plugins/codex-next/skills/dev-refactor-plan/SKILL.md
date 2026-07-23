@@ -2,8 +2,8 @@
 name: dev-refactor-plan
 description: Use for planning software refactors before editing files, especially when behavior must be preserved.
 metadata:
-  version: "0.3"
-  updated: "2026-07-08"
+  version: "0.4"
+  updated: "2026-07-23"
 ---
 
 # Refactor plan workflow
@@ -20,6 +20,10 @@ Use this workflow when the task is to refactor code while preserving behavior.
    - Relevant files and modules
    - Entry points and call paths
    - Tests and validation commands
+   - Dependency cycles and change fan-out
+   - Shared mutable state and deployment coupling
+   - Git co-change history when it can reveal candidate seams; treat it as
+     supporting evidence, not an automatic reason to merge modules
 
 3. Identify contracts.
    - Public APIs

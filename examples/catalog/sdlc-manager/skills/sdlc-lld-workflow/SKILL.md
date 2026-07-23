@@ -2,8 +2,8 @@
 name: sdlc-lld-workflow
 description: Use to create or refine LLD for modules, interfaces, state machines, data structures, errors, transactions, and tests.
 metadata:
-  version: "0.3"
-  updated: "2026-06-12"
+  version: "0.4"
+  updated: "2026-07-23"
 ---
 
 # LLD Workflow
@@ -29,11 +29,16 @@ Use this skill to write detailed design for a bounded module or feature area.
 1. Select the module or bounded area.
 2. Confirm related HLD/SRS/NFR/SPEC IDs.
 3. Define module responsibilities and forbidden responsibilities.
-4. Define interfaces, data structures, state transitions, and error behavior.
+4. Define interfaces, data structures, state transitions, and error behavior,
+   including idempotency, ordering, timeout, retry, and partial-failure semantics
+   where they apply.
 5. Define transaction, consistency, permission, and validation rules.
-6. Define directory/file placement and dependency rules.
-7. Define test points and expected validation.
-8. Identify implementation risks and unresolved decisions.
+6. Make dependencies explicit and inspect global state, required call order,
+   shared mutable data, framework types, and third-party SDK objects for hidden
+   code, data, temporal, or implementation coupling.
+7. Define directory/file placement and dependency rules.
+8. Define test points and expected validation.
+9. Identify implementation risks and unresolved decisions.
 
 ## Validation
 
@@ -44,6 +49,10 @@ Check:
 - API/interface details align with API SPEC.
 - Permission checks align with Permission SPEC.
 - State and error behavior are explicit.
+- Public interfaces do not leak storage models, framework internals, or
+  third-party SDK objects without a deliberate compatibility reason.
+- Ordering, idempotency, timeout, retry, and partial-failure semantics are
+  explicit when callers depend on them.
 - Tests can be derived from the design.
 
 ## Output

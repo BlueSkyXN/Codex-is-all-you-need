@@ -2,8 +2,8 @@
 name: sdlc-modular-monolith-architecture
 description: Use to design modular monolith boundaries, module layout, dependency rules, shared/platform seams, and extraction triggers.
 metadata:
-  version: "0.3"
-  updated: "2026-06-12"
+  version: "0.4"
+  updated: "2026-07-23"
 ---
 
 # Modular Monolith Architecture
@@ -23,17 +23,24 @@ Use this skill to design or refine a modular monolith.
 - Domain boundary map.
 - HLD, SRS, NFR, Directory SPEC, existing repo map.
 - Current framework and deployment model.
+- When boundaries or split decisions are contested, read
+  [Modularity and Coupling Heuristics](references/modularity-and-coupling.md).
 
 ## Workflow
 
 1. Confirm why modular monolith is appropriate.
-2. Map domains to modules.
-3. Define each module's internal layers.
-4. Define shared/platform boundaries.
-5. Define allowed and forbidden dependencies.
-6. Define public module interfaces.
-7. Define data ownership and migration boundaries.
-8. Define future extraction criteria for microservices.
+2. Map domains to modules using business capability, data invariants, reasons to
+   change, and corroborating co-change evidence as cohesion signals.
+3. Classify material code, data, control, temporal, semantic, deployment,
+   runtime, and organizational coupling.
+4. Distinguish intentional coupling that protects a required constraint from
+   accidental coupling caused by leakage, implicit order, or unclear ownership.
+5. Define each module's internal layers.
+6. Define shared/platform boundaries.
+7. Define allowed and forbidden dependencies.
+8. Define public module interfaces.
+9. Define data ownership and migration boundaries.
+10. Define future extraction criteria for microservices.
 
 ## Suggested structure
 
@@ -57,6 +64,12 @@ Check:
 - Modules are domain-aligned.
 - Internal implementation is hidden from other modules.
 - Shared code does not become a dumping ground.
+- An ordinary change does not fan out across unrelated modules.
+- The module dependency graph is acyclic, or a temporary cycle and its removal
+  plan are explicit.
+- Shared/platform areas have coherent consumers, owners, and reasons to change.
+- Material temporal, semantic, data, and deployment coupling is visible rather
+  than hidden behind an interface or service boundary.
 - Future microservice extraction is possible but not premature.
 
 ## Output
@@ -69,8 +82,9 @@ Return:
 4. Dependency rules
 5. Data ownership rules
 6. Shared/platform rules
-7. Migration notes
-8. Future extraction triggers
+7. Coupling assessment: coupling type, evidence, risk, and recommended seam
+8. Migration notes
+9. Future extraction triggers
 
 ## Boundaries
 

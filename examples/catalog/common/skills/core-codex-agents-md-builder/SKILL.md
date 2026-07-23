@@ -2,8 +2,8 @@
 name: core-codex-agents-md-builder
 description: 为 Codex 仓库设计、审计或重构 AGENTS.md 层级；用于写/改/审计 AGENTS.md，不用于 CLAUDE.md 或 Cursor 规则。
 metadata:
-  version: "0.3"
-  updated: "2026-06-12"
+  version: "0.4"
+  updated: "2026-07-23"
 ---
 
 # Codex AGENTS.md 设计技能
@@ -62,6 +62,7 @@ Git 操作只允许只读命令：`git status`、`git diff`、`git ls-files`、`
 - 已有的 AGENTS.md / AGENTS.override.md 清单
 - 要新增或更新的 AGENTS.md 路径清单
 - 每个文件的类型（Root router / Domain card / Guardrail card）
+- 每个文件主要承载哪些指令类型（Principle / Rule / Convention / Procedure）及原因
 - 不创建 AGENTS.md 的目录及原因
 - 不确定的命令或假设
 
@@ -70,6 +71,10 @@ Git 操作只允许只读命令：`git status`、`git diff`、`git ls-files`、`
 ### Step 3：写根 AGENTS.md
 
 必须包含：仓库目的、Codex 启动行为、目录地图（含 Local AGENTS.md 列和 Read when 列）、按需 cat 协议、关键命令复述、全局规则、Do not、Validation 标准。
+
+按 `references/instruction-types.md` 区分 Principle、Rule、Convention、Procedure：
+根文件只保留跨目录判断、可验证规则、全局约定和必要的流程入口，不把局部操作
+流程伪装成全局原则。
 
 目标长度 **8–16 KiB**，硬上限 **25 KiB**。
 
@@ -81,11 +86,22 @@ Domain card 或 Guardrail card，单文件 **0.5–2 KiB**。
 
 只在第 3 节"判定"通过时写。无独立价值的目录不写。
 
+用四类指令决定内容落点：Domain card 只写本模块特有 Principle/Rule/Convention/
+Procedure；Guardrail card 优先写有触发条件和验证方式的 Rule，以及有完成/停止
+条件的 Procedure。不要重复上级规则。
+
 完整模板见 `references/card-templates.md` 的对应段。
 
 ### Step 5：自检与最终汇报
 
 自检清单和中文最终汇报格式：见 `references/output-format.md` 的自检 + 汇报段。
+
+同时检查：
+
+- Principle、Rule、Convention、Procedure 没有混写成含义不清的口号
+- Rule 有范围、触发条件和真实验证方式
+- Procedure 有输入、顺序、输出、完成和停止条件
+- Principle 没有被机械化为无适用条件的绝对禁令
 
 ## 硬约束
 
@@ -128,5 +144,6 @@ Domain card 或 Guardrail card，单文件 **0.5–2 KiB**。
 | `references/loading-model.md` | 开始前必读：Codex 加载模型、字节预算、override.md 处理、沙箱限制、与 README 的关系 |
 | `references/card-templates.md` | Step 3、4 写文件时：三类卡片完整模板、必含元素、禁止事项、最短形式示例 |
 | `references/output-format.md` | Step 1 探索时 + Step 5 汇报时：探索清单、推荐命令、忽略目录、自检项、中文最终汇报格式 |
+| `references/instruction-types.md` | Step 2–5：判断 Principle、Rule、Convention、Procedure 的落点和硬检查 |
 
 按需读取，不要一次性全读。SKILL.md 本身的判断和约束足够覆盖大多数决策；只在写具体内容、收尾汇报、或对加载模型有疑问时才打开对应 references。

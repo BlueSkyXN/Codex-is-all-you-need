@@ -2,7 +2,7 @@
 name: sdlc-modular-monolith-architecture
 description: Use to design modular monolith boundaries, module layout, dependency rules, shared/platform seams, and extraction triggers.
 metadata:
-  version: "0.4"
+  version: "0.5"
   updated: "2026-07-23"
 ---
 

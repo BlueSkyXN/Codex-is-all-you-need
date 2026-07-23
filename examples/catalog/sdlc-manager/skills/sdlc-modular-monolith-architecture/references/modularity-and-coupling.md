@@ -53,7 +53,7 @@ formulae:
 - **Common Reuse Principle (CRP)**: avoid making consumers depend on a package
   whose unrelated parts they do not use; split broad `common` or `utils` areas
   around coherent consumers and change reasons.
-- **Release/Reuse Equivalence Principle (REP)**: a reused component should have
+- **Reuse/Release Equivalence Principle (REP)**: a reused component should have
   a coherent, supportable release boundary when independent reuse matters.
 - **Acyclic Dependencies Principle (ADP)**: keep the module dependency graph
   acyclic or make a temporary cycle-breaking plan explicit.

@@ -2,8 +2,8 @@
 
 Last updated: **2026-07-17**
 
-本文是 **调研证据横表**，不是开发规范正文。规范真源见 [../SPEC.md](../SPEC.md)。  
-证据来源：Agent Skills 开放标准 + 各平台 extract 文档 + 本机安装样本（2026-07-17）。
+本文是 **调研证据横表**，不是开发规范正文。规范真源见 [../SPEC.md](../SPEC.md)。
+证据来源：Agent Skills 开放标准 + 各平台 extract 文档 + 脱敏的本机安装样本（2026-07-17）。
 
 ---
 
@@ -62,7 +62,7 @@ Last updated: **2026-07-17**
 | **Team** | ❌ | WorkBuddy / Claude teams | 多角色协作（lead + members） | 编排层，不是 skill |
 | **Command / Slash** | ❌ | 多数产品 | 用户显式 `/name` 入口 | Claude 中与 skill 合流；Qoder 中常分目录 `commands/` |
 | **Connector / MCP** | ❌ | QoderWork / 多数插件生态 | 外部工具桥 | Plugin 可附带；Skill 可依赖 |
-| **Suite** | ❌ | Codex 本地生态 | 编排用 agent 套件（本机 `suites/all/agents`） | 非 skill 包标准 |
+| **Suite** | ❌ | Codex 本地生态 | legacy/local agent 编排套件 | 非 skill 包标准 |
 
 ### 1.4 一句话心智模型
 
@@ -182,7 +182,9 @@ policy:
 | `metadata.openclaw.*` | OpenClaw | OS/bin/env gating、install、emoji… | ❌ vendor ns（可共存） |
 | `metadata.short-description` 等 | Codex 样本 | 短描述 | ⚠️ 用唯一键 |
 
-### 2.4 真实 frontmatter 样本（本机）
+### 2.4 frontmatter 字段形态（本机样本脱敏）
+
+以下示例保留已观察到的字段形态；用户自建 skill 的名称与描述已替换为公开安全占位内容。
 
 **开放标准 / Codex 最小可移植：**
 
@@ -195,12 +197,12 @@ metadata:
 ---
 ```
 
-**WorkBuddy 用户 skill：**
+**WorkBuddy 用户 skill（脱敏）：**
 
 ```yaml
 ---
-name: feishu-spreadsheet-sheet-float-image
-description: This skill should be used when the task involves ...
+name: example-workflow
+description: This skill should be used when the task involves the example workflow.
 agent_created: true
 ---
 ```
@@ -209,22 +211,22 @@ agent_created: true
 
 ```yaml
 ---
-name: PRD生成
+name: 示例工作流
 description: >
-  输入功能需求描述，生成结构化PRD文档...
-argument-hint: "输入功能需求描述，如：..."
-name_en: "prd-generation"
+  输入任务描述，执行示例工作流...
+argument-hint: "输入任务描述，如：..."
+name_en: "example-workflow"
 description_en: >
-  Enter a feature description...
+  Enter a task description...
 ---
 ```
 
-**Copilot / Claude 风格最小 skill：**
+**Copilot / Claude 风格最小 skill（脱敏）：**
 
 ```yaml
 ---
-name: pua
-description: "Use when any task has failed 2+ times..."
+name: failure-recovery
+description: "Use when a task has failed repeatedly and needs structured recovery."
 ---
 ```
 
@@ -306,7 +308,7 @@ skill-name/                 # 目录名 = frontmatter name
 
 ### 3.3 各平台 skill 目录「标准形」
 
-| 平台 | 规范/文档推荐形 | 本机常见形 | 相对标准的增量 |
+| 平台 | 规范/文档推荐形 | 脱敏观察形态 | 相对标准的增量 |
 |---|---|---|---|
 | **开放标准** | `SKILL.md` + scripts/references/assets | — | 基线 |
 | **Codex** | 同上 + **`agents/openai.yaml`** | system skill-creator 含 agents/scripts/references/assets | sidecar |
@@ -343,10 +345,10 @@ my-expert/
 └── avatars/...
 
 # QoderWork role plugin
-产品管理/
+示例角色/
 ├── .qoder-plugin/plugin.json
 ├── .mcp.json
-├── skills/PRD生成/SKILL.md
+├── skills/示例工作流/SKILL.md
 ├── README.md
 └── CONNECTORS.md
 
@@ -391,9 +393,9 @@ plugin-root/
 
 对 portable 作者的可操作结论：
 
-1. **最小合法包**：`skill-name/SKILL.md`（仅 name+description 亦可）  
-2. **标准包**：再加真正用到的 `scripts/` `references/` `assets/`  
-3. **按需生长**：无材料不建空目录  
+1. **最小合法包**：`skill-name/SKILL.md`（仅 name+description 亦可）
+2. **标准包**：再加真正用到的 `scripts/` `references/` `assets/`
+3. **按需生长**：无材料不建空目录
 4. **产品目录**（`agents/`、中文 skill 名、plugin 壳）放适配层，不污染核心
 
 ---
@@ -410,10 +412,10 @@ plugin-root/
 
 ## 5. 对规范设计的直接含义（供 SPEC 校准，非 SPEC 正文）
 
-1. **名词**：SPEC 应只把 Skill 定义成工序单元；Plugin/Agent/Expert 最多作为边界说明，不并进 skill 分类。  
-2. **SKILL.md**：可移植必须集 = 开放标准六字段模型（2 必填 + 4 可选）；其余一律「平台扩展」。  
-3. **目录**：标准推荐 scripts/references/assets；允许有独立职责的新目录；禁止把分发壳目录写成 skill 必选。  
-4. **冲突处理**：`name` 字符集与「目录名一致」以开放标准为准；QoderWork 中文 UI 名视为产品例外。  
+1. **名词**：SPEC 应只把 Skill 定义成工序单元；Plugin/Agent/Expert 最多作为边界说明，不并进 skill 分类。
+2. **SKILL.md**：可移植必须集 = 开放标准六字段模型（2 必填 + 4 可选）；其余一律「平台扩展」。
+3. **目录**：标准推荐 scripts/references/assets；允许有独立职责的新目录；禁止把分发壳目录写成 skill 必选。
+4. **冲突处理**：`name` 字符集与「目录名一致」以开放标准为准；QoderWork 中文 UI 名视为产品例外。
 5. **仍待 runtime 验证**：未知 frontmatter 忽略还是拒绝；Copilot 多根发现优先级；Qoder 重名优先级。
 
 ---
@@ -434,5 +436,5 @@ plugin-root/
 
 公网真源：
 
-- https://agentskills.io/home.md  
-- https://agentskills.io/specification  
+- https://agentskills.io/home.md
+- https://agentskills.io/specification

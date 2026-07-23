@@ -9,7 +9,7 @@
 | Public package spec | Still **no stable first-party web authoring page** comparable to Claude/Codex |
 | First-party local evidence | WorkBuddy.app bundled `builtin-skills/` (verified 2026-07-17) |
 | Related product | CodeBuddy CLI docs describe a Claude-like skill surface; WorkBuddy reuses `.codebuddy-plugin` names and often CodeBuddy wording inside creators |
-| Extracted | 2026-07-17 from local app package + local install samples |
+| Extracted | 2026-07-17 from local app package + sanitized local layout samples |
 
 Primary local sources:
 
@@ -83,10 +83,8 @@ Default when unset:
 
 `expert-manager` refuses generating experts outside that tree so the product can detect them.
 
-Observed marketplaces on this machine also include:
-
-- `codebuddy-plugins-official`
-- `cb_teams_marketplace`
+Marketplace identifiers vary by installation and are intentionally omitted here;
+they are distribution state, not part of the portable skill shape.
 
 ## 4. Directory structure
 
@@ -100,12 +98,12 @@ skill-name/
 └── assets/                  # optional
 ```
 
-Local sample:
+Sanitized local shape:
 
 ```text
-~/.workbuddy/skills/feishu-spreadsheet-sheet-float-image/
+~/.workbuddy/skills/example-workflow/
 ├── SKILL.md
-└── references/float_image_api_reference.md
+└── references/example-api.md
 ```
 
 ### Expert package (plugin)
@@ -141,12 +139,12 @@ WorkBuddy-specific / product-local:
 | `disable` | Optional | Builtin creators use `disable: false` |
 | `license` | Optional | e.g. pointer to `LICENSE.txt` |
 
-Local user skill sample frontmatter:
+Sanitized local user-skill frontmatter:
 
 ```yaml
 ---
-name: feishu-spreadsheet-sheet-float-image
-description: This skill should be used when the task involves ...
+name: example-workflow
+description: This skill should be used when the task involves the example workflow.
 agent_created: true
 ---
 ```
@@ -212,9 +210,9 @@ Experts:
 
 ### Skill distribution
 
-1. Local authoring under user/project skills roots  
-2. `package_skill.py` → zip after validation  
-3. BuiltinMarket install through host tool (no user-constructed HTTP/auth)  
+1. Local authoring under user/project skills roots
+2. `package_skill.py` → zip after validation
+3. BuiltinMarket install through host tool (no user-constructed HTTP/auth)
 4. Editing marketplace-installed skills must mark local meta `userModified: true`
    so auto-update does not silently overwrite
 
@@ -328,12 +326,12 @@ results to lead via messaging conventions.
 
 ## 14. Authoring practices
 
-1. Author portable skill core as Agent Skills (`name`/`description` + lean body + resources).  
-2. On WorkBuddy, set `agent_created: true` if the skill should remain agent-manageable.  
-3. Use `skill-creator` for skills; use `expert-manager` when the unit is a marketable role/team.  
-4. Keep expert generation inside the fixed `my-experts/plugins` root.  
-5. Fill bilingual display fields carefully; they are product UX contracts, not optional polish.  
-6. After editing marketplace-installed skills, mark `userModified: true`.  
+1. Author portable skill core as Agent Skills (`name`/`description` + lean body + resources).
+2. On WorkBuddy, set `agent_created: true` if the skill should remain agent-manageable.
+3. Use `skill-creator` for skills; use `expert-manager` when the unit is a marketable role/team.
+4. Keep expert generation inside the fixed `my-experts/plugins` root.
+5. Fill bilingual display fields carefully; they are product UX contracts, not optional polish.
+6. After editing marketplace-installed skills, mark `userModified: true`.
 7. Do not assume WorkBuddy upload/SkillHub rules from community posts alone — prefer
    app-bundled validators/scripts when packaging.
 

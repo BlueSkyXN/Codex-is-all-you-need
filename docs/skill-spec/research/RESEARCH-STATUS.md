@@ -21,7 +21,7 @@ and what is blocked on missing official sources or runtime verification.
 | Qoder / QoderWork | Medium | [qoder.md](qoder.md) | Public CLI thin + **local QoderWork creators/plugins captured**; precedence still open |
 | GitHub Copilot CLI | Medium | [copilot-cli.md](copilot-cli.md) | **New**: local install layout + agents/plugins samples; full official schema open |
 
-**Design-ready now:** open standard + Claude + Codex + OpenClaw core + WorkBuddy skill/expert shape + QoderWork plugin shape.  
+**Design-ready now:** open standard + Claude + Codex + OpenClaw core + WorkBuddy skill/expert shape + QoderWork plugin shape.
 **Not freeze-ready:** full public SkillHub upload whitepaper, Qoder collision precedence, complete Copilot official plugin schema, full runtime matrix.
 
 ---
@@ -63,33 +63,31 @@ and what is blocked on missing official sources or runtime verification.
 | Business role packages | WorkBuddy, QoderWork | Expert / 角色套件（plugin）面向业务用户 |
 | Developer subagent configs | Codex, Claude Code, Copilot CLI | TOML / markdown / `.agent.yaml` 偏开发者 |
 
-### Local evidence already collected
+### Sanitized product-shape evidence already collected
 
-- Many real `agents/openai.yaml` samples under local Codex skill installs
-  - Observed top-level keys only: `interface`, `policy`, `dependencies`
-  - In one local curated set (39 files), **zero** set
-    `policy.allow_implicit_invocation: false` (all default/implicit-on)
+- Sanitized `agents/openai.yaml` samples from distributable Codex skill installs
+  - Observed top-level keys: `interface`, `policy`, `dependencies`
+  - The observed set used default/implicit invocation; that sample is not treated
+    as evidence that explicit opt-out is globally uncommon
 - This repo dual-publishes plugins with both:
   - `.codex-plugin/plugin.json`
   - `.claude-plugin/plugin.json`
-- Local system skill-creator contains:
-  - `references/openai_yaml.md`
-  - `scripts/generate_openai_yaml.py`
-  - `scripts/init_skill.py`
-  - `scripts/quick_validate.py`
+- The system skill-creator exposes sidecar guidance plus generation,
+  initialization, and validation helpers
 - **WorkBuddy (2026-07-17):**
   - App bundled `skill-creator`, `expert-manager`, `marketplace-skill-installer`
-  - User skills root `~/.workbuddy/skills/` with real skill sample (`agent_created: true`)
-  - Expert package schema via `references/plugin-json-spec.md` + agent/team specs
+  - User skills root `~/.workbuddy/skills/`; sanitized shape includes
+    `agent_created: true`
+  - Expert package fields summarized without copying private templates
   - Manifest dir name `.codebuddy-plugin/`
 - **QoderWork CN (2026-07-17):**
-  - `~/.qoderworkcn/skills/{create-skill,plugin-creator,...}`
-  - Role plugins under `~/.qoderworkcn/plugins/{产品管理,市场营销,data}/`
-  - `.qoder-plugin/plugin.json` + `.mcp.json` + Chinese skill names
+  - User skills under `~/.qoderworkcn/skills/`
+  - Role plugins under `~/.qoderworkcn/plugins/<localized-role-name>/`
+  - `.qoder-plugin/plugin.json` + `.mcp.json` + localized skill names
 - **Copilot CLI (2026-07-17):**
   - `~/.copilot/skills/`, `~/.copilot/agents/*.md`
-  - `~/.copilot/pkg/darwin-arm64/1.0.64-1/definitions/*.agent.yaml`
-  - `installed-plugins/_direct/plugin.json` sample
+  - `~/.copilot/pkg/darwin-arm64/<version>/definitions/*.agent.yaml`
+  - Sanitized `installed-plugins/_direct/plugin.json` shape
 
 ---
 
@@ -135,7 +133,7 @@ Legend:
 | C4 | Plugin packaging | DONE enough | skill-only plugin layout captured |
 | C5 | skill-creator doctrine | DONE enough | progressive disclosure, freedom levels, validate flow |
 | C6 | Current canonical location after `openai/skills` deprecation | PARTIAL | README points to `openai/plugins`; re-check live install path periodically |
-| C7 | Whether `allow_implicit_invocation: false` is common in first-party skills | PARTIAL | local curated sample set showed 0/39 false |
+| C7 | Whether `allow_implicit_invocation: false` is common in first-party skills | PARTIAL | sanitized observed set used defaults; sample is not representative enough to freeze prevalence |
 | C8 | Exact schema validation for openai.yaml beyond skill-creator notes | OPEN | no formal JSON schema found yet |
 
 ### D. OpenClaw
@@ -176,7 +174,7 @@ Legend:
 
 | ID | Item | Status | Notes / next action |
 |---|---|---|---|
-| G1 | First-party skill authoring shape | DONE enough | app-bundled `skill-creator` + local user skill sample |
+| G1 | First-party skill authoring shape | DONE enough | app-bundled creator + sanitized user-layout observation |
 | G2 | SkillHub / BuiltinMarket upload package format | PARTIAL | installer + package_skill flow known; still no public whitepaper |
 | G3 | Expert vs skill relationship | DONE enough | `expert-manager` + plugin-json/agent-md/team specs |
 | G4 | Compatibility with CodeBuddy / Agent Skills | DONE enough for design | shared progressive disclosure + `.codebuddy-plugin`; live root `~/.workbuddy` |
@@ -186,7 +184,7 @@ Legend:
 
 | ID | Item | Status | Notes / next action |
 |---|---|---|---|
-| I1 | User skill / agent / plugin paths | DONE enough | local install captured in `copilot-cli.md` |
+| I1 | User skill / agent / plugin paths | DONE enough | sanitized install layout captured in `copilot-cli.md` |
 | I2 | Bundled `.agent.yaml` schema | DONE enough for observed keys | richer than user markdown agents |
 | I3 | Official public plugin schema page | OPEN | currently inferred from samples + path survey |
 | I4 | Skill discovery precedence across `.agents`/`.claude`/`.github`/user roots | OPEN | needs runtime matrix |
@@ -221,7 +219,7 @@ Legend:
 
 ### Source path overview (local, 2026-07-17)
 
-Primary input: local machine path survey across WorkBuddy / QoderWork CN / Codex / Claude Code / Copilot CLI creation roots (see workspace note `AI工具创建能力路径总览.md`).
+Primary input: sanitized local path survey across WorkBuddy / QoderWork CN / Codex / Claude Code / Copilot CLI creation roots, summarized in the checked-in platform extracts below.
 
 ### WorkBuddy (local first-party assets)
 
@@ -238,13 +236,13 @@ Primary input: local machine path survey across WorkBuddy / QoderWork CN / Codex
 
 ### QoderWork CN (local creators/plugins)
 
-- Creators: `create-skill`, `plugin-creator` (v1.7.1), `create-command`
+- Creators: `create-skill`, `plugin-creator`, `create-command`
 - Plugin = role toolbox; Skill = single tool inside it
 - Plugin layout: `.qoder-plugin/plugin.json` + `.mcp.json` + `skills/` + README/CONNECTORS
 - UI-first Chinese skill directory/`name` inside plugins; `plugin.json.name` stays English kebab-case
 - No independent subagent/team framework; role plugin approximates “agent”
 
-### Copilot CLI (local install `1.0.64-1`)
+### Copilot CLI (sanitized local install layout)
 
 - Roots: `~/.copilot/skills`, `~/.copilot/agents`, `~/.copilot/plugins`, `installed-plugins/`
 - Bundled agents: `definitions/*.agent.yaml` with `tools`, `model`, `promptParts`, `prompt`
@@ -254,8 +252,8 @@ Primary input: local machine path survey across WorkBuddy / QoderWork CN / Codex
 
 ### Creation-style taxonomy (cross-tool)
 
-1. Scripted engineering scaffolds (Codex / WorkBuddy)  
-2. Conversational creator skills (QoderWork)  
+1. Scripted engineering scaffolds (Codex / WorkBuddy)
+2. Conversational creator skills (QoderWork)
 3. Slash command families + bundled definitions (Claude / Copilot)
 
 ---
@@ -264,30 +262,30 @@ Primary input: local machine path survey across WorkBuddy / QoderWork CN / Codex
 
 Not urgent freeze; when continuing, do this order for highest value:
 
-1. **A2–A5** open-standard creation/eval guides  
-   → improves portable authoring doctrine without product politics  
-2. **H1/H2/H6** minimal skill + unknown frontmatter smoke across Claude/Codex/Copilot/WorkBuddy/QoderWork  
-   → turns packaging hypotheses into compatibility claims  
-3. **I3/I4** Copilot official plugin schema + discovery precedence  
-4. **D4–D7** OpenClaw config/CLI/security pages  
-5. **C6/C8** Codex current canonical skill-creator/plugin examples / openai.yaml schema  
-6. **B2–B4** Claude plugin/hooks/eval details  
-7. **F3** Qoder precedence runtime test  
+1. **A2–A5** open-standard creation/eval guides
+   → improves portable authoring doctrine without product politics
+2. **H1/H2/H6** minimal skill + unknown frontmatter smoke across Claude/Codex/Copilot/WorkBuddy/QoderWork
+   → turns packaging hypotheses into compatibility claims
+3. **I3/I4** Copilot official plugin schema + discovery precedence
+4. **D4–D7** OpenClaw config/CLI/security pages
+5. **C6/C8** Codex current canonical skill-creator/plugin examples / openai.yaml schema
+6. **B2–B4** Claude plugin/hooks/eval details
+7. **F3** Qoder precedence runtime test
 8. **G2** WorkBuddy public SkillHub whitepaper only if/when published
 
 ---
 
 ## Working rules while incomplete / 未完成前的使用原则
 
-1. Design portable skills against **Agent Skills open standard**.  
+1. Design portable skills against **Agent Skills open standard**.
 2. Treat product fields as **adapters**:
    - Codex → `agents/openai.yaml`
    - Claude/CodeBuddy/Copilot-ish → frontmatter runtime fields
    - OpenClaw → `metadata.openclaw`
    - WorkBuddy → `agent_created` + expert package cosmetics
    - QoderWork → bilingual UI fields + `.qoder-plugin` role suites
-3. Do not put WorkBuddy expert marketplace cosmetics or QoderWork Chinese UI names into the portable core.  
-4. Do not claim cross-runtime behavior that has not been smoke-tested (H1–H6).  
+3. Do not put WorkBuddy expert marketplace cosmetics or QoderWork Chinese UI names into the portable core.
+4. Do not claim cross-runtime behavior that has not been smoke-tested (H1–H6).
 5. When docs conflict (Qoder precedence, OpenClaw description length guidance, WorkBuddy creator text saying `~/.codebuddy`), mark as **unresolved** instead of picking silently.
 
 ---

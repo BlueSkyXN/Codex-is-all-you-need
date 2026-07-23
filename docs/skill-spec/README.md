@@ -51,6 +51,6 @@ references = 怎么做对   examples = 长什么样   evals = 测过了吗
 
 ## 相关仓内文档
 
-- [skill-design.md](../skill-design.md) — 旧公开设计短文  
-- [skill-versioning.md](../skill-versioning.md) — 行为版本契约  
-- [agent-skill-map.md](../agent-skill-map.md) — Agent 与 skill 分工  
+- [skill-design.md](../skill-design.md) — 旧公开设计短文
+- [skill-versioning.md](../skill-versioning.md) — 行为版本契约
+- [agent-skill-map.md](../agent-skill-map.md) — Agent 与 skill 分工

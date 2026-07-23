@@ -1,7 +1,7 @@
 # Skill Design / Skill 设计
 
-> 完整开发规范（最小/标准/集合/群、目录、清单）见 **[skill-spec/SPEC.md](skill-spec/SPEC.md)**。  
-> 各平台调研证据见 **[skill-spec/research/](skill-spec/research/)**。  
+> 完整开发规范（单文件/标准/套件/群、目录、清单）见 **[skill-spec/SPEC.md](skill-spec/SPEC.md)**。
+> 各平台调研证据见 **[skill-spec/research/](skill-spec/research/)**。
 > 本文保留为公开安全、偏短的写法导读。
 
 This guide defines a public-safe Codex skill style.

@@ -37,10 +37,10 @@ Highest precedence wins on name collision:
 
 Notes:
 
-- Discovery finds `SKILL.md` up to **6 levels** under a root  
-- Folder nesting is organizational; identity comes from frontmatter `name` (or directory name)  
-- Codex CLI `$CODEX_HOME/skills` is **not** an OpenClaw root (migrate via `openclaw migrate …`)  
-- Connected node skills can appear from the node’s skill dir; collisions may get node-prefixed names  
+- Discovery finds `SKILL.md` up to **6 levels** under a root
+- Folder nesting is organizational; identity comes from frontmatter `name` (or directory name)
+- Codex CLI `$CODEX_HOME/skills` is **not** an OpenClaw root (migrate via `openclaw migrate …`)
+- Connected node skills can appear from the node’s skill dir; collisions may get node-prefixed names
 
 Visibility (who can see a skill) is separate from precedence and can be narrowed
 by agent allowlists (`agents.defaults.skills`, `agents.list[].skills`).
@@ -67,8 +67,8 @@ When the user asks to generate an image, use the `image_generate` tool...
 
 Parsing notes:
 
-- YAML first; fallback single-line-only parser  
-- Nested `metadata` may be flattened/re-parsed as JSON5  
+- YAML first; fallback single-line-only parser
+- Nested `metadata` may be flattened/re-parsed as JSON5
 
 ### Common optional fields
 
@@ -104,20 +104,20 @@ skills should use `openclaw`.
 
 ## 6. Progressive disclosure / loading
 
-- Eligible skills compile into a compact XML `<available_skills>`-style prompt block  
-- Base overhead only when ≥1 skill is eligible  
-- Per skill roughly ~97 chars + name/description/location lengths before tokenization effects  
-- If over `skills.limits.maxSkillsPromptChars`, identities are preserved first; descriptions may be shortened/omitted  
-- `disable-model-invocation: true` withholds body from normal prompt (slash-only style path)  
-- Eligibility snapshot at session start; refresh on watcher / node / allowlist changes  
+- Eligible skills compile into a compact XML `<available_skills>`-style prompt block
+- Base overhead only when ≥1 skill is eligible
+- Per skill roughly ~97 chars + name/description/location lengths before tokenization effects
+- If over `skills.limits.maxSkillsPromptChars`, identities are preserved first; descriptions may be shortened/omitted
+- `disable-model-invocation: true` withholds body from normal prompt (slash-only style path)
+- Eligibility snapshot at session start; refresh on watcher / node / allowlist changes
 
 ## 7. Supporting files
 
-- Standard optional scripts/docs/assets under the skill directory  
-- Use `{baseDir}` for portable relative references  
-- Node-hosted skill binaries/resources execute on the node (`exec host=node …`)  
+- Standard optional scripts/docs/assets under the skill directory
+- Use `{baseDir}` for portable relative references
+- Node-hosted skill binaries/resources execute on the node (`exec host=node …`)
 - Config overrides in `~/.openclaw/openclaw.json` under `skills.entries`:
-  `enabled`, `apiKey`, `env`, `config`, plus bundled allowlisting controls  
+  `enabled`, `apiKey`, `env`, `config`, plus bundled allowlisting controls
 
 ## 8. Invocation
 
@@ -143,15 +143,15 @@ openclaw skills verify @owner/<slug>
 
 Also:
 
-- Plugin skill directories via `openclaw.plugin.json`  
-- Skill Workshop for agent-drafted proposals with human apply  
-- Private uploaded archives gated off by default  
+- Plugin skill directories via `openclaw.plugin.json`
+- Skill Workshop for agent-drafted proposals with human apply
+- Private uploaded archives gated off by default
 
 ## 10. Versioning
 
-- No dedicated skill semver field emphasized on the skills page  
-- ClawHub origin metadata can record registry/version identity  
-- Prompt compaction may retain a version token under budget pressure  
+- No dedicated skill semver field emphasized on the skills page
+- ClawHub origin metadata can record registry/version identity
+- Prompt compaction may retain a version token under budget pressure
 
 Prefer Agent Skills `metadata.version` in-file if you need portable behavior
 versioning.
@@ -171,39 +171,39 @@ versioning.
 
 OpenClaw-heavy surface area:
 
-- `metadata.openclaw` eligibility gates and installers  
-- Multi-root precedence including `.agents/skills` and `~/.openclaw/skills`  
-- ClawHub install/verify/update  
-- Node-hosted remote skills  
-- Session skill snapshots + watcher hot refresh  
-- `command-dispatch` tool short-circuit  
+- `metadata.openclaw` eligibility gates and installers
+- Multi-root precedence including `.agents/skills` and `~/.openclaw/skills`
+- ClawHub install/verify/update
+- Node-hosted remote skills
+- Session skill snapshots + watcher hot refresh
+- `command-dispatch` tool short-circuit
 
 ## 13. Security
 
 Docs treat third-party skills as untrusted code:
 
-- Read before enable; prefer sandbox for risky tools  
-- Path containment for workspace/project/extra roots  
-- Optional `security.installPolicy` (fail closed) before installs  
-- Secrets via `skills.entries.*.env` / `apiKey` on host turn only—not in SKILL.md  
-- Verify ClawHub packages; scanning integrations mentioned in ecosystem docs  
+- Read before enable; prefer sandbox for risky tools
+- Path containment for workspace/project/extra roots
+- Optional `security.installPolicy` (fail closed) before installs
+- Secrets via `skills.entries.*.env` / `apiKey` on host turn only—not in SKILL.md
+- Verify ClawHub packages; scanning integrations mentioned in ecosystem docs
 
 ## 14. Authoring practices
 
-1. Always set clear short `name` + compact `description`.  
-2. Declare real gates (`requires.bins` / `env` / `os` / `config`).  
-3. Prefer `metadata.openclaw` over legacy keys.  
-4. Use `{baseDir}` for local file references.  
-5. Place skills by intended visibility (workspace vs managed global vs plugin).  
-6. Use `disable-model-invocation` for slash-only workflows.  
-7. Never embed secrets in skill text.  
-8. Keep descriptions short to survive prompt budgets.  
+1. Always set clear short `name` + compact `description`.
+2. Declare real gates (`requires.bins` / `env` / `os` / `config`).
+3. Prefer `metadata.openclaw` over legacy keys.
+4. Use `{baseDir}` for local file references.
+5. Place skills by intended visibility (workspace vs managed global vs plugin).
+6. Use `disable-model-invocation` for slash-only workflows.
+7. Never embed secrets in skill text.
+8. Keep descriptions short to survive prompt budgets.
 9. Human-review workshop proposals and third-party installs.
 
 ## 15. Extraction notes
 
-- Primary source: https://docs.openclaw.ai/tools/skills  
-- Strong on load gating and distribution; lighter on body-authoring templates.  
+- Primary source: https://docs.openclaw.ai/tools/skills
+- Strong on load gating and distribution; lighter on body-authoring templates.
 - Align frontmatter minimum with Agent Skills open standard for portability.
 
 ### Follow-up sources already identified

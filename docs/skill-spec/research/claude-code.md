@@ -39,10 +39,10 @@ Unlike `CLAUDE.md`, skill body loads **only when used**.
 
 **Name conflict precedence (same name):**
 
-1. Enterprise overrides personal  
-2. Personal overrides project  
-3. Any of the above can override a bundled skill of the same name  
-4. Plugin skills use `plugin-name:skill-name` namespace (no clash with plain names)  
+1. Enterprise overrides personal
+2. Personal overrides project
+3. Any of the above can override a bundled skill of the same name
+4. Plugin skills use `plugin-name:skill-name` namespace (no clash with plain names)
 5. If skill and `.claude/commands/` share a name, **skill wins**
 
 Nested skills with the same basename stay available under qualified names such as
@@ -125,18 +125,18 @@ text; stdout replaces the placeholder. Not model-executed tool use.
 
 ## 6. Progressive disclosure / loading
 
-1. Skill **names/descriptions** enter context so Claude knows what exists  
-2. Full `SKILL.md` loads on invoke  
-3. Supporting files load when referenced/needed  
+1. Skill **names/descriptions** enter context so Claude knows what exists
+2. Full `SKILL.md` loads on invoke
+3. Supporting files load when referenced/needed
 
 Lifecycle notes:
 
-- Rendered skill content stays in the session after invoke  
-- Re-invoke with identical rendered content may only note “already loaded”  
-- On auto-compact, recent skill invocations are reattached with budgets  
-  (per-skill keep front portion; combined reattach budget documented as 25k tokens)  
+- Rendered skill content stays in the session after invoke
+- Re-invoke with identical rendered content may only note “already loaded”
+- On auto-compact, recent skill invocations are reattached with budgets
+  (per-skill keep front portion; combined reattach budget documented as 25k tokens)
 - Description listing budget scales with model context (default about 1%); per-entry
-  description+when_to_use cap **1536** chars  
+  description+when_to_use cap **1536** chars
 
 Guidance: keep `SKILL.md` under **500 lines**.
 
@@ -213,27 +213,27 @@ Claude-specific power features:
 
 ## 13. Security
 
-- Project skills with `allowed-tools` take effect after workspace trust acceptance  
-- Review project skills before trust; they can grant broad tool access  
-- Permission rules can allow/deny `Skill` tool or named skills  
-- `disableSkillShellExecution` can block `!` command expansion from untrusted sources  
+- Project skills with `allowed-tools` take effect after workspace trust acceptance
+- Review project skills before trust; they can grant broad tool access
+- Permission rules can allow/deny `Skill` tool or named skills
+- `disableSkillShellExecution` can block `!` command expansion from untrusted sources
 - Treat third-party/plugin skills as code
 
 ## 14. Authoring practices
 
-1. Put trigger keywords in `description` (and `when_to_use` if needed).  
-2. Write actions, not essays; body stays in session after load.  
-3. Split detail into supporting files; stay under 500 lines.  
-4. Use `disable-model-invocation: true` for side-effect workflows (deploy/commit).  
-5. Use `user-invocable: false` for background knowledge that is not a user command.  
-6. Reference scripts with `${CLAUDE_SKILL_DIR}`.  
-7. Measure trigger quality and output quality separately (skill-creator / evals).  
+1. Put trigger keywords in `description` (and `when_to_use` if needed).
+2. Write actions, not essays; body stays in session after load.
+3. Split detail into supporting files; stay under 500 lines.
+4. Use `disable-model-invocation: true` for side-effect workflows (deploy/commit).
+5. Use `user-invocable: false` for background knowledge that is not a user command.
+6. Reference scripts with `${CLAUDE_SKILL_DIR}`.
+7. Measure trigger quality and output quality separately (skill-creator / evals).
 8. Fix “never triggers” by improving description keywords; fix “over-triggers” by
    narrowing description or disabling model invocation.
 
 ## 15. Extraction notes
 
-- Primary source: https://code.claude.com/docs/zh-CN/skills  
-- Page is detailed; this note compresses tables and rules for comparison.  
+- Primary source: https://code.claude.com/docs/zh-CN/skills
+- Page is detailed; this note compresses tables and rules for comparison.
 - Subpages (plugins reference, hooks, best practices, agentskills eval format)
   were not fully re-ingested here—follow upstream links for those subsystems.

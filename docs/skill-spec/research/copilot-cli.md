@@ -8,7 +8,7 @@
 | User config root | `~/.copilot` (not `.copilotcli`) |
 | Binary sample | `/opt/homebrew/bin/copilot` |
 | Local package root | `~/.copilot/pkg/darwin-arm64/<version>/` |
-| Extracted | 2026-07-17 from local install (pkg `1.0.64-1`) + user data |
+| Extracted | 2026-07-17 from a versioned local install + sanitized user-layout observations |
 | Public docs | Product docs exist for cloud-agent customization; local CLI packaging is partly inferred from install layout |
 
 This extract covers **local CLI extensibility paths** observed on disk:
@@ -58,8 +58,8 @@ Creation UX (product commands, from path survey):
 └── ... optional resources
 ```
 
-Observed skills on this machine include both English and product-local packs
-(`pua`, `pdf`, `xlsx`, `multi-model-council`, …).
+A sanitized layout survey confirmed that public/bundled and user-authored packs
+can coexist under this root; installation-specific identifiers are omitted.
 
 ### Plugin
 
@@ -74,10 +74,10 @@ installed-plugins/_direct/
 └── ...
 ```
 
-User plugin workspace example:
+Sanitized user-plugin workspace shape:
 
 ```text
-~/.copilot/plugins/copilot-hud/
+~/.copilot/plugins/<plugin-name>/
 ```
 
 ### Agent
@@ -86,19 +86,12 @@ Two coexisting formats:
 
 ```text
 # User-authored markdown agents
-~/.copilot/agents/code-reviewer.md
-~/.copilot/agents/backend-developer.md
+~/.copilot/agents/<agent-name>.md
 ...
 
 # Bundled YAML agents (versioned package)
 ~/.copilot/pkg/darwin-arm64/<ver>/definitions/
-  code-review.agent.yaml
-  explore.agent.yaml
-  rem-agent.agent.yaml
-  research.agent.yaml
-  rubber-duck.agent.yaml
-  security-review.agent.yaml
-  task.agent.yaml
+  <bundled-agent>.agent.yaml
 ```
 
 ## 5. `SKILL.md` and frontmatter
@@ -107,8 +100,8 @@ Copilot skills follow the Agent Skills core:
 
 ```yaml
 ---
-name: pua
-description: "Use when any task has failed 2+ times..."
+name: failure-recovery
+description: "Use when a task has failed repeatedly and needs structured recovery."
 ---
 ```
 
@@ -160,8 +153,8 @@ router skill.
 | Agent | `/agents` management + runtime subagent dispatch |
 | Plugin | Install/enable plugin, then use its commands/hooks/skills |
 
-Bundled agents are task-specialized subagents (`research`, `explore`, `code-review`,
-`security-review`, `task`, …), typically orchestrated by the main agent.
+Bundled agents are task-specialized subagents, typically orchestrated by the main
+agent; their installation-specific identifiers are omitted here.
 
 ## 9. Packaging and distribution
 
@@ -171,7 +164,7 @@ From `installed-plugins/_direct/plugin.json`:
 
 | Field | Example / role |
 |---|---|
-| `name` | `copilot-hud` |
+| `name` | `example-plugin` |
 | `description` | one-line summary |
 | `version` | semver |
 | `author` | `{name}` |
@@ -182,7 +175,7 @@ From `installed-plugins/_direct/plugin.json`:
 | `hooks` | path, e.g. `hooks.json` |
 
 Path-survey notes also indicate plugin spec support for `skills`, `agents`,
-`extensions` in broader packaging (not all present in the HUD sample).
+`extensions` in broader packaging (not all present in the observed sample).
 
 ### Marketplace interop note
 
@@ -213,14 +206,14 @@ For portable limits, fall back to Agent Skills (`name` ≤ 64, `description` ≤
 
 ## 12. Platform-specific extensions
 
-### User agent markdown frontmatter (observed)
+### User agent markdown frontmatter (sanitized observed shape)
 
 ```yaml
 ---
-name: code-reviewer
-description: "Use this agent when you need to conduct comprehensive code reviews..."
+name: example-reviewer
+description: "Use this agent when a structured review is required."
 tools: Read, Write, Edit, Bash, Glob, Grep
-model: opus
+model: example-model
 ---
 ```
 
@@ -232,7 +225,7 @@ Notes:
 
 ### Bundled `.agent.yaml` (observed keys)
 
-From `definitions/research.agent.yaml`:
+From a sanitized `definitions/<bundled-agent>.agent.yaml` shape:
 
 | Key | Role |
 |---|---|
@@ -260,11 +253,11 @@ This YAML format is **Copilot-package-native** and richer than plain user markdo
 
 ## 14. Authoring practices
 
-1. Write portable skills as Agent Skills directories; they drop into `~/.copilot/skills/`.  
-2. Use Claude-compatible optional fields only when needed (`user-invocable`, etc.).  
-3. Prefer markdown agents under `~/.copilot/agents/` for simple custom specialists.  
-4. Use plugin packages when shipping commands/hooks together with skills/agents.  
-5. Do not assume user-agent `tools:` syntax is portable to WorkBuddy/Claude/Codex without adaptation.  
+1. Write portable skills as Agent Skills directories; they drop into `~/.copilot/skills/`.
+2. Use Claude-compatible optional fields only when needed (`user-invocable`, etc.).
+3. Prefer markdown agents under `~/.copilot/agents/` for simple custom specialists.
+4. Use plugin packages when shipping commands/hooks together with skills/agents.
+5. Do not assume user-agent `tools:` syntax is portable to WorkBuddy/Claude/Codex without adaptation.
 6. For multi-ecosystem distribution, dual thin manifests + shared `skills/` remains the practical pattern.
 
 ## 15. Extraction notes

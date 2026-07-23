@@ -34,8 +34,8 @@ Skills are modular: one skill ≈ one task type.
 
 Conflict handling differs slightly across pages:
 
-- Overview-style docs often say **project wins**  
-- CLI deep-dive extract noted **user wins** on collision  
+- Overview-style docs often say **project wins**
+- CLI deep-dive extract noted **user wins** on collision
 
 Treat collision behavior as **verify on your installed Qoder version** before
 relying on it in automation. After manual adds, restart IDE or `/skills reload`
@@ -45,15 +45,15 @@ as documented for the surface you use.
 
 | Scope | Path | Notes |
 |---|---|---|
-| User skills | `~/.qoderworkcn/skills/` | Live root; contains `create-skill`, `plugin-creator`, many domain skills |
+| User skills | `~/.qoderworkcn/skills/` | Live root; contains bundled creators and user-authored skills |
 | Parallel root | `~/.qoderwork/skills/` | Non-CN install mirror (same shape) |
-| Plugins (role suites) | `~/.qoderworkcn/plugins/<角色名>/` | e.g. `产品管理/`, `市场营销/`, `data/` |
+| Plugins (role suites) | `~/.qoderworkcn/plugins/<localized-role-name>/` | Role names are installation content and are omitted here |
 | Custom plugin staging | `~/.qoderworkcn/plugins-custom/` | Empty/custom staging area |
 | Slash commands | `~/.qoderworkcn/commands/` | includes `create-command.md` |
 
 `create-skill` templates paths with `~/{{.DataDirName}}/skills/` (host) or
-`/root/{{.DataDirName}}/skills/` (VM/container). On this machine `DataDirName`
-resolves to `qoderworkcn`.
+`/root/{{.DataDirName}}/skills/` (VM/container). `DataDirName` is
+product- and installation-specific; portable instructions must not hardcode it.
 
 ## 4. Directory structure
 
@@ -101,14 +101,14 @@ Show specific usage examples.
 
 Overview page does not redefine schema and defers to fuller docs / `/create-skill`.
 
-### QoderWork CN extensions (local plugin skills)
+### QoderWork CN extensions (sanitized local plugin shapes)
 
-Role-suite skills on this machine commonly add bilingual / UX fields beyond the
+Observed role-suite skill shapes commonly add bilingual / UX fields beyond the
 portable minimum:
 
 | Field | Role |
 |---|---|
-| `name` | **May be Chinese** in plugin UI skills (e.g. `PRD生成`, `营销文案`) |
+| `name` | **May be localized** in plugin UI skills (for example, `示例工作流`) |
 | `description` | Chinese trigger-rich description |
 | `name_en` / `description_en` | English mirrors for bilingual packs |
 | `displayName` | Optional UI label (seen on some skills) |
@@ -138,17 +138,17 @@ Run: python scripts/helper.py input.txt
 
 Load lifecycle (CLI):
 
-- New sessions load skills at startup  
-- Running CLI may need `/skills reload` after edits  
-- List via `/skills` or natural-language “What Skills are available?”  
+- New sessions load skills at startup
+- Running CLI may need `/skills reload` after edits
+- List via `/skills` or natural-language “What Skills are available?”
 
 ## 7. Supporting files
 
 Optional:
 
-- `REFERENCE.md`, `EXAMPLES.md` (or similarly named guides)  
-- `scripts/` helpers (may need `chmod +x`)  
-- `templates/`  
+- `REFERENCE.md`, `EXAMPLES.md` (or similarly named guides)
+- `scripts/` helpers (may need `chmod +x`)
+- `templates/`
 
 Dependencies can be declared in description or a Requirements section; CLI may
 install or request permission.
@@ -178,31 +178,30 @@ Internally, skills may map to a special command type sharing a runner.
 
 Ways to obtain skills:
 
-1. `/create-skill <description>` guided scaffold (Qoder) / local `create-skill` skill (QoderWork)  
+1. `/create-skill <description>` guided scaffold (Qoder) / local `create-skill` skill (QoderWork)
 2. CLI install examples:
    - `npx skills add vercel-labs/agent-browser -a qoder`
    - `npx skills add https://github.com/anthropics/skills --skill skill-creator -a qoder`
-3. Hand-authored directories under user/project paths  
-4. `/create-skill-ui` for interactive HTML widgets in chat  
+3. Hand-authored directories under user/project paths
+4. `/create-skill-ui` for interactive HTML widgets in chat
 5. Bundle many skills into a QoderWork **role plugin** via `plugin-creator`
 
 ### QoderWork plugins (role toolkits)
 
-`plugin-creator` (local v1.7.1) defines a plugin as **not** a single skill, but a
+The observed `plugin-creator` defines a plugin as **not** a single skill, but a
 role/industry toolkit:
 
 - Skill = one tool (e.g. “draft a contract”)
 - Plugin = full toolbox for a role (e.g. “法务助手”)
 
-Observed plugin layout:
+Sanitized observed plugin layout:
 
 ```text
-~/.qoderworkcn/plugins/产品管理/
+~/.qoderworkcn/plugins/<localized-role-name>/
 ├── .qoder-plugin/plugin.json
 ├── .mcp.json
 ├── skills/
-│   ├── PRD生成/SKILL.md
-│   ├── 用户故事拆解/SKILL.md
+│   ├── <localized-skill-name>/SKILL.md
 │   └── ...
 ├── README.md
 ├── README_EN.md
@@ -213,8 +212,8 @@ Observed `plugin.json` fields:
 
 | Field | Example / notes |
 |---|---|
-| `name` | English kebab-case internal id (`product-management`) |
-| `displayName` | User-language UI name (`产品管理`) |
+| `name` | English kebab-case internal id (for example, `example-role`) |
+| `displayName` | User-language UI name (for example, `示例角色`) |
 | `displayNameEn` | English display |
 | `version` | semver |
 | `description` / `descriptionEn` | long bilingual capability blurb |
@@ -243,15 +242,15 @@ sections in Markdown body. For portable packs, use Agent Skills
 
 Qoder / QoderWork ergonomics:
 
-- `/create-skill` and `/create-skill-ui` (Qoder surfaces)  
-- Local conversation creators: `create-skill`, `plugin-creator`, `create-command`  
-- `npx skills add … -a qoder` installer path  
-- Built-in helpers cited on overview (`/vercel-deploy`, `/create-subagent`, `/canvas`, …)  
-- Optional `templates/` directory naming in examples  
-- QoderWork plugin manifest dir: **`.qoder-plugin/`**  
-- Bilingual skill metadata (`name_en`, `description_en`, `description_zh`)  
-- UI-first Chinese skill names inside role plugins  
-- Connector/MCP packaging beside skills (`.mcp.json`, `CONNECTORS.md`)  
+- `/create-skill` and `/create-skill-ui` (Qoder surfaces)
+- Local conversation creators: `create-skill`, `plugin-creator`, `create-command`
+- `npx skills add … -a qoder` installer path
+- Built-in helpers cited on overview (`/vercel-deploy`, `/create-subagent`, `/canvas`, …)
+- Optional `templates/` directory naming in examples
+- QoderWork plugin manifest dir: **`.qoder-plugin/`**
+- Bilingual skill metadata (`name_en`, `description_en`, `description_zh`)
+- UI-first Chinese skill names inside role plugins
+- Connector/MCP packaging beside skills (`.mcp.json`, `CONNECTORS.md`)
 
 No Claude-style `context: fork` / OpenClaw `metadata.openclaw` block appears in
 the extracted public pages. QoderWork also has **no independent subagent/team
@@ -262,18 +261,18 @@ is approximated by role plugins + skills.
 
 Pages are light on security policy. Practical baseline still applies:
 
-- Review third-party installed skills before use  
-- Treat `scripts/` as executable code  
-- Be careful with dependency auto-install prompts  
+- Review third-party installed skills before use
+- Treat `scripts/` as executable code
+- Be careful with dependency auto-install prompts
 
 ## 14. Authoring practices
 
-1. One domain per skill.  
-2. Specific descriptions with real trigger phrases.  
-3. Prefer `/create-skill` if format is unfamiliar, then edit.  
-4. Put long material in `REFERENCE.md` / `EXAMPLES.md` / `scripts/`.  
-5. Test auto-trigger and edge cases before sharing.  
-6. If skill never triggers: check path, YAML syntax, description specificity.  
+1. One domain per skill.
+2. Specific descriptions with real trigger phrases.
+3. Prefer `/create-skill` if format is unfamiliar, then edit.
+4. Put long material in `REFERENCE.md` / `EXAMPLES.md` / `scripts/`.
+5. Test auto-trigger and edge cases before sharing.
+6. If skill never triggers: check path, YAML syntax, description specificity.
 7. If skills conflict: differentiate trigger terms in descriptions.
 
 ## 15. Extraction notes

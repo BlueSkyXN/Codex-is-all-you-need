@@ -29,14 +29,14 @@ task-specific workflow repeatable for Codex / agents.
 
 Skills can provide:
 
-1. Multi-step domain workflows  
-2. Tool / file-format / API integration guidance  
-3. Domain or company knowledge the model does not reliably “just know”  
-4. Bundled scripts, references, and assets  
+1. Multi-step domain workflows
+2. Tool / file-format / API integration guidance
+3. Domain or company knowledge the model does not reliably “just know”
+4. Bundled scripts, references, and assets
 
 In Codex product language:
 
-- **Skill** = authoring unit for a reusable workflow  
+- **Skill** = authoring unit for a reusable workflow
 - **Plugin** = distribution unit that can package one or more skills (and optional
   MCP/app/hooks)
 
@@ -60,10 +60,10 @@ In API language:
 
 Notes from product docs:
 
-- For repos, Codex scans `.agents/skills` from CWD up toward repo root  
-- Same `name` does **not** merge; both may appear in selectors  
-- Symlinked skill folders are supported  
-- Local folders are for authoring/discovery; broader distribution prefers plugins  
+- For repos, Codex scans `.agents/skills` from CWD up toward repo root
+- Same `name` does **not** merge; both may appear in selectors
+- Symlinked skill folders are supported
+- Local folders are for authoring/discovery; broader distribution prefers plugins
 
 Enable/disable without deleting (`~/.codex/config.toml`):
 
@@ -100,10 +100,10 @@ skill-name/
 
 skill-creator also stresses:
 
-- Folder name = skill name  
+- Folder name = skill name
 - Do **not** ship human-process clutter as skill content:
   `README`, installation guides, changelogs, setup/testing essays intended for
-  humans rather than the agent runtime  
+  humans rather than the agent runtime
 
 ### Skill-only plugin shape (distribution)
 
@@ -149,17 +149,17 @@ Skill instructions for Codex to follow.
 
 Open standard constraints still apply for portable packs:
 
-- `name` ≤ 64, lowercase/digits/hyphens, no leading/trailing/consecutive `-`  
-- `description` ≤ 1024  
+- `name` ≤ 64, lowercase/digits/hyphens, no leading/trailing/consecutive `-`
+- `description` ≤ 1024
 
 ### skill-creator doctrine on frontmatter
 
-- For authored skills, treat frontmatter as **`name` + `description` first**  
+- For authored skills, treat frontmatter as **`name` + `description` first**
 - Triggering/selection is driven by those fields; a “When to Use” section only in
-  the body does **not** help discovery  
-- Put all trigger conditions in `description`  
+  the body does **not** help discovery
+- Put all trigger conditions in `description`
 - Optional open-standard fields (`license`, `compatibility`, `metadata`,
-  experimental `allowed-tools`) remain available for portability  
+  experimental `allowed-tools`) remain available for portability
 
 ### Optional Codex UI / policy sidecar: `agents/openai.yaml`
 
@@ -257,21 +257,21 @@ implicit invocation.
 
 Shared three-level model (open standard + skill-creator + Codex docs):
 
-1. **Metadata** — `name` + `description` (+ path) always available for selection  
-2. **`SKILL.md` body** — loaded when skill is selected/triggered  
-3. **Bundled resources** — scripts/references/assets on demand  
+1. **Metadata** — `name` + `description` (+ path) always available for selection
+2. **`SKILL.md` body** — loaded when skill is selected/triggered
+3. **Bundled resources** — scripts/references/assets on demand
 
 Codex product budget for the **initial skills list**:
 
-- At most **~2% of the model context window**, or  
-- **8,000 characters** if window unknown  
-- With many skills: descriptions shortened first; some skills may be omitted with warning  
-- Budget applies to the listing only; selected skills still load full instructions  
+- At most **~2% of the model context window**, or
+- **8,000 characters** if window unknown
+- With many skills: descriptions shortened first; some skills may be omitted with warning
+- Budget applies to the listing only; selected skills still load full instructions
 
 skill-creator size guidance:
 
-- Body ideally **under ~500 lines** / **&lt; ~5k words**  
-- Metadata roughly ~100 words  
+- Body ideally **under ~500 lines** / **&lt; ~5k words**
+- Metadata roughly ~100 words
 
 API loading note: skill instructions are treated as **user-prompt input**, not
 system prompt, when attached through the Skills/shell environment path.
@@ -305,10 +305,10 @@ Freedom-level framing (skill-creator):
 
 Create flows:
 
-- `$skill-creator` / built-in creator  
-- Record & Replay style capture  
-- Manual folder + `SKILL.md`  
-- `$skill-installer` for curated/local installs  
+- `$skill-creator` / built-in creator
+- Record & Replay style capture
+- Manual folder + `SKILL.md`
+- `$skill-installer` for curated/local installs
 
 ### API environments
 
@@ -362,87 +362,87 @@ Do not conflate them.
 
 Codex / OpenAI-specific beyond bare Agent Skills:
 
-- `agents/openai.yaml` UI + `allow_implicit_invocation` policy  
-- Plugin packaging (`.codex-plugin/plugin.json`, marketplaces)  
-- Local multi-root `.agents/skills` discovery  
-- `$skill-creator`, `$skill-installer`, plugin-creator flows  
-- Hosted `skill_id` version registry for API  
-- System skills under Codex install / historical `.system` packs  
+- `agents/openai.yaml` UI + `allow_implicit_invocation` policy
+- Plugin packaging (`.codex-plugin/plugin.json`, marketplaces)
+- Local multi-root `.agents/skills` discovery
+- `$skill-creator`, `$skill-installer`, plugin-creator flows
+- Hosted `skill_id` version registry for API
+- System skills under Codex install / historical `.system` packs
 
 ## 13. Security
 
 From API + general skill practice:
 
-- Treat skills as privileged instructions/code  
-- Inspect third-party skills before enable/install  
-- Prefer developer-selected skills mapped to bounded workflows  
-- Gate write/high-impact actions  
-- Hosted container mounts are lifecycle-bound  
-- Use local shell/path mode when execution must stay on your machine  
-- Do not embed secrets in `SKILL.md`  
+- Treat skills as privileged instructions/code
+- Inspect third-party skills before enable/install
+- Prefer developer-selected skills mapped to bounded workflows
+- Gate write/high-impact actions
+- Hosted container mounts are lifecycle-bound
+- Use local shell/path mode when execution must stay on your machine
+- Do not embed secrets in `SKILL.md`
 
 ## 14. Authoring practices
 
 Synthesized from **skill-creator + Codex build-skills** (stronger than API page alone):
 
 1. **Concise is key** — context is shared with system prompt, history, other skill
-   metadata, and the user request. Add only what the model lacks.  
+   metadata, and the user request. Add only what the model lacks.
 2. Write `description` with clear include **and exclude** triggers; front-load
-   keywords in case listings are truncated.  
-3. Keep body imperative, step-oriented, with explicit inputs/outputs.  
-4. Prefer instructions first; add scripts only for determinism/tooling.  
-5. Progressive-disclose: short `SKILL.md`, long detail in `references/`.  
-6. One skill = one job.  
-7. Test real prompts against description for implicit trigger quality.  
-8. Validate with tooling when available (`quick_validate.py` in skill-creator pack).  
-9. Iterate from real friction after use, not from abstract completeness.  
+   keywords in case listings are truncated.
+3. Keep body imperative, step-oriented, with explicit inputs/outputs.
+4. Prefer instructions first; add scripts only for determinism/tooling.
+5. Progressive-disclose: short `SKILL.md`, long detail in `references/`.
+6. One skill = one job.
+7. Test real prompts against description for implicit trigger quality.
+8. Validate with tooling when available (`quick_validate.py` in skill-creator pack).
+9. Iterate from real friction after use, not from abstract completeness.
 10. Distribute reusable work as a plugin once local skill stabilizes.
 
 ### skill-creator process (ordered)
 
-1. Understand with concrete examples / sample utterances  
-2. Plan reusable scripts/refs/assets  
-3. Initialize (`init_skill.py` or creator flow)  
-4. Edit resources + `SKILL.md`  
-5. Validate  
-6. Use → observe misses → revise  
+1. Understand with concrete examples / sample utterances
+2. Plan reusable scripts/refs/assets
+3. Initialize (`init_skill.py` or creator flow)
+4. Edit resources + `SKILL.md`
+5. Validate
+6. Use → observe misses → revise
 
 ## 15. Extraction notes
 
 ### Why the API page felt incomplete
 
-Your suspicion is correct.  
+Your suspicion is correct.
 https://developers.openai.com/api/docs/guides/tools-skills is primarily an
 **attachment/runtime API** document. The deeper **authoring doctrine** lives in:
 
-1. Codex product docs (`learn.chatgpt.com/docs/build-skills`)  
-2. Plugin packaging docs (`learn.chatgpt.com/docs/build-plugins`)  
+1. Codex product docs (`learn.chatgpt.com/docs/build-skills`)
+2. Plugin packaging docs (`learn.chatgpt.com/docs/build-plugins`)
 3. The system `skill-creator` skill (historically in `openai/skills`, now with
    migration pressure toward `openai/plugins`)
 
 ### What skill-creator adds beyond the API page
 
-- Freedom-level design (high/medium/low specificity)  
-- Hard guidance that trigger text belongs in description only  
-- Explicit progressive-disclosure budgets and ~500-line body target  
-- `agents/openai.yaml` as recommended sidecar  
-- Ban on human-oriented clutter files inside skill packages  
-- init/validate script workflow and iteration loop  
-- Concrete resource roles for scripts vs references vs assets  
+- Freedom-level design (high/medium/low specificity)
+- Hard guidance that trigger text belongs in description only
+- Explicit progressive-disclosure budgets and ~500-line body target
+- `agents/openai.yaml` as recommended sidecar
+- Ban on human-oriented clutter files inside skill packages
+- init/validate script workflow and iteration loop
+- Concrete resource roles for scripts vs references vs assets
 
 ### What Codex product docs add
 
-- Concrete `.agents/skills` discovery roots  
-- Skills-list context budget (~2% / 8k chars)  
-- `$skill-creator` / `$skill-installer` / enable config  
-- Plugin-first distribution path  
+- Concrete `.agents/skills` discovery roots
+- Skills-list context budget (~2% / 8k chars)
+- `$skill-creator` / `$skill-installer` / enable config
+- Plugin-first distribution path
 
 ### Residual gaps
 
 - Exact current location of skill-creator after `openai/skills` deprecation should
-  be re-checked against the latest Codex install / `openai/plugins`  
+  be re-checked against the latest Codex install / `openai/plugins`
 - Numeric listing budgets and API upload limits can change; re-fetch before
-  treating as hard compliance gates  
+  treating as hard compliance gates
 - This repo’s own public skill contract remains
-  [skill-design.md](../skill-design.md) +
-  [skill-versioning.md](../skill-versioning.md); this note is comparative research
+  [skill-design.md](../../skill-design.md) +
+  [skill-versioning.md](../../skill-versioning.md); this note is comparative research

@@ -91,9 +91,9 @@ content into referenced files.
 
 Designed progressive loading:
 
-1. **Metadata (~100 tokens)** — `name` + `description` for all skills at startup  
-2. **Instructions (< 5000 tokens recommended)** — full `SKILL.md` body on activation  
-3. **Resources (as needed)** — `scripts/`, `references/`, `assets/` only when required  
+1. **Metadata (~100 tokens)** — `name` + `description` for all skills at startup
+2. **Instructions (< 5000 tokens recommended)** — full `SKILL.md` body on activation
+3. **Resources (as needed)** — `scripts/`, `references/`, `assets/` only when required
 
 Guidance:
 
@@ -177,15 +177,15 @@ Not heavily normative in the core page, but practical implications:
 
 ## 14. Authoring practices
 
-1. Write `description` with both **capability** and **trigger keywords**.  
-2. Keep `SKILL.md` short; progressive-disclose detail.  
-3. Prefer relative, one-level-deep links to references/scripts.  
-4. Put product-only data under unique `metadata` keys.  
+1. Write `description` with both **capability** and **trigger keywords**.
+2. Keep `SKILL.md` short; progressive-disclose detail.
+3. Prefer relative, one-level-deep links to references/scripts.
+4. Put product-only data under unique `metadata` keys.
 5. Validate with `skills-ref` when shipping.
 
 ## 15. Extraction notes
 
-- Source: https://agentskills.io/specification  
-- This note is a structured extract, not a fork of the standard.  
+- Source: https://agentskills.io/specification
+- This note is a structured extract, not a fork of the standard.
 - Numeric limits above are from the open spec and are the best shared baseline
   for multi-platform authoring.

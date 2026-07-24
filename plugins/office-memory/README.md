@@ -72,20 +72,21 @@ python3 skills/manage-office-memory/scripts/office_memory.py validate --config o
 ```
 
 `check-config` does not read source or daily bodies; it reports the date-record
-count and latest date from filenames. `snapshot` reads only explicitly
-selected config sources plus repeated explicit `--material` files and writes
-nothing; its stdout contains file count, mtime, and SHA-256. Project materials
-use the safe ID `project#relative/path`. `init` is dry-run by default and
-creates only missing AWARENESS.md and MEMORY.md, never overwriting either.
+count, latest valid date, and invalid filename count. `snapshot` reads only
+selected or configured-default sources plus repeated explicit `--material`
+files and writes nothing; its stdout contains file count, mtime, and SHA-256.
+Project materials use the safe ID `project#relative/path`. `init` is dry-run by
+default and creates only missing AWARENESS.md and MEMORY.md, never overwriting
+either.
 `--material` accepts only explicit project-relative files and applies a
 realpath gate; the helper never recursively traverses project content or rewrites
 source text.
 
-For awareness, the caller must pass `--focus project` or an exact configured
-scope whenever supplying `--material`. Exact scope requires every material to
-be within that subtree. AI produces the result after review.
+For daily and awareness work, the caller must use `--focus project` or an exact
+configured scope. Exact scope requires every material to be within that
+subtree. AI produces the result after review.
 Keep identity, organization, personal-history, MBA, other-project, and
-credential information out of both result files.
+credential information out of every result file.
 
 ## Markdown contracts
 

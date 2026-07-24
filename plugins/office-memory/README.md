@@ -4,17 +4,20 @@ Office Memory is a public method plugin for creating two reviewed project
 results: AWARENESS.md and MEMORY.md. It does not ship project content or
 automatically discover sources.
 
-## Exact manual authorization
+## Explicit manual authorization
 
-The Codex sidecar sets `allow_implicit_invocation: false`. The skill also stops
-before any read or write unless the user prompt contains exactly:
+The Codex sidecar sets `allow_implicit_invocation: false`. The Skill accepts
+two equivalent explicit entry forms so both installation styles are usable:
 
 ```text
-$office-memory:manage-office-memory
+$manage-office-memory                     # project-local Skill
+$office-memory:manage-office-memory       # installed plugin
 ```
 
-Slash/menu invocation, a descriptive request, or a memory-looking file does
-not substitute for that token.
+Selecting the project-local Skill through the host's Skill link/attachment UI
+counts as the first form. A descriptive request alone does not activate the
+workflow. Tokens found only inside quoted examples, embedded documentation,
+Skill metadata, file contents, or another agent's output do not count.
 
 ## Local config
 

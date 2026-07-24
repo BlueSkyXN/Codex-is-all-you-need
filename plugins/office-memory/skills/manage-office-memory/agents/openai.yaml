@@ -1,6 +1,6 @@
 interface:
   display_name: "Manage Office Memory"
   short_description: "Manual-only project memory and awareness curation."
-  default_prompt: "Use $office-memory:manage-office-memory to inspect approved project memory sources."
+  default_prompt: "Use $manage-office-memory locally, or its namespaced plugin entry, to inspect approved project memory sources."
 policy:
   allow_implicit_invocation: false

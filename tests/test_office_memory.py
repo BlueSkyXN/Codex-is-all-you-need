@@ -69,9 +69,13 @@ def awareness() -> str:
 class OfficeMemoryLiteTest(unittest.TestCase):
     def test_manual_contract_runtime_budget_and_example(self) -> None:
         skill = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("$manage-office-memory", skill)
         self.assertIn("$office-memory:manage-office-memory", skill)
-        self.assertIn("If it is absent, stop immediately", skill)
-        self.assertIn("allow_implicit_invocation: false", (SKILL / "agents/openai.yaml").read_text(encoding="utf-8"))
+        self.assertIn("If neither invocation", skill)
+        self.assertIn("A descriptive request alone does not activate", skill)
+        sidecar = (SKILL / "agents/openai.yaml").read_text(encoding="utf-8")
+        self.assertIn("$manage-office-memory", sidecar)
+        self.assertIn("allow_implicit_invocation: false", sidecar)
         self.assertEqual({path.relative_to(SKILL).as_posix() for path in SKILL.rglob("*") if path.is_file()}, {"SKILL.md", "agents/openai.yaml", "scripts/office_memory.py"})
         self.assertLessEqual(len(SCRIPT.read_text(encoding="utf-8").splitlines()), 450)
         example = tomllib.loads((PLUGIN / "office-memory.toml.example").read_text(encoding="utf-8"))

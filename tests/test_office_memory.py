@@ -163,6 +163,40 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             awareness_path.write_text("x" * (16 * 1024 + 1), encoding="utf-8")
             self.assertIn("16 KiB", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
 
+    def test_review_rejects_secret_without_memory_entries(self) -> None:
+        with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
+            root, external = Path(root_text), Path(external_text)
+            (external / "memory.md").write_text("source", encoding="utf-8")
+            cfg = write_config(root, external)
+            run("init", "--config", str(cfg), "--apply")
+            (root / "documents").mkdir()
+            (root / "documents/input.md").write_text("material", encoding="utf-8")
+            (root / ".agents/awareness/AWARENESS.md").write_text(awareness(), encoding="utf-8")
+            (root / ".agents/memory/MEMORY.md").write_text("# Project Memory\n\npassword=not-safe-value\n", encoding="utf-8")
+            errors = json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]
+            self.assertTrue(any("secret-like" in error for error in errors), errors)
+
+    def test_review_rejects_reserved_project_source_id(self) -> None:
+        with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
+            root, external = Path(root_text), Path(external_text)
+            (external / "memory.md").write_text("source", encoding="utf-8")
+            cfg = write_config(root, external)
+            cfg.write_text(cfg.read_text(encoding="utf-8").replace('id = "memory-source"', 'id = "project"', 1), encoding="utf-8")
+            result = run("check-config", "--config", str(cfg), check=False)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("reserved", result.stderr)
+
+    def test_review_skill_uses_real_focus_flag(self) -> None:
+        skill = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("pass `--focus project`", skill)
+        self.assertNotIn("pass `focus=project`", skill)
+
+    def test_review_readme_uses_bundled_helper_path(self) -> None:
+        readme = (PLUGIN / "README.md").read_text(encoding="utf-8")
+        helper = SCRIPT.relative_to(PLUGIN).as_posix()
+        self.assertIn(f"python3 {helper} check-config", readme)
+        self.assertNotIn("python3 office_memory.py", readme)
+
 
 if __name__ == "__main__":
     unittest.main()

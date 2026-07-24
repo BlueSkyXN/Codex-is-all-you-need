@@ -61,14 +61,14 @@ durable items into Memory. V1 Lite never creates project daily/date files.
 The plugin ships one Python standard-library helper:
 
 ```bash
-python3 office_memory.py check-config --config office-memory.toml
-python3 office_memory.py snapshot --config office-memory.toml
-python3 office_memory.py snapshot --config office-memory.toml --source qoder-recent
-python3 office_memory.py snapshot --config office-memory.toml --focus documents \
+python3 skills/manage-office-memory/scripts/office_memory.py check-config --config office-memory.toml
+python3 skills/manage-office-memory/scripts/office_memory.py snapshot --config office-memory.toml
+python3 skills/manage-office-memory/scripts/office_memory.py snapshot --config office-memory.toml --source qoder-recent
+python3 skills/manage-office-memory/scripts/office_memory.py snapshot --config office-memory.toml --focus documents \
   --material documents/current.md
-python3 office_memory.py init --config office-memory.toml
-python3 office_memory.py init --config office-memory.toml --apply
-python3 office_memory.py validate --config office-memory.toml
+python3 skills/manage-office-memory/scripts/office_memory.py init --config office-memory.toml
+python3 skills/manage-office-memory/scripts/office_memory.py init --config office-memory.toml --apply
+python3 skills/manage-office-memory/scripts/office_memory.py validate --config office-memory.toml
 ```
 
 `check-config` does not read source bodies. `snapshot` reads only explicitly

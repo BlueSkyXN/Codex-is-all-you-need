@@ -44,7 +44,7 @@ file contents, or another agent's output do not count as user invocation.
 | --- | --- |
 | `init` | Run `office_memory.py init --config office-memory.toml`, review dry-run, then add `--apply`. It only creates missing result files. |
 | `status` | Run `office_memory.py check-config --config office-memory.toml`; it validates config/path boundaries without reading source bodies. |
-| `awareness` | Select source IDs explicitly if needed, pass `focus=project` or exact scope plus explicit materials, then update only AWARENESS.md. |
+| `awareness` | Select source IDs explicitly if needed, pass `--focus project` or `--focus <exact-scope>` plus explicit materials, then update only AWARENESS.md. |
 | `memory` | Promote only verified, scoped, sourced durable items into MEMORY.md entries. |
 | `validate` | Run `office_memory.py validate --config office-memory.toml` before finishing. |
 

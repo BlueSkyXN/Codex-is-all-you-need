@@ -97,6 +97,8 @@ def load_config(path_value: str) -> Config:
     for raw in raw_sources:
         if not isinstance(raw, dict) or not isinstance(raw.get("id"), str) or not SOURCE_ID.fullmatch(raw["id"]) or not isinstance(raw.get("path"), str) or raw.get("role") not in {"profile", "memory", "recent"} or not isinstance(raw.get("default"), bool):
             raise ContractError("each source needs id, path, role, and default")
+        if raw["id"] == "project":
+            raise ContractError("source id 'project' is reserved for explicit project materials")
         if raw["role"] in {"profile", "recent"} and raw["default"]:
             raise ContractError("profile and recent sources must default to false")
         include = raw.get("include", ["*"])
@@ -254,10 +256,12 @@ def memory_errors(text: str, cfg: Config) -> list[str]:
         return ["MEMORY.md exceeds 64 KiB; compress it without splitting files"]
     if not text.startswith("# Project Memory\n"):
         return ["MEMORY.md must start with # Project Memory"]
+    if SECRET.search(text):
+        errors.append("secret-like content in MEMORY.md")
     sections = re.split(r"^## ([^\n]+)\n", text, flags=re.MULTILINE)
     keys: set[str] = set()
     if len(sections) == 1:
-        return []
+        return errors
     for index in range(1, len(sections), 2):
         key, body = sections[index].strip(), sections[index + 1]
         if not KEY.fullmatch(key) or key in keys:
@@ -282,8 +286,6 @@ def memory_errors(text: str, cfg: Config) -> list[str]:
                     errors.append(f"expired review: {key}")
             except ValueError:
                 errors.append(f"invalid date: {key}")
-        if SECRET.search(body):
-            errors.append(f"secret-like content: {key}")
     return errors
 
 

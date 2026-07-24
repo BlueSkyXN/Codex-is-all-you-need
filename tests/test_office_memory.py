@@ -66,6 +66,12 @@ def awareness() -> str:
     return "# Project Awareness\n- Updated: 2026-07-24\n- Focus: project\n- Sources checked: memory-source; project#documents/input.md\n\n" + "\n".join(f"## {heading}\n" for heading in headings)
 
 
+def daily_record(*, day: str = "2026-07-24", focus: str = "project", sources: str = "memory-source", content: str = "- A meaningful reviewed change.\n") -> str:
+    headings = ("Meaningful changes", "Decisions and constraints", "Conflicts and unknowns", "Long-term candidates")
+    sections = [f"## {heading}\n{content if index == 0 else ''}" for index, heading in enumerate(headings)]
+    return f"# Daily Project Memory — {day}\n- Focus: {focus}\n- Sources checked: {sources}\n\n" + "\n".join(sections)
+
+
 class OfficeMemoryLiteTest(unittest.TestCase):
     def test_manual_contract_runtime_budget_and_example(self) -> None:
         skill = (SKILL / "SKILL.md").read_text(encoding="utf-8")
@@ -73,6 +79,9 @@ class OfficeMemoryLiteTest(unittest.TestCase):
         self.assertIn("$office-memory:manage-office-memory", skill)
         self.assertIn("If neither invocation", skill)
         self.assertIn("A descriptive request alone does not activate", skill)
+        self.assertIn("| `daily` |", skill)
+        self.assertIn("Rewrite the whole day", skill)
+        self.assertIn("delete old dates", skill)
         sidecar = (SKILL / "agents/openai.yaml").read_text(encoding="utf-8")
         self.assertIn("$manage-office-memory", sidecar)
         self.assertIn("allow_implicit_invocation: false", sidecar)
@@ -97,6 +106,7 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             status = json.loads(run("check-config", "--config", str(cfg)).stdout)
             self.assertEqual(status["outputs"]["awareness"]["exists"], False)
             self.assertEqual(status["outputs"]["memory"]["exists"], False)
+            self.assertEqual(status["outputs"]["daily"], {"count": 0, "directory": ".agents/memory", "invalid": 0, "latest": None})
             source.write_text("memory", encoding="utf-8")
             before[source] = (hashlib.sha256(source.read_bytes()).hexdigest(), source.stat().st_mtime_ns)
             self.assertEqual(json.loads(run("snapshot", "--config", str(cfg)).stdout)["source_ids"], ["memory-source"])
@@ -134,6 +144,8 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             self.assertEqual(awareness.read_text(encoding="utf-8"), "custom")
             overlap = write_config(root, external, source_path=root / ".agents/awareness")
             self.assertNotEqual(run("check-config", "--config", str(overlap), check=False).returncode, 0)
+            daily_overlap = write_config(root, external, source_path=root / ".agents/memory/2099-01-01.md")
+            self.assertNotEqual(run("check-config", "--config", str(daily_overlap), check=False).returncode, 0)
 
     def test_awareness_memory_schema_and_limits(self) -> None:
         with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
@@ -196,6 +208,60 @@ class OfficeMemoryLiteTest(unittest.TestCase):
         helper = SCRIPT.relative_to(PLUGIN).as_posix()
         self.assertIn(f"python3 {helper} check-config", readme)
         self.assertNotIn("python3 office_memory.py", readme)
+
+    def test_daily_status_and_valid_schema(self) -> None:
+        with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
+            root, external = Path(root_text), Path(external_text)
+            (external / "memory.md").write_text("source", encoding="utf-8")
+            cfg = write_config(root, external)
+            run("init", "--config", str(cfg), "--apply")
+            (root / "documents").mkdir()
+            (root / "documents/input.md").write_text("material", encoding="utf-8")
+            (root / ".agents/awareness/AWARENESS.md").write_text(awareness(), encoding="utf-8")
+            daily_dir = root / ".agents/memory"
+            (daily_dir / "2026-07-23.md").write_text(daily_record(day="2026-07-23"), encoding="utf-8")
+            (daily_dir / "2026-07-24.md").write_text(daily_record(), encoding="utf-8")
+            self.assertEqual(run("validate", "--config", str(cfg)).returncode, 0)
+            status = json.loads(run("check-config", "--config", str(cfg)).stdout)["outputs"]["daily"]
+            self.assertEqual((status["count"], status["latest"], status["invalid"]), (2, "2026-07-24", 0))
+
+    def test_daily_schema_rejects_unsafe_or_empty_records(self) -> None:
+        with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
+            root, external = Path(root_text), Path(external_text)
+            (external / "memory.md").write_text("source", encoding="utf-8")
+            cfg = write_config(root, external)
+            run("init", "--config", str(cfg), "--apply")
+            (root / "documents").mkdir()
+            (root / "documents/input.md").write_text("material", encoding="utf-8")
+            (root / ".agents/awareness/AWARENESS.md").write_text(awareness(), encoding="utf-8")
+            path = root / ".agents/memory/2026-07-24.md"
+
+            cases = (
+                (daily_record(day="2026-07-23"), "heading date"),
+                (daily_record(focus="other"), "Focus"),
+                (daily_record(sources="unknown-source"), "Sources checked"),
+                (daily_record(content="password=not-safe-value\n"), "secret-like"),
+                (daily_record(content=""), "curated item"),
+                (daily_record(content="x" * (13 * 1024)), "12 KiB"),
+            )
+            for content, expected in cases:
+                path.write_text(content, encoding="utf-8")
+                errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
+                self.assertIn(expected, errors)
+
+            path.write_text(daily_record(), encoding="utf-8")
+            invalid_date = root / ".agents/memory/2026-13-40.md"
+            invalid_date.write_text(daily_record(day="2026-13-40"), encoding="utf-8")
+            errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
+            self.assertIn("valid date", errors)
+            status = json.loads(run("check-config", "--config", str(cfg)).stdout)["outputs"]["daily"]
+            self.assertEqual((status["count"], status["latest"], status["invalid"]), (1, "2026-07-24", 1))
+            invalid_date.unlink()
+
+            unexpected = root / ".agents/memory/notes.md"
+            unexpected.write_text("not a daily record", encoding="utf-8")
+            errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
+            self.assertIn("unexpected project memory file", errors)
 
 
 if __name__ == "__main__":

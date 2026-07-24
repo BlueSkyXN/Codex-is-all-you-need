@@ -1,7 +1,7 @@
 # Office Memory V1 Lite
 
-Office Memory is a public method plugin for creating two reviewed project
-results: AWARENESS.md and MEMORY.md. It does not ship project content or
+Office Memory is a public method plugin for AI-curated date records, current
+AWARENESS.md, and durable MEMORY.md. It does not ship project content or
 automatically discover sources.
 
 ## Explicit manual authorization
@@ -53,8 +53,8 @@ Sources have stable IDs, one of `profile`, `memory`, or `recent` roles, and a
 default flag. A source is read only. Profile is default-off and is read only
 when the request explicitly selects its source ID. Qoder short-term files such
 as `memory/YYYY-MM-DD.md` map to `role = "recent"`, `default = false`: select
-them explicitly for awareness candidates, verify them, then promote only
-durable items into Memory. V1 Lite never creates project daily/date files.
+them explicitly, let AI semantically merge only project-relevant evidence into
+the current project's date record, then promote only durable items into Memory.
 
 ## One helper
 
@@ -71,7 +71,8 @@ python3 skills/manage-office-memory/scripts/office_memory.py init --config offic
 python3 skills/manage-office-memory/scripts/office_memory.py validate --config office-memory.toml
 ```
 
-`check-config` does not read source bodies. `snapshot` reads only explicitly
+`check-config` does not read source or daily bodies; it reports the date-record
+count and latest date from filenames. `snapshot` reads only explicitly
 selected config sources plus repeated explicit `--material` files and writes
 nothing; its stdout contains file count, mtime, and SHA-256. Project materials
 use the safe ID `project#relative/path`. `init` is dry-run by default and
@@ -88,6 +89,15 @@ credential information out of both result files.
 
 ## Markdown contracts
 
+Date records live beside MEMORY.md as `YYYY-MM-DD.md`. They are created only by
+an explicit `daily` request with meaningful content; same-day runs wholly
+revise and semantically deduplicate the existing file. They are never
+automatically deleted or archived, and each is limited to 12 KiB. The current
+local date is the default; an older date is used only for an explicit backfill.
+One date item combines matching evidence from multiple clients. Date records
+capture that day's meaningful change, AWARENESS.md synthesizes current state,
+and MEMORY.md keeps only stable reusable conclusions.
+
 AWARENESS.md begins with exactly `# Project Awareness`, then a non-empty ISO
 date in `- Updated:`, `project` or an exact configured scope in `- Focus:`, and
 configured source IDs or safe project refs in `- Sources checked:`. Five
@@ -100,4 +110,6 @@ dots and hyphens and uses five bullet metadata lines (`- Scope:`, `- Kind:`,
 paragraph. Source refs are semicolon-separated `source-id#safe-locator` or
 `project#relative/path[:locator]`. Kinds are `fact`, `preference`, `decision`,
 `runbook`, or `lesson`; sources must be configured, keys unique, scopes allowed,
-dates valid, and both result files non-secret.
+dates valid, and all result files non-secret. `validate` also rejects malformed
+date filenames, mismatched heading dates, unsafe daily paths, unknown sources,
+empty daily records, and unexpected Markdown files beside MEMORY.md.

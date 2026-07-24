@@ -16,9 +16,11 @@ from typing import Any, Iterable
 
 SOURCE_ID = re.compile(r"^[a-z][a-z0-9-]{0,63}$")
 KEY = re.compile(r"^[a-z][a-z0-9.-]{0,79}$")
+DAILY_FILE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.md$")
 SECRET = re.compile(r"(?:-----BEGIN [A-Z ]*PRIVATE KEY-----|\bAKIA[0-9A-Z]{16}\b|\bsk-[A-Za-z0-9_-]{16,}\b|(?:password|secret|token)\s*[:=]\s*[^\s]{8,})", re.I)
 KINDS = {"fact", "preference", "decision", "runbook", "lesson"}
 AWARENESS_SECTIONS = ("Current understanding", "Relevant changes", "Conflicts and unknowns", "Needs attention", "Memory candidates")
+DAILY_SECTIONS = ("Meaningful changes", "Decisions and constraints", "Conflicts and unknowns", "Long-term candidates")
 
 
 class ContractError(ValueError):
@@ -107,8 +109,9 @@ def load_config(path_value: str) -> Config:
         sources.append(Source(raw["id"], resolve(raw["path"], root, strict=False), raw["role"], raw["default"], tuple(include)))
     if len({source.id for source in sources}) != len(sources):
         raise ContractError("source ids must be unique")
+    daily_dir = outputs[1].parent
     for source in sources:
-        if any(source.path == output or within(output, source.path) for output in outputs):
+        if any(source.path == output or within(output, source.path) for output in outputs) or within(source.path, daily_dir):
             raise ContractError(f"source overlaps an output path: {source.id}")
     return Config(project_id, root, tuple(scopes), outputs[0], outputs[1], tuple(sources))
 
@@ -214,9 +217,7 @@ def awareness_errors(text: str, cfg: Config) -> list[str]:
         return ["AWARENESS.md Updated must be an ISO date"]
     if fields["Focus"] not in {"project", *cfg.allowed_scopes}:
         return ["AWARENESS.md Focus must be project or an exact allowed scope"]
-    checked = [item.strip() for item in fields["Sources checked"].split(";") if item.strip()]
-    configured = {source.id for source in cfg.sources}
-    if not checked or any(item not in configured and not valid_sources(item, cfg) for item in checked):
+    if not valid_checked_sources(fields["Sources checked"], cfg):
         return ["AWARENESS.md Sources checked contains an unknown or unsafe reference"]
     headings = re.findall(r"^## (.+)$", text, re.MULTILINE)
     if headings != list(AWARENESS_SECTIONS):
@@ -248,6 +249,70 @@ def valid_sources(value: str, cfg: Config) -> bool:
         elif identifier not in configured or not valid_locator(locator):
             return False
     return True
+
+
+def valid_checked_sources(value: str, cfg: Config) -> bool:
+    configured = {source.id for source in cfg.sources}
+    refs = [item.strip() for item in value.split(";") if item.strip()]
+    return bool(refs) and all(item in configured or valid_sources(item, cfg) for item in refs)
+
+
+def daily_records(cfg: Config) -> tuple[list[Path], list[str]]:
+    records: list[Path] = []
+    errors: list[str] = []
+    directory = cfg.memory.parent
+    if not directory.exists():
+        return records, errors
+    canonical = {cfg.memory, cfg.awareness}
+    for path in sorted(directory.iterdir()):
+        if path in canonical or path.suffix.lower() != ".md":
+            continue
+        match = DAILY_FILE.fullmatch(path.name)
+        if match is None:
+            errors.append(f"unexpected project memory file: {path.name}")
+            continue
+        try:
+            date.fromisoformat(match.group(1))
+        except ValueError:
+            errors.append(f"daily memory filename is not a valid date: {path.name}")
+            continue
+        if path.is_symlink() or not path.is_file():
+            errors.append(f"unsafe daily memory path: {path.name}")
+        else:
+            records.append(path)
+    return records, errors
+
+
+def daily_errors(path: Path, text: str, cfg: Config) -> list[str]:
+    errors: list[str] = []
+    if len(text.encode("utf-8")) > 12 * 1024:
+        return ["exceeds 12 KiB; curate it without splitting the day"]
+    match = DAILY_FILE.fullmatch(path.name)
+    if match is None:
+        return ["invalid daily filename"]
+    day = match.group(1)
+    try:
+        date.fromisoformat(day)
+    except ValueError:
+        errors.append("filename is not a valid date")
+    if not text.startswith(f"# Daily Project Memory — {day}\n"):
+        errors.append("heading date must match filename")
+    fields = dict(re.findall(r"^- (Focus|Sources checked):\s*(.+)$", text, re.MULTILINE))
+    if set(fields) != {"Focus", "Sources checked"}:
+        errors.append("needs non-empty Focus and Sources checked values")
+    else:
+        if fields["Focus"] not in {"project", *cfg.allowed_scopes}:
+            errors.append("Focus must be project or an exact allowed scope")
+        if not valid_checked_sources(fields["Sources checked"], cfg):
+            errors.append("Sources checked contains an unknown or unsafe reference")
+    headings = re.findall(r"^## (.+)$", text, re.MULTILINE)
+    if headings != list(DAILY_SECTIONS):
+        errors.append("must contain exactly the four daily sections in order")
+    elif not any(section.strip() for section in re.split(r"^## .+$", text, flags=re.MULTILINE)[1:]):
+        errors.append("must contain at least one curated item")
+    if SECRET.search(text):
+        errors.append("contains secret-like content")
+    return errors
 
 
 def memory_errors(text: str, cfg: Config) -> list[str]:
@@ -290,6 +355,7 @@ def memory_errors(text: str, cfg: Config) -> list[str]:
 
 
 def command_check(cfg: Config) -> int:
+    daily, invalid = daily_records(cfg)
     output_json({
         "valid": True,
         "project_id": cfg.project_id,
@@ -297,6 +363,7 @@ def command_check(cfg: Config) -> int:
         "outputs": {
             "awareness": {"path": cfg.awareness.relative_to(cfg.root).as_posix(), "exists": cfg.awareness.is_file()},
             "memory": {"path": cfg.memory.relative_to(cfg.root).as_posix(), "exists": cfg.memory.is_file()},
+            "daily": {"directory": cfg.memory.parent.relative_to(cfg.root).as_posix(), "count": len(daily), "latest": daily[-1].stem if daily else None, "invalid": len(invalid)},
         },
     })
     return 0
@@ -327,12 +394,16 @@ def command_validate(cfg: Config) -> int:
         errors.append("MEMORY.md is missing")
     else:
         errors.extend(memory_errors(cfg.memory.read_text(encoding="utf-8"), cfg))
+    daily, daily_path_errors = daily_records(cfg)
+    errors.extend(daily_path_errors)
+    for path in daily:
+        errors.extend(f"{path.name}: {error}" for error in daily_errors(path, path.read_text(encoding="utf-8"), cfg))
     output_json({"valid": not errors, "errors": errors})
     return 0 if not errors else 1
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate and initialize two Markdown office-memory results.")
+    parser = argparse.ArgumentParser(description="Validate two canonical office-memory results and AI-curated daily records.")
     parser.add_argument("command", choices=("check-config", "snapshot", "validate", "init"))
     parser.add_argument("--config", required=True, help="Path to office-memory.toml.")
     parser.add_argument("--source", action="append", default=[], help="Configured source id; repeatable.")

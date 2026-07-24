@@ -1,7 +1,7 @@
 {
   "name": "office-memory",
   "version": "0.1.0",
-  "description": "Manual V1 Lite method for reviewed AWARENESS.md and MEMORY.md from explicit sources and materials.",
+  "description": "Manual V1 Lite method for AI-curated daily, current, and durable project memory.",
   "author": {
     "name": "BlueSkyXN",
     "url": "https://github.com/BlueSkyXN"
@@ -13,12 +13,13 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Office Memory",
-    "shortDescription": "Manual V1 Lite workflow for AWARENESS.md and MEMORY.md.",
-    "longDescription": "Office Memory V1 Lite is a manual method for reviewed AWARENESS.md and MEMORY.md. It reads only explicitly selected whitelisted sources and explicit project materials, never writes sources, and validates the two Markdown contracts.",
+    "shortDescription": "Manual daily, awareness, and durable project memory.",
+    "longDescription": "Office Memory V1 Lite manually curates meaningful YYYY-MM-DD.md project records, current AWARENESS.md, and durable MEMORY.md from explicitly selected read-only sources and project materials.",
     "developerName": "BlueSkyXN",
     "category": "Productivity",
     "capabilities": [],
     "defaultPrompt": [
+      "Use $office-memory:manage-office-memory to curate today's meaningful project memory.",
       "Use $office-memory:manage-office-memory to initialize reviewed AWARENESS.md and MEMORY.md.",
       "Use $office-memory:manage-office-memory with explicit project materials for a focused awareness update."
     ],

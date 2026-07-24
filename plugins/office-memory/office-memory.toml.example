@@ -1,10 +1,10 @@
 version = "0.1"
 manual_activation_only = true
 project_id = "example-project"
-project_root = "."
+project_root = ".."
 allowed_scopes = ["documents"]
-awareness_file = "awareness/AWARENESS.md"
-memory_file = "memory/MEMORY.md"
+awareness_file = ".agents/awareness/AWARENESS.md"
+memory_file = ".agents/memory/MEMORY.md"
 
 [[sources]]
 id = "project-memory"

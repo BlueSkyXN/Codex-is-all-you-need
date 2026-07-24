@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import errno
 import fnmatch
 import hashlib
 import json
@@ -17,7 +18,7 @@ from typing import Any, Iterable
 SOURCE_ID = re.compile(r"^[a-z][a-z0-9-]{0,63}$")
 KEY = re.compile(r"^[a-z][a-z0-9.-]{0,79}$")
 DAILY_FILE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.md$")
-SECRET = re.compile(r"(?:-----BEGIN [A-Z ]*PRIVATE KEY-----|\bAKIA[0-9A-Z]{16}\b|\bsk-[A-Za-z0-9_-]{16,}\b|(?:password|secret|token)\s*[:=]\s*[^\s]{8,})", re.I)
+SECRET = re.compile(r"(?:-----BEGIN [A-Z ]*PRIVATE KEY-----|\bAKIA[0-9A-Z]{16}\b|\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|hf_[A-Za-z0-9]{20,}|npm_[A-Za-z0-9]{20,}|glpat-[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|sk-[A-Za-z0-9_-]{16,})\b|\bauthorization\s*:\s*bearer\s+[A-Za-z0-9._~+/=-]{8,}|\b(?:password|passwd|secret|token|api[ _-]?key|access[ _-]?key|client[ _-]?secret)\s*[:=]\s*[^\s]{8,})", re.I)
 KINDS = {"fact", "preference", "decision", "runbook", "lesson"}
 AWARENESS_SECTIONS = ("Current understanding", "Relevant changes", "Conflicts and unknowns", "Needs attention", "Memory candidates")
 DAILY_SECTIONS = ("Meaningful changes", "Decisions and constraints", "Conflicts and unknowns", "Long-term candidates")
@@ -111,7 +112,7 @@ def load_config(path_value: str) -> Config:
         raise ContractError("source ids must be unique")
     daily_dir = outputs[1].parent
     for source in sources:
-        if any(source.path == output or within(output, source.path) for output in outputs) or within(source.path, daily_dir):
+        if any(source.path == output or within(output, source.path) or within(source.path, output) for output in outputs) or within(source.path, daily_dir):
             raise ContractError(f"source overlaps an output path: {source.id}")
     return Config(project_id, root, tuple(scopes), outputs[0], outputs[1], tuple(sources))
 
@@ -187,20 +188,47 @@ def snapshot(cfg: Config, selected: Iterable[str], materials: Iterable[Path]) ->
     return {"source_ids": sorted({row["source_id"] for row in rows}), "file_count": len(rows), "files": sorted(rows, key=lambda row: (row["source_id"], row["file_id"]))}
 
 
+def write_sync(handle: Any, content: str) -> None:
+    handle.write(content)
+    handle.flush()
+    os.fsync(handle.fileno())
+
+
 def atomic_create(path: Path, content: str) -> bool:
     if path.exists():
         return False
     path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent, delete=False) as handle:
-        handle.write(content)
-        temporary = Path(handle.name)
+    temporary: Path | None = None
     try:
-        os.link(temporary, path)
-    except FileExistsError:
-        temporary.unlink(missing_ok=True)
-        return False
-    temporary.unlink(missing_ok=True)
-    return True
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent, delete=False) as handle:
+            temporary = Path(handle.name)
+            write_sync(handle, content)
+        try:
+            os.link(temporary, path)
+        except FileExistsError:
+            return False
+        except OSError as error:
+            unsupported = {errno.EPERM, getattr(errno, "ENOTSUP", -1), getattr(errno, "EOPNOTSUPP", -1)}
+            if error.errno not in unsupported:
+                raise
+            try:
+                descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+                with os.fdopen(descriptor, "w", encoding="utf-8") as target:
+                    write_sync(target, content)
+            except FileExistsError:
+                return False
+            except (OSError, UnicodeError):
+                path.unlink(missing_ok=True)
+                raise
+        return True
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
+def exact_fields(text: str, names: tuple[str, ...]) -> dict[str, str] | None:
+    matches = re.findall(r"^- (" + "|".join(names) + r"):\s*(.+)$", text, re.MULTILINE)
+    return dict(matches) if len(matches) == len(names) and {name for name, _ in matches} == set(names) else None
 
 
 def awareness_errors(text: str, cfg: Config) -> list[str]:
@@ -208,8 +236,8 @@ def awareness_errors(text: str, cfg: Config) -> list[str]:
         return ["AWARENESS.md exceeds 16 KiB; compress it without splitting files"]
     if not text.startswith("# Project Awareness\n"):
         return ["AWARENESS.md must start with # Project Awareness"]
-    fields = dict(re.findall(r"^- (Updated|Focus|Sources checked):\s*(.+)$", text, re.MULTILINE))
-    if set(fields) != {"Updated", "Focus", "Sources checked"}:
+    fields = exact_fields(text, ("Updated", "Focus", "Sources checked"))
+    if fields is None:
         return ["AWARENESS.md needs non-empty Updated, Focus, and Sources checked values"]
     try:
         date.fromisoformat(fields["Updated"])
@@ -265,11 +293,11 @@ def daily_records(cfg: Config) -> tuple[list[Path], list[str]]:
         return records, errors
     canonical = {cfg.memory, cfg.awareness}
     for path in sorted(directory.iterdir()):
-        if path in canonical or path.suffix.lower() != ".md":
+        if path in canonical or path.name == ".DS_Store":
             continue
         match = DAILY_FILE.fullmatch(path.name)
         if match is None:
-            errors.append(f"unexpected project memory file: {path.name}")
+            errors.append(f"unexpected project memory artifact: {path.name}")
             continue
         try:
             date.fromisoformat(match.group(1))
@@ -297,8 +325,8 @@ def daily_errors(path: Path, text: str, cfg: Config) -> list[str]:
         errors.append("filename is not a valid date")
     if not text.startswith(f"# Daily Project Memory — {day}\n"):
         errors.append("heading date must match filename")
-    fields = dict(re.findall(r"^- (Focus|Sources checked):\s*(.+)$", text, re.MULTILINE))
-    if set(fields) != {"Focus", "Sources checked"}:
+    fields = exact_fields(text, ("Focus", "Sources checked"))
+    if fields is None:
         errors.append("needs non-empty Focus and Sources checked values")
     else:
         if fields["Focus"] not in {"project", *cfg.allowed_scopes}:
@@ -332,10 +360,13 @@ def memory_errors(text: str, cfg: Config) -> list[str]:
         if not KEY.fullmatch(key) or key in keys:
             errors.append(f"invalid or duplicate memory key: {key}")
         keys.add(key)
-        fields = dict(re.findall(r"^- (Scope|Kind|Sources|Observed|Review):\s*(.+)$", body, re.MULTILINE))
+        fields = exact_fields(body, ("Scope", "Kind", "Sources", "Observed", "Review"))
+        if fields is None:
+            errors.append(f"missing memory entry fields: {key}")
+            continue
         metadata = "\n".join(f"- {field}: {fields.get(field, '')}" for field in ("Scope", "Kind", "Sources", "Observed", "Review"))
         summary = body.replace(metadata, "", 1)
-        if set(fields) != {"Scope", "Kind", "Sources", "Observed", "Review"} or not re.match(r"^\n[ \t]*\n\S", summary) or summary.lstrip().startswith("Summary:"):
+        if not re.match(r"^\n[ \t]*\n\S", summary) or summary.lstrip().startswith("Summary:"):
             errors.append(f"missing memory entry fields: {key}")
             continue
         if fields["Scope"] not in {"project", *cfg.allowed_scopes}:
@@ -374,6 +405,9 @@ def command_init(cfg: Config, apply: bool) -> int:
     if not apply:
         output_json({"dry_run": True, "plan": plan})
         return 0
+    for path in (cfg.awareness, cfg.memory):
+        if path.exists() and not path.is_file():
+            raise ContractError(f"output exists but is not a regular file: {path.name}")
     changed = []
     awareness = "# Project Awareness\n- Updated:\n- Focus:\n- Sources checked:\n\n" + "\n".join(f"## {heading}\n" for heading in AWARENESS_SECTIONS)
     if atomic_create(cfg.awareness, awareness):
@@ -386,12 +420,12 @@ def command_init(cfg: Config, apply: bool) -> int:
 
 def command_validate(cfg: Config) -> int:
     errors: list[str] = []
-    if not cfg.awareness.exists():
-        errors.append("AWARENESS.md is missing")
+    if not cfg.awareness.is_file():
+        errors.append("AWARENESS.md is missing or not a regular file")
     else:
         errors.extend(awareness_errors(cfg.awareness.read_text(encoding="utf-8"), cfg))
-    if not cfg.memory.exists():
-        errors.append("MEMORY.md is missing")
+    if not cfg.memory.is_file():
+        errors.append("MEMORY.md is missing or not a regular file")
     else:
         errors.extend(memory_errors(cfg.memory.read_text(encoding="utf-8"), cfg))
     daily, daily_path_errors = daily_records(cfg)
@@ -427,7 +461,7 @@ def main() -> int:
         if args.command == "init":
             return command_init(cfg, args.apply)
         return command_validate(cfg)
-    except ContractError as error:
+    except (ContractError, OSError, UnicodeError) as error:
         parser.error(str(error))
     return 2
 

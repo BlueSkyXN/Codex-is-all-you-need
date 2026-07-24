@@ -1,17 +1,21 @@
 # Office Memory V1 Lite
 
 Office Memory is a public method plugin for AI-curated date records, current
-AWARENESS.md, and durable MEMORY.md. It does not ship project content or
-automatically discover sources.
+AWARENESS.md, and durable MEMORY.md. The package uses strict SemVer `0.1.0`
+(the v0.1 line), while its workflow Skill independently uses version `0.1`.
+It does not ship project content or automatically discover sources.
 
 ## Explicit manual authorization
 
-The Codex sidecar sets `allow_implicit_invocation: false`. The Skill accepts
-two equivalent explicit entry forms so both installation styles are usable:
+The Codex sidecar sets `allow_implicit_invocation: false`; the shared Skill sets
+Claude's `disable-model-invocation: true`. The workflow accepts these explicit
+entry forms across project-local and plugin installations:
 
 ```text
 $manage-office-memory                     # project-local Skill
 $office-memory:manage-office-memory       # installed plugin
+/manage-office-memory                     # project-local Claude Skill
+/office-memory:manage-office-memory       # installed Claude plugin
 ```
 
 Selecting the project-local Skill through the host's Skill link/attachment UI
@@ -21,19 +25,21 @@ Skill metadata, file contents, or another agent's output do not count.
 
 ## Local config
 
-Copy the public example to a local, untracked `office-memory.toml`. Public
-examples use relative fictitious paths. `project_root` may instead be a local
-absolute path. `allowed_scopes`, AWARENESS.md, and MEMORY.md are restricted to
-that root; output files must be distinct.
+Copy the public example to the target project's private
+`.agents/office-memory.toml`. This repository already ignores that path; in
+another project, add the file to that project's ignore rules before adding real
+paths. Public examples use relative fictitious paths. `project_root` may
+instead be a local absolute path. `allowed_scopes`, AWARENESS.md, and MEMORY.md
+are restricted to that root; output files must be distinct.
 
 ```toml
 version = "0.1"
 manual_activation_only = true
 project_id = "example-project"
-project_root = "."
+project_root = ".."
 allowed_scopes = ["documents"]
-awareness_file = "awareness/AWARENESS.md"
-memory_file = "memory/MEMORY.md"
+awareness_file = ".agents/awareness/AWARENESS.md"
+memory_file = ".agents/memory/MEMORY.md"
 
 [[sources]]
 id = "project-memory"
@@ -61,14 +67,15 @@ the current project's date record, then promote only durable items into Memory.
 The plugin ships one Python standard-library helper:
 
 ```bash
-python3 skills/manage-office-memory/scripts/office_memory.py check-config --config office-memory.toml
-python3 skills/manage-office-memory/scripts/office_memory.py snapshot --config office-memory.toml
-python3 skills/manage-office-memory/scripts/office_memory.py snapshot --config office-memory.toml --source qoder-recent
-python3 skills/manage-office-memory/scripts/office_memory.py snapshot --config office-memory.toml --focus documents \
+CONFIG=/path/to/project/.agents/office-memory.toml
+python3 skills/manage-office-memory/scripts/office_memory.py check-config --config "$CONFIG"
+python3 skills/manage-office-memory/scripts/office_memory.py snapshot --config "$CONFIG"
+python3 skills/manage-office-memory/scripts/office_memory.py snapshot --config "$CONFIG" --source qoder-recent
+python3 skills/manage-office-memory/scripts/office_memory.py snapshot --config "$CONFIG" --focus documents \
   --material documents/current.md
-python3 skills/manage-office-memory/scripts/office_memory.py init --config office-memory.toml
-python3 skills/manage-office-memory/scripts/office_memory.py init --config office-memory.toml --apply
-python3 skills/manage-office-memory/scripts/office_memory.py validate --config office-memory.toml
+python3 skills/manage-office-memory/scripts/office_memory.py init --config "$CONFIG"
+python3 skills/manage-office-memory/scripts/office_memory.py init --config "$CONFIG" --apply
+python3 skills/manage-office-memory/scripts/office_memory.py validate --config "$CONFIG"
 ```
 
 `check-config` does not read source or daily bodies; it reports the date-record

@@ -1,13 +1,17 @@
 from __future__ import annotations
 
+import errno
 import hashlib
+import importlib.util
 import json
+import stat
 import subprocess
 import sys
 import tempfile
 import tomllib
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 sys.dont_write_bytecode = True
@@ -15,6 +19,19 @@ ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "office-memory"
 SKILL = PLUGIN / "skills" / "manage-office-memory"
 SCRIPT = SKILL / "scripts" / "office_memory.py"
+
+
+def load_helper():
+    spec = importlib.util.spec_from_file_location("office_memory_test_module", SCRIPT)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("cannot load Office Memory helper")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+HELPER = load_helper()
 
 
 def run(*args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -77,6 +94,9 @@ class OfficeMemoryLiteTest(unittest.TestCase):
         skill = (SKILL / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("$manage-office-memory", skill)
         self.assertIn("$office-memory:manage-office-memory", skill)
+        self.assertIn("/manage-office-memory", skill)
+        self.assertIn("/office-memory:manage-office-memory", skill)
+        self.assertIn("disable-model-invocation: true", skill)
         self.assertIn("If neither invocation", skill)
         self.assertIn("A descriptive request alone does not activate", skill)
         self.assertIn("| `daily` |", skill)
@@ -86,11 +106,33 @@ class OfficeMemoryLiteTest(unittest.TestCase):
         self.assertIn("$manage-office-memory", sidecar)
         self.assertIn("allow_implicit_invocation: false", sidecar)
         self.assertEqual({path.relative_to(SKILL).as_posix() for path in SKILL.rglob("*") if path.is_file()}, {"SKILL.md", "agents/openai.yaml", "scripts/office_memory.py"})
-        self.assertLessEqual(len(SCRIPT.read_text(encoding="utf-8").splitlines()), 450)
+        self.assertLessEqual(len(SCRIPT.read_text(encoding="utf-8").splitlines()), 475)
+        codex_manifest = json.loads((PLUGIN / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
+        claude_manifest = json.loads((PLUGIN / ".claude-plugin/plugin.json").read_text(encoding="utf-8"))
+        self.assertEqual((codex_manifest["version"], claude_manifest["version"]), ("0.1.0", "0.1.0"))
+        self.assertIn('version: "0.1"', skill)
         example = tomllib.loads((PLUGIN / "office-memory.toml.example").read_text(encoding="utf-8"))
-        self.assertEqual((example["awareness_file"], example["memory_file"]), ("awareness/AWARENESS.md", "memory/MEMORY.md"))
+        self.assertEqual((example["project_root"], example["awareness_file"], example["memory_file"]), ("..", ".agents/awareness/AWARENESS.md", ".agents/memory/MEMORY.md"))
         recent = next(item for item in example["sources"] if item["id"] == "qoder-recent")
         self.assertEqual((recent["role"], recent["default"]), ("recent", False))
+        self.assertNotIn("--config office-memory.toml", skill)
+        self.assertIn("--config .agents/office-memory.toml", skill)
+
+    def test_init_falls_back_without_hardlink_and_leaves_no_temporary_file(self) -> None:
+        with tempfile.TemporaryDirectory() as root_text:
+            root = Path(root_text)
+            output = root / "AWARENESS.md"
+            with mock.patch.object(HELPER.os, "link", side_effect=OSError(errno.EOPNOTSUPP, "hardlinks unsupported")):
+                self.assertTrue(HELPER.atomic_create(output, "complete\n"))
+            self.assertEqual(output.read_text(encoding="utf-8"), "complete\n")
+            self.assertEqual(stat.S_IMODE(output.stat().st_mode), 0o600)
+            self.assertEqual([path.name for path in root.iterdir()], ["AWARENESS.md"])
+            self.assertFalse(HELPER.atomic_create(output, "replacement\n"))
+            self.assertEqual(output.read_text(encoding="utf-8"), "complete\n")
+            with mock.patch.object(HELPER, "write_sync", side_effect=OSError("write failed")):
+                with self.assertRaises(OSError):
+                    HELPER.atomic_create(root / "MEMORY.md", "partial\n")
+            self.assertEqual([path.name for path in root.iterdir()], ["AWARENESS.md"])
 
     def test_status_snapshot_focus_and_source_read_only(self) -> None:
         with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
@@ -117,6 +159,9 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             self.assertNotIn(external.as_posix(), json.dumps(explicit))
             self.assertNotEqual(run("snapshot", "--config", str(cfg), "--focus", "project", "--material", str(profile), check=False).returncode, 0)
             self.assertNotEqual(run("snapshot", "--config", str(cfg), "--focus", "documents", "--material", "office-memory.toml", check=False).returncode, 0)
+            missing = run("snapshot", "--config", str(cfg), "--focus", "documents", "--material", "documents/missing.md", check=False)
+            self.assertNotEqual(missing.returncode, 0)
+            self.assertNotIn("Traceback", missing.stderr)
             escape = root / "documents/escape.md"
             try:
                 escape.symlink_to(profile)
@@ -144,8 +189,21 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             self.assertEqual(awareness.read_text(encoding="utf-8"), "custom")
             overlap = write_config(root, external, source_path=root / ".agents/awareness")
             self.assertNotEqual(run("check-config", "--config", str(overlap), check=False).returncode, 0)
+            reverse_overlap = write_config(root, external, source_path=root / ".agents/awareness/AWARENESS.md/source")
+            self.assertNotEqual(run("check-config", "--config", str(reverse_overlap), check=False).returncode, 0)
             daily_overlap = write_config(root, external, source_path=root / ".agents/memory/2099-01-01.md")
             self.assertNotEqual(run("check-config", "--config", str(daily_overlap), check=False).returncode, 0)
+
+            cfg = write_config(root, external)
+            awareness.unlink()
+            awareness.mkdir()
+            result = run("validate", "--config", str(cfg), check=False)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("not a regular file", result.stdout)
+            self.assertNotIn("Traceback", result.stderr)
+            result = run("init", "--config", str(cfg), "--apply", check=False)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertNotIn("Traceback", result.stderr)
 
     def test_awareness_memory_schema_and_limits(self) -> None:
         with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
@@ -165,6 +223,8 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             self.assertIn("Focus", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
             awareness_path.write_text(awareness().replace("memory-source; project#documents/input.md", "unknown-source"), encoding="utf-8")
             self.assertIn("Sources checked", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+            awareness_path.write_text(awareness().replace("- Focus: project", "- Focus: project\n- Focus: project"), encoding="utf-8")
+            self.assertIn("needs non-empty", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
             awareness_path.write_text(awareness().replace("## Needs attention", "token=not-safe-value\n\n## Needs attention"), encoding="utf-8")
             self.assertIn("secret-like", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
             awareness_path.write_text(awareness(), encoding="utf-8")
@@ -208,6 +268,39 @@ class OfficeMemoryLiteTest(unittest.TestCase):
         helper = SCRIPT.relative_to(PLUGIN).as_posix()
         self.assertIn(f"python3 {helper} check-config", readme)
         self.assertNotIn("python3 office_memory.py", readme)
+        self.assertIn(".agents/office-memory.toml", readme)
+        ignored = subprocess.run(["git", "check-ignore", "-q", "--no-index", ".agents/office-memory.toml"], cwd=ROOT)
+        self.assertEqual(ignored.returncode, 0)
+
+    def test_common_credentials_are_rejected_across_all_results(self) -> None:
+        with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
+            root, external = Path(root_text), Path(external_text)
+            (external / "memory.md").write_text("source", encoding="utf-8")
+            cfg = write_config(root, external)
+            run("init", "--config", str(cfg), "--apply")
+            awareness_path = root / ".agents/awareness/AWARENESS.md"
+            memory_path = root / ".agents/memory/MEMORY.md"
+            daily_path = root / ".agents/memory/2026-07-24.md"
+
+            awareness_path.write_text(awareness().replace("## Needs attention", "ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\n\n## Needs attention"), encoding="utf-8")
+            memory_path.write_text("# Project Memory\n\n", encoding="utf-8")
+            self.assertIn("secret-like", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+
+            awareness_path.write_text(awareness(), encoding="utf-8")
+            daily_path.write_text(daily_record(content="- hf_ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\n"), encoding="utf-8")
+            self.assertIn("secret-like", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+
+            daily_path.unlink()
+            for credential in (
+                "Authorization: Bearer abcdefghijklmnopqrstuvwxyz",
+                "api key: abcdefghijklmnopqrstuvwxyz",
+                "github_pat_ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+            ):
+                memory_path.write_text("# Project Memory\n\n" + entry(summary=credential), encoding="utf-8")
+                self.assertIn("secret-like", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+
+            memory_path.write_text("# Project Memory\n\n" + entry(summary="A stable note about token budgets without a credential."), encoding="utf-8")
+            self.assertEqual(run("validate", "--config", str(cfg)).returncode, 0)
 
     def test_daily_status_and_valid_schema(self) -> None:
         with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
@@ -243,6 +336,7 @@ class OfficeMemoryLiteTest(unittest.TestCase):
                 (daily_record(content="password=not-safe-value\n"), "secret-like"),
                 (daily_record(content=""), "curated item"),
                 (daily_record(content="x" * (13 * 1024)), "12 KiB"),
+                (daily_record().replace("- Focus: project", "- Focus: project\n- Focus: project"), "non-empty Focus"),
             )
             for content, expected in cases:
                 path.write_text(content, encoding="utf-8")
@@ -261,7 +355,13 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             unexpected = root / ".agents/memory/notes.md"
             unexpected.write_text("not a daily record", encoding="utf-8")
             errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
-            self.assertIn("unexpected project memory file", errors)
+            self.assertIn("unexpected project memory artifact", errors)
+            unexpected.unlink()
+
+            state = root / ".agents/memory/state.json"
+            state.write_text("{}", encoding="utf-8")
+            errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
+            self.assertIn("unexpected project memory artifact", errors)
 
 
 if __name__ == "__main__":

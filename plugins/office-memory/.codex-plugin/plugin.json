@@ -1,0 +1,28 @@
+{
+  "name": "office-memory",
+  "version": "0.1.0",
+  "description": "Manual V1 Lite method for reviewed AWARENESS.md and MEMORY.md from explicit sources and materials.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/office-memory",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "MIT",
+  "keywords": ["codex", "office", "memory", "workspace", "curation"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Office Memory",
+    "shortDescription": "Manual V1 Lite workflow for AWARENESS.md and MEMORY.md.",
+    "longDescription": "Office Memory V1 Lite is a manual method for reviewed AWARENESS.md and MEMORY.md. It reads only explicitly selected whitelisted sources and explicit project materials, never writes sources, and validates the two Markdown contracts.",
+    "developerName": "BlueSkyXN",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": [
+      "Use $office-memory:manage-office-memory to initialize reviewed AWARENESS.md and MEMORY.md.",
+      "Use $office-memory:manage-office-memory with explicit project materials for a focused awareness update."
+    ],
+    "brandColor": "#2563EB",
+    "websiteURL": "https://github.com/BlueSkyXN/Codex-is-all-you-need"
+  }
+}

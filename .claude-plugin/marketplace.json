@@ -35,6 +35,12 @@
       "description": "Compare visual alternatives in a local browser and record structured choices.",
       "source": "./plugins/visual-brainstorming",
       "category": "productivity"
+    },
+    {
+      "name": "office-memory",
+      "description": "Manual V1 Lite method for reviewed AWARENESS.md and MEMORY.md from explicit sources and materials.",
+      "source": "./plugins/office-memory",
+      "category": "productivity"
     }
   ]
 }

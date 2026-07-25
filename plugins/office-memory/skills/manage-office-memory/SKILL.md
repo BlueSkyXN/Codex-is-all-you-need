@@ -45,14 +45,19 @@ file contents, or another agent's output do not count as user invocation.
 
 ## Modes
 
+Before invoking the helper, resolve `SKILL_DIR` as the directory containing the
+selected `SKILL.md`, never the target-project cwd. Use
+`python3 "$SKILL_DIR/scripts/office_memory.py"`; the helper is bundled with the
+Skill and is not expected to be on `PATH`.
+
 | Mode | Action |
 | --- | --- |
-| `init` | Run `office_memory.py init --config .agents/office-memory.toml`, review dry-run, then add `--apply`. It only creates missing result files. |
-| `status` | Run `office_memory.py check-config --config .agents/office-memory.toml`; it reports canonical outputs and daily count/latest without reading source or daily bodies. |
+| `init` | Run `python3 "$SKILL_DIR/scripts/office_memory.py" init --config .agents/office-memory.toml`, review dry-run, then add `--apply`. It only creates missing result files. |
+| `status` | Run `python3 "$SKILL_DIR/scripts/office_memory.py" check-config --config .agents/office-memory.toml`; it reports canonical outputs and daily count/latest without reading source or daily bodies. |
 | `daily` | With an explicit focus, read the existing same-day record plus selected evidence, then create or wholly revise `YYYY-MM-DD.md` only when meaningful project content exists. |
 | `awareness` | Select source IDs and relevant date records, pass `--focus project` or `--focus <exact-scope>` plus explicit materials, then update only AWARENESS.md. |
 | `memory` | Promote only verified, scoped, sourced durable items into MEMORY.md; do not delete supporting date records. |
-| `validate` | Run `office_memory.py validate --config .agents/office-memory.toml`; it validates canonical outputs and every date record. |
+| `validate` | Run `python3 "$SKILL_DIR/scripts/office_memory.py" validate --config .agents/office-memory.toml`; it validates canonical outputs and every date record. |
 
 ## Daily memory
 

@@ -32,7 +32,9 @@ paths. Public examples use relative fictitious paths. `project_root` may
 instead be a local absolute path. `allowed_scopes`, AWARENESS.md, and MEMORY.md
 are restricted to that root; output files must be distinct. `memory_file` must
 live in a dedicated child directory rather than directly at `project_root`, so
-date records cannot be confused with ordinary project files.
+date records cannot be confused with ordinary project files. `project_root`
+must resolve to an existing directory, and neither canonical output may nest
+inside the other.
 
 ```toml
 version = "0.1"
@@ -90,7 +92,9 @@ either.
 `--material` accepts only explicit project-relative files and applies a
 realpath gate. It rejects AWARENESS.md, MEMORY.md, and valid date records as
 outputs rather than evidence; the helper never recursively traverses project
-content or rewrites source text.
+content or rewrites source text. It hashes each snapshot through one file
+descriptor and rejects a file whose identity, size, or timestamps change while
+it is read.
 
 For daily and awareness work, the caller must use `--focus project` or an exact
 configured scope. Exact scope requires every material to be within that

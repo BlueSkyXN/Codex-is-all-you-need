@@ -14,7 +14,6 @@ from datetime import date
 from pathlib import Path
 from typing import Any, Iterable
 
-
 SOURCE_ID = re.compile(r"^[a-z][a-z0-9-]{0,63}$")
 KEY = re.compile(r"^[a-z][a-z0-9.-]{0,79}$")
 DAILY_FILE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.md$")
@@ -78,6 +77,7 @@ def load_config(path_value: str) -> Config:
     if not isinstance(project_id, str) or not project_id or not isinstance(root_value, str) or not root_value:
         raise ContractError("project_id and project_root are required strings")
     root = resolve(root_value, path.parent, strict=True)
+    if not root.is_dir(): raise ContractError("project_root must be an existing directory")
     scopes = data.get("allowed_scopes")
     if not isinstance(scopes, list) or not scopes or not all(isinstance(scope, str) and scope and not Path(scope).is_absolute() and ".." not in Path(scope).parts for scope in scopes):
         raise ContractError("allowed_scopes must be non-empty relative scope names")
@@ -91,8 +91,8 @@ def load_config(path_value: str) -> Config:
         if not within(candidate, root) or candidate.name != expected:
             raise ContractError(f"{key} must be a project-root descendant named {expected}")
         outputs.append(candidate)
-    if outputs[0] == outputs[1]:
-        raise ContractError("awareness_file and memory_file must be unique")
+    if outputs[0] == outputs[1] or within(outputs[0], outputs[1]) or within(outputs[1], outputs[0]):
+        raise ContractError("awareness_file and memory_file must be distinct and not nest")
     if outputs[1].parent == root:
         raise ContractError("memory_file must live in a dedicated project-root descendant directory")
     raw_sources = data.get("sources", [])
@@ -120,13 +120,9 @@ def load_config(path_value: str) -> Config:
 
 
 def is_office_memory_result(path: Path, cfg: Config) -> bool:
-    if path in {cfg.awareness, cfg.memory}:
-        return True
-    if path.parent != cfg.memory.parent:
-        return False
     match = DAILY_FILE.fullmatch(path.name)
-    if match is None:
-        return False
+    if path in {cfg.awareness, cfg.memory}: return True
+    if path.parent != cfg.memory.parent or match is None: return False
     try:
         date.fromisoformat(match.group(1))
     except ValueError:
@@ -187,23 +183,28 @@ def source_files(source: Source) -> Iterable[Path]:
             yield candidate
 
 
-def digest(path: Path) -> str:
+def snapshot_digest(path: Path) -> tuple[int, str]:
     hasher = hashlib.sha256()
     with path.open("rb") as handle:
+        before = os.fstat(handle.fileno())
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             hasher.update(chunk)
-    return hasher.hexdigest()
+        after = os.fstat(handle.fileno())
+    state = lambda value: (value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns)
+    if state(before) != state(after) or state(before) != state(path.stat()):
+        raise ContractError(f"file changed while snapshotting: {path.name}")
+    return before.st_mtime_ns, hasher.hexdigest()
 
 
 def snapshot(cfg: Config, selected: Iterable[str], materials: Iterable[Path]) -> dict[str, Any]:
     rows: list[dict[str, Any]] = []
     for source in select_sources(cfg, selected):
         for path in source_files(source):
-            stat = path.stat()
-            rows.append({"source_id": source.id, "file_id": path.name if source.path.is_dir() else source.path.name, "mtime_ns": stat.st_mtime_ns, "sha256": digest(path)})
+            mtime_ns, sha256 = snapshot_digest(path)
+            rows.append({"source_id": source.id, "file_id": path.name if source.path.is_dir() else source.path.name, "mtime_ns": mtime_ns, "sha256": sha256})
     for path in materials:
-        stat = path.stat()
-        rows.append({"source_id": "project", "file_id": f"project#{path.relative_to(cfg.root).as_posix()}", "mtime_ns": stat.st_mtime_ns, "sha256": digest(path)})
+        mtime_ns, sha256 = snapshot_digest(path)
+        rows.append({"source_id": "project", "file_id": f"project#{path.relative_to(cfg.root).as_posix()}", "mtime_ns": mtime_ns, "sha256": sha256})
     return {"source_ids": sorted({row["source_id"] for row in rows}), "file_count": len(rows), "files": sorted(rows, key=lambda row: (row["source_id"], row["file_id"]))}
 
 

@@ -102,6 +102,8 @@ class OfficeMemoryLiteTest(unittest.TestCase):
         self.assertIn("| `daily` |", skill)
         self.assertIn("Rewrite the whole day", skill)
         self.assertIn("delete old dates", skill)
+        self.assertIn('SKILL_DIR/scripts/office_memory.py', skill)
+        self.assertNotIn('Run `office_memory.py', skill)
         sidecar = (SKILL / "agents/openai.yaml").read_text(encoding="utf-8")
         self.assertIn("$manage-office-memory", sidecar)
         self.assertIn("allow_implicit_invocation: false", sidecar)
@@ -133,6 +135,16 @@ class OfficeMemoryLiteTest(unittest.TestCase):
                 with self.assertRaises(OSError):
                     HELPER.atomic_create(root / "MEMORY.md", "partial\n")
             self.assertEqual([path.name for path in root.iterdir()], ["AWARENESS.md"])
+
+    def test_snapshot_rejects_a_file_that_changes_during_hashing(self) -> None:
+        with tempfile.TemporaryDirectory() as root_text:
+            path = Path(root_text) / "source.md"
+            path.write_text("source", encoding="utf-8")
+            stable = path.stat()
+            changed = mock.Mock(st_dev=stable.st_dev, st_ino=stable.st_ino, st_size=stable.st_size + 1, st_mtime_ns=stable.st_mtime_ns, st_ctime_ns=stable.st_ctime_ns)
+            with mock.patch.object(HELPER.os, "fstat", side_effect=(stable, changed)):
+                with self.assertRaisesRegex(HELPER.ContractError, "changed while snapshotting"):
+                    HELPER.snapshot_digest(path)
 
     def test_status_snapshot_focus_and_source_read_only(self) -> None:
         with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
@@ -282,6 +294,26 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             result = run("check-config", "--config", str(cfg), check=False)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("dedicated", result.stderr)
+
+    def test_review_rejects_non_directory_roots_and_nested_outputs(self) -> None:
+        with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
+            root, external = Path(root_text), Path(external_text)
+            (external / "memory.md").write_text("source", encoding="utf-8")
+            cfg = write_config(root, external)
+            regular_file = root / "not-a-directory.md"
+            regular_file.write_text("not a directory", encoding="utf-8")
+            cfg.write_text(cfg.read_text(encoding="utf-8").replace(f'project_root = "{root.as_posix()}"', f'project_root = "{regular_file.as_posix()}"'), encoding="utf-8")
+            result = run("check-config", "--config", str(cfg), check=False)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("existing directory", result.stderr)
+
+            for awareness_file, memory_file in ((".agents/memory/MEMORY.md/AWARENESS.md", ".agents/memory/MEMORY.md"), (".agents/awareness/AWARENESS.md", ".agents/awareness/AWARENESS.md/MEMORY.md")):
+                cfg = write_config(root, external)
+                content = cfg.read_text(encoding="utf-8").replace('awareness_file = ".agents/awareness/AWARENESS.md"', f'awareness_file = "{awareness_file}"').replace('memory_file = ".agents/memory/MEMORY.md"', f'memory_file = "{memory_file}"')
+                cfg.write_text(content, encoding="utf-8")
+                result = run("check-config", "--config", str(cfg), check=False)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("not nest", result.stderr)
 
     def test_review_skill_uses_real_focus_flag(self) -> None:
         skill = (SKILL / "SKILL.md").read_text(encoding="utf-8")

@@ -110,8 +110,8 @@ def load_config(path_value: str) -> Config:
         if raw["role"] in {"profile", "recent"} and raw["default"]:
             raise ContractError("profile and recent sources must default to false")
         include = raw.get("include", ["*"])
-        if not isinstance(include, list) or not include or not all(isinstance(item, str) and item and ".." not in Path(item).parts for item in include):
-            raise ContractError("source include must be a non-empty relative glob array")
+        if not isinstance(include, list) or not include or not all(isinstance(item, str) and item and not Path(item).is_absolute() and len(Path(item).parts) == 1 and ".." not in Path(item).parts for item in include):
+            raise ContractError("source include must be a non-empty relative basename glob array")
         sources.append(Source(raw["id"], resolve(raw["path"], root, strict=False), raw["role"], raw["default"], tuple(include)))
     if len({source.id for source in sources}) != len(sources):
         raise ContractError("source ids must be unique")
@@ -218,6 +218,8 @@ def snapshot(cfg: Config, selected: Iterable[str], materials: Iterable[Path]) ->
     rows: list[dict[str, Any]] = []
     for source in select_sources(cfg, selected):
         for path in source_files(source):
+            if is_office_memory_result(path, cfg):
+                raise ContractError("source file must not name an Office Memory result file")
             mtime_ns, sha256 = snapshot_digest(path)
             rows.append({"source_id": source.id, "file_id": path.name if source.path.is_dir() else source.path.name, "mtime_ns": mtime_ns, "sha256": sha256})
     for path in materials:
@@ -264,9 +266,21 @@ def atomic_create(path: Path, content: str) -> bool:
             temporary.unlink(missing_ok=True)
 
 
-def exact_fields(text: str, names: tuple[str, ...]) -> dict[str, str] | None:
-    matches = re.findall(r"^- (" + "|".join(names) + r"):[ \t]*(.+)$", text, re.MULTILINE)
-    return dict(matches) if len(matches) == len(names) and {name for name, _ in matches} == set(names) else None
+def exact_fields(text: str, names: tuple[str, ...], header: bool = False) -> dict[str, str] | None:
+    lines = text.splitlines()
+    if header:
+        if len(lines) != len(names) + 2 or lines[-1] != "":
+            return None
+        lines = lines[1:-1]
+    elif len(lines) != len(names):
+        return None
+    values: list[str] = []
+    for name, line in zip(names, lines):
+        match = re.fullmatch(r"- " + re.escape(name) + r":[ \t]*(.+)", line)
+        if match is None:
+            return None
+        values.append(match.group(1))
+    return dict(zip(names, values))
 
 
 def header_block(text: str) -> str:
@@ -278,13 +292,15 @@ def awareness_errors(text: str, cfg: Config) -> list[str]:
         return ["AWARENESS.md exceeds 16 KiB; compress it without splitting files"]
     if not text.startswith("# Project Awareness\n"):
         return ["AWARENESS.md must start with # Project Awareness"]
-    fields = exact_fields(header_block(text), ("Updated", "Focus", "Sources checked"))
+    fields = exact_fields(header_block(text), ("Updated", "Focus", "Sources checked"), header=True)
     if fields is None:
         return ["AWARENESS.md needs non-empty Updated, Focus, and Sources checked values"]
     try:
-        date.fromisoformat(fields["Updated"])
+        updated = date.fromisoformat(fields["Updated"])
     except ValueError:
         return ["AWARENESS.md Updated must be an ISO date"]
+    if updated > date.today():
+        return ["AWARENESS.md Updated must not be in the future"]
     if fields["Focus"] not in {"project", *cfg.allowed_scopes}:
         return ["AWARENESS.md Focus must be project or an exact allowed scope"]
     if not valid_checked_sources(fields["Sources checked"], cfg, fields["Focus"]):
@@ -380,7 +396,7 @@ def daily_errors(path: Path, text: str, cfg: Config) -> list[str]:
             errors.append("filename must not be in the future")
     if not text.startswith(f"# Daily Project Memory — {day}\n"):
         errors.append("heading date must match filename")
-    fields = exact_fields(header_block(text), ("Focus", "Sources checked"))
+    fields = exact_fields(header_block(text), ("Focus", "Sources checked"), header=True)
     if fields is None:
         errors.append("needs non-empty Focus and Sources checked values")
     else:
@@ -435,6 +451,8 @@ def memory_errors(text: str, cfg: Config) -> list[str]:
         for field in ("Observed", "Review"):
             try:
                 parsed = date.fromisoformat(fields[field])
+                if field == "Observed" and parsed > date.today():
+                    errors.append(f"future observed date: {key}")
                 if field == "Review" and parsed < date.today():
                     errors.append(f"expired review: {key}")
             except ValueError:
@@ -475,20 +493,32 @@ def command_init(cfg: Config, apply: bool) -> int:
     return 0
 
 
+def result_text(path: Path, limit: int) -> str | None:
+    return path.read_text(encoding="utf-8") if path.stat().st_size <= limit else None
+
+
 def command_validate(cfg: Config) -> int:
     errors: list[str] = []
     if not cfg.awareness.is_file():
         errors.append("AWARENESS.md is missing or not a regular file")
+    elif (text := result_text(cfg.awareness, 16 * 1024)) is None:
+        errors.append("AWARENESS.md exceeds 16 KiB; compress it without splitting files")
     else:
-        errors.extend(awareness_errors(cfg.awareness.read_text(encoding="utf-8"), cfg))
+        errors.extend(awareness_errors(text, cfg))
     if not cfg.memory.is_file():
         errors.append("MEMORY.md is missing or not a regular file")
+    elif (text := result_text(cfg.memory, 64 * 1024)) is None:
+        errors.append("MEMORY.md exceeds 64 KiB; compress it without splitting files")
     else:
-        errors.extend(memory_errors(cfg.memory.read_text(encoding="utf-8"), cfg))
+        errors.extend(memory_errors(text, cfg))
     daily, daily_path_errors = daily_records(cfg)
     errors.extend(daily_path_errors)
     for path in daily:
-        errors.extend(f"{path.name}: {error}" for error in daily_errors(path, path.read_text(encoding="utf-8"), cfg))
+        text = result_text(path, 12 * 1024)
+        if text is None:
+            errors.append(f"{path.name}: exceeds 12 KiB; curate it without splitting the day")
+        else:
+            errors.extend(f"{path.name}: {error}" for error in daily_errors(path, text, cfg))
     output_json({"valid": not errors, "errors": errors})
     return 0 if not errors else 1
 

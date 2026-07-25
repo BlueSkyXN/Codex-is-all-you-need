@@ -110,7 +110,7 @@ class OfficeMemoryLiteTest(unittest.TestCase):
         self.assertIn("$manage-office-memory", sidecar)
         self.assertIn("allow_implicit_invocation: false", sidecar)
         self.assertEqual({path.relative_to(SKILL).as_posix() for path in SKILL.rglob("*") if path.is_file()}, {"SKILL.md", "agents/openai.yaml", "scripts/office_memory.py"})
-        self.assertLessEqual(len(SCRIPT.read_text(encoding="utf-8").splitlines()), 550)
+        self.assertLessEqual(len(SCRIPT.read_text(encoding="utf-8").splitlines()), 650)
         codex_manifest = json.loads((PLUGIN / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
         claude_manifest = json.loads((PLUGIN / ".claude-plugin/plugin.json").read_text(encoding="utf-8"))
         self.assertEqual((codex_manifest["version"], claude_manifest["version"], codex_manifest["license"], claude_manifest["license"]), ("0.1.0", "0.1.0", "GPL-3.0-only", "GPL-3.0-only"))
@@ -188,6 +188,13 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             repeated = tuple(value for _ in range(21) for value in ("--material", "documents/input.md"))
             self.assertNotEqual(run("snapshot", "--config", str(cfg), "--focus", "documents", *repeated, check=False).returncode, 0)
 
+            run("init", "--config", str(cfg), "--apply")
+            source.unlink()
+            os.link(root / ".agents/memory/MEMORY.md", source)
+            result = run("snapshot", "--config", str(cfg), check=False)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("source file must not", result.stderr)
+
     def test_output_hardlink_aliases_are_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
             root, external = Path(root_text), Path(external_text)
@@ -232,6 +239,10 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             self.assertNotEqual(run("check-config", "--config", str(reverse_overlap), check=False).returncode, 0)
             daily_overlap = write_config(root, external, source_path=root / ".agents/memory/2099-01-01.md")
             self.assertNotEqual(run("check-config", "--config", str(daily_overlap), check=False).returncode, 0)
+            for include in ("/archive/*.md", "nested/*.md"):
+                invalid_include = write_config(root, external)
+                invalid_include.write_text(invalid_include.read_text(encoding="utf-8").replace('include = ["*.md"]', f'include = ["{include}"]'), encoding="utf-8")
+                self.assertNotEqual(run("check-config", "--config", str(invalid_include), check=False).returncode, 0)
 
             cfg = write_config(root, external)
             awareness.unlink()
@@ -260,6 +271,12 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             self.assertNotEqual(run("validate", "--config", str(cfg), check=False).returncode, 0)
             awareness_path.write_text(awareness().replace("- Focus: project", "- Focus: other"), encoding="utf-8")
             self.assertIn("Focus", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+            awareness_path.write_text(awareness().replace("- Updated: 2026-07-24\n- Focus: project\n- Sources checked: memory-source; project#documents/input.md", "- Sources checked: memory-source; project#documents/input.md\n- Focus: project\n- Updated: 2026-07-24"), encoding="utf-8")
+            self.assertIn("needs non-empty", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+            awareness_path.write_text(awareness().replace("- Updated: 2026-07-24", "Note before metadata\n- Updated: 2026-07-24"), encoding="utf-8")
+            self.assertIn("needs non-empty", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+            awareness_path.write_text(awareness().replace("2026-07-24", "9999-12-31", 1), encoding="utf-8")
+            self.assertIn("future", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
             awareness_path.write_text(awareness().replace("memory-source; project#documents/input.md", "unknown-source"), encoding="utf-8")
             self.assertIn("Sources checked", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
             awareness_path.write_text(awareness().replace("- Focus: project", "- Focus: project\n- Focus: project"), encoding="utf-8")
@@ -271,8 +288,30 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
             for expected in ("duplicate", "secret-like", "invalid scope", "expired", "invalid sources"):
                 self.assertIn(expected, errors)
+            memory_path.write_text("# Project Memory\n\n" + entry(observed="9999-12-31"), encoding="utf-8")
+            self.assertIn("future", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
             awareness_path.write_text("x" * (16 * 1024 + 1), encoding="utf-8")
             self.assertIn("16 KiB", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+
+    def test_validate_does_not_decode_oversized_results(self) -> None:
+        with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
+            root, external = Path(root_text), Path(external_text)
+            (external / "memory.md").write_text("source", encoding="utf-8")
+            cfg_path = write_config(root, external)
+            run("init", "--config", str(cfg_path), "--apply")
+            awareness_path = root / ".agents/awareness/AWARENESS.md"
+            awareness_path.write_bytes(b"x" * (16 * 1024 + 1))
+            cfg = HELPER.load_config(str(cfg_path))
+            original_read_text = Path.read_text
+
+            def guarded_read_text(path: Path, *args: object, **kwargs: object) -> str:
+                if path == awareness_path:
+                    raise AssertionError("oversized awareness was decoded")
+                return original_read_text(path, *args, **kwargs)
+
+            with mock.patch.object(Path, "read_text", guarded_read_text), mock.patch.object(HELPER, "output_json") as output:
+                self.assertEqual(HELPER.command_validate(cfg), 1)
+            self.assertTrue(any("exceeds 16 KiB" in error for error in output.call_args.args[0]["errors"]))
 
     def test_review_rejects_secret_without_memory_entries(self) -> None:
         with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
@@ -422,6 +461,11 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             daily_path.unlink()
 
             daily_path.write_text(daily_record().replace("- Focus: project", "- Focus:\nproject"), encoding="utf-8")
+            errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
+            self.assertIn("non-empty Focus", errors)
+            daily_path.unlink()
+
+            daily_path.write_text(daily_record().replace("- Focus: project\n- Sources checked: memory-source", "- Sources checked: memory-source\n- Focus: project"), encoding="utf-8")
             errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
             self.assertIn("non-empty Focus", errors)
             daily_path.unlink()

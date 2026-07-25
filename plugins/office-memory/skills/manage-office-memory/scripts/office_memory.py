@@ -77,7 +77,8 @@ def load_config(path_value: str) -> Config:
     if not isinstance(project_id, str) or not project_id or not isinstance(root_value, str) or not root_value:
         raise ContractError("project_id and project_root are required strings")
     root = resolve(root_value, path.parent, strict=True)
-    if not root.is_dir(): raise ContractError("project_root must be an existing directory")
+    if not root.is_dir():
+        raise ContractError("project_root must be an existing directory")
     scopes = data.get("allowed_scopes")
     if not isinstance(scopes, list) or not scopes or not all(isinstance(scope, str) and scope and not Path(scope).is_absolute() and ".." not in Path(scope).parts for scope in scopes):
         raise ContractError("allowed_scopes must be non-empty relative scope names")
@@ -93,6 +94,8 @@ def load_config(path_value: str) -> Config:
         outputs.append(candidate)
     if outputs[0] == outputs[1] or within(outputs[0], outputs[1]) or within(outputs[1], outputs[0]):
         raise ContractError("awareness_file and memory_file must be distinct and not nest")
+    if same_file(outputs[0], outputs[1]):
+        raise ContractError("awareness_file and memory_file must not refer to the same file")
     if outputs[1].parent == root:
         raise ContractError("memory_file must live in a dedicated project-root descendant directory")
     raw_sources = data.get("sources", [])
@@ -119,15 +122,30 @@ def load_config(path_value: str) -> Config:
     return Config(project_id, root, tuple(scopes), outputs[0], outputs[1], tuple(sources))
 
 
-def is_office_memory_result(path: Path, cfg: Config) -> bool:
-    match = DAILY_FILE.fullmatch(path.name)
-    if path in {cfg.awareness, cfg.memory}: return True
-    if path.parent != cfg.memory.parent or match is None: return False
+def same_file(left: Path, right: Path) -> bool:
     try:
-        date.fromisoformat(match.group(1))
+        return left.exists() and right.exists() and left.samefile(right)
+    except OSError:
+        return False
+
+
+def valid_daily_record_path(path: Path) -> bool:
+    match = DAILY_FILE.fullmatch(path.name)
+    if match is None:
+        return False
+    try:
+        return date.fromisoformat(match.group(1)) <= date.today()
     except ValueError:
         return False
-    return True
+
+
+def is_office_memory_result(path: Path, cfg: Config) -> bool:
+    if any(path == output or same_file(path, output) for output in (cfg.awareness, cfg.memory)):
+        return True
+    directory = cfg.memory.parent
+    if path.parent == directory and valid_daily_record_path(path):
+        return True
+    return directory.is_dir() and any(valid_daily_record_path(candidate) and same_file(path, candidate) for candidate in directory.iterdir())
 
 
 def gate_materials(cfg: Config, values: Iterable[str]) -> tuple[Path, ...]:
@@ -165,7 +183,7 @@ def gate_focus(cfg: Config, focus: str | None, materials: tuple[Path, ...]) -> N
 
 def select_sources(cfg: Config, selected: Iterable[str]) -> tuple[Source, ...]:
     by_id = {source.id: source for source in cfg.sources}
-    ids = tuple(selected)
+    ids = tuple(dict.fromkeys(selected))
     if any(identifier not in by_id for identifier in ids):
         raise ContractError("--source accepts only a configured source id")
     return tuple(by_id[identifier] for identifier in ids) if ids else tuple(source for source in cfg.sources if source.default)
@@ -296,7 +314,7 @@ def valid_sources(value: str, cfg: Config, scope: str = "project") -> bool:
             if not valid_locator(project_path) or (separator and not valid_locator(nested)):
                 return False
             candidate = resolve(project_path, cfg.root, strict=False)
-            if not within(candidate, cfg.root):
+            if not within(candidate, cfg.root) or not candidate.is_file():
                 return False
             if is_office_memory_result(candidate, cfg):
                 return False
@@ -323,14 +341,20 @@ def daily_records(cfg: Config) -> tuple[list[Path], list[str]]:
     for path in sorted(directory.iterdir()):
         if path in canonical or path.name == ".DS_Store":
             continue
+        if any(same_file(path, output) for output in canonical):
+            errors.append(f"daily memory aliases canonical output: {path.name}")
+            continue
         match = DAILY_FILE.fullmatch(path.name)
         if match is None:
             errors.append(f"unexpected project memory artifact: {path.name}")
             continue
         try:
-            date.fromisoformat(match.group(1))
+            parsed = date.fromisoformat(match.group(1))
         except ValueError:
             errors.append(f"daily memory filename is not a valid date: {path.name}")
+            continue
+        if parsed > date.today():
+            errors.append(f"daily memory filename is in the future: {path.name}")
             continue
         if path.is_symlink() or not path.is_file():
             errors.append(f"unsafe daily memory path: {path.name}")
@@ -348,9 +372,12 @@ def daily_errors(path: Path, text: str, cfg: Config) -> list[str]:
         return ["invalid daily filename"]
     day = match.group(1)
     try:
-        date.fromisoformat(day)
+        parsed = date.fromisoformat(day)
     except ValueError:
         errors.append("filename is not a valid date")
+    else:
+        if parsed > date.today():
+            errors.append("filename must not be in the future")
     if not text.startswith(f"# Daily Project Memory — {day}\n"):
         errors.append("heading date must match filename")
     fields = exact_fields(header_block(text), ("Focus", "Sources checked"))

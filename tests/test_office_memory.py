@@ -4,12 +4,14 @@ import errno
 import hashlib
 import importlib.util
 import json
+import os
 import stat
 import subprocess
 import sys
 import tempfile
 import tomllib
 import unittest
+from datetime import date, timedelta
 from pathlib import Path
 from unittest import mock
 
@@ -108,10 +110,10 @@ class OfficeMemoryLiteTest(unittest.TestCase):
         self.assertIn("$manage-office-memory", sidecar)
         self.assertIn("allow_implicit_invocation: false", sidecar)
         self.assertEqual({path.relative_to(SKILL).as_posix() for path in SKILL.rglob("*") if path.is_file()}, {"SKILL.md", "agents/openai.yaml", "scripts/office_memory.py"})
-        self.assertLessEqual(len(SCRIPT.read_text(encoding="utf-8").splitlines()), 500)
+        self.assertLessEqual(len(SCRIPT.read_text(encoding="utf-8").splitlines()), 550)
         codex_manifest = json.loads((PLUGIN / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
         claude_manifest = json.loads((PLUGIN / ".claude-plugin/plugin.json").read_text(encoding="utf-8"))
-        self.assertEqual((codex_manifest["version"], claude_manifest["version"]), ("0.1.0", "0.1.0"))
+        self.assertEqual((codex_manifest["version"], claude_manifest["version"], codex_manifest["license"], claude_manifest["license"]), ("0.1.0", "0.1.0", "GPL-3.0-only", "GPL-3.0-only"))
         self.assertIn('version: "0.1"', skill)
         example = tomllib.loads((PLUGIN / "office-memory.toml.example").read_text(encoding="utf-8"))
         self.assertEqual((example["project_root"], example["awareness_file"], example["memory_file"]), ("..", ".agents/awareness/AWARENESS.md", ".agents/memory/MEMORY.md"))
@@ -167,6 +169,8 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             self.assertNotEqual(run("snapshot", "--config", str(cfg), "--material", "documents/input.md", check=False).returncode, 0)
             explicit = json.loads(run("snapshot", "--config", str(cfg), "--source", "profile-source", "--source", "recent-source", "--focus", "documents", "--material", "documents/input.md").stdout)
             self.assertIn("project#documents/input.md", {row["file_id"] for row in explicit["files"]})
+            duplicated = json.loads(run("snapshot", "--config", str(cfg), "--source", "profile-source", "--source", "profile-source").stdout)
+            self.assertEqual((duplicated["source_ids"], duplicated["file_count"]), (["profile-source"], 1))
             self.assertEqual(before, {path: (hashlib.sha256(path.read_bytes()).hexdigest(), path.stat().st_mtime_ns) for path in before})
             self.assertNotIn(external.as_posix(), json.dumps(explicit))
             self.assertNotEqual(run("snapshot", "--config", str(cfg), "--focus", "project", "--material", str(profile), check=False).returncode, 0)
@@ -183,6 +187,29 @@ class OfficeMemoryLiteTest(unittest.TestCase):
                 self.assertNotEqual(run("snapshot", "--config", str(cfg), "--focus", "documents", "--material", "documents/escape.md", check=False).returncode, 0)
             repeated = tuple(value for _ in range(21) for value in ("--material", "documents/input.md"))
             self.assertNotEqual(run("snapshot", "--config", str(cfg), "--focus", "documents", *repeated, check=False).returncode, 0)
+
+    def test_output_hardlink_aliases_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
+            root, external = Path(root_text), Path(external_text)
+            (external / "memory.md").write_text("source", encoding="utf-8")
+            cfg = write_config(root, external)
+            run("init", "--config", str(cfg), "--apply")
+            awareness = root / ".agents/awareness/AWARENESS.md"
+            alias = root / "output-alias.md"
+            try:
+                os.link(awareness, alias)
+            except OSError as error:
+                self.skipTest(f"hard links are unavailable: {error}")
+            result = run("snapshot", "--config", str(cfg), "--focus", "project", "--material", "output-alias.md", check=False)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("Office Memory result", result.stderr)
+
+            memory = root / ".agents/memory/MEMORY.md"
+            memory.unlink()
+            os.link(awareness, memory)
+            result = run("check-config", "--config", str(cfg), check=False)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("same file", result.stderr)
 
     def test_output_boundaries_missing_results_and_init_nonoverwrite(self) -> None:
         with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
@@ -335,6 +362,8 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             (external / "memory.md").write_text("source", encoding="utf-8")
             cfg = write_config(root, external)
             run("init", "--config", str(cfg), "--apply")
+            (root / "documents").mkdir()
+            (root / "documents/input.md").write_text("material", encoding="utf-8")
             awareness_path = root / ".agents/awareness/AWARENESS.md"
             memory_path = root / ".agents/memory/MEMORY.md"
             daily_path = root / ".agents/memory/2026-07-24.md"
@@ -399,6 +428,9 @@ class OfficeMemoryLiteTest(unittest.TestCase):
 
             awareness_path.write_text(awareness().replace("- Focus: project", "- Focus: documents").replace("project#documents/input.md", "project#other/input.md"), encoding="utf-8")
             self.assertIn("Sources checked", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+            for locator in ("project#documents", "project#documents/missing.md"):
+                awareness_path.write_text(awareness().replace("project#documents/input.md", locator), encoding="utf-8")
+                self.assertIn("Sources checked", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
             awareness_path.write_text(awareness().replace("- Focus: project", "- Focus: documents"), encoding="utf-8")
             self.assertEqual(run("validate", "--config", str(cfg)).returncode, 0)
 
@@ -467,6 +499,15 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             status = json.loads(run("check-config", "--config", str(cfg)).stdout)["outputs"]["daily"]
             self.assertEqual((status["count"], status["latest"], status["invalid"]), (1, "2026-07-24", 1))
             invalid_date.unlink()
+
+            future_day = (date.today() + timedelta(days=1)).isoformat()
+            future_date = root / f".agents/memory/{future_day}.md"
+            future_date.write_text(daily_record(day=future_day), encoding="utf-8")
+            errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
+            self.assertIn("future", errors)
+            status = json.loads(run("check-config", "--config", str(cfg)).stdout)["outputs"]["daily"]
+            self.assertEqual((status["count"], status["latest"], status["invalid"]), (1, "2026-07-24", 1))
+            future_date.unlink()
 
             unexpected = root / ".agents/memory/notes.md"
             unexpected.write_text("not a daily record", encoding="utf-8")

@@ -258,6 +258,31 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("reserved", result.stderr)
 
+    def test_review_rejects_result_materials_and_root_memory_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
+            root, external = Path(root_text), Path(external_text)
+            (external / "memory.md").write_text("source", encoding="utf-8")
+            cfg = write_config(root, external)
+            run("init", "--config", str(cfg), "--apply")
+            daily_path = root / ".agents/memory/2026-07-24.md"
+            daily_path.write_text(daily_record(), encoding="utf-8")
+            for material in (".agents/awareness/AWARENESS.md", ".agents/memory/MEMORY.md", ".agents/memory/2026-07-24.md"):
+                result = run("snapshot", "--config", str(cfg), "--focus", "project", "--material", material, check=False)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("Office Memory result", result.stderr)
+
+            (root / "documents").mkdir()
+            (root / "documents/input.md").write_text("material", encoding="utf-8")
+            (root / ".agents/awareness/AWARENESS.md").write_text(awareness(), encoding="utf-8")
+            (root / ".agents/memory/MEMORY.md").write_text("# Project Memory\n\n" + entry(sources="project#.agents/memory/MEMORY.md"), encoding="utf-8")
+            errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
+            self.assertIn("invalid sources", errors)
+
+            cfg.write_text(cfg.read_text(encoding="utf-8").replace('memory_file = ".agents/memory/MEMORY.md"', 'memory_file = "MEMORY.md"'), encoding="utf-8")
+            result = run("check-config", "--config", str(cfg), check=False)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("dedicated", result.stderr)
+
     def test_review_skill_uses_real_focus_flag(self) -> None:
         skill = (SKILL / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("pass `--focus project`", skill)
@@ -298,6 +323,7 @@ class OfficeMemoryLiteTest(unittest.TestCase):
                 "OPENAI_API_KEY=abcdefghijklmnop",
                 "GITHUB_TOKEN=abcdefghijklmnop",
                 "AWS_SECRET_ACCESS_KEY=abcdefghijklmnop",
+                "ASIAIOSFODNN7EXAMPLE",
             ):
                 memory_path.write_text("# Project Memory\n\n" + entry(summary=credential), encoding="utf-8")
                 self.assertIn("secret-like", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
@@ -325,7 +351,16 @@ class OfficeMemoryLiteTest(unittest.TestCase):
             awareness_path.write_text(misplaced, encoding="utf-8")
             self.assertIn("needs non-empty", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
 
+            cross_line = awareness().replace("- Focus: project", "- Focus:\nproject")
+            awareness_path.write_text(cross_line, encoding="utf-8")
+            self.assertIn("needs non-empty", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+
             daily_path.write_text(daily_record().replace("- Focus: project\n", "").replace("## Meaningful changes\n", "## Meaningful changes\n- Focus: project\n"), encoding="utf-8")
+            errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
+            self.assertIn("non-empty Focus", errors)
+            daily_path.unlink()
+
+            daily_path.write_text(daily_record().replace("- Focus: project", "- Focus:\nproject"), encoding="utf-8")
             errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
             self.assertIn("non-empty Focus", errors)
             daily_path.unlink()
@@ -345,6 +380,10 @@ class OfficeMemoryLiteTest(unittest.TestCase):
 
             misplaced_entry = entry().replace("- Kind: fact\n", "").replace("A reviewed, conservative fact.", "- Kind: fact\nA reviewed, conservative fact.")
             memory_path.write_text("# Project Memory\n\n" + misplaced_entry, encoding="utf-8")
+            self.assertIn("missing memory entry fields", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+
+            cross_line_entry = entry().replace("- Scope: project", "- Scope:\nproject")
+            memory_path.write_text("# Project Memory\n\n" + cross_line_entry, encoding="utf-8")
             self.assertIn("missing memory entry fields", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
 
     def test_daily_status_and_valid_schema(self) -> None:

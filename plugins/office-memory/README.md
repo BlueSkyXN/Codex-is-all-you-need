@@ -30,7 +30,9 @@ Copy the public example to the target project's private
 another project, add the file to that project's ignore rules before adding real
 paths. Public examples use relative fictitious paths. `project_root` may
 instead be a local absolute path. `allowed_scopes`, AWARENESS.md, and MEMORY.md
-are restricted to that root; output files must be distinct.
+are restricted to that root; output files must be distinct. `memory_file` must
+live in a dedicated child directory rather than directly at `project_root`, so
+date records cannot be confused with ordinary project files.
 
 ```toml
 version = "0.1"
@@ -86,8 +88,9 @@ Project materials use the safe ID `project#relative/path`. `init` is dry-run by
 default and creates only missing AWARENESS.md and MEMORY.md, never overwriting
 either.
 `--material` accepts only explicit project-relative files and applies a
-realpath gate; the helper never recursively traverses project content or rewrites
-source text.
+realpath gate. It rejects AWARENESS.md, MEMORY.md, and valid date records as
+outputs rather than evidence; the helper never recursively traverses project
+content or rewrites source text.
 
 For daily and awareness work, the caller must use `--focus project` or an exact
 configured scope. Exact scope requires every material to be within that

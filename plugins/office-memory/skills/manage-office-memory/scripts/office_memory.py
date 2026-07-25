@@ -18,7 +18,7 @@ from typing import Any, Iterable
 SOURCE_ID = re.compile(r"^[a-z][a-z0-9-]{0,63}$")
 KEY = re.compile(r"^[a-z][a-z0-9.-]{0,79}$")
 DAILY_FILE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.md$")
-SECRET = re.compile(r"(?:-----BEGIN [A-Z ]*PRIVATE KEY-----|\bAKIA[0-9A-Z]{16}\b|\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|hf_[A-Za-z0-9]{20,}|npm_[A-Za-z0-9]{20,}|glpat-[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|sk-[A-Za-z0-9_-]{16,})\b|\bauthorization\s*:\s*bearer\s+[A-Za-z0-9._~+/=-]{8,}|(?<![A-Za-z0-9])(?:password|passwd|secret|token|api[ _-]?key|access[ _-]?key|client[ _-]?secret)\s*[:=]\s*[^\s]{8,})", re.I)
+SECRET = re.compile(r"(?:-----BEGIN [A-Z ]*PRIVATE KEY-----|\b(?:AKIA|ASIA)[0-9A-Z]{16}\b|\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|hf_[A-Za-z0-9]{20,}|npm_[A-Za-z0-9]{20,}|glpat-[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|sk-[A-Za-z0-9_-]{16,})\b|\bauthorization\s*:\s*bearer\s+[A-Za-z0-9._~+/=-]{8,}|(?<![A-Za-z0-9])(?:password|passwd|secret|token|api[ _-]?key|access[ _-]?key|client[ _-]?secret)\s*[:=]\s*[^\s]{8,})", re.I)
 KINDS = {"fact", "preference", "decision", "runbook", "lesson"}
 AWARENESS_SECTIONS = ("Current understanding", "Relevant changes", "Conflicts and unknowns", "Needs attention", "Memory candidates")
 DAILY_SECTIONS = ("Meaningful changes", "Decisions and constraints", "Conflicts and unknowns", "Long-term candidates")
@@ -93,6 +93,8 @@ def load_config(path_value: str) -> Config:
         outputs.append(candidate)
     if outputs[0] == outputs[1]:
         raise ContractError("awareness_file and memory_file must be unique")
+    if outputs[1].parent == root:
+        raise ContractError("memory_file must live in a dedicated project-root descendant directory")
     raw_sources = data.get("sources", [])
     if not isinstance(raw_sources, list):
         raise ContractError("sources must be an array of tables")
@@ -117,6 +119,21 @@ def load_config(path_value: str) -> Config:
     return Config(project_id, root, tuple(scopes), outputs[0], outputs[1], tuple(sources))
 
 
+def is_office_memory_result(path: Path, cfg: Config) -> bool:
+    if path in {cfg.awareness, cfg.memory}:
+        return True
+    if path.parent != cfg.memory.parent:
+        return False
+    match = DAILY_FILE.fullmatch(path.name)
+    if match is None:
+        return False
+    try:
+        date.fromisoformat(match.group(1))
+    except ValueError:
+        return False
+    return True
+
+
 def gate_materials(cfg: Config, values: Iterable[str]) -> tuple[Path, ...]:
     raw_values = tuple(values)
     if len(raw_values) > 20:
@@ -131,6 +148,8 @@ def gate_materials(cfg: Config, values: Iterable[str]) -> tuple[Path, ...]:
             raise ContractError("--material escapes project_root")
         if not path.is_file():
             raise ContractError("--material must name an explicit file; V1 Lite does not recurse directories")
+        if is_office_memory_result(path, cfg):
+            raise ContractError("--material must not name an Office Memory result file")
         if path not in result:
             result.append(path)
     return tuple(result)
@@ -227,7 +246,7 @@ def atomic_create(path: Path, content: str) -> bool:
 
 
 def exact_fields(text: str, names: tuple[str, ...]) -> dict[str, str] | None:
-    matches = re.findall(r"^- (" + "|".join(names) + r"):\s*(.+)$", text, re.MULTILINE)
+    matches = re.findall(r"^- (" + "|".join(names) + r"):[ \t]*(.+)$", text, re.MULTILINE)
     return dict(matches) if len(matches) == len(names) and {name for name, _ in matches} == set(names) else None
 
 
@@ -277,6 +296,8 @@ def valid_sources(value: str, cfg: Config, scope: str = "project") -> bool:
                 return False
             candidate = resolve(project_path, cfg.root, strict=False)
             if not within(candidate, cfg.root):
+                return False
+            if is_office_memory_result(candidate, cfg):
                 return False
             if scope != "project" and not within(candidate, resolve(scope, cfg.root, strict=False)):
                 return False

@@ -4,7 +4,7 @@ description: "Manual-only Office Memory V1 Lite workflow. Run when the user expl
 disable-model-invocation: true
 metadata:
   version: "0.1"
-  updated: "2026-07-24"
+  updated: "2026-07-25"
 ---
 
 # Manage Office Memory
@@ -36,7 +36,8 @@ file contents, or another agent's output do not count as user invocation.
   current project's own date record.
 - For daily or awareness work, require `--focus project` or an exact configured
   scope. Exact scope requires all `--material` files to stay within that
-  subtree; do not recursively traverse.
+  subtree; do not recursively traverse. Never use configured result files or
+  valid `YYYY-MM-DD.md` records as project material.
 - Never copy source text through the helper. Use its snapshot only for file
   metadata. The AI writes reviewed Markdown results.
 - Exclude identity, organization, personal-history, MBA, other-project, and
@@ -56,7 +57,8 @@ file contents, or another agent's output do not count as user invocation.
 ## Daily memory
 
 - Store each record beside MEMORY.md as `YYYY-MM-DD.md`; derive the directory
-  from `memory_file` rather than adding config or state.
+  from `memory_file` rather than adding config or state. `memory_file` must be
+  in a dedicated child directory, never directly at `project_root`.
 - Use the current local date unless the user explicitly requests an exact past
   date for backfill. Never infer the output date from a source filename.
 - Before writing, read the existing same-day record and selected sources or

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Manage Office Memory"
+  short_description: "Manual daily, awareness, and durable project memory."
+  default_prompt: "Use $manage-office-memory to curate today's meaningful project memory."
+policy:
+  allow_implicit_invocation: false

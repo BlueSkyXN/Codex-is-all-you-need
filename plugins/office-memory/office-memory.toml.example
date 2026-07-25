@@ -1,0 +1,26 @@
+version = "0.1"
+manual_activation_only = true
+project_id = "example-project"
+project_root = ".."
+allowed_scopes = ["documents"]
+awareness_file = ".agents/awareness/AWARENESS.md"
+memory_file = ".agents/memory/MEMORY.md"
+
+[[sources]]
+id = "project-memory"
+path = "example-inputs/memory.md"
+role = "memory"
+default = true
+
+[[sources]]
+id = "qoder-recent"
+path = "example-inputs/recent"
+role = "recent"
+default = false
+include = ["*.md"]
+
+[[sources]]
+id = "profile-reference"
+path = "example-inputs/profile.md"
+role = "profile"
+default = false

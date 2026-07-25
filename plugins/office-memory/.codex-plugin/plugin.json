@@ -1,0 +1,29 @@
+{
+  "name": "office-memory",
+  "version": "0.1.0",
+  "description": "Manual V1 Lite method for AI-curated daily, current, and durable project memory.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/office-memory",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "GPL-3.0-only",
+  "keywords": ["codex", "office", "memory", "workspace", "curation"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Office Memory",
+    "shortDescription": "Manual daily, awareness, and durable project memory.",
+    "longDescription": "Office Memory V1 Lite manually curates meaningful YYYY-MM-DD.md project records, current AWARENESS.md, and durable MEMORY.md from explicitly selected read-only sources and project materials.",
+    "developerName": "BlueSkyXN",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": [
+      "Use $office-memory:manage-office-memory to curate today's meaningful project memory.",
+      "Use $office-memory:manage-office-memory to initialize reviewed AWARENESS.md and MEMORY.md.",
+      "Use $office-memory:manage-office-memory with explicit project materials for a focused awareness update."
+    ],
+    "brandColor": "#2563EB",
+    "websiteURL": "https://github.com/BlueSkyXN/Codex-is-all-you-need"
+  }
+}

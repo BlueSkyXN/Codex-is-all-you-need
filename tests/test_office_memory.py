@@ -106,7 +106,7 @@ class OfficeMemoryLiteTest(unittest.TestCase):
         self.assertIn("$manage-office-memory", sidecar)
         self.assertIn("allow_implicit_invocation: false", sidecar)
         self.assertEqual({path.relative_to(SKILL).as_posix() for path in SKILL.rglob("*") if path.is_file()}, {"SKILL.md", "agents/openai.yaml", "scripts/office_memory.py"})
-        self.assertLessEqual(len(SCRIPT.read_text(encoding="utf-8").splitlines()), 475)
+        self.assertLessEqual(len(SCRIPT.read_text(encoding="utf-8").splitlines()), 500)
         codex_manifest = json.loads((PLUGIN / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
         claude_manifest = json.loads((PLUGIN / ".claude-plugin/plugin.json").read_text(encoding="utf-8"))
         self.assertEqual((codex_manifest["version"], claude_manifest["version"]), ("0.1.0", "0.1.0"))
@@ -295,12 +295,57 @@ class OfficeMemoryLiteTest(unittest.TestCase):
                 "Authorization: Bearer abcdefghijklmnopqrstuvwxyz",
                 "api key: abcdefghijklmnopqrstuvwxyz",
                 "github_pat_ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+                "OPENAI_API_KEY=abcdefghijklmnop",
+                "GITHUB_TOKEN=abcdefghijklmnop",
+                "AWS_SECRET_ACCESS_KEY=abcdefghijklmnop",
             ):
                 memory_path.write_text("# Project Memory\n\n" + entry(summary=credential), encoding="utf-8")
                 self.assertIn("secret-like", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
 
             memory_path.write_text("# Project Memory\n\n" + entry(summary="A stable note about token budgets without a credential."), encoding="utf-8")
             self.assertEqual(run("validate", "--config", str(cfg)).returncode, 0)
+
+    def test_metadata_must_live_in_header_and_scope_refs_stay_in_scope(self) -> None:
+        with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:
+            root, external = Path(root_text), Path(external_text)
+            (external / "memory.md").write_text("source", encoding="utf-8")
+            cfg = write_config(root, external)
+            run("init", "--config", str(cfg), "--apply")
+            (root / "documents").mkdir()
+            (root / "documents/input.md").write_text("material", encoding="utf-8")
+            awareness_path = root / ".agents/awareness/AWARENESS.md"
+            memory_path = root / ".agents/memory/MEMORY.md"
+            daily_path = root / ".agents/memory/2026-07-24.md"
+
+            awareness_path.write_text(awareness(), encoding="utf-8")
+            memory_path.write_text("# Project Memory\n\n", encoding="utf-8")
+            self.assertEqual(run("validate", "--config", str(cfg)).returncode, 0)
+
+            misplaced = awareness().replace("- Focus: project\n", "").replace("## Current understanding\n", "## Current understanding\n- Focus: project\n")
+            awareness_path.write_text(misplaced, encoding="utf-8")
+            self.assertIn("needs non-empty", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+
+            daily_path.write_text(daily_record().replace("- Focus: project\n", "").replace("## Meaningful changes\n", "## Meaningful changes\n- Focus: project\n"), encoding="utf-8")
+            errors = "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"])
+            self.assertIn("non-empty Focus", errors)
+            daily_path.unlink()
+
+            awareness_path.write_text(awareness().replace("- Focus: project", "- Focus: documents").replace("project#documents/input.md", "project#other/input.md"), encoding="utf-8")
+            self.assertIn("Sources checked", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+            awareness_path.write_text(awareness().replace("- Focus: project", "- Focus: documents"), encoding="utf-8")
+            self.assertEqual(run("validate", "--config", str(cfg)).returncode, 0)
+
+            memory_path.write_text("# Project Memory\n\nUnsourced prose before entries.\n", encoding="utf-8")
+            self.assertIn("outside memory entries", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+
+            memory_path.write_text("# Project Memory\n\n" + entry(scope="documents", sources="memory-source#memory.md; project#other/input.md"), encoding="utf-8")
+            self.assertIn("invalid sources", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
+            memory_path.write_text("# Project Memory\n\n" + entry(scope="documents", sources="memory-source#memory.md; project#documents/input.md"), encoding="utf-8")
+            self.assertEqual(run("validate", "--config", str(cfg)).returncode, 0)
+
+            misplaced_entry = entry().replace("- Kind: fact\n", "").replace("A reviewed, conservative fact.", "- Kind: fact\nA reviewed, conservative fact.")
+            memory_path.write_text("# Project Memory\n\n" + misplaced_entry, encoding="utf-8")
+            self.assertIn("missing memory entry fields", "\n".join(json.loads(run("validate", "--config", str(cfg), check=False).stdout)["errors"]))
 
     def test_daily_status_and_valid_schema(self) -> None:
         with tempfile.TemporaryDirectory() as root_text, tempfile.TemporaryDirectory() as external_text:

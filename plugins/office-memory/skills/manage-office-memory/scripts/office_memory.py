@@ -18,7 +18,7 @@ from typing import Any, Iterable
 SOURCE_ID = re.compile(r"^[a-z][a-z0-9-]{0,63}$")
 KEY = re.compile(r"^[a-z][a-z0-9.-]{0,79}$")
 DAILY_FILE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.md$")
-SECRET = re.compile(r"(?:-----BEGIN [A-Z ]*PRIVATE KEY-----|\bAKIA[0-9A-Z]{16}\b|\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|hf_[A-Za-z0-9]{20,}|npm_[A-Za-z0-9]{20,}|glpat-[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|sk-[A-Za-z0-9_-]{16,})\b|\bauthorization\s*:\s*bearer\s+[A-Za-z0-9._~+/=-]{8,}|\b(?:password|passwd|secret|token|api[ _-]?key|access[ _-]?key|client[ _-]?secret)\s*[:=]\s*[^\s]{8,})", re.I)
+SECRET = re.compile(r"(?:-----BEGIN [A-Z ]*PRIVATE KEY-----|\bAKIA[0-9A-Z]{16}\b|\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|hf_[A-Za-z0-9]{20,}|npm_[A-Za-z0-9]{20,}|glpat-[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|sk-[A-Za-z0-9_-]{16,})\b|\bauthorization\s*:\s*bearer\s+[A-Za-z0-9._~+/=-]{8,}|(?<![A-Za-z0-9])(?:password|passwd|secret|token|api[ _-]?key|access[ _-]?key|client[ _-]?secret)\s*[:=]\s*[^\s]{8,})", re.I)
 KINDS = {"fact", "preference", "decision", "runbook", "lesson"}
 AWARENESS_SECTIONS = ("Current understanding", "Relevant changes", "Conflicts and unknowns", "Needs attention", "Memory candidates")
 DAILY_SECTIONS = ("Meaningful changes", "Decisions and constraints", "Conflicts and unknowns", "Long-term candidates")
@@ -231,12 +231,16 @@ def exact_fields(text: str, names: tuple[str, ...]) -> dict[str, str] | None:
     return dict(matches) if len(matches) == len(names) and {name for name, _ in matches} == set(names) else None
 
 
+def header_block(text: str) -> str:
+    return re.split(r"^## ", text, maxsplit=1, flags=re.MULTILINE)[0]
+
+
 def awareness_errors(text: str, cfg: Config) -> list[str]:
     if len(text.encode("utf-8")) > 16 * 1024:
         return ["AWARENESS.md exceeds 16 KiB; compress it without splitting files"]
     if not text.startswith("# Project Awareness\n"):
         return ["AWARENESS.md must start with # Project Awareness"]
-    fields = exact_fields(text, ("Updated", "Focus", "Sources checked"))
+    fields = exact_fields(header_block(text), ("Updated", "Focus", "Sources checked"))
     if fields is None:
         return ["AWARENESS.md needs non-empty Updated, Focus, and Sources checked values"]
     try:
@@ -245,7 +249,7 @@ def awareness_errors(text: str, cfg: Config) -> list[str]:
         return ["AWARENESS.md Updated must be an ISO date"]
     if fields["Focus"] not in {"project", *cfg.allowed_scopes}:
         return ["AWARENESS.md Focus must be project or an exact allowed scope"]
-    if not valid_checked_sources(fields["Sources checked"], cfg):
+    if not valid_checked_sources(fields["Sources checked"], cfg, fields["Focus"]):
         return ["AWARENESS.md Sources checked contains an unknown or unsafe reference"]
     headings = re.findall(r"^## (.+)$", text, re.MULTILINE)
     if headings != list(AWARENESS_SECTIONS):
@@ -258,7 +262,7 @@ def valid_locator(value: str) -> bool:
     return bool(value) and not path.is_absolute() and ".." not in path.parts
 
 
-def valid_sources(value: str, cfg: Config) -> bool:
+def valid_sources(value: str, cfg: Config, scope: str = "project") -> bool:
     configured = {source.id for source in cfg.sources}
     refs = [item.strip() for item in value.split(";") if item.strip()]
     if not refs:
@@ -274,15 +278,17 @@ def valid_sources(value: str, cfg: Config) -> bool:
             candidate = resolve(project_path, cfg.root, strict=False)
             if not within(candidate, cfg.root):
                 return False
+            if scope != "project" and not within(candidate, resolve(scope, cfg.root, strict=False)):
+                return False
         elif identifier not in configured or not valid_locator(locator):
             return False
     return True
 
 
-def valid_checked_sources(value: str, cfg: Config) -> bool:
+def valid_checked_sources(value: str, cfg: Config, scope: str = "project") -> bool:
     configured = {source.id for source in cfg.sources}
     refs = [item.strip() for item in value.split(";") if item.strip()]
-    return bool(refs) and all(item in configured or valid_sources(item, cfg) for item in refs)
+    return bool(refs) and all(item in configured or valid_sources(item, cfg, scope) for item in refs)
 
 
 def daily_records(cfg: Config) -> tuple[list[Path], list[str]]:
@@ -325,13 +331,13 @@ def daily_errors(path: Path, text: str, cfg: Config) -> list[str]:
         errors.append("filename is not a valid date")
     if not text.startswith(f"# Daily Project Memory — {day}\n"):
         errors.append("heading date must match filename")
-    fields = exact_fields(text, ("Focus", "Sources checked"))
+    fields = exact_fields(header_block(text), ("Focus", "Sources checked"))
     if fields is None:
         errors.append("needs non-empty Focus and Sources checked values")
     else:
         if fields["Focus"] not in {"project", *cfg.allowed_scopes}:
             errors.append("Focus must be project or an exact allowed scope")
-        if not valid_checked_sources(fields["Sources checked"], cfg):
+        if not valid_checked_sources(fields["Sources checked"], cfg, fields["Focus"]):
             errors.append("Sources checked contains an unknown or unsafe reference")
     headings = re.findall(r"^## (.+)$", text, re.MULTILINE)
     if headings != list(DAILY_SECTIONS):
@@ -353,6 +359,8 @@ def memory_errors(text: str, cfg: Config) -> list[str]:
         errors.append("secret-like content in MEMORY.md")
     sections = re.split(r"^## ([^\n]+)\n", text, flags=re.MULTILINE)
     keys: set[str] = set()
+    if sections[0].strip() != "# Project Memory":
+        errors.append("content outside memory entries")
     if len(sections) == 1:
         return errors
     for index in range(1, len(sections), 2):
@@ -360,7 +368,7 @@ def memory_errors(text: str, cfg: Config) -> list[str]:
         if not KEY.fullmatch(key) or key in keys:
             errors.append(f"invalid or duplicate memory key: {key}")
         keys.add(key)
-        fields = exact_fields(body, ("Scope", "Kind", "Sources", "Observed", "Review"))
+        fields = exact_fields(body.partition("\n\n")[0], ("Scope", "Kind", "Sources", "Observed", "Review"))
         if fields is None:
             errors.append(f"missing memory entry fields: {key}")
             continue
@@ -373,7 +381,7 @@ def memory_errors(text: str, cfg: Config) -> list[str]:
             errors.append(f"invalid scope: {key}")
         if fields["Kind"] not in KINDS:
             errors.append(f"invalid kind: {key}")
-        if not valid_sources(fields["Sources"], cfg):
+        if not valid_sources(fields["Sources"], cfg, fields["Scope"]):
             errors.append(f"invalid sources: {key}")
         for field in ("Observed", "Review"):
             try:

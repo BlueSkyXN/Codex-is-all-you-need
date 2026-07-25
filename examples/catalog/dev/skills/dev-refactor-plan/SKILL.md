@@ -1,9 +1,9 @@
 ---
 name: dev-refactor-plan
-description: Use for planning software refactors before editing files, especially when behavior must be preserved.
+description: Use when the user asks for a behavior-preserving refactor plan before implementation. Do not trigger when the user already requested a clear, scoped refactor to be implemented directly.
 metadata:
-  version: "0.4"
-  updated: "2026-07-23"
+  version: "0.5"
+  updated: "2026-07-26"
 ---
 
 # Refactor plan workflow

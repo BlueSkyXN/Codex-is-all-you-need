@@ -1,29 +1,32 @@
 ---
 name: sdlc-router
-description: Use to route SDLC/ADS work by lane and choose minimum materials for 重建、重构、增补、从头开发、bugfix、规则变更、发布、local/sdlc、交付卡、handoff, or direct-dev.
+description: Use only when the user explicitly invokes this skill to decide whether work needs SDLC/ADS and which minimum materials, if any, are justified.
 metadata:
-  version: "0.4"
-  updated: "2026-06-12"
+  version: "1.0"
+  updated: "2026-07-26"
 ---
 
 # SDLC Router
 
-Use this skill when a request may need SDLC/ADS materials but the smallest safe path is unclear.
+Use this skill only after the user explicitly asks for SDLC/ADS classification
+or invokes it by name.
 
-This skill only routes. It does not write BRD, URS, PRD, SRS, NFR, HLD, LLD, ADR, SPEC, RTM, handoff, or implementation content.
+This skill only recommends a route. It does not write or update `local/sdlc`,
+BRD, URS, PRD, SRS, NFR, HLD, LLD, ADR, SPEC, RTM, handoff, tracker, or
+implementation content, and it does not invoke the recommended skill.
 
 For the canonical vocabulary, local state layout, ID contract, and lightweight templates, read `references/sdlc-operating-model.md`.
 
 ## Use When
 
 - The user asks whether a task needs formal SDLC materials or can go directly to dev.
-- The work may affect product scope, architecture, domain ownership, data ownership, API contracts, permissions, compliance, security, privacy, release, rollback, or validation evidence.
-- Existing materials are mixed, incomplete, stale, or not clearly connected to implementation.
-- New information appears during implementation and needs to be classified as same-scope, side-path, conflicting, or urgent.
-- A task mentions 重建、重构、增补、从头开发、bugfix、规则变更、发布、`local/sdlc`, 交付卡, `handoff`, or `direct-dev`.
-- The user brings a plan from Web, GPT5.5Pro, another AI, a pasted discussion, or an external research session and wants to make it usable in the SDLC/dev flow.
+- The user explicitly asks which SDLC lane, ADS depth, dev path, or durable
+  material is justified.
+- The user explicitly asks to classify midstream or external input against an
+  existing SDLC baseline.
 
-Do not use this skill for simple read-only explanation when no delivery decision is needed. Use `direct-read` / `dev-repo-onboarding` style exploration instead.
+Do not use this skill merely because work mentions architecture, requirements,
+refactoring, release, `local/sdlc`, or an existing artifact.
 
 ## Inputs
 
@@ -62,10 +65,10 @@ Modifiers:
 
 Only output `Intake` when new information arrives during an active implementation:
 
-- `同范围补充`: append to current `TASK` / `VAL`.
-- `旁路小修`: use fast-lane `direct-dev`; record only if it affects current state.
-- `冲突变更`: update current state, record `Q` / `DEC`, and decide whether ADS/spec must change.
-- `紧急修复`: fix first through fast lane, validate minimally, then record impact.
+- `同范围补充`: recommend appending to the current `TASK` / `VAL`.
+- `旁路小修`: recommend fast-lane `direct-dev`.
+- `冲突变更`: recommend a baseline decision before implementation continues.
+- `紧急修复`: recommend a bounded fix and validation before impact review.
 
 Do not restart SDLC by default for midstream intake.
 
@@ -74,9 +77,10 @@ Do not restart SDLC by default for midstream intake.
 When the source is Web, GPT5.5Pro, another AI, pasted chat, or an external proposal:
 
 - Treat it as reference input, not executable truth.
-- If short, summarize it into current `00-状态.md`.
-- If long, route it to `local/sdlc/<slug>/01-外部讨论.md`.
-- Convert only accepted pieces into `REQ`, `TASK`, and `VAL`.
+- Summarize short input in the routing response.
+- For long input, recommend an optional discussion artifact but do not create
+  it.
+- Recommend converting only accepted pieces into `REQ`, `TASK`, and `VAL`.
 - Label evidence as `[用户确认]`, `[外部建议]`, `[代码证据]`, `[local材料]`, `[推断]`, or `[未验证]`.
 
 If the external proposal conflicts with repository evidence, route as `冲突变更` or `blocked`.
@@ -114,7 +118,7 @@ Escalate only when scope, Architecture, Domain, business semantics, release risk
 
 ## Next Skill Routing
 
-Use the smallest next step:
+Recommend the smallest next step. Do not invoke it:
 
 - Read-only repo exploration: `dev-repo-onboarding`
 - Bugfix or urgent repair: `dev-bugfix`
@@ -167,6 +171,10 @@ Omit `Intake` when the request is not midstream.
 
 ## Boundaries
 
+- Do not create or edit files or external state.
+- Do not invoke, imitate, or begin the recommended skill.
+- Do not treat a mention of SDLC terminology as authorization to run this
+  control workflow.
 - Do not inflate artifact needs to imitate a heavy process.
 - Do not weaken artifact needs when implementation would otherwise guess scope, ownership, validation, or release risk.
 - Do not make Validation Plan, RTM, PRD, or SRS universal blockers for clear, narrow, verifiable direct-dev tasks.

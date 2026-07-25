@@ -1,9 +1,9 @@
 ---
 name: sdlc-readiness-review
-description: Use to assess whether SDLC materials, specs, handoffs, issues, or direct-dev requests are ready, need revision, are not needed, or are blocked.
+description: Use only when the user explicitly invokes this skill to make a readiness-gate judgment on SDLC materials, specs, handoffs, issues, or direct-dev requests.
 metadata:
-  version: "0.5"
-  updated: "2026-07-12"
+  version: "1.0"
+  updated: "2026-07-26"
 ---
 
 # SDLC Readiness Review
@@ -203,8 +203,9 @@ If traceability is absent but the task is safe for direct dev, mark it as an acc
 
 ### 8. Decide readiness verdict
 
-If the trade-off set is still contested, run `core-grilling` on it before
-freezing the decision.
+If the trade-off set is still contested, recommend an explicit
+`core-grilling` run before freezing the decision. Do not invoke it from this
+review.
 
 Use one verdict only:
 

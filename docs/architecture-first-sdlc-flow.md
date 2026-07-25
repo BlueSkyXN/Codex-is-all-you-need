@@ -68,7 +68,7 @@ baseline / scope / requirements / architecture change
 
 | Phase | Agent / Entry | Primary Skills |
 |---|---|---|
-| SDLC intake and coordination | default Codex Next routing | `sdlc-manager`, `sdlc-router` |
+| SDLC intake and coordination | explicit Codex Next control workflow | `sdlc-manager`, `sdlc-router` |
 | Existing-project research | `sdlc_project_researcher` | `sdlc-project-research`, `sdlc-requirements-traceability`, `sdlc-readiness-review` |
 | Requirements | `sdlc_requirements_manager` | `sdlc-requirements-workflow`, `sdlc-brd-workflow`, `sdlc-urs-workflow`, `sdlc-prd-workflow`, `sdlc-router` |
 | Software requirements | `sdlc_srs_specifier` | `sdlc-srs-workflow`, `sdlc-nfr-spec`, `sdlc-requirements-traceability` |
@@ -97,14 +97,16 @@ Small direct-dev tasks may only need a clear issue, repository evidence, and val
 
 ## Plugin And V1 Suite Guidance / Plugin 和 V1 Suite 建议
 
-Codex Next is the V2 production surface for SDLC skills. Start with
-`$codex-next:core-router` or `$codex-next:sdlc-manager` when the plugin is
-installed. Local suites are V1 legacy/local-development compositions for custom
-agents, experiments, or machines that have not migrated.
+Codex Next is the V2 production surface for SDLC skills. Use
+`$codex-next:core-router` for a recommendation or explicitly invoke
+`$codex-next:sdlc-manager` for multi-artifact SDLC coordination. Clear direct
+work does not need either entrypoint. Local suites are V1 legacy/local-development
+compositions for custom agents, experiments, or machines that have not migrated.
 
-Codex Next 是 SDLC skills 的 V2 生产 surface。已安装插件时，从
-`$codex-next:core-router` 或 `$codex-next:sdlc-manager` 开始。本机 suites 是 V1
-legacy/local-dev 组合，用于 custom agents、实验，或尚未迁移的机器。
+Codex Next 是 SDLC skills 的 V2 生产 surface。需要建议时使用
+`$codex-next:core-router`；需要多工件 SDLC 协调时显式调用
+`$codex-next:sdlc-manager`。清楚的 direct work 不需要经过这两个入口。本机 suites
+是 V1 legacy/local-dev 组合，用于 custom agents、实验，或尚未迁移的机器。
 
 V1 local suite shapes:
 

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Solution Spec Workflow"
+  short_description: "Coordinate an explicit multi-artifact solution package."
+policy:
+  allow_implicit_invocation: false

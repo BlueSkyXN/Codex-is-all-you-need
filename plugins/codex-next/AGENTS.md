@@ -52,9 +52,21 @@ the user's task differs.
   Every such path must resolve in both the plugin package and the source
   catalog bucket; the surface checker fails on dangling parent-path references
   and dangling relative links.
-- Invocation: keep a skill model-invoked only when Codex should discover it
-  without the user naming it, or when another skill routes to it. Expensive or
-  human-started workflows need an explicit reason to be always visible.
+- Invocation: keep a skill model-invoked only when the user's natural-language
+  request already authorizes the bounded result and the skill does not add
+  governance scope, persistent state, interrogation, or multi-artifact
+  coordination. Control-plane workflows must set
+  `policy.allow_implicit_invocation: false` in `agents/openai.yaml`; the surface
+  checker enforces the Codex policy. Do not set
+  `disable-model-invocation: true` in this shared package: current Codex plugin
+  ingestion rejects that Claude extension. Claude therefore has no equivalent
+  hard per-skill gate in this shared package: descriptions must narrowly bound
+  discovery, while recommend-only bodies constrain behavior after selection
+  rather than preventing selection.
+- Routing: `core-router` is an optional discovery entrypoint, not a mandatory
+  gateway. It may recommend direct execution, one bounded skill, or one
+  explicit control workflow, then it stops. A router must not invoke or imitate
+  a downstream skill, and authorization does not transfer between skills.
 - Information hierarchy: keep the next required action in `SKILL.md`, move
   conditional detail into `references/`, and place repeatable fragile operations
   in `scripts/`.

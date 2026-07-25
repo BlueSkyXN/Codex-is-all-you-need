@@ -1,0 +1,5 @@
+interface:
+  display_name: "Requirements Workflow"
+  short_description: "Build an explicit coordinated requirements baseline."
+policy:
+  allow_implicit_invocation: false

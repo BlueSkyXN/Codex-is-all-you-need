@@ -10,16 +10,15 @@ synthesis.
 
 ## What It Includes
 
-- A plugin entrypoint skill, `core-router`, for routing work to the smallest
-  useful bundled workflow, now with a flow map for direct-dev, PR delivery,
-  SDLC, bugfix, context, and skill-quality paths.
+- An optional discovery skill, `core-router`, which recommends direct execution,
+  one bounded skill, or one explicit control workflow, then stops without
+  invoking the recommendation.
 - Core process skills from the common catalog: `core-grilling` for
   one-question-at-a-time plan interrogation, `core-explore-unknowns` for
   quadrant-walk requirement clarification when the user's request is ambiguous,
   `core-skill-eval` for golden-case skill behavior checks, and `core-goal-run`
-  which tracks task-specific anchor state and uses it, with one safe-unit
-  exception for legacy `DOING` or `VERIFYING` rows, to govern automatic
-  continuation.
+  for an explicitly requested persistent goal tracker that updates at phase
+  boundaries instead of after every small work unit.
 - SDLC and delivery skills such as `sdlc-manager`, `sdlc-router`,
   `sdlc-requirements-workflow`, `sdlc-solution-spec-workflow`,
   `sdlc-dev-handoff-planning`, and `sdlc-readiness-review`.
@@ -35,6 +34,25 @@ synthesis.
   over-engineered diffs without treating repository-required artifacts as
   overhead.
 - Data, office, research, and common workflow skills from the public catalog.
+
+## Invocation Policy
+
+Clear tasks do not need to pass through a router. Bounded skills remain
+available through natural-language matching when the user already requested
+their result. In Codex, control-plane skills that introduce interrogation,
+persistent state, SDLC governance, readiness gates, or multi-artifact
+coordination are explicit-only and must be selected with `$skill` syntax.
+
+`core-router` remains visible as the plugin entrypoint for discovery questions,
+but it only recommends a path. It does not call another skill, create files, or
+start an SDLC workflow.
+
+Codex enforces explicit-only control workflows through each skill's
+`agents/openai.yaml`. The shared `SKILL.md` files intentionally omit Claude's
+`disable-model-invocation: true` extension because current Codex plugin
+ingestion rejects it. Claude therefore has no equivalent hard per-skill gate in
+this shared package: narrowed descriptions reduce automatic selection, while
+recommend-only workflow bodies constrain behavior only after selection.
 
 ## What It Does Not Include
 
@@ -115,13 +133,15 @@ Then install the plugin from the configured marketplace:
 codex plugin add codex-next@codex-is-all-you-need
 ```
 
-After installation, start with:
+After installation, use the optional discovery entrypoint when you need help
+choosing a path:
 
 ```text
 $codex-next:core-router
 ```
 
-or ask Codex to use Codex Next for the task.
+For a clear task, ask for the result directly; Codex can use a matching bounded
+skill without routing first. Invoke control-plane workflows explicitly.
 
 If you are migrating an existing V1 machine from suite-based runtime
 entrypoints, see

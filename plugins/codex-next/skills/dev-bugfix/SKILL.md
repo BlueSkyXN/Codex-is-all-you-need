@@ -1,9 +1,9 @@
 ---
 name: dev-bugfix
-description: Use for difficult bug fixes and regressions that require a real reproduction loop, root-cause work, and validation. Triggers when the user says "debug"/"diagnose"/"fix", or reports broken, failing, flaky, throwing, or slow behavior.
+description: Use for a concrete defect or regression that needs reproduction, root-cause diagnosis, a fix, and regression validation. Do not trigger for routine localized edits or primarily performance-focused work.
 metadata:
-  version: "0.5"
-  updated: "2026-07-08"
+  version: "0.6"
+  updated: "2026-07-26"
 ---
 
 # Bugfix workflow

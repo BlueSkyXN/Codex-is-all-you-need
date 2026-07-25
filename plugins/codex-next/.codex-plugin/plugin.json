@@ -1,6 +1,6 @@
 {
   "name": "codex-next",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "description": "Reusable Codex skills for SDLC planning, software delivery, development workflows, research, data work, and office productivity.",
   "author": {
     "name": "BlueSkyXN",
@@ -28,9 +28,7 @@
       "Workflow"
     ],
     "defaultPrompt": [
-      "Use $codex-next:core-router to route this task.",
-      "Use Codex Next to choose the smallest workflow.",
-      "Use $codex-next:sdlc-manager to manage SDLC/ADS work."
+      "Use $codex-next:core-router to recommend a path without starting another workflow."
     ],
     "brandColor": "#2563EB",
     "websiteURL": "https://github.com/BlueSkyXN/Codex-is-all-you-need"

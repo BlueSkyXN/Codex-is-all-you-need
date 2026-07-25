@@ -1,9 +1,9 @@
 ---
 name: dev-fullstack-feature
-description: Use for planning and implementing features that span frontend, backend, API, database, scripts, or tests.
+description: Use when the requested feature genuinely spans at least two delivery layers such as frontend, backend, API, data, scripts, or tests. Do not expand a single-layer change into a full-stack workflow.
 metadata:
-  version: "0.2"
-  updated: "2026-06-11"
+  version: "0.3"
+  updated: "2026-07-26"
 ---
 
 # Full-stack feature workflow

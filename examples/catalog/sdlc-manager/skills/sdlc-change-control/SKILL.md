@@ -1,9 +1,9 @@
 ---
 name: sdlc-change-control
-description: Use to manage baseline or scope changes, artifact updates, traceability impact, approvals, and handoff revisions.
+description: Use only when the user explicitly invokes this skill to manage an approved or proposed baseline/scope change across artifacts, traceability, approvals, and handoff.
 metadata:
-  version: "0.4"
-  updated: "2026-06-12"
+  version: "1.0"
+  updated: "2026-07-26"
 ---
 
 # Change Control

@@ -17,6 +17,26 @@ GOAL_RUN_COPIES = (
     PLUGIN_SKILLS / "core-goal-run" / "SKILL.md",
     CATALOG / "common" / "skills" / "core-goal-run" / "SKILL.md",
 )
+REQUIREMENTS_COPIES = (
+    PLUGIN_SKILLS / "sdlc-requirements-workflow" / "SKILL.md",
+    CATALOG
+    / "sdlc-manager"
+    / "skills"
+    / "sdlc-requirements-workflow"
+    / "SKILL.md",
+)
+SDLC_ROUTER_COPIES = (
+    PLUGIN_SKILLS / "sdlc-router" / "SKILL.md",
+    CATALOG / "sdlc-manager" / "skills" / "sdlc-router" / "SKILL.md",
+)
+SOLUTION_SPEC_COPIES = (
+    PLUGIN_SKILLS / "sdlc-solution-spec-workflow" / "SKILL.md",
+    CATALOG
+    / "sdlc-manager"
+    / "skills"
+    / "sdlc-solution-spec-workflow"
+    / "SKILL.md",
+)
 PR_REVIEW_COPIES = (
     PLUGIN_SKILLS / "dev-pr-review" / "SKILL.md",
     CATALOG / "dev" / "skills" / "dev-pr-review" / "SKILL.md",
@@ -101,104 +121,156 @@ class SkillBehaviorContractsTest(unittest.TestCase):
                 self.assertIn("otherwise use `change-control-needed`", compact)
                 self.assertIn("never bypass source authority", compact)
 
-    def test_goal_run_legacy_anchor_transitions_and_halting(self) -> None:
-        migration_markers = (
-            "For a task that has not started",
-            "For an existing `DONE`, `BLOCKED`, `HUMAN_PENDING`, or `SKIPPED_HUMAN` row",
-            "Do not treat a generic resume request",
-            "If a legacy task is already `DOING` or `VERIFYING`",
-            "Before writing a terminal `DONE` or `BLOCKED` status",
-            "After that unit",
-        )
-
+    def test_goal_run_explicit_tracking_and_phase_boundary_updates(self) -> None:
         for path in GOAL_RUN_COPIES:
             with self.subTest(path=path):
                 text = path.read_text(encoding="utf-8")
                 compact = normalized(text)
-                self.assertIn("Neither value is a confirmed anchor", compact)
-
-                migration = normalized(
-                    section(
-                        text,
-                        "When an existing `goal-tasks.md` has no `Anchor` column:",
-                        "Do not put long command output",
-                    )
-                )
-                self.assert_markers_in_order(migration, migration_markers)
-                self.assertIn("write `legacy-unresolved`, preserve its status", migration)
-                self.assertIn("record the provenance gap", migration)
-                self.assertIn("Confirm an anchor before reopening or resuming", migration)
-                self.assertIn("takes precedence over the normal halting condition", migration)
                 self.assertIn(
-                    "replace `pending` with any task-specific anchor established",
-                    migration,
+                    "Use only when the user explicitly invokes this skill", compact
                 )
-                self.assertIn("set `Anchor=legacy-unresolved`", migration)
-                self.assertIn("return it to `TODO` with `Anchor=pending`", migration)
-                self.assertIn("mark it `BLOCKED` and record the blocker", migration)
+                self.assertIn(
+                    "Do not use this workflow for ordinary work that can finish "
+                    "in the current turn",
+                    compact,
+                )
+                self.assertNotIn("legacy-unresolved", text)
+                self.assertNotIn("`Anchor`", text)
+
+                workflow = normalized(
+                    section(text, "## Workflow", "## Human and External Boundaries")
+                )
+                self.assert_markers_in_order(
+                    workflow,
+                    (
+                        "Confirm that the user explicitly requested persistent "
+                        "goal tracking",
+                        "Read the source goal and existing tracker files",
+                        "Create tracker files only when they are missing",
+                        "Extract actionable tasks",
+                        "Continue the current safe task",
+                        "Update tracker files only at a meaningful phase "
+                        "boundary",
+                        "Before stopping, ensure completed work has evidence",
+                    ),
+                )
+                self.assertIn(
+                    "Do not interrupt implementation after every small unit", workflow
+                )
 
                 stop_conditions = normalized(section(text, "## Stop Conditions"))
-                for status in ("`TODO`", "`DOING`", "`VERIFYING`"):
-                    self.assertIn(status, stop_conditions)
-                self.assertIn("confirmed task-specific `Anchor`", stop_conditions)
-                self.assertIn("finishing that allowed unit", stop_conditions)
-                self.assertIn("do not invent work", stop_conditions)
-                self.assertIn("record a concrete blocker", stop_conditions)
-                self.assertIn("Only unanchored suggestions remain", stop_conditions)
-                self.assertIn("do not promote them into tasks", stop_conditions)
+                self.assertIn("no actionable automatic task remains", stop_conditions)
+                self.assertIn("requires a user decision", stop_conditions)
+                self.assertIn("verification has a concrete blocker", stop_conditions)
+                self.assertIn(
+                    "Do not treat a difficult, slow, or incomplete task as blocked",
+                    stop_conditions,
+                )
 
-    def test_router_ambiguity_specificity_and_coordinator_precedence(self) -> None:
+    def test_router_recommends_one_path_and_stops(self) -> None:
         text = ROUTER.read_text(encoding="utf-8")
-        workflow = normalized(section(text, "## Workflow", "## Route Table"))
+        compact = normalized(text)
+        route_choices = normalized(
+            section(text, "## Route Choices", "## Capability Map")
+        )
         self.assert_markers_in_order(
-            workflow,
+            route_choices,
             (
-                "If the request is ambiguous",
-                "A clear user request tied to an explicit outcome is an external anchor",
-                "After the problem and outcome are clear",
-                "If the clarified, anchored request only needs lane",
-                "When several routes match",
-                "If multiple equally specific SDLC artifact intents remain",
-                "Otherwise, if the clarified request is SDLC/ADS",
-                "If the request is clear, anchored, and local",
+                "Direct execution",
+                "One bounded skill",
+                "One explicit control workflow",
             ),
         )
         self.assertIn(
-            "Ambiguity takes precedence over SDLC/ADS lane classification", workflow
+            "Direct execution is a successful routing result", route_choices
         )
-        self.assertIn("Do not choose one leaf workflow arbitrarily", workflow)
+        self.assertIn("Do not recommend a skill only because one exists", route_choices)
 
-        route_table = section(
-            text, "## Route Table", "## Manual or Expensive Helpers"
+        decision_rules = normalized(
+            section(text, "## Decision Rules", "## Output")
         )
-        rows = [
-            tuple(cell.strip() for cell in line.strip().strip("|").split("|"))
-            for line in route_table.splitlines()
-            if line.lstrip().startswith("|") and "---" not in line
-        ]
-
-        def assert_route(intent_fragment: str, skill_name: str) -> None:
-            matching = [row for row in rows if intent_fragment in row[0]]
-            self.assertEqual(len(matching), 1, intent_fragment)
-            self.assertIn(skill_name, matching[0][1])
-
-        assert_route("Ambiguous, underspecified", "core-explore-unknowns")
-        assert_route("no task-specific external anchor", "sdlc-readiness-review")
-        assert_route("Need only lane", "sdlc-router")
-        assert_route(
-            "Solution/spec package coordination", "sdlc-solution-spec-workflow"
+        self.assert_markers_in_order(
+            decision_rules,
+            (
+                "Prefer direct work",
+                "Recommend a bounded skill only when",
+                "Do not infer that a midstream project needs",
+                "show its explicit `$skill` name and wait",
+                "Ask at most one question",
+            ),
         )
-        assert_route("SDLC/ADS work", "sdlc-manager")
-
-        table_rules = normalized(route_table.split("| User intent", 1)[0])
-        self.assertIn("choose the most specific intent", table_rules)
-        self.assertIn("fallbacks, not overrides", table_rules)
-        self.assertIn("multiple equally specific SDLC artifact rows", table_rules)
 
         boundaries = normalized(section(text, "## Boundaries"))
-        self.assertIn("Do not route ambiguous work directly", boundaries)
-        self.assertIn("do not manufacture process overhead", boundaries)
-        self.assertIn("Do not arbitrarily select one leaf", boundaries)
+        self.assertIn("Do not call another skill or imitate its workflow", boundaries)
+        self.assertIn("Do not create or edit files", boundaries)
+        self.assertIn("Do not run commands, spawn agents", boundaries)
+        self.assertIn(
+            "Do not turn ambiguity alone into an unknowns, grilling, or "
+            "readiness process",
+            boundaries,
+        )
+        self.assertIn("Do not return several equally weighted routes", boundaries)
+        self.assertIn("Recommend the smallest useful path and stop", compact)
+        self.assertNotIn("continue with the selected skill", compact.lower())
+
+    def test_sdlc_router_is_explicit_read_only_and_recommend_only(self) -> None:
+        for path in SDLC_ROUTER_COPIES:
+            with self.subTest(path=path):
+                text = path.read_text(encoding="utf-8")
+                compact = normalized(text)
+                self.assertIn(
+                    "Use only when the user explicitly invokes this skill", compact
+                )
+                self.assertIn("This skill only recommends a route", compact)
+                self.assertIn(
+                    "It does not write or update `local/sdlc`", compact
+                )
+
+                next_skill_routing = normalized(
+                    section(text, "## Next Skill Routing", "## Output")
+                )
+                self.assertIn(
+                    "Recommend the smallest next step. Do not invoke it",
+                    next_skill_routing,
+                )
+
+                boundaries = normalized(section(text, "## Boundaries"))
+                self.assertIn("Do not create or edit files", boundaries)
+                self.assertIn(
+                    "Do not invoke, imitate, or begin the recommended skill",
+                    boundaries,
+                )
+
+    def test_coordinators_recommend_instead_of_auto_invoking_controls(self) -> None:
+        for path in REQUIREMENTS_COPIES:
+            with self.subTest(path=path):
+                compact = normalized(path.read_text(encoding="utf-8"))
+                self.assertIn(
+                    "recommend an explicit `core-grilling` run and stop", compact
+                )
+                self.assertIn(
+                    "Do not invoke `sdlc-router` from this workflow", compact
+                )
+                self.assertIn(
+                    "Optional next-skill recommendations; do not invoke them "
+                    "automatically",
+                    compact,
+                )
+
+        for path in SOLUTION_SPEC_COPIES:
+            with self.subTest(path=path):
+                compact = normalized(path.read_text(encoding="utf-8"))
+                for skill_name in (
+                    "sdlc-hld-workflow",
+                    "sdlc-architecture-decision-record",
+                    "sdlc-lld-workflow",
+                    "sdlc-dev-handoff-planning",
+                ):
+                    self.assertIn(f"recommend `{skill_name}`", compact.lower())
+                self.assertIn(
+                    "Recommend at most one downstream skill", compact
+                )
+                self.assertGreaterEqual(compact.lower().count("do not invoke"), 5)
 
     def test_pr_review_minimality_respects_required_artifacts(self) -> None:
         for path in PR_REVIEW_COPIES:

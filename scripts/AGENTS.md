@@ -24,8 +24,9 @@ Key files: `sync_codex_entrypoints.py`, `check_codex_next_surface.py`,
 
 - `check_codex_next_surface.py` is read-only. It enforces the packaged
   `plugins/codex-next` gates: catalog/plugin content parity, manifest version
-  parity, Agent Skills spec frontmatter constraints, and parent-path/relative
-  link resolution. Exit code 1 means a hard gate failed.
+  parity, Agent Skills spec frontmatter constraints, Codex invocation policy
+  for explicit control workflows, and parent-path/relative link resolution.
+  Exit code 1 means a hard gate failed.
 - Keep the checker stdlib-only and its gates aligned with
   `plugins/codex-next/AGENTS.md`; extend
   `../tests/test_check_codex_next_surface.py` when a gate changes.

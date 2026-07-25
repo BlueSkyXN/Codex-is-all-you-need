@@ -1,0 +1,5 @@
+interface:
+  display_name: "SDLC Readiness Review"
+  short_description: "Make an explicit readiness-gate judgment."
+policy:
+  allow_implicit_invocation: false

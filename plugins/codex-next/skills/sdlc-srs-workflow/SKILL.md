@@ -8,12 +8,6 @@ metadata:
 
 # SRS Workflow
 
-When this workflow recommends an explicit-control skill, return its exact
-`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
-imitate, or begin the target skill. Stop this workflow and wait for the user
-to invoke that command explicitly; authorization for this skill does not
-transfer to another skill.
-
 Use this workflow when the SDLC manager must produce or update a Software Requirements Specification before implementation.
 
 The SRS is the software-facing contract between requirements work and development execution. It turns business, user, and product intent into precise, testable, traceable software requirements that dev agents can consume without taking ownership of upstream requirement management.
@@ -326,6 +320,9 @@ Before declaring the SRS ready, check:
 - Do not let this SRS workflow replace NFR, SPEC-slice, solution-package, or dev-handoff work when those specialized outputs are needed.
 
 ## Handoff
+
+Recommend the smallest next step. For an explicit-control workflow, return its
+exact `$codex-next:<skill-name>` command and stop; do not begin it here.
 
 Use the SRS to route downstream work:
 

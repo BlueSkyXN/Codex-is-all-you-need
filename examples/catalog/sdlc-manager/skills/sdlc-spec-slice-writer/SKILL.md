@@ -8,12 +8,6 @@ metadata:
 
 # SPEC Slice Writer
 
-When this workflow recommends an explicit-control skill, return its exact
-`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
-imitate, or begin the target skill. Stop this workflow and wait for the user
-to invoke that command explicitly; authorization for this skill does not
-transfer to another skill.
-
 Use this workflow when a requirement must be turned into one or more implementation-facing specification slices.
 
 A SPEC slice is a narrow contract for one technical or product surface. It should be precise enough for dev agents to implement and validate, while remaining owned by the SDLC manager as a requirements artifact.
@@ -442,6 +436,9 @@ Before calling slices ready:
 - Do not use a SPEC slice to bypass `sdlc-dev-handoff-planning`.
 
 ## Handoff
+
+Recommend the smallest next step. For an explicit-control workflow, return its
+exact `$codex-next:<skill-name>` command and stop; do not begin it here.
 
 Route downstream:
 

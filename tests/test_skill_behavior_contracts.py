@@ -4,8 +4,6 @@ import re
 import unittest
 from pathlib import Path
 
-from scripts import check_codex_next_surface
-
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_SKILLS = REPO_ROOT / "plugins" / "codex-next" / "skills"
@@ -55,9 +53,19 @@ SDLC_MANAGER_COPIES = (
     PLUGIN_SKILLS / "sdlc-manager" / "SKILL.md",
     CATALOG / "sdlc-manager" / "skills" / "sdlc-manager" / "SKILL.md",
 )
+CONTROL_HANDOFF_CONSUMERS = tuple(
+    PLUGIN_SKILLS / name / "SKILL.md"
+    for name in (
+        "sdlc-dev-handoff-planning",
+        "sdlc-nfr-spec",
+        "sdlc-readiness-review",
+        "sdlc-requirements-traceability",
+        "sdlc-spec-slice-writer",
+        "sdlc-srs-workflow",
+        "sdlc-validation-plan-workflow",
+    )
+)
 ROUTER = PLUGIN_SKILLS / "core-router" / "SKILL.md"
-EXPLICIT_CONTROL_SKILLS = check_codex_next_surface.EXPLICIT_CONTROL_SKILLS
-EXPLICIT_HANDOFF_CONTRACT = check_codex_next_surface.EXPLICIT_HANDOFF_CONTRACT
 
 
 def normalized(text: str) -> str:
@@ -273,44 +281,27 @@ class SkillBehaviorContractsTest(unittest.TestCase):
                 )
                 self.assertNotIn("Continue with the selected skill", compact)
 
-        forbidden_templates = (
-            r"\brun\s+`{target}`",
-            r"\breturn\s+to\s+`{target}`",
-            r"\bcontinue\s+with\s+`{target}`",
-            r"\bhand\s+off\s+to\s+`{target}`",
+        for path in CONTROL_HANDOFF_CONSUMERS:
+            with self.subTest(path=path):
+                handoff = normalized(
+                    section(path.read_text(encoding="utf-8"), "## Handoff")
+                )
+                self.assertIn(
+                    "exact `$codex-next:<skill-name>` command and stop", handoff
+                )
+                self.assertIn("do not begin it here", handoff)
+
+        legacy_cascade_phrases = (
+            "run `core-grilling`",
+            "return to `sdlc-manager`",
+            "continue with the selected skill",
+            "invoke or approve",
         )
         for path in sorted(PLUGIN_SKILLS.glob("*/SKILL.md")):
-            text = path.read_text(encoding="utf-8")
-            compact = normalized(text)
-            owner = path.parent.name
-            cross_skill_commands: set[str] = set()
-            for target in EXPLICIT_CONTROL_SKILLS:
-                if target == owner:
-                    continue
-                with self.subTest(path=path, target=target, contract="exact-command"):
-                    self.assertNotIn(
-                        f"`{target}`",
-                        text,
-                        "cross-skill references to explicit-control skills must use "
-                        "the exact `$codex-next:<skill-name>` command",
-                    )
-                if f"`$codex-next:{target}`" in text:
-                    cross_skill_commands.add(target)
-                for template in forbidden_templates:
-                    pattern = template.format(target=re.escape(target))
-                    with self.subTest(path=path, target=target, pattern=pattern):
-                        self.assertIsNone(
-                            re.search(pattern, text, re.IGNORECASE | re.DOTALL)
-                        )
-            if cross_skill_commands:
-                with self.subTest(
-                    path=path,
-                    targets=sorted(cross_skill_commands),
-                    contract="recommend-stop-wait",
-                ):
-                    self.assertIn(EXPLICIT_HANDOFF_CONTRACT, compact)
-            self.assertNotIn("invoke or approve", text.lower(), path)
-            self.assertNotIn("continue with the selected skill", text.lower(), path)
+            compact = normalized(path.read_text(encoding="utf-8")).lower()
+            for phrase in legacy_cascade_phrases:
+                with self.subTest(path=path, phrase=phrase):
+                    self.assertNotIn(phrase, compact)
 
     def test_sdlc_router_is_explicit_read_only_and_recommend_only(self) -> None:
         for path in SDLC_ROUTER_COPIES:
@@ -373,6 +364,9 @@ class SkillBehaviorContractsTest(unittest.TestCase):
                     self.assertIn(f"recommend `{skill_name}`", compact.lower())
                 self.assertIn(
                     "Recommend at most one downstream skill", compact
+                )
+                self.assertIn(
+                    "exact `$codex-next:<skill-name>` command and stop", compact
                 )
                 self.assertGreaterEqual(compact.lower().count("do not invoke"), 5)
 

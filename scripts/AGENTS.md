@@ -33,15 +33,11 @@ Key files: `sync_codex_entrypoints.py`, `check_codex_next_surface.py`,
   duplicate or unknown fields. Unsupported YAML must fail closed. The actual
   `allow_implicit_invocation: false` set must equal the declared explicit-control
   set, including existence checks for every declared member.
-- The declared explicit-control set is also authoritative for cross-skill
-  references. Anywhere in `SKILL.md`, a sibling Skill may name an
-  explicit-control target only through its exact
-  `$codex-next:<skill-name>` command or a real
-  `../<skill-name>/references/...` technical path. Direct sibling `SKILL.md`
-  loading, plain names, Markdown-link aliases, and alternate command forms must
-  fail closed. Invocation-bearing commands outside fenced blocks and HTML
-  comments must be preceded by the visible recommend-only, stop/wait,
-  non-transitive handoff contract.
+- Keep the surface checker focused on deterministic package contracts. Do not
+  make it parse arbitrary Skill prose or enforce one Markdown spelling for
+  recommend-only behavior. Regression-test known cascade risks in focused
+  behavior-contract tests, and validate trigger behavior with representative
+  runtime prompts when practical.
 - Keep the checker stdlib-only and its gates aligned with
   `plugins/codex-next/AGENTS.md`; extend
   `../tests/test_check_codex_next_surface.py` when a gate changes.

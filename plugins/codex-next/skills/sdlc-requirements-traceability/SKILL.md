@@ -8,12 +8,6 @@ metadata:
 
 # Requirements Traceability
 
-When this workflow recommends an explicit-control skill, return its exact
-`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
-imitate, or begin the target skill. Stop this workflow and wait for the user
-to invoke that command explicitly; authorization for this skill does not
-transfer to another skill.
-
 Use this workflow to create, update, or inspect a requirements traceability matrix.
 
 Traceability connects intent to execution:
@@ -304,6 +298,9 @@ Before declaring traceability ready, check:
 - Do not overwrite existing tracking conventions without user approval.
 
 ## Handoff
+
+Recommend the smallest next step. For an explicit-control workflow, return its
+exact `$codex-next:<skill-name>` command and stop; do not begin it here.
 
 Route findings:
 

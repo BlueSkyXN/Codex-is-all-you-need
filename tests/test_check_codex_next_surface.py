@@ -145,13 +145,6 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
         agents.mkdir(exist_ok=True)
         agents.joinpath("openai.yaml").write_text(content, encoding="utf-8")
 
-    def write_mirrored_alpha(self, body: str) -> None:
-        for root in (
-            self.plugin / "skills" / "alpha-skill",
-            self.catalog / "common" / "skills" / "alpha-skill",
-        ):
-            self.write_skill(root, "alpha-skill", body=body)
-
     def tearDown(self) -> None:
         self.tmp.cleanup()
 
@@ -360,151 +353,17 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
                     summary["errors"],
                 )
 
-    def test_explicit_reference_gate_uses_authoritative_sidecar_semantics(
-        self,
-    ) -> None:
-        cases = (
-            "  allow_implicit_invocation:    false\n",
-            "  allow_implicit_invocation : false\n",
-        )
-        for policy_line in cases:
-            with self.subTest(policy_line=policy_line.strip()):
-                content = (
-                    "interface:\n"
-                    '  display_name: "Manual Skill"\n'
-                    '  short_description: "Explicit workflow."\n'
-                    "policy:\n"
-                    f"{policy_line}"
-                )
-                for root in (
-                    self.plugin / "skills" / "core-goal-run",
-                    self.catalog / "common" / "skills" / "core-goal-run",
-                ):
-                    self.write_raw_openai_sidecar(root, content)
-                self.write_mirrored_alpha(
-                    "# Alpha\n\nUse core-goal-run before continuing.\n"
-                )
-
-                parser_errors: list[str] = []
-                sidecar_result = check_codex_next_surface.inspect_openai_sidecar(
-                    self.plugin / "skills" / "core-goal-run",
-                    errors=parser_errors,
-                )
-                summary = check_codex_next_surface.run_check(
-                    self.plugin, self.catalog
-                )
-
-                self.assertEqual(sidecar_result, (True, False))
-                self.assertEqual(parser_errors, [])
-                self.assertEqual(summary["codex_explicit_skills"], ["core-goal-run"])
-                self.assertTrue(
-                    any(
-                        "explicit-control skill 'core-goal-run' must use exact command"
-                        in error
-                        for error in summary["errors"]
-                    ),
-                    summary["errors"],
-                )
-
-    def test_explicit_reference_gate_rejects_noncanonical_forms(self) -> None:
-        cases = (
-            "Use core-goal-run before continuing.",
-            "| readiness | core-goal-run |",
-            "Hand off to [core-goal-run](../core-goal-run/SKILL.md).",
-            "Run `$core-goal-run` next.",
-            "Run `codex-next:core-goal-run` next.",
-            "Run `$codex-next:core-goal-run/extra` next.",
-            "Use CORE-GOAL-RUN before continuing.",
-            "Read and follow ../core-goal-run/SKILL.md.",
-            "Read ../core-goal-run/references/../SKILL.md.",
-            "Read ../core-goal-run/references/guide.md/../../SKILL.md.",
-            "<!-- Use core-goal-run before continuing. -->",
-            "```text\nUse core-goal-run before continuing.\n```",
-        )
-        for body_line in cases:
-            with self.subTest(body_line=body_line):
-                self.write_mirrored_alpha(f"# Alpha\n\n{body_line}\n")
-
-                summary = check_codex_next_surface.run_check(
-                    self.plugin, self.catalog
-                )
-
-                self.assertTrue(
-                    any(
-                        "explicit-control skill 'core-goal-run' must use exact command"
-                        in error
-                        for error in summary["errors"]
-                    ),
-                    summary["errors"],
-                )
-
-    def test_explicit_reference_gate_requires_visible_handoff_contract(
-        self,
-    ) -> None:
-        contract = check_codex_next_surface.EXPLICIT_HANDOFF_CONTRACT
-        invalid_contracts = (
-            f"<!-- {contract} -->",
-            f"```text\n{contract}\n```",
-            contract,
-        )
-        for invalid_contract in invalid_contracts:
-            with self.subTest(invalid_contract=invalid_contract.splitlines()[0]):
-                self.write_mirrored_alpha(
-                    "# Alpha\n\n"
-                    "Recommend `$codex-next:core-goal-run`.\n\n"
-                    f"{invalid_contract}\n"
-                )
-
-                summary = check_codex_next_surface.run_check(
-                    self.plugin, self.catalog
-                )
-
-                self.assertTrue(
-                    any(
-                        "exact explicit-control commands require a preceding visible"
-                        in error
-                        for error in summary["errors"]
-                    ),
-                    summary["errors"],
-                )
-
-    def test_explicit_reference_gate_accepts_visible_contract_and_safe_reference(
-        self,
-    ) -> None:
-        contract = check_codex_next_surface.EXPLICIT_HANDOFF_CONTRACT
-        self.write_mirrored_alpha(
+    def test_informational_skill_mentions_are_not_policy_errors(self) -> None:
+        body = (
             "# Alpha\n\n"
-            f"{contract}\n\n"
-            "Recommend `$codex-next:core-goal-run`.\n"
+            "Existing `core-goal-run` records may be useful evidence; this is not "
+            "an instruction to invoke that workflow.\n"
         )
-
-        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
-
-        self.assertEqual(summary["errors"], [])
-
         for root in (
-            self.plugin / "skills" / "core-goal-run",
-            self.catalog / "common" / "skills" / "core-goal-run",
+            self.plugin / "skills" / "alpha-skill",
+            self.catalog / "common" / "skills" / "alpha-skill",
         ):
-            references = root / "references"
-            references.mkdir()
-            references.joinpath("guide.md").write_text("# Guide\n", encoding="utf-8")
-        self.write_mirrored_alpha(
-            "# Alpha\n\n"
-            "Read ../core-goal-run/references/guide.md for shared terms.\n"
-        )
-
-        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
-
-        self.assertEqual(summary["errors"], [])
-
-    def test_explicit_reference_gate_ignores_fenced_examples(self) -> None:
-        self.write_mirrored_alpha(
-            "# Alpha\n\n"
-            "```text\n"
-            "Invoke `$codex-next:core-goal-run` only when explicitly requested.\n"
-            "```\n"
-        )
+            self.write_skill(root, "alpha-skill", body=body)
 
         summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
 

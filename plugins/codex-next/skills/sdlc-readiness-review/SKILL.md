@@ -8,12 +8,6 @@ metadata:
 
 # SDLC Readiness Review
 
-When this workflow recommends an explicit-control skill, return its exact
-`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
-imitate, or begin the target skill. Stop this workflow and wait for the user
-to invoke that command explicitly; authorization for this skill does not
-transfer to another skill.
-
 Use this workflow to judge whether work is ready for the next delivery step.
 
 This is a readiness check, not an enterprise approval board. It should make the next action clear:
@@ -323,6 +317,9 @@ Before returning the verdict, check:
 - Do not let dev own SDLC artifacts; dev may report implementation blockers and contradictions.
 
 ## Handoff
+
+Recommend the smallest next step. For an explicit-control workflow, return its
+exact `$codex-next:<skill-name>` command and stop; do not begin it here.
 
 Route by verdict:
 

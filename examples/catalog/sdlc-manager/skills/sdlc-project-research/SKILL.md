@@ -8,12 +8,6 @@ metadata:
 
 # 项目功能能力地图
 
-When this workflow recommends an explicit-control skill, return its exact
-`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
-imitate, or begin the target skill. Stop this workflow and wait for the user
-to invoke that command explicitly; authorization for this skill does not
-transfer to another skill.
-
 ## 目标
 
 读取一个已有代码项目、配置、文档、`local/` 材料和 git 记录，整理出一份轻量的项目功能能力地图，帮助后续做进展管理、项目汇报、绩效材料和需求范围判断。默认在当前响应中返回结果；只有用户明确要求持久研究包时才创建目录或文件。

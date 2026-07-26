@@ -8,12 +8,6 @@ metadata:
 
 # Solution Spec Workflow
 
-When this workflow recommends an explicit-control skill, return its exact
-`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
-imitate, or begin the target skill. Stop this workflow and wait for the user
-to invoke that command explicitly; authorization for this skill does not
-transfer to another skill.
-
 Use this workflow when SDLC manager materials need a solution-level package before dev execution.
 
 A solution package connects SRS/NFR/HLD/LLD/ADR/Domain Boundary Map/SPEC materials to an implementation approach. This workflow coordinates and summarizes those artifacts; it should not replace the dedicated `sdlc-hld-workflow`, `sdlc-lld-workflow`, `sdlc-domain-boundary-modeling`, `sdlc-modular-monolith-architecture`, or `sdlc-architecture-decision-record` workflows when those artifacts need to be authored in full.
@@ -383,6 +377,9 @@ Before calling the solution spec ready:
 
 Recommend at most one downstream skill after completing the requested package.
 Do not invoke it automatically:
+
+For an explicit-control workflow, return its exact
+`$codex-next:<skill-name>` command and stop.
 
 | Need | Next skill |
 |---|---|

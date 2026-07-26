@@ -8,12 +8,6 @@ metadata:
 
 # Validation Plan Workflow
 
-When this workflow recommends an explicit-control skill, return its exact
-`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
-imitate, or begin the target skill. Stop this workflow and wait for the user
-to invoke that command explicitly; authorization for this skill does not
-transfer to another skill.
-
 Use this workflow to define how a change will be proven correct before implementation, review, or release.
 
 This is not a missing testing capability. It is an SDLC-owned artifact that makes the validation contract explicit:
@@ -351,6 +345,9 @@ Before returning the plan, check:
 - Do not block clear direct-dev tasks solely because a formal validation plan is absent.
 
 ## Handoff
+
+Recommend the smallest next step. For an explicit-control workflow, return its
+exact `$codex-next:<skill-name>` command and stop; do not begin it here.
 
 Route downstream:
 

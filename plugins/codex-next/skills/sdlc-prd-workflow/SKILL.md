@@ -8,12 +8,6 @@ metadata:
 
 # PRD Workflow
 
-When this workflow recommends an explicit-control skill, return its exact
-`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
-imitate, or begin the target skill. Stop this workflow and wait for the user
-to invoke that command explicitly; authorization for this skill does not
-transfer to another skill.
-
 Use this skill to produce product requirements after business and user direction is clear enough to define product behavior.
 
 A PRD defines what the product should deliver and how success will be accepted. It should not replace SRS, NFR, SPEC, dev handoff, or implementation work.

@@ -8,12 +8,6 @@ metadata:
 
 # NFR Spec
 
-When this workflow recommends an explicit-control skill, return its exact
-`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
-imitate, or begin the target skill. Stop this workflow and wait for the user
-to invoke that command explicitly; authorization for this skill does not
-transfer to another skill.
-
 Use this workflow when a software feature, system, release, or integration needs measurable non-functional requirements.
 
 NFRs are quality and constraint requirements. They must be explicit, measurable where possible, and connected to validation. They should not be left as vague claims inside a PRD or SRS.
@@ -368,6 +362,9 @@ Before calling the NFR spec ready, verify:
 - Do not let this narrow NFR workflow replace solution-package coordination or `sdlc-dev-handoff-planning`.
 
 ## Handoff
+
+Recommend the smallest next step. For an explicit-control workflow, return its
+exact `$codex-next:<skill-name>` command and stop; do not begin it here.
 
 Route downstream:
 

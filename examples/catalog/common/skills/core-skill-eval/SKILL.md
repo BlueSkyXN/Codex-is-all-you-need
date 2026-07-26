@@ -2,15 +2,15 @@
 name: core-skill-eval
 description: Use only when the user explicitly invokes this skill to evaluate a skill with representative cases, isolated runs, independent judging, and evidence-driven edits.
 metadata:
-  version: "1.0"
+  version: "1.1"
   updated: "2026-07-26"
 ---
 
 # Skill Eval
 
-Use this only when requested or when a major skill change needs a behavior gate.
-Do not run it for ordinary tasks: it needs a target skill, representative cases,
-and a clear standard for judging each case.
+Use this only when the user explicitly invokes this skill. Do not run it for
+ordinary tasks or start it on your own after a skill change: it needs a target
+skill, representative cases, and a clear standard for judging each case.
 
 ## Required Inputs
 

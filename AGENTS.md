@@ -61,9 +61,9 @@ Before editing files under a directory with a local `AGENTS.md`:
 
 ## Commands
 
-This repository has no committed package manager config, Makefile, or CI
-workflow. Confirmed commands come from the checked-in Python scripts, tests, and
-repository docs.
+This repository has no committed package manager config or Makefile. The
+minimal CI workflow runs the checked-in Python tests and deterministic package
+gates; confirmed commands come from those scripts, tests, and repository docs.
 
 | Command | Purpose | Scope | Sandbox notes |
 |---|---|---|---|
@@ -73,7 +73,7 @@ repository docs.
 | `python3 dashboard/build_dashboard.py --config ~/.codex/dashboard/config.toml` | Generate dashboard JSON and HTML | `dashboard/` plus configured local paths | Requires local config; output must stay outside the public repository unless explicitly configured for a local experiment |
 | `open ~/.codex/dashboard/index.html` | Preview generated dashboard | local machine | macOS GUI command; not a sandbox validation step |
 | `python3 scripts/sync_codex_entrypoints.py --help` | Validate entrypoint sync CLI loads | `scripts/` | OK |
-| `python3 scripts/check_codex_next_surface.py` | Validate the packaged Codex Next skill surface: catalog/plugin content parity, manifest version parity, Agent Skills frontmatter gates, and reference resolution | `plugins/codex-next/`, `examples/catalog/` | OK; read-only, exits 1 on gate failure |
+| `python3 scripts/check_codex_next_surface.py` | Validate the packaged Codex Next skill surface: catalog/plugin content parity, manifest version parity, Agent Skills frontmatter gates, Codex invocation policy for explicit control workflows, and reference resolution | `plugins/codex-next/`, `examples/catalog/` | OK; read-only, exits 1 on gate failure |
 | `python3 scripts/check_skill_metadata.py audit --history-ref HEAD` | Audit independent public skill versions from normalized Git history | tracked public skills | OK; read-only unless `backfill --apply` is explicitly used |
 | `python3 scripts/check_skill_metadata.py check --base-ref origin/main` | Validate skill metadata schema, mirror parity, and version transitions | tracked public skills | Requires the selected Git base ref |
 | `python3 scripts/sync_codex_entrypoints.py sync --workspace <workspace> --source-root <workspace>/.codex --link-mode directories` | Dry-run legacy/local-dev repo-local `.codex` directory link sync | local workspace | Replace placeholders before running; dry-run by default; reads local workspace paths; do not add `--apply` without explicit user request |

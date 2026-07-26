@@ -2,7 +2,7 @@
 name: core-goal-run
 description: Use only when the user explicitly invokes this skill to create or resume a persistent file-based goal tracker across sessions.
 metadata:
-  version: "1.0"
+  version: "1.1"
   updated: "2026-07-26"
 ---
 
@@ -53,8 +53,8 @@ taxonomy:
 - `VERIFYING`
 - `DONE`
 - `BLOCKED`
-- `HUMAN_PENDING`
-- `SKIPPED_HUMAN`
+- `HUMAN_PENDING` — waiting on a user decision, credential, or approval.
+- `SKIPPED_HUMAN` — human-only work the user explicitly asked to skip.
 
 Do not paste command output, long rationale, PR bodies, or full logs into the
 table.
@@ -98,7 +98,10 @@ reviewed source section. The tracker itself is not proof of completion.
 
 1. Confirm that the user explicitly requested persistent goal tracking or
    resumption. Otherwise stop using this skill and complete the task normally.
-2. Read the source goal and existing tracker files.
+2. Read the source goal and existing tracker files. When tracker files exist,
+   `goal-tasks.md` is the current status truth: resume from it instead of
+   re-deriving status from the source plan, and treat status notes inside the
+   source plan as historical input.
 3. Create tracker files only when they are missing and persistent tracking is
    part of the request.
 4. Extract actionable tasks, not every paragraph or improvement idea.
@@ -129,6 +132,7 @@ Stop and report when:
 - the next step requires a user decision, credential, permission, or
   irreversible action;
 - the source plan conflicts with current repository or external evidence;
+- the source plan and `goal-tasks.md` contradict each other;
 - verification has a concrete blocker;
 - the user asks to pause, change scope, or replace the tracking method.
 

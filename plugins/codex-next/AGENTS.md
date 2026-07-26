@@ -107,7 +107,7 @@ the user's task differs.
 
 - `python3 scripts/check_codex_next_surface.py` (from the repo root) - hard gate
   for catalog/plugin content parity, manifest version parity, Agent Skills spec
-  frontmatter, and reference resolution.
+  frontmatter, Codex invocation policy, and reference resolution.
 - `python3 scripts/check_skill_metadata.py check --base-ref origin/main` - hard
   gate for independent skill metadata and version transitions.
 - `python3 ~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/codex-next` - plugin manifest/package validation; requires the local system validator path.

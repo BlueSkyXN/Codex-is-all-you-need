@@ -1,9 +1,9 @@
 ---
 name: dev-git-workflow
-description: Use for branch strategy, worktrees, commits, opening or updating PRs, reviewer-facing PR titles and bodies, merge/rebase decisions, conflicts, tags, and release notes.
+description: Use for non-trivial Git state such as branch strategy, worktrees, merge/rebase decisions, conflicts, reviewer-facing PR preparation, tags, and release notes. Do not trigger for a routine commit, push, or PR that needs no strategy decision.
 metadata:
-  version: "0.4"
-  updated: "2026-07-10"
+  version: "0.5"
+  updated: "2026-07-26"
 ---
 
 # Git workflow

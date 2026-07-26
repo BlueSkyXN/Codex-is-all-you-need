@@ -36,8 +36,9 @@ Key files: `sync_codex_entrypoints.py`, `check_codex_next_surface.py`,
 - Keep the surface checker focused on deterministic package contracts. Do not
   make it parse arbitrary Skill prose or enforce one Markdown spelling for
   recommend-only behavior. Regression-test known cascade risks in focused
-  behavior-contract tests, and validate trigger behavior with representative
-  runtime prompts when practical.
+  behavior-contract tests. Runtime trigger behavior is verified manually with
+  representative prompts when a change warrants it; no automated runtime
+  evaluation exists in this repository.
 - Keep the checker stdlib-only and its gates aligned with
   `plugins/codex-next/AGENTS.md`; extend
   `../tests/test_check_codex_next_surface.py` when a gate changes.

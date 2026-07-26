@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests
+      - name: Codex Next surface gates
+        run: python3 scripts/check_codex_next_surface.py
+      - name: Skill metadata gates
+        run: python3 scripts/check_skill_metadata.py check --base-ref origin/main

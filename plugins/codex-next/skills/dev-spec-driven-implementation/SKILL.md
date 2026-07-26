@@ -8,6 +8,11 @@ metadata:
 
 # Spec-driven Implementation
 
+Any exact `$codex-next:<skill-name>` command in this document is a
+recommendation only. Do not invoke, imitate, or begin that skill. Stop this
+workflow and wait for the user to invoke the command explicitly; authorization
+for this skill does not transfer to another skill.
+
 ## SDLC artifact policy
 
 Use SDLC artifacts when they are present, but do not require them for every development task.

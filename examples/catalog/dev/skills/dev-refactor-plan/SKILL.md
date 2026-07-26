@@ -8,6 +8,11 @@ metadata:
 
 # Refactor plan workflow
 
+Any exact `$codex-next:<skill-name>` command in this document is a
+recommendation only. Do not invoke, imitate, or begin that skill. Stop this
+workflow and wait for the user to invoke the command explicitly; authorization
+for this skill does not transfer to another skill.
+
 Use this workflow when the task is to refactor code while preserving behavior.
 
 ## Steps

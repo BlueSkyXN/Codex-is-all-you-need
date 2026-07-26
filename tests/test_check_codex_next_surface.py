@@ -158,6 +158,14 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
         self.assertEqual(summary["missing_explicit_control_skills"], [])
         self.assertEqual(summary["unexpected_explicit_skills"], [])
         self.assertEqual(summary["unenforced_explicit_control_skills"], [])
+        self.assertEqual(summary["claude_frontmatter_model_invoked"], 3)
+        self.assertEqual(summary["claude_frontmatter_user_invoked"], 0)
+        self.assertEqual(
+            summary["claude_invocation_basis"],
+            "packaged_frontmatter_inventory_runtime_unverified",
+        )
+        # Retained as compatibility aliases; the basis field prevents them
+        # from being interpreted as live runtime selection evidence.
         self.assertEqual(summary["claude_model_invoked"], 3)
         self.assertEqual(summary["claude_user_invoked"], 0)
         self.assertEqual(summary["openai_sidecars"], 1)

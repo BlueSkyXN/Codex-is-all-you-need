@@ -78,7 +78,7 @@ workflow; it does not author, invoke, or imitate requirements,
 architecture/design, domain, SPEC, traceability, readiness, change-control, or
 handoff skills itself.
 
-`sdlc-project-research` is the lightweight upstream entry point when an existing codebase needs an evidence-grounded capability map before BRD/URS/PRD, SRS/SPEC, traceability, handoff, or reporting work. It defaults to Simplified Chinese file names, sections, table headers, statuses, notes, and next steps. Default artifacts are `项目能力摘要.md`, `项目功能能力地图.md`, and `项目能力表.csv`.
+`sdlc-project-research` is the lightweight upstream entry point when an existing codebase needs an evidence-grounded capability map before BRD/URS/PRD, SRS/SPEC, traceability, handoff, or reporting work. It returns the capability map inline by default. Only when the user explicitly requests a persistent research package does it create `项目能力摘要.md`, `项目功能能力地图.md`, and `项目能力表.csv`, using Simplified Chinese file names, sections, table headers, statuses, notes, and next steps by default.
 
 `sdlc-solution-spec-workflow` coordinates a solution package; it should not replace dedicated `sdlc-hld-workflow`, `sdlc-lld-workflow`, `sdlc-domain-boundary-modeling`, `sdlc-modular-monolith-architecture`, or `sdlc-architecture-decision-record` workflows.
 
@@ -86,7 +86,7 @@ handoff skills itself.
 并推荐一个需要单独调用的下一工作流；它本身不撰写、调用或模仿需求、架构/设计、
 领域、SPEC、追踪、准备度、变更控制或开发交接 Skill。
 
-`sdlc-project-research` 是现有代码库进入 BRD/URS/PRD、SRS/SPEC、traceability、handoff 或汇报前的轻量上游入口，先形成证据可追溯的项目功能能力地图。默认只产出 `项目能力摘要.md`、`项目功能能力地图.md` 和 `项目能力表.csv`，并默认使用简体中文文件名、中文章节、中文表头、中文状态、中文备注和中文下一步。
+`sdlc-project-research` 是现有代码库进入 BRD/URS/PRD、SRS/SPEC、traceability、handoff 或汇报前的轻量上游入口，先形成证据可追溯的项目功能能力地图。默认内联返回；只有用户明确要求持久研究包时，才生成 `项目能力摘要.md`、`项目功能能力地图.md` 和 `项目能力表.csv`，并默认使用简体中文文件名、中文章节、中文表头、中文状态、中文备注和中文下一步。
 
 `sdlc-solution-spec-workflow` 负责协调 solution package；它不替代专项的 `sdlc-hld-workflow`、`sdlc-lld-workflow`、`sdlc-domain-boundary-modeling`、`sdlc-modular-monolith-architecture` 或 `sdlc-architecture-decision-record`。
 

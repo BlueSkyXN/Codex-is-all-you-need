@@ -2,11 +2,16 @@
 name: sdlc-validation-plan-workflow
 description: Use to create validation plans or behavior baselines linking requirements to checks, evidence, gaps, risks, and release gates.
 metadata:
-  version: "0.4"
-  updated: "2026-07-23"
+  version: "0.5"
+  updated: "2026-07-26"
 ---
 
 # Validation Plan Workflow
+
+Any exact `$codex-next:<skill-name>` command in this document is a
+recommendation only. Do not invoke, imitate, or begin that skill. Stop this
+workflow and wait for the user to invoke the command explicitly; authorization
+for this skill does not transfer to another skill.
 
 Use this workflow to define how a change will be proven correct before implementation, review, or release.
 
@@ -354,6 +359,6 @@ Route downstream:
 | repo-specific test strategy | `dev-test-strategy` |
 | test execution or failure diagnosis | `dev_test_runner` |
 | traceability update | `sdlc-requirements-traceability` |
-| readiness decision | `sdlc-readiness-review` |
+| readiness decision | `$codex-next:sdlc-readiness-review` |
 | release validation execution | `dev-release-check` |
-| missing SRS/NFR/SPEC/HLD/LLD/ADR/domain source | relevant `sdlc-manager` authoring skill |
+| missing SRS/NFR/SPEC/HLD/LLD/ADR/domain source | `$codex-next:sdlc-manager` |

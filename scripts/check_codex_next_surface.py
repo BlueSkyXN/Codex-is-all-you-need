@@ -707,6 +707,13 @@ def run_check(
         "missing_explicit_control_skills": missing_explicit_skills,
         "unexpected_explicit_skills": unexpected_explicit_skills,
         "unenforced_explicit_control_skills": unenforced_explicit_skills,
+        "claude_frontmatter_model_invoked": claude_model_invoked,
+        "claude_frontmatter_user_invoked": claude_user_invoked,
+        "claude_invocation_basis": (
+            "packaged_frontmatter_inventory_runtime_unverified"
+        ),
+        # Compatibility aliases for existing JSON consumers. These counts are
+        # static packaged-frontmatter inventory, not live runtime evidence.
         "claude_model_invoked": claude_model_invoked,
         "claude_user_invoked": claude_user_invoked,
         "openai_sidecars": openai_sidecars,
@@ -742,12 +749,13 @@ def print_text(summary: dict[str, Any]) -> None:
     print(f"- Codex user-invoked: {summary['user_invoked']}")
     print(
         "- Claude frontmatter model-invoked inventory: "
-        f"{summary['claude_model_invoked']}"
+        f"{summary['claude_frontmatter_model_invoked']}"
     )
     print(
         "- Claude frontmatter user-invoked inventory: "
-        f"{summary['claude_user_invoked']}"
+        f"{summary['claude_frontmatter_user_invoked']}"
     )
+    print(f"- Claude invocation basis: {summary['claude_invocation_basis']}")
     print(f"- OpenAI sidecars: {summary['openai_sidecars']}")
     print(f"- description words: {summary['description_words']}")
     print(f"- references dirs: {summary['references_dirs']}")

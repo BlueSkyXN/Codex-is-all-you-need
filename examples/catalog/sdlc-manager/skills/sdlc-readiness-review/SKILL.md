@@ -8,6 +8,11 @@ metadata:
 
 # SDLC Readiness Review
 
+Any exact `$codex-next:<skill-name>` command in this document is a
+recommendation only. Do not invoke, imitate, or begin that skill. Stop this
+workflow and wait for the user to invoke the command explicitly; authorization
+for this skill does not transfer to another skill.
+
 Use this workflow to judge whether work is ready for the next delivery step.
 
 This is a readiness check, not an enterprise approval board. It should make the next action clear:
@@ -325,8 +330,8 @@ Route by verdict:
 | `ready-for-dev` | `sdlc-dev-handoff-planning` or dev implementation skill |
 | `ready-for-direct-dev` | dev skill such as `dev-bugfix`, `dev-repo-onboarding`, or `dev-spec-driven-implementation` |
 | `repo-onboarding-first` | `dev-repo-onboarding` |
-| `revise` | relevant authoring skill: `sdlc-srs-workflow`, `sdlc-nfr-spec`, `sdlc-spec-slice-writer`, `sdlc-requirements-workflow` |
+| `revise` | relevant authoring skill: `sdlc-srs-workflow`, `sdlc-nfr-spec`, `sdlc-spec-slice-writer`, `$codex-next:sdlc-requirements-workflow` |
 | `reduce-scope` | return to the requesting skill or direct-dev with the baseline-compatible smaller alternative named |
-| `change-control-needed` | `sdlc-change-control` |
+| `change-control-needed` | `$codex-next:sdlc-change-control` |
 | `not-needed` | report the evidence that no unmet need remains; do not route to build |
 | `blocked` | ask for required owner decision, missing input, or conflict resolution |

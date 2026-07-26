@@ -8,6 +8,11 @@ metadata:
 
 # SDLC Router
 
+Any exact `$codex-next:<skill-name>` command in this document is a
+recommendation only. Do not invoke, imitate, or begin that skill. Stop this
+workflow and wait for the user to invoke the command explicitly; authorization
+for this skill does not transfer to another skill.
+
 Use this skill only after the user explicitly asks for SDLC/ADS classification
 or invokes it by name.
 
@@ -127,14 +132,14 @@ recommendation or approval does not transfer authorization.
 - Read-only repo exploration: `dev-repo-onboarding`
 - Bugfix or urgent repair: `dev-bugfix`
 - Direct implementation from clear input: `dev-spec-driven-implementation`
-- Requirements package or Product Pack: `sdlc-requirements-workflow`, `sdlc-prd-workflow`, `sdlc-brd-workflow`, `sdlc-urs-workflow`
+- Requirements package or Product Pack: `$codex-next:sdlc-requirements-workflow`, `sdlc-prd-workflow`, `sdlc-brd-workflow`, `sdlc-urs-workflow`
 - Software requirements or NFR: `sdlc-srs-workflow`, `sdlc-nfr-spec`
 - Architecture or domain impact: `sdlc-hld-workflow`, `sdlc-domain-boundary-modeling`, `sdlc-architecture-decision-record`, `sdlc-modular-monolith-architecture`
-- Detailed design or implementation-facing slices: `sdlc-lld-workflow`, `sdlc-solution-spec-workflow`, `sdlc-spec-slice-writer`
+- Detailed design or implementation-facing slices: `sdlc-lld-workflow`, `$codex-next:sdlc-solution-spec-workflow`, `sdlc-spec-slice-writer`
 - Handoff: `sdlc-dev-handoff-planning`
 - Validation plan: `sdlc-validation-plan-workflow`
-- Traceability or change control: `sdlc-requirements-traceability`, `sdlc-change-control`
-- Readiness check: `sdlc-readiness-review`
+- Traceability or change control: `sdlc-requirements-traceability`, `$codex-next:sdlc-change-control`
+- Readiness check: `$codex-next:sdlc-readiness-review`
 - Refactor or migration planning: `dev-refactor-plan`, `dev-migration-plan`
 - Release readiness: `dev-release-check`
 

@@ -8,6 +8,11 @@ metadata:
 
 # 项目功能能力地图
 
+Any exact `$codex-next:<skill-name>` command in this document is a
+recommendation only. Do not invoke, imitate, or begin that skill. Stop this
+workflow and wait for the user to invoke the command explicitly; authorization
+for this skill does not transfer to another skill.
+
 ## 目标
 
 读取一个已有代码项目、配置、文档、`local/` 材料和 git 记录，整理出一份轻量的项目功能能力地图，帮助后续做进展管理、项目汇报、绩效材料和需求范围判断。默认在当前响应中返回结果；只有用户明确要求持久研究包时才创建目录或文件。
@@ -24,7 +29,7 @@ metadata:
 -> 下一步
 ```
 
-在 `sdlc-manager` 中，能力地图也是后续 SDLC artifact 的证据入口。需要时可为每个三级功能点追加：
+在 SDLC manager 协调中，能力地图也是后续 SDLC artifact 的证据入口。需要时可为每个三级功能点追加：
 
 ```text
 推荐后续材料
@@ -35,7 +40,7 @@ handoff 风险
 
 这些字段只是路由建议，不代表已经完成 PRD、SRS、SPEC 或 dev handoff。
 
-`sdlc-project-research` 在 `sdlc-manager` 中专注于项目功能能力地图和证据入口，不再承载旧产品工程研究包。
+`sdlc-project-research` 在 SDLC manager 协调中专注于项目功能能力地图和证据入口，不再承载旧产品工程研究包。
 
 当研究用于重建、替换或迁移时，按 `../sdlc-router/references/sdlc-operating-model.md` 把能力地图作为范围决策表的证据输入。不要一次性写完整未来 PRD/SRS/RTM；只把旧能力标成保留、舍弃、改造或存疑，并路由到首波需求包、规格或 handoff。
 
@@ -208,13 +213,13 @@ handoff 风险
 
 | 后续需求 | 推荐 skill |
 |---|---|
-| 业务需求、用户需求或产品范围 | `sdlc-requirements-workflow`, `sdlc-prd-workflow` |
+| 业务需求、用户需求或产品范围 | `$codex-next:sdlc-requirements-workflow`, `sdlc-prd-workflow` |
 | 软件行为要求、验收条件、字段/权限/状态 | `sdlc-srs-workflow` |
 | UI/API/Data/Admin/Permission/Directory 规格切片 | `sdlc-spec-slice-writer` |
 | 质量、安全、性能、可用性、隐私或合规约束 | `sdlc-nfr-spec` |
 | 能力、需求、规格、任务、测试之间的追踪 | `sdlc-requirements-traceability` |
 | 已具备规格后的研发任务包 | `sdlc-dev-handoff-planning` |
-| 旧系统重建、替换或迁移范围收口 | 范围决策表 -> `sdlc-requirements-workflow` 或首波 `sdlc-dev-handoff-planning` |
+| 旧系统重建、替换或迁移范围收口 | 范围决策表 -> `$codex-next:sdlc-requirements-workflow` 或首波 `sdlc-dev-handoff-planning` |
 
 如果用户只需要中文项目能力地图，不要额外生成 SDLC 材料。
 

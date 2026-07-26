@@ -8,7 +8,12 @@ metadata:
 
 # Requirements Workflow
 
-Use this skill as the main `sdlc-manager` entry point for requirements work.
+Any exact `$codex-next:<skill-name>` command in this document is a
+recommendation only. Do not invoke, imitate, or begin that skill. Stop this
+workflow and wait for the user to invoke the command explicitly; authorization
+for this skill does not transfer to another skill.
+
+Use this skill as the requirements entry point selected by explicit SDLC manager coordination.
 
 It coordinates BRD, URS, and PRD material. It does not replace SRS, NFR, SPEC, RTM, or dev handoff skills.
 
@@ -73,7 +78,7 @@ workflow.
 
 2. Decide artifact depth.
    - If depth is unclear, ask one load-bearing question with a recommended
-     default. Do not invoke `sdlc-router` from this workflow.
+default. Do not invoke `$codex-next:sdlc-router` from this workflow.
    - 快线：do not use this workflow unless scope is unclear; prefer direct-dev or handoff-lite.
    - 增补：produce a short requirements package only when product scope, non-scope, or acceptance is unclear.
    - 规则变更：produce `REQ` items and acceptance direction for permission, billing, data metric, state machine, compliance, privacy, or business-semantic changes.

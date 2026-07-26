@@ -2,11 +2,16 @@
 name: sdlc-nfr-spec
 description: Use to define measurable NFRs for performance, reliability, security, privacy, accessibility, observability, and operations.
 metadata:
-  version: "0.4"
-  updated: "2026-06-12"
+  version: "0.5"
+  updated: "2026-07-26"
 ---
 
 # NFR Spec
+
+Any exact `$codex-next:<skill-name>` command in this document is a
+recommendation only. Do not invoke, imitate, or begin that skill. Stop this
+workflow and wait for the user to invoke the command explicitly; authorization
+for this skill does not transfer to another skill.
 
 Use this workflow when a software feature, system, release, or integration needs measurable non-functional requirements.
 
@@ -27,7 +32,7 @@ When an NFR changes architecture, it must be resolved before or during HLD. Do n
 
 - The task only needs product framing, BRD, URS, or PRD.
 - The work is direct implementation, debugging, or PR review.
-- The user asks for architecture decisions without a requirement source. Use `sdlc-hld-workflow`, `sdlc-architecture-decision-record`, or `sdlc-solution-spec-workflow` after NFRs are identified.
+- The user asks for architecture decisions without a requirement source. Recommend `sdlc-hld-workflow`, `sdlc-architecture-decision-record`, or `$codex-next:sdlc-solution-spec-workflow` after NFRs are identified.
 - The quality requirement cannot be evaluated yet because the product behavior is still undefined. Use `sdlc-srs-workflow` or `sdlc-prd-workflow` first.
 
 ## Inputs
@@ -359,7 +364,7 @@ Before calling the NFR spec ready, verify:
 - Do not choose architecture merely to satisfy an NFR unless the architecture decision is already approved.
 - Do not promise production performance without measurement or a defined test plan.
 - Do not treat monitoring as a substitute for meeting a requirement.
-- Do not replace `sdlc-solution-spec-workflow` or `sdlc-dev-handoff-planning`.
+- Do not replace `$codex-next:sdlc-solution-spec-workflow` or `sdlc-dev-handoff-planning`.
 
 ## Handoff
 
@@ -372,10 +377,10 @@ Route downstream:
 | HLD | `sdlc-hld-workflow` |
 | LLD | `sdlc-lld-workflow` |
 | architecture decision record | `sdlc-architecture-decision-record` |
-| solution package coordination | `sdlc-solution-spec-workflow` |
+| solution package coordination | `$codex-next:sdlc-solution-spec-workflow` |
 | implementation task package | `sdlc-dev-handoff-planning` |
 | traceability | `sdlc-requirements-traceability` |
-| readiness judgment | `sdlc-readiness-review` |
+| readiness judgment | `$codex-next:sdlc-readiness-review` |
 
 For dev handoff, provide:
 

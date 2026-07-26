@@ -2,11 +2,16 @@
 name: sdlc-srs-workflow
 description: Use to draft or audit SRS with requirement IDs, functional requirements, acceptance criteria, constraints, NFR hooks, and traceability.
 metadata:
-  version: "0.4"
-  updated: "2026-06-12"
+  version: "0.5"
+  updated: "2026-07-26"
 ---
 
 # SRS Workflow
+
+Any exact `$codex-next:<skill-name>` command in this document is a
+recommendation only. Do not invoke, imitate, or begin that skill. Stop this
+workflow and wait for the user to invoke the command explicitly; authorization
+for this skill does not transfer to another skill.
 
 Use this workflow when the SDLC manager must produce or update a Software Requirements Specification before implementation.
 
@@ -24,8 +29,8 @@ The SRS is the software-facing contract between requirements work and developmen
 
 - The task is direct code implementation, debugging, test execution, PR review, or release publishing.
 - The user only needs business justification, user research, or PRD-level framing.
-- There is no approved or clearly marked requirement source; use `sdlc-requirements-workflow` or `sdlc-prd-workflow` first.
-- The request is to decide final architecture, implementation libraries, database technology, or repository refactor strategy. Use `sdlc-solution-spec-workflow` for structured solution material and let dev handle execution.
+- There is no approved or clearly marked requirement source; recommend `$codex-next:sdlc-requirements-workflow` or use `sdlc-prd-workflow` first.
+- The request is to decide final architecture, implementation libraries, database technology, or repository refactor strategy. Recommend `$codex-next:sdlc-solution-spec-workflow` for structured solution material and let dev handle execution.
 
 ## Inputs
 
@@ -317,7 +322,7 @@ Before declaring the SRS ready, check:
 - Do not finalize architecture when repository evidence is missing.
 - Do not present assumptions as confirmed requirements.
 - Do not expand scope beyond the approved baseline.
-- Do not replace `sdlc-nfr-spec`, `sdlc-spec-slice-writer`, `sdlc-solution-spec-workflow`, or `sdlc-dev-handoff-planning` when those specialized outputs are needed.
+- Do not replace `sdlc-nfr-spec`, `sdlc-spec-slice-writer`, `$codex-next:sdlc-solution-spec-workflow`, or `sdlc-dev-handoff-planning` when those specialized outputs are needed.
 
 ## Handoff
 
@@ -327,10 +332,10 @@ Use the SRS to route downstream work:
 |---|---|
 | measurable quality constraints | `sdlc-nfr-spec` |
 | UI/API/Data/Admin/Permission/Directory specs | `sdlc-spec-slice-writer` |
-| HLD/LLD-oriented solution material | `sdlc-solution-spec-workflow` |
+| HLD/LLD-oriented solution material | `$codex-next:sdlc-solution-spec-workflow` |
 | implementation task package | `sdlc-dev-handoff-planning` |
 | requirement-to-task/test traceability | `sdlc-requirements-traceability` |
-| readiness judgment | `sdlc-readiness-review` |
+| readiness judgment | `$codex-next:sdlc-readiness-review` |
 
 When handing off to dev, provide:
 

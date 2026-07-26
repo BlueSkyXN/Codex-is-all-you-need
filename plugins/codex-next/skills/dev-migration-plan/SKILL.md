@@ -8,6 +8,11 @@ metadata:
 
 # Migration plan workflow
 
+Any exact `$codex-next:<skill-name>` command in this document is a
+recommendation only. Do not invoke, imitate, or begin that skill. Stop this
+workflow and wait for the user to invoke the command explicitly; authorization
+for this skill does not transfer to another skill.
+
 Use this workflow when changing technology, framework, architecture, schema, or large old-system behavior must be planned safely.
 
 When present, consume the SDLC-ADS state before planning:

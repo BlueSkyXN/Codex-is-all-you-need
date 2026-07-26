@@ -59,6 +59,12 @@ EXPLICIT_CONTROL_SKILLS = frozenset(
     for path in PLUGIN_SKILLS.glob("*/agents/openai.yaml")
     if "allow_implicit_invocation: false" in path.read_text(encoding="utf-8")
 )
+EXPLICIT_HANDOFF_CONTRACT = (
+    "Any exact `$codex-next:<skill-name>` command in this document is a "
+    "recommendation only. Do not invoke, imitate, or begin that skill. Stop this "
+    "workflow and wait for the user to invoke the command explicitly; authorization "
+    "for this skill does not transfer to another skill."
+)
 
 
 def normalized(text: str) -> str:
@@ -282,13 +288,34 @@ class SkillBehaviorContractsTest(unittest.TestCase):
         )
         for path in sorted(PLUGIN_SKILLS.glob("*/SKILL.md")):
             text = path.read_text(encoding="utf-8")
+            compact = normalized(text)
+            owner = path.parent.name
+            cross_skill_commands: set[str] = set()
             for target in EXPLICIT_CONTROL_SKILLS:
+                if target == owner:
+                    continue
+                with self.subTest(path=path, target=target, contract="exact-command"):
+                    self.assertNotIn(
+                        f"`{target}`",
+                        text,
+                        "cross-skill references to explicit-control skills must use "
+                        "the exact `$codex-next:<skill-name>` command",
+                    )
+                if f"`$codex-next:{target}`" in text:
+                    cross_skill_commands.add(target)
                 for template in forbidden_templates:
                     pattern = template.format(target=re.escape(target))
                     with self.subTest(path=path, target=target, pattern=pattern):
                         self.assertIsNone(
                             re.search(pattern, text, re.IGNORECASE | re.DOTALL)
                         )
+            if cross_skill_commands:
+                with self.subTest(
+                    path=path,
+                    targets=sorted(cross_skill_commands),
+                    contract="recommend-stop-wait",
+                ):
+                    self.assertIn(EXPLICIT_HANDOFF_CONTRACT, compact)
             self.assertNotIn("invoke or approve", text.lower(), path)
             self.assertNotIn("continue with the selected skill", text.lower(), path)
 
@@ -332,7 +359,8 @@ class SkillBehaviorContractsTest(unittest.TestCase):
                     "recommend `$codex-next:core-grilling` and stop", compact
                 )
                 self.assertIn(
-                    "Do not invoke `sdlc-router` from this workflow", compact
+                    "Do not invoke `$codex-next:sdlc-router` from this workflow",
+                    compact,
                 )
                 self.assertIn(
                     "Optional next-skill recommendations; do not invoke them "

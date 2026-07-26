@@ -8,9 +8,14 @@ metadata:
 
 # SDLC Manager
 
+Any exact `$codex-next:<skill-name>` command in this document is a
+recommendation only. Do not invoke, imitate, or begin that skill. Stop this
+workflow and wait for the user to invoke the command explicitly; authorization
+for this skill does not transfer to another skill.
+
 Use this skill as the explicit SDLC coordination entrypoint inside Codex Next.
 It recommends which workflow the user should invoke next, while keeping
-`sdlc-router` focused on lane, ADS, and minimum-material classification.
+`$codex-next:sdlc-router` focused on lane, ADS, and minimum-material classification.
 
 This skill coordinates. It does not replace the authoring skills.
 
@@ -55,9 +60,9 @@ midstream-intake vocabulary, follow:
 
 | Need | Next skill |
 |---|---|
-| Lane, ADS, dev path, or minimum materials | `sdlc-router` |
+| Lane, ADS, dev path, or minimum materials | `$codex-next:sdlc-router` |
 | Existing repo capability map | `sdlc-project-research` |
-| Requirements package | `sdlc-requirements-workflow` |
+| Requirements package | `$codex-next:sdlc-requirements-workflow` |
 | Business, user, or product incubation | `sdlc-brd-workflow`, `sdlc-urs-workflow`, or `sdlc-prd-workflow` |
 | Software requirements | `sdlc-srs-workflow` |
 | Measurable quality constraints | `sdlc-nfr-spec` |
@@ -66,12 +71,12 @@ midstream-intake vocabulary, follow:
 | Domain ownership or dependency boundaries | `sdlc-domain-boundary-modeling` |
 | Modular monolith architecture | `sdlc-modular-monolith-architecture` |
 | Durable architecture decision | `sdlc-architecture-decision-record` |
-| Solution/spec package coordination | `sdlc-solution-spec-workflow` |
+| Solution/spec package coordination | `$codex-next:sdlc-solution-spec-workflow` |
 | Implementation-facing slice | `sdlc-spec-slice-writer` |
 | Validation artifact | `sdlc-validation-plan-workflow` |
 | Traceability | `sdlc-requirements-traceability` |
-| Readiness review | `sdlc-readiness-review` |
-| Baseline or scope change | `sdlc-change-control` |
+| Readiness review | `$codex-next:sdlc-readiness-review` |
+| Baseline or scope change | `$codex-next:sdlc-change-control` |
 | Dev handoff | `sdlc-dev-handoff-planning` |
 
 ## Output

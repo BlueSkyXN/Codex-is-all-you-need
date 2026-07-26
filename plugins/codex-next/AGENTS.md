@@ -68,6 +68,10 @@ the user's task differs.
   approval of a recommendation is not invocation. No router, manager, or
   bounded workflow may invoke, imitate, or begin another explicit-control
   skill. It must recommend the exact command and stop for the user to invoke it.
+  Descriptive history and existing records should use ordinary domain wording,
+  not invocation commands. Cross-skill technical reuse may point into a
+  sibling's `references/` directory, but must never load that sibling's
+  `SKILL.md` directly.
 - Routing: `core-router` is an optional discovery entrypoint, not a mandatory
   gateway. It may recommend direct execution, one bounded skill, or one
   explicit control workflow, then it stops. A router must not invoke or imitate

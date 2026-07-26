@@ -8,17 +8,18 @@ metadata:
 
 # Dev Handoff Planning
 
-Any exact `$codex-next:<skill-name>` command in this document is a
-recommendation only. Do not invoke, imitate, or begin that skill. Stop this
-workflow and wait for the user to invoke the command explicitly; authorization
-for this skill does not transfer to another skill.
+When this workflow recommends an explicit-control skill, return its exact
+`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
+imitate, or begin the target skill. Stop this workflow and wait for the user
+to invoke that command explicitly; authorization for this skill does not
+transfer to another skill.
 
 Use this workflow when SDLC manager work must be converted into a package that dev agents can execute.
 
 The handoff is the boundary between the specification control plane and the implementation execution plane:
 
 ```text
-sdlc-manager creates the delivery contract.
+SDLC coordination creates the delivery contract.
 dev executes the delivery contract.
 ```
 
@@ -88,7 +89,7 @@ Choose one path:
 | Path | Use when | Output depth |
 |---|---|---|
 | `sdlc-backed` | SRS/SPEC/NFR/RTM or approved planning artifacts exist | Full dev handoff |
-| `lane-routed` | `$codex-next:sdlc-router` already chose a lane and dev path | Match the selected dev path |
+| `lane-routed` | The upstream router already chose a lane and dev path | Match the selected dev path |
 | `issue-backed` | Issue or task is clear, but formal SDLC artifacts are absent | Task handoff |
 | `bugfix-backed` | Reproduction or observed failure exists | Bugfix handoff |
 | `repo-onboarding-first` | Repository or implementation area is unclear | Onboarding handoff |
@@ -360,7 +361,7 @@ Before declaring the handoff ready, check:
 - Do not fabricate SRS, SPEC, or RTM just to satisfy a process shape.
 - Do not replace `sdlc-validation-plan-workflow` when validation planning needs a durable artifact.
 - Do not hide risk when development proceeds without SDLC artifacts.
-- Do not let dev handoff replace `sdlc-requirements-traceability`, `$codex-next:sdlc-readiness-review`, or `$codex-next:sdlc-change-control` when those are needed.
+- Do not let dev handoff replace dedicated traceability, readiness-review, or change-control work when those are needed.
 
 ## Handoff
 

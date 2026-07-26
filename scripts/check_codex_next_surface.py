@@ -40,6 +40,13 @@ EXPLICIT_CONTROL_SKILLS = frozenset(
         "sdlc-solution-spec-workflow",
     }
 )
+EXPLICIT_HANDOFF_CONTRACT = (
+    "When this workflow recommends an explicit-control skill, return its exact "
+    "`$codex-next:<skill-name>` command as a recommendation only. Do not invoke, "
+    "imitate, or begin the target skill. Stop this workflow and wait for the user "
+    "to invoke that command explicitly; authorization for this skill does not "
+    "transfer to another skill."
+)
 OPENAI_SIDECAR_FIELDS = {
     "interface": frozenset({"display_name", "short_description"}),
     "policy": frozenset({"allow_implicit_invocation"}),
@@ -178,6 +185,115 @@ def check_skill_references(skill_dir: Path, errors: list[str]) -> None:
                 errors.append(f"{md_file}: relative link escapes skill root: {href}")
             elif not reference_exists(target, require_file=False):
                 errors.append(f"{md_file}: relative link does not resolve: {href}")
+
+
+def mask_non_behavioral_markdown(text: str) -> str:
+    """Mask fenced blocks and HTML comments while preserving offsets and lines."""
+    masked = list(text)
+
+    for match in re.finditer(r"<!--.*?-->", text, re.DOTALL):
+        for index in range(match.start(), match.end()):
+            if masked[index] != "\n":
+                masked[index] = " "
+
+    fence_char: str | None = None
+    fence_length = 0
+    offset = 0
+    for line in text.splitlines(keepends=True):
+        stripped = line.lstrip(" \t")
+        fence_match = re.match(r"(`{3,}|~{3,})", stripped)
+        in_fence = fence_char is not None
+        opens_fence = not in_fence and fence_match is not None
+        closes_fence = False
+        if in_fence and fence_match is not None:
+            fence = fence_match.group(1)
+            closes_fence = (
+                fence[0] == fence_char
+                and len(fence) >= fence_length
+                and not stripped[len(fence) :].strip()
+            )
+
+        if in_fence or opens_fence:
+            for index in range(offset, offset + len(line)):
+                if masked[index] != "\n":
+                    masked[index] = " "
+
+        if opens_fence:
+            assert fence_match is not None
+            fence = fence_match.group(1)
+            fence_char = fence[0]
+            fence_length = len(fence)
+        elif closes_fence:
+            fence_char = None
+            fence_length = 0
+        offset += len(line)
+
+    return "".join(masked)
+
+
+def check_explicit_control_references(
+    skill_dir: Path,
+    text: str,
+    errors: list[str],
+) -> None:
+    """Fail closed on non-canonical cross-skill explicit-control references."""
+    visible = mask_non_behavioral_markdown(text)
+    owner = skill_dir.name
+    cross_skill_commands: set[str] = set()
+
+    for target in sorted(EXPLICIT_CONTROL_SKILLS):
+        if target == owner:
+            continue
+
+        target_pattern = re.compile(
+            rf"(?<![A-Za-z0-9-]){re.escape(target)}(?![A-Za-z0-9-])",
+            re.IGNORECASE,
+        )
+        command_pattern = re.compile(
+            rf"(?<![A-Za-z0-9_$:/.-])\$codex-next:{re.escape(target)}"
+            r"(?![A-Za-z0-9_:/.-])"
+        )
+        safe_reference_pattern = re.compile(
+            rf"(?<![A-Za-z0-9_.-])\.\./{re.escape(target)}/references"
+            r"(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)+"
+            r"(?:#[A-Za-z0-9_.:-]+)?"
+            r"(?![A-Za-z0-9_./#?=&%+-])"
+        )
+        allowed_spans = [
+            match.span()
+            for pattern in (command_pattern, safe_reference_pattern)
+            for match in pattern.finditer(text)
+        ]
+        if command_pattern.search(visible):
+            cross_skill_commands.add(target)
+
+        for match in target_pattern.finditer(text):
+            if any(
+                allowed_start <= match.start() and match.end() <= allowed_end
+                for allowed_start, allowed_end in allowed_spans
+            ):
+                continue
+            line_number = text.count("\n", 0, match.start()) + 1
+            errors.append(
+                f"{skill_dir / 'SKILL.md'}:{line_number}: explicit-control skill "
+                f"{target!r} must use exact command "
+                f"`$codex-next:{target}`; only sibling references/ paths are "
+                "allowed as non-invocation technical references"
+            )
+
+    if cross_skill_commands:
+        compact = " ".join(visible.split())
+        contract_index = compact.find(EXPLICIT_HANDOFF_CONTRACT)
+        first_command_index = min(
+            compact.find(f"$codex-next:{target}")
+            for target in cross_skill_commands
+        )
+        if contract_index < 0 or contract_index > first_command_index:
+            errors.append(
+                f"{skill_dir / 'SKILL.md'}: exact explicit-control commands require "
+                "a preceding visible recommend-only, do-not-invoke, stop, wait, "
+                "and non-transitive authorization contract"
+            )
 
 
 def reference_escapes_root(target: Path, reference_root: Path) -> bool:
@@ -603,6 +719,7 @@ def run_check(
 
         check_spec_frontmatter(skill_file, frontmatter, errors)
         check_skill_references(skill_dir, errors)
+        check_explicit_control_references(skill_dir, text, errors)
         body_lines = len(text.splitlines())
         if body_lines > SPEC_BODY_LINE_BUDGET:
             warnings.append(

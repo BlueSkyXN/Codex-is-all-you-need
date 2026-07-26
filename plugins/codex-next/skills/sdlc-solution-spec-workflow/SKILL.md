@@ -8,10 +8,11 @@ metadata:
 
 # Solution Spec Workflow
 
-Any exact `$codex-next:<skill-name>` command in this document is a
-recommendation only. Do not invoke, imitate, or begin that skill. Stop this
-workflow and wait for the user to invoke the command explicitly; authorization
-for this skill does not transfer to another skill.
+When this workflow recommends an explicit-control skill, return its exact
+`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
+imitate, or begin the target skill. Stop this workflow and wait for the user
+to invoke that command explicitly; authorization for this skill does not
+transfer to another skill.
 
 Use this workflow when SDLC manager materials need a solution-level package before dev execution.
 
@@ -59,7 +60,7 @@ Prefer:
 - incident or bug history
 - dependency and platform constraints
 - rollout or migration requirements
-- open questions from sdlc-manager artifacts
+- open questions from SDLC coordination artifacts
 
 If repo evidence is unavailable, mark solution material as proposed. Do not claim it reflects current code reality.
 

@@ -8,10 +8,11 @@ metadata:
 
 # SRS Workflow
 
-Any exact `$codex-next:<skill-name>` command in this document is a
-recommendation only. Do not invoke, imitate, or begin that skill. Stop this
-workflow and wait for the user to invoke the command explicitly; authorization
-for this skill does not transfer to another skill.
+When this workflow recommends an explicit-control skill, return its exact
+`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
+imitate, or begin the target skill. Stop this workflow and wait for the user
+to invoke that command explicitly; authorization for this skill does not
+transfer to another skill.
 
 Use this workflow when the SDLC manager must produce or update a Software Requirements Specification before implementation.
 
@@ -322,7 +323,7 @@ Before declaring the SRS ready, check:
 - Do not finalize architecture when repository evidence is missing.
 - Do not present assumptions as confirmed requirements.
 - Do not expand scope beyond the approved baseline.
-- Do not replace `sdlc-nfr-spec`, `sdlc-spec-slice-writer`, `$codex-next:sdlc-solution-spec-workflow`, or `sdlc-dev-handoff-planning` when those specialized outputs are needed.
+- Do not let this SRS workflow replace NFR, SPEC-slice, solution-package, or dev-handoff work when those specialized outputs are needed.
 
 ## Handoff
 

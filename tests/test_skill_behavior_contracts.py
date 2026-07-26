@@ -4,6 +4,8 @@ import re
 import unittest
 from pathlib import Path
 
+from scripts import check_codex_next_surface
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_SKILLS = REPO_ROOT / "plugins" / "codex-next" / "skills"
@@ -54,17 +56,8 @@ SDLC_MANAGER_COPIES = (
     CATALOG / "sdlc-manager" / "skills" / "sdlc-manager" / "SKILL.md",
 )
 ROUTER = PLUGIN_SKILLS / "core-router" / "SKILL.md"
-EXPLICIT_CONTROL_SKILLS = frozenset(
-    path.parents[1].name
-    for path in PLUGIN_SKILLS.glob("*/agents/openai.yaml")
-    if "allow_implicit_invocation: false" in path.read_text(encoding="utf-8")
-)
-EXPLICIT_HANDOFF_CONTRACT = (
-    "Any exact `$codex-next:<skill-name>` command in this document is a "
-    "recommendation only. Do not invoke, imitate, or begin that skill. Stop this "
-    "workflow and wait for the user to invoke the command explicitly; authorization "
-    "for this skill does not transfer to another skill."
-)
+EXPLICIT_CONTROL_SKILLS = check_codex_next_surface.EXPLICIT_CONTROL_SKILLS
+EXPLICIT_HANDOFF_CONTRACT = check_codex_next_surface.EXPLICIT_HANDOFF_CONTRACT
 
 
 def normalized(text: str) -> str:

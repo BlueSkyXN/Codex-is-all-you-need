@@ -8,14 +8,15 @@ metadata:
 
 # SDLC Manager
 
-Any exact `$codex-next:<skill-name>` command in this document is a
-recommendation only. Do not invoke, imitate, or begin that skill. Stop this
-workflow and wait for the user to invoke the command explicitly; authorization
-for this skill does not transfer to another skill.
+When this workflow recommends an explicit-control skill, return its exact
+`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
+imitate, or begin the target skill. Stop this workflow and wait for the user
+to invoke that command explicitly; authorization for this skill does not
+transfer to another skill.
 
 Use this skill as the explicit SDLC coordination entrypoint inside Codex Next.
-It recommends which workflow the user should invoke next, while keeping
-`$codex-next:sdlc-router` focused on lane, ADS, and minimum-material classification.
+It recommends which workflow the user should invoke next, while keeping lane,
+ADS, and minimum-material classification in the dedicated router workflow.
 
 This skill coordinates. It does not replace the authoring skills.
 

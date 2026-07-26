@@ -8,10 +8,11 @@ metadata:
 
 # Requirements Traceability
 
-Any exact `$codex-next:<skill-name>` command in this document is a
-recommendation only. Do not invoke, imitate, or begin that skill. Stop this
-workflow and wait for the user to invoke the command explicitly; authorization
-for this skill does not transfer to another skill.
+When this workflow recommends an explicit-control skill, return its exact
+`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
+imitate, or begin the target skill. Stop this workflow and wait for the user
+to invoke that command explicitly; authorization for this skill does not
+transfer to another skill.
 
 Use this workflow to create, update, or inspect a requirements traceability matrix.
 
@@ -289,7 +290,7 @@ Before declaring traceability ready, check:
 - Validation Plan items link to tasks and execution evidence where a validation plan exists.
 - Architecture-sensitive requirements point to HLD, LLD, ADR, Domain Boundary Map, or an explicit accepted gap.
 - SPEC-dependent requirements point to the relevant SPEC slice or missing-SPEC gap.
-- Change-related rows point to `$codex-next:sdlc-change-control` records when baseline is affected.
+- Change-related rows point to existing change-control records when baseline is affected.
 - Status values are consistent.
 - Direct-dev work is not misrepresented as full SDLC-backed work.
 

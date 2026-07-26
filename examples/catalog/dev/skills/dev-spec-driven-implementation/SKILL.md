@@ -8,10 +8,11 @@ metadata:
 
 # Spec-driven Implementation
 
-Any exact `$codex-next:<skill-name>` command in this document is a
-recommendation only. Do not invoke, imitate, or begin that skill. Stop this
-workflow and wait for the user to invoke the command explicitly; authorization
-for this skill does not transfer to another skill.
+When this workflow recommends an explicit-control skill, return its exact
+`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
+imitate, or begin the target skill. Stop this workflow and wait for the user
+to invoke that command explicitly; authorization for this skill does not
+transfer to another skill.
 
 ## SDLC artifact policy
 
@@ -36,7 +37,7 @@ When these artifacts exist, treat them as delivery inputs. Keep the implementati
 
 When these artifacts are absent, continue from the best available direct input when it is sufficient: user request, issue, bug report, reproduction steps, failing test, local diff, repository evidence, or explicit user instruction. Missing SDLC artifacts are a risk signal, not an automatic stop condition.
 
-Do not make `dev` own, approve, or rewrite SDLC-manager artifacts unless the user explicitly asks for that. Dev may report blockers, contradictions, implementation evidence, and suggested follow-up artifacts.
+Do not make `dev` own, approve, or rewrite SDLC-owned artifacts unless the user explicitly asks for that. Dev may report blockers, contradictions, implementation evidence, and suggested follow-up artifacts.
 
 When present, read the lightweight SDLC-ADS state before implementation:
 
@@ -201,7 +202,7 @@ Return:
 ## Handoff
 
 - Use `dev-test-strategy` for validation design or test gap review.
-- Use `sdlc-validation-plan-workflow` when the pre-implementation proof-of-correctness artifact itself is missing or needs SDLC-manager ownership.
+- Use `sdlc-validation-plan-workflow` when the pre-implementation proof-of-correctness artifact itself is missing or needs SDLC ownership.
 - Use `dev-pr-review` for diff review before merge.
 - Use `dev-security-review` or `dev-performance-diagnosis` when NFRs require it.
 - Use `dev-release-check` when the change is release-bound.

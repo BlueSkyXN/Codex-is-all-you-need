@@ -8,10 +8,11 @@ metadata:
 
 # NFR Spec
 
-Any exact `$codex-next:<skill-name>` command in this document is a
-recommendation only. Do not invoke, imitate, or begin that skill. Stop this
-workflow and wait for the user to invoke the command explicitly; authorization
-for this skill does not transfer to another skill.
+When this workflow recommends an explicit-control skill, return its exact
+`$codex-next:<skill-name>` command as a recommendation only. Do not invoke,
+imitate, or begin the target skill. Stop this workflow and wait for the user
+to invoke that command explicitly; authorization for this skill does not
+transfer to another skill.
 
 Use this workflow when a software feature, system, release, or integration needs measurable non-functional requirements.
 
@@ -364,7 +365,7 @@ Before calling the NFR spec ready, verify:
 - Do not choose architecture merely to satisfy an NFR unless the architecture decision is already approved.
 - Do not promise production performance without measurement or a defined test plan.
 - Do not treat monitoring as a substitute for meeting a requirement.
-- Do not replace `$codex-next:sdlc-solution-spec-workflow` or `sdlc-dev-handoff-planning`.
+- Do not let this narrow NFR workflow replace solution-package coordination or `sdlc-dev-handoff-planning`.
 
 ## Handoff
 

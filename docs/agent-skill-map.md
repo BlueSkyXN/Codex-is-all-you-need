@@ -63,7 +63,7 @@ skills 的可用性由 runtime 文件结构决定：
 
 | Agent | Role | Recommended Skills |
 |---|---|---|
-| default Codex Next routing | SDLC control-plane entrypoint before choosing specific SDLC authoring or review workflows | `sdlc-manager`, `sdlc-router` |
+| explicit Codex Next SDLC coordination | User-invoked control-plane planning and recommendation before a separately invoked authoring or review workflow | `sdlc-manager`, `sdlc-router` |
 | `sdlc_project_researcher` | Existing-project capability mapping, evidence paths, gaps, and downstream SDLC routing | `sdlc-project-research`, `sdlc-requirements-traceability`, `sdlc-readiness-review` |
 | `sdlc_requirements_manager` | BRD, URS, PRD, scope baseline, assumptions, success metrics, and requirements package shaping | `sdlc-requirements-workflow`, `sdlc-brd-workflow`, `sdlc-urs-workflow`, `sdlc-prd-workflow`, `sdlc-router` |
 | `sdlc_srs_specifier` | Software-facing SRS, requirement IDs, acceptance criteria, NFR hooks, and traceability-ready requirements | `sdlc-srs-workflow`, `sdlc-nfr-spec`, `sdlc-requirements-traceability` |
@@ -72,13 +72,19 @@ skills 的可用性由 runtime 文件结构决定：
 | `sdlc_readiness_reviewer` | Readiness review for SDLC materials, direct-dev requests, or handoff packages | `sdlc-readiness-review`, `sdlc-requirements-traceability`, `sdlc-dev-handoff-planning` |
 | `sdlc_change_manager` | Baseline, scope, requirement, traceability, and change-control decisions | `sdlc-change-control`, `sdlc-requirements-traceability`, `sdlc-readiness-review` |
 
-`sdlc-manager` is the bundled SDLC entrypoint skill and the Architecture-first SDLC control plane: architecture defines structure, domain boundaries define ownership, and specifications define execution. It owns requirements, architecture/design artifacts, domain boundaries, SPEC slices, traceability, readiness, change control, and dev handoff.
+`sdlc-manager` is the explicit bundled SDLC coordination entrypoint. It plans
+the Architecture-first sequence and recommends one separately invoked next
+workflow; it does not author, invoke, or imitate requirements,
+architecture/design, domain, SPEC, traceability, readiness, change-control, or
+handoff skills itself.
 
 `sdlc-project-research` is the lightweight upstream entry point when an existing codebase needs an evidence-grounded capability map before BRD/URS/PRD, SRS/SPEC, traceability, handoff, or reporting work. It defaults to Simplified Chinese file names, sections, table headers, statuses, notes, and next steps. Default artifacts are `项目能力摘要.md`, `项目功能能力地图.md`, and `项目能力表.csv`.
 
 `sdlc-solution-spec-workflow` coordinates a solution package; it should not replace dedicated `sdlc-hld-workflow`, `sdlc-lld-workflow`, `sdlc-domain-boundary-modeling`, `sdlc-modular-monolith-architecture`, or `sdlc-architecture-decision-record` workflows.
 
-`sdlc-manager` 是插件内的 SDLC 入口 skill，也是架构先行的 SDLC 控制面：架构定义结构，领域边界定义归属，规格定义执行。它负责需求、架构/设计材料、领域边界、SPEC 切片、需求追踪、准备度、变更控制和开发交接。
+`sdlc-manager` 是插件内需要显式调用的 SDLC 协调入口。它规划架构先行的执行顺序，
+并推荐一个需要单独调用的下一工作流；它本身不撰写、调用或模仿需求、架构/设计、
+领域、SPEC、追踪、准备度、变更控制或开发交接 Skill。
 
 `sdlc-project-research` 是现有代码库进入 BRD/URS/PRD、SRS/SPEC、traceability、handoff 或汇报前的轻量上游入口，先形成证据可追溯的项目功能能力地图。默认只产出 `项目能力摘要.md`、`项目功能能力地图.md` 和 `项目能力表.csv`，并默认使用简体中文文件名、中文章节、中文表头、中文状态、中文备注和中文下一步。
 

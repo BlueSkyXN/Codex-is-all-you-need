@@ -54,6 +54,11 @@ ingestion rejects it. Claude therefore has no equivalent hard per-skill gate in
 this shared package: narrowed descriptions reduce automatic selection, while
 recommend-only workflow bodies constrain behavior only after selection.
 
+Explicit invocation is not transitive. A router, manager, or bounded workflow
+may recommend an exact `$codex-next:<skill-name>` command, but it must stop and
+wait for the user to invoke that control workflow. Approval of a recommendation
+does not invoke another skill.
+
 ## What It Does Not Include
 
 - Custom agent TOML files from `.codex/agents`.
@@ -74,6 +79,8 @@ plugins/codex-next/
   skills/
     <skill-name>/
       SKILL.md
+      agents/
+        openai.yaml  # optional Codex interface and invocation policy
       references/
       scripts/
       assets/
@@ -162,7 +169,7 @@ Check the packaged skill surface with:
 python3 scripts/check_codex_next_surface.py
 ```
 
-Validate the Claude compatibility manifest and its discovered components with:
+Validate the Claude compatibility manifest and package shape with:
 
 ```bash
 claude plugin validate --strict plugins/codex-next

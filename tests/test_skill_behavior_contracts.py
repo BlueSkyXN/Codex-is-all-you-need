@@ -41,7 +41,24 @@ PR_REVIEW_COPIES = (
     PLUGIN_SKILLS / "dev-pr-review" / "SKILL.md",
     CATALOG / "dev" / "skills" / "dev-pr-review" / "SKILL.md",
 )
+PROJECT_RESEARCH_COPIES = (
+    PLUGIN_SKILLS / "sdlc-project-research" / "SKILL.md",
+    CATALOG
+    / "sdlc-manager"
+    / "skills"
+    / "sdlc-project-research"
+    / "SKILL.md",
+)
+SDLC_MANAGER_COPIES = (
+    PLUGIN_SKILLS / "sdlc-manager" / "SKILL.md",
+    CATALOG / "sdlc-manager" / "skills" / "sdlc-manager" / "SKILL.md",
+)
 ROUTER = PLUGIN_SKILLS / "core-router" / "SKILL.md"
+EXPLICIT_CONTROL_SKILLS = frozenset(
+    path.parents[1].name
+    for path in PLUGIN_SKILLS.glob("*/agents/openai.yaml")
+    if "allow_implicit_invocation: false" in path.read_text(encoding="utf-8")
+)
 
 
 def normalized(text: str) -> str:
@@ -195,7 +212,7 @@ class SkillBehaviorContractsTest(unittest.TestCase):
                 "Prefer direct work",
                 "Recommend a bounded skill only when",
                 "Do not infer that a midstream project needs",
-                "show its explicit `$skill` name and wait",
+                "show its exact `$codex-next:<skill-name>` command and wait",
                 "Ask at most one question",
             ),
         )
@@ -212,6 +229,68 @@ class SkillBehaviorContractsTest(unittest.TestCase):
         self.assertIn("Do not return several equally weighted routes", boundaries)
         self.assertIn("Recommend the smallest useful path and stop", compact)
         self.assertNotIn("continue with the selected skill", compact.lower())
+        self.assertNotIn("invoke or approve", compact.lower())
+        self.assertIn("Approval of the recommendation is not invocation", compact)
+
+    def test_explicit_control_invocation_is_not_transitive(self) -> None:
+        grilling_consumers = (
+            PLUGIN_SKILLS / "dev-refactor-plan" / "SKILL.md",
+            CATALOG / "dev" / "skills" / "dev-refactor-plan" / "SKILL.md",
+            PLUGIN_SKILLS / "dev-migration-plan" / "SKILL.md",
+            CATALOG / "dev" / "skills" / "dev-migration-plan" / "SKILL.md",
+            PLUGIN_SKILLS / "sdlc-hld-workflow" / "SKILL.md",
+            CATALOG
+            / "sdlc-manager"
+            / "skills"
+            / "sdlc-hld-workflow"
+            / "SKILL.md",
+            PLUGIN_SKILLS / "sdlc-prd-workflow" / "SKILL.md",
+            CATALOG
+            / "sdlc-manager"
+            / "skills"
+            / "sdlc-prd-workflow"
+            / "SKILL.md",
+            *READINESS_COPIES,
+            *REQUIREMENTS_COPIES,
+        )
+        for path in grilling_consumers:
+            with self.subTest(path=path):
+                compact = normalized(path.read_text(encoding="utf-8"))
+                self.assertIn("`$codex-next:core-grilling`", compact)
+                self.assertIn("stop", compact.lower())
+                self.assertIn("invoke it explicitly", compact)
+                self.assertIn("do not imitate or begin", compact.lower())
+
+        for path in SDLC_MANAGER_COPIES:
+            with self.subTest(path=path):
+                compact = normalized(path.read_text(encoding="utf-8"))
+                self.assertIn("recommends which workflow", compact)
+                self.assertIn(
+                    "Explicit authorization for this manager does not transfer",
+                    compact,
+                )
+                self.assertIn(
+                    "Do not invoke, imitate, or begin a downstream skill", compact
+                )
+                self.assertNotIn("Continue with the selected skill", compact)
+
+        forbidden_templates = (
+            r"\brun\s+`{target}`",
+            r"\breturn\s+to\s+`{target}`",
+            r"\bcontinue\s+with\s+`{target}`",
+            r"\bhand\s+off\s+to\s+`{target}`",
+        )
+        for path in sorted(PLUGIN_SKILLS.glob("*/SKILL.md")):
+            text = path.read_text(encoding="utf-8")
+            for target in EXPLICIT_CONTROL_SKILLS:
+                for template in forbidden_templates:
+                    pattern = template.format(target=re.escape(target))
+                    with self.subTest(path=path, target=target, pattern=pattern):
+                        self.assertIsNone(
+                            re.search(pattern, text, re.IGNORECASE | re.DOTALL)
+                        )
+            self.assertNotIn("invoke or approve", text.lower(), path)
+            self.assertNotIn("continue with the selected skill", text.lower(), path)
 
     def test_sdlc_router_is_explicit_read_only_and_recommend_only(self) -> None:
         for path in SDLC_ROUTER_COPIES:
@@ -233,6 +312,10 @@ class SkillBehaviorContractsTest(unittest.TestCase):
                     "Recommend the smallest next step. Do not invoke it",
                     next_skill_routing,
                 )
+                self.assertIn(
+                    "return its exact `$codex-next:<skill-name>` command and stop",
+                    next_skill_routing,
+                )
 
                 boundaries = normalized(section(text, "## Boundaries"))
                 self.assertIn("Do not create or edit files", boundaries)
@@ -246,7 +329,7 @@ class SkillBehaviorContractsTest(unittest.TestCase):
             with self.subTest(path=path):
                 compact = normalized(path.read_text(encoding="utf-8"))
                 self.assertIn(
-                    "recommend an explicit `core-grilling` run and stop", compact
+                    "recommend `$codex-next:core-grilling` and stop", compact
                 )
                 self.assertIn(
                     "Do not invoke `sdlc-router` from this workflow", compact
@@ -271,6 +354,34 @@ class SkillBehaviorContractsTest(unittest.TestCase):
                     "Recommend at most one downstream skill", compact
                 )
                 self.assertGreaterEqual(compact.lower().count("do not invoke"), 5)
+
+    def test_project_research_is_inline_unless_persistence_is_requested(
+        self,
+    ) -> None:
+        for path in PROJECT_RESEARCH_COPIES:
+            with self.subTest(path=path):
+                text = path.read_text(encoding="utf-8")
+                compact = normalized(text)
+                self.assertIn("不要用于普通代码探索", compact)
+                self.assertIn("默认在当前响应中返回结果", compact)
+                self.assertIn(
+                    "默认直接在当前响应中返回简体中文结果，不创建目录",
+                    compact,
+                )
+                self.assertIn(
+                    "只有用户明确要求持久研究包时", compact
+                )
+                self.assertIn(
+                    "只在响应中推荐相应 Skill，不自动调用或模仿下游流程",
+                    compact,
+                )
+
+                workflow = normalized(
+                    section(text, "## 工作流程", "## 默认响应")
+                )
+                self.assertIn("默认在响应中返回", workflow)
+                self.assertIn("不写文件", workflow)
+                self.assertIn("只有用户明确要求持久研究包时", workflow)
 
     def test_pr_review_minimality_respects_required_artifacts(self) -> None:
         for path in PR_REVIEW_COPIES:

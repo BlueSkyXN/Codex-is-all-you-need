@@ -106,7 +106,7 @@ find examples/catalog -maxdepth 3 \( -path '*/agents/*.toml' -o -path '*/skills/
 
 | Pack | Agents | Skills | 用途 |
 |---|---:|---:|---|
-| `common` | 6 | 2 | 规划、编排、文档核查、质量复核、上下文压缩、文件整理 |
+| `common` | 6 | 5 | 规划、编排、文档核查、质量复核、上下文压缩、文件整理 |
 | `sdlc-manager` | 7 | 21 | 架构先行 SDLC 控制：BRD/URS/PRD、SRS/NFR、HLD/LLD、ADR、领域边界、SPEC、交接 |
 | `dev` | 14 | 20 | 代码阅读、实现、测试、review、API、CLI、前端、Python、安全、性能 |
 | `data` | 5 | 4 | 数据画像、SQL、清洗、pipeline、分析报告 |
@@ -119,7 +119,8 @@ find examples/catalog -maxdepth 3 \( -path '*/agents/*.toml' -o -path '*/skills/
 
 Codex Next 把公开安全的 skills 打包成一个可安装插件。它不打包
 `.codex/agents` custom agent TOML，也不打包 V1 本机 suite symlink。插件内包含
-`core-router` 入口 skill，用来把任务路由到最小充分的内置工作流。
+可选的 `core-router` 发现入口：它只推荐直接执行、一个 bounded Skill 或一个
+explicit-control workflow，然后停止，不会自动调用推荐结果。
 
 插件源码：
 
@@ -160,7 +161,8 @@ codex plugin list --marketplace codex-is-all-you-need --available --json
 codex plugin add codex-next@codex-is-all-you-need
 ```
 
-安装后可以调用 `$codex-next:core-router`，或直接要求 Codex 使用 Codex Next 处理任务。
+安装后，只有需要工作流建议时才调用 `$codex-next:core-router`。任务已经清楚时直接要求
+结果即可，不需要先经过 router。
 
 同一个 marketplace 也提供与 Codex Next 分离的独立插件。Visual Brainstorming
 会启动项目本地 HTTP companion 并打开浏览器，因此保持显式 opt-in：

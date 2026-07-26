@@ -203,9 +203,9 @@ If traceability is absent but the task is safe for direct dev, mark it as an acc
 
 ### 8. Decide readiness verdict
 
-If the trade-off set is still contested, recommend an explicit
-`core-grilling` run before freezing the decision. Do not invoke it from this
-review.
+If the trade-off set is still contested, recommend
+`$codex-next:core-grilling` and stop before freezing the decision. Wait for the
+user to invoke it explicitly; do not imitate or begin it from this review.
 
 Use one verdict only:
 

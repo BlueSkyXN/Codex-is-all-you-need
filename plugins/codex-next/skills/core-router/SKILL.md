@@ -47,9 +47,10 @@ because one exists.
    outcome without adding prerequisites or artifacts.
 3. Do not infer that a midstream project needs BRD, PRD, SRS, HLD, RTM,
    readiness review, or a handoff package merely because those skills exist.
-4. When a control workflow is justified, show its explicit `$skill` name and
-   wait for the user to invoke or approve it. Authorization does not transfer
-   from this router to another skill.
+4. When a control workflow is justified, show its exact
+   `$codex-next:<skill-name>` command and wait for the user to invoke it
+   explicitly. Approval of the recommendation is not invocation, and
+   authorization does not transfer from this router to another skill.
 5. Ask at most one question, and only when its answer would change the primary
    route. Include the recommended default.
 

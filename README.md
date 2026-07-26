@@ -109,7 +109,7 @@ Public examples include:
 
 | Pack | Agents | Skills | Use Case |
 |---|---:|---:|---|
-| `common` | 6 | 2 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
+| `common` | 6 | 5 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
 | `sdlc-manager` | 7 | 21 | Architecture-first SDLC control: BRD/URS/PRD, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
 | `dev` | 14 | 20 | Code mapping, implementation, tests, reviews, APIs, CLI, frontend, Python, security, performance |
 | `data` | 5 | 4 | Data profiling, SQL, cleaning, pipelines, analysis reports |

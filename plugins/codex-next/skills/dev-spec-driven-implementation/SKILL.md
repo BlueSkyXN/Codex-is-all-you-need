@@ -54,7 +54,9 @@ External Web/GPT/AI discussion is not executable by itself. Implement only the p
 
 ## Do not use when
 
-- The user is asking to create BRD, URS, PRD, SRS, NFR, SPEC, traceability, or change-control materials. Use `sdlc-manager` skills.
+- The user is asking to create coordinated BRD, URS, PRD, SRS, NFR, SPEC,
+  traceability, or change-control materials. Recommend
+  `$codex-next:sdlc-manager` and stop; do not invoke it from this workflow.
 - The repository area is unknown and the task is risky. Start with `dev-repo-onboarding`.
 - The requested change is unsafe, unbounded, or impossible to validate.
 
@@ -198,4 +200,5 @@ Return:
 - Use `dev-pr-review` for diff review before merge.
 - Use `dev-security-review` or `dev-performance-diagnosis` when NFRs require it.
 - Use `dev-release-check` when the change is release-bound.
-- Return to `sdlc-manager` only when artifacts need ownership-level update, baseline change, traceability update, or change control.
+- When artifacts need ownership-level update, baseline change, traceability
+  update, or change control, recommend `$codex-next:sdlc-manager` and stop.

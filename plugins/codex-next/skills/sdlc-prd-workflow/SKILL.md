@@ -2,8 +2,8 @@
 name: sdlc-prd-workflow
 description: Use to draft or refine PRDs covering product goals, scope, features, user flows, priorities, exceptions, and acceptance criteria.
 metadata:
-  version: "0.4"
-  updated: "2026-07-08"
+  version: "0.5"
+  updated: "2026-07-26"
 ---
 
 # PRD Workflow
@@ -43,8 +43,9 @@ Collect:
    - State what is out of scope.
    - State what may be future scope.
    - State what assumptions require confirmation.
-   - If the trade-off set is still contested, run `core-grilling` on it before
-     freezing the decision.
+   - If the trade-off set is still contested, recommend
+     `$codex-next:core-grilling` and stop. Wait for the user to invoke it
+     explicitly; do not imitate or begin that workflow here.
    - Do not proceed to detailed product requirements when core scope is unresolved.
 
 3. Define feature list and priority.

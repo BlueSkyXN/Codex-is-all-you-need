@@ -2,8 +2,8 @@
 name: dev-migration-plan
 description: Use to plan modernization, framework upgrades, service extraction, schema migrations, rewrites, and rollback paths.
 metadata:
-  version: "0.5"
-  updated: "2026-07-08"
+  version: "0.6"
+  updated: "2026-07-26"
 ---
 
 # Migration plan workflow
@@ -44,8 +44,9 @@ For pure refactor or migration, prefer behavior baseline, `as-built`, `to-be`, p
    - Feature flag rollout
    - Backward-compatible schema transition
    - Architecture/domain constraint preservation
-   - If the trade-off set is still contested, run `core-grilling` on it before
-     freezing the decision.
+   - If the trade-off set is still contested, recommend
+     `$codex-next:core-grilling` and stop. Wait for the user to invoke it
+     explicitly; do not imitate or begin that workflow here.
 
 4. Build safety rails.
    - Characterization tests

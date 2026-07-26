@@ -63,6 +63,11 @@ the user's task differs.
   hard per-skill gate in this shared package: descriptions must narrowly bound
   discovery, while recommend-only bodies constrain behavior after selection
   rather than preventing selection.
+- Authorization: explicit invocation is not transitive. A user must invoke
+  each control-plane skill with its exact `$codex-next:<skill-name>` command;
+  approval of a recommendation is not invocation. No router, manager, or
+  bounded workflow may invoke, imitate, or begin another explicit-control
+  skill. It must recommend the exact command and stop for the user to invoke it.
 - Routing: `core-router` is an optional discovery entrypoint, not a mandatory
   gateway. It may recommend direct execution, one bounded skill, or one
   explicit control workflow, then it stops. A router must not invoke or imitate

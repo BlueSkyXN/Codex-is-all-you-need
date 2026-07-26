@@ -120,6 +120,10 @@ Escalate only when scope, Architecture, Domain, business semantics, release risk
 
 Recommend the smallest next step. Do not invoke it:
 
+If the recommendation is an explicit-control skill, return its exact
+`$codex-next:<skill-name>` command and stop for the user to invoke it. A plain
+recommendation or approval does not transfer authorization.
+
 - Read-only repo exploration: `dev-repo-onboarding`
 - Bugfix or urgent repair: `dev-bugfix`
 - Direct implementation from clear input: `dev-spec-driven-implementation`

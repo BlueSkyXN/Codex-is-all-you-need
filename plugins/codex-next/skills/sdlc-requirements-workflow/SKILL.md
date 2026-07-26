@@ -58,8 +58,9 @@ Before writing delivery requirements, diagnose the request from three perspectiv
    - What must be proven before dev starts?
 
 After the three perspectives, if the trade-off set is still contested,
-recommend an explicit `core-grilling` run and stop before freezing the
-decision. Do not invoke it from this workflow.
+recommend `$codex-next:core-grilling` and stop before freezing the decision.
+Wait for the user to invoke it explicitly; do not imitate or begin it from this
+workflow.
 
 ## Workflow
 

@@ -40,6 +40,10 @@ EXPLICIT_CONTROL_SKILLS = frozenset(
         "sdlc-solution-spec-workflow",
     }
 )
+OPENAI_SIDECAR_FIELDS = {
+    "interface": frozenset({"display_name", "short_description"}),
+    "policy": frozenset({"allow_implicit_invocation"}),
+}
 JUNK_FILES = frozenset({".DS_Store", "Thumbs.db", "desktop.ini"})
 WORD_RE = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_'-]*")
 CHECKBOX_RE = re.compile(r"(?m)^\s*-\s+\[[ xX]\]")
@@ -206,11 +210,12 @@ def read_json(path: Path, errors: list[str]) -> dict[str, Any] | None:
 def parse_openai_sidecar(
     path: Path, errors: list[str]
 ) -> dict[str, dict[str, Any]]:
-    """Read the flat interface/policy mappings used by agents/openai.yaml.
+    """Read the canonical stdlib-only agents/openai.yaml subset.
 
-    The plugin validator owns full YAML schema validation. This stdlib-only
-    checker extracts the two flat mappings needed for the Codex invocation
-    policy gate without introducing a YAML dependency.
+    The authoritative plugin validator owns general YAML validation. This
+    repository deliberately accepts a stricter two-level subset so invocation
+    policy cannot be interpreted differently by this gate and the validator.
+    Any unsupported syntax fails closed instead of being ignored.
     """
     data: dict[str, dict[str, Any]] = {}
     section: str | None = None
@@ -223,7 +228,8 @@ def parse_openai_sidecar(
     for line_number, raw in enumerate(lines, start=1):
         if not raw.strip() or raw.lstrip().startswith("#"):
             continue
-        if "\t" in raw[: len(raw) - len(raw.lstrip())]:
+        leading = raw[: len(raw) - len(raw.lstrip())]
+        if "\t" in leading:
             errors.append(
                 f"{path}:{line_number}: tabs are not supported in YAML indentation"
             )
@@ -238,24 +244,76 @@ def parse_openai_sidecar(
                 )
                 section = None
                 continue
-            section = stripped[:-1]
-            data.setdefault(section, {})
+            candidate = stripped[:-1]
+            if candidate not in OPENAI_SIDECAR_FIELDS:
+                errors.append(
+                    f"{path}:{line_number}: unsupported top-level section "
+                    f"{candidate!r}"
+                )
+                section = None
+                continue
+            if candidate in data:
+                errors.append(
+                    f"{path}:{line_number}: duplicate top-level section "
+                    f"{candidate!r}"
+                )
+                section = None
+                continue
+            section = candidate
+            data[section] = {}
             continue
 
-        if indent != 2 or section not in {"interface", "policy"}:
+        if indent != 2:
+            errors.append(
+                f"{path}:{line_number}: unsupported indentation; "
+                "sidecar fields must use exactly two spaces"
+            )
+            continue
+        if section is None:
+            errors.append(
+                f"{path}:{line_number}: sidecar field has no recognized "
+                "top-level section"
+            )
             continue
         if ":" not in stripped:
             errors.append(f"{path}:{line_number}: expected key: value")
             continue
         key, raw_value = stripped.split(":", 1)
+        key = key.strip()
         value = raw_value.strip()
-        if value.lower() in {"true", "false"}:
-            parsed: Any = value.lower() == "true"
-        elif is_quoted_scalar(value):
-            parsed = value[1:-1]
+        if key not in OPENAI_SIDECAR_FIELDS[section]:
+            errors.append(
+                f"{path}:{line_number}: unsupported {section} field {key!r}"
+            )
+            continue
+        if key in data[section]:
+            errors.append(
+                f"{path}:{line_number}: duplicate {section} field {key!r}"
+            )
+            continue
+
+        if section == "interface":
+            try:
+                parsed = json.loads(value)
+            except json.JSONDecodeError:
+                errors.append(
+                    f"{path}:{line_number}: interface.{key} must be a "
+                    "double-quoted JSON string"
+                )
+                continue
+            if not isinstance(parsed, str):
+                errors.append(
+                    f"{path}:{line_number}: interface.{key} must be a string"
+                )
+                continue
+        elif value in {"true", "false"}:
+            parsed = value == "true"
         else:
-            parsed = value
-        data[section][key.strip()] = parsed
+            errors.append(
+                f"{path}:{line_number}: policy.{key} must be true or false"
+            )
+            continue
+        data[section][key] = parsed
     return data
 
 
@@ -491,6 +549,7 @@ def run_check(
     do_not_sections = 0
     do_not_use_when_sections = 0
     openai_sidecars = 0
+    codex_explicit_skills: set[str] = set()
     skill_names: list[str] = []
 
     for skill_dir in skill_dirs:
@@ -538,24 +597,9 @@ def run_check(
         openai_sidecars += int(has_openai_sidecar)
         if allow_implicit is False:
             user_invoked += 1
+            codex_explicit_skills.add(skill_dir.name)
         else:
             model_invoked += 1
-        if (
-            skill_dir.name in EXPLICIT_CONTROL_SKILLS
-            and allow_implicit is not False
-        ):
-            errors.append(
-                f"{skill_dir}: control-plane skill must set "
-                "policy.allow_implicit_invocation: false in agents/openai.yaml"
-            )
-        if (
-            skill_dir.name not in EXPLICIT_CONTROL_SKILLS
-            and allow_implicit is False
-        ):
-            errors.append(
-                f"{skill_dir}: skill is not listed in EXPLICIT_CONTROL_SKILLS "
-                "but disables implicit Codex invocation"
-            )
 
         check_spec_frontmatter(skill_file, frontmatter, errors)
         check_skill_references(skill_dir, errors)
@@ -587,6 +631,31 @@ def run_check(
     catalog_skill_paths = discover_catalog_skills(catalog_dir, errors)
     catalog_skill_set = set(catalog_skill_paths)
     plugin_skill_set = set(skill_names)
+    expected_explicit_skills = set(EXPLICIT_CONTROL_SKILLS)
+    missing_explicit_skills = sorted(expected_explicit_skills - plugin_skill_set)
+    unexpected_explicit_skills = sorted(
+        codex_explicit_skills - expected_explicit_skills
+    )
+    unenforced_explicit_skills = sorted(
+        (expected_explicit_skills & plugin_skill_set) - codex_explicit_skills
+    )
+    if missing_explicit_skills:
+        errors.append(
+            "explicit control skills missing from plugin package: "
+            + ", ".join(missing_explicit_skills)
+        )
+    if unexpected_explicit_skills:
+        errors.append(
+            "plugin skills disable implicit Codex invocation without "
+            "classification: "
+            + ", ".join(unexpected_explicit_skills)
+        )
+    if unenforced_explicit_skills:
+        errors.append(
+            "explicit control skills must set policy.allow_implicit_invocation "
+            "to false: "
+            + ", ".join(unenforced_explicit_skills)
+        )
     plugin_only_skills = sorted(plugin_skill_set - catalog_skill_set)
     unexpected_plugin_only = [
         name for name in plugin_only_skills if name not in PLUGIN_ONLY_SKILLS
@@ -634,6 +703,10 @@ def run_check(
         "skill_names": skill_names,
         "model_invoked": model_invoked,
         "user_invoked": user_invoked,
+        "codex_explicit_skills": sorted(codex_explicit_skills),
+        "missing_explicit_control_skills": missing_explicit_skills,
+        "unexpected_explicit_skills": unexpected_explicit_skills,
+        "unenforced_explicit_control_skills": unenforced_explicit_skills,
         "claude_model_invoked": claude_model_invoked,
         "claude_user_invoked": claude_user_invoked,
         "openai_sidecars": openai_sidecars,
@@ -667,8 +740,14 @@ def print_text(summary: dict[str, Any]) -> None:
     print(f"- skills: {summary['skills']}")
     print(f"- Codex model-invoked: {summary['model_invoked']}")
     print(f"- Codex user-invoked: {summary['user_invoked']}")
-    print(f"- Claude model-invoked: {summary['claude_model_invoked']}")
-    print(f"- Claude user-invoked: {summary['claude_user_invoked']}")
+    print(
+        "- Claude frontmatter model-invoked inventory: "
+        f"{summary['claude_model_invoked']}"
+    )
+    print(
+        "- Claude frontmatter user-invoked inventory: "
+        f"{summary['claude_user_invoked']}"
+    )
     print(f"- OpenAI sidecars: {summary['openai_sidecars']}")
     print(f"- description words: {summary['description_words']}")
     print(f"- references dirs: {summary['references_dirs']}")

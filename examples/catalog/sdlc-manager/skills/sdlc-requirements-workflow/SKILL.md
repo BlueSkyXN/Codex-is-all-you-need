@@ -1,14 +1,14 @@
 ---
 name: sdlc-requirements-workflow
-description: Use to turn business, user, and product inputs into scoped requirements, source baselines, assumptions, and downstream handoff.
+description: Use only when the user explicitly invokes this skill to establish a coordinated requirements baseline spanning business, user, and product inputs.
 metadata:
-  version: "0.5"
-  updated: "2026-07-08"
+  version: "1.0"
+  updated: "2026-07-26"
 ---
 
 # Requirements Workflow
 
-Use this skill as the main `sdlc-manager` entry point for requirements work.
+Use this skill as the requirements entry point selected by explicit SDLC manager coordination.
 
 It coordinates BRD, URS, and PRD material. It does not replace SRS, NFR, SPEC, RTM, or dev handoff skills.
 
@@ -57,8 +57,10 @@ Before writing delivery requirements, diagnose the request from three perspectiv
    - What timeline, release, migration, or rollout constraint matters?
    - What must be proven before dev starts?
 
-After the three perspectives, if the trade-off set is still contested, run
-`core-grilling` on it before freezing the decision.
+After the three perspectives, if the trade-off set is still contested,
+recommend `$codex-next:core-grilling` and stop before freezing the decision.
+Wait for the user to invoke it explicitly; do not imitate or begin it from this
+workflow.
 
 ## Workflow
 
@@ -70,7 +72,8 @@ After the three perspectives, if the trade-off set is still contested, run
    - Long external discussion should land in `local/sdlc/<slug>/01-外部讨论.md`; only normalized `REQ`, `TASK`, and `VAL` items become executable.
 
 2. Decide artifact depth.
-   - If depth is unclear, route through `sdlc-router`.
+   - If depth is unclear, ask one load-bearing question with a recommended
+default. Do not invoke `$codex-next:sdlc-router` from this workflow.
    - 快线：do not use this workflow unless scope is unclear; prefer direct-dev or handoff-lite.
    - 增补：produce a short requirements package only when product scope, non-scope, or acceptance is unclear.
    - 规则变更：produce `REQ` items and acceptance direction for permission, billing, data metric, state machine, compliance, privacy, or business-semantic changes.
@@ -113,7 +116,7 @@ Return a requirements package with:
 7. Success metrics
 8. Assumptions and open questions
 9. Required downstream artifacts
-10. Next skill sequence
+10. Optional next-skill recommendations; do not invoke them automatically
 
 ## Recommended Markdown structure
 

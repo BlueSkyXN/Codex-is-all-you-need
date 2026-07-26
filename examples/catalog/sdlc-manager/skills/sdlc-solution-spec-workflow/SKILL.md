@@ -1,9 +1,9 @@
 ---
 name: sdlc-solution-spec-workflow
-description: Use to coordinate solution specs across HLD, LLD, domain, ADR, NFR, and SPEC slices; use leaf skills for details.
+description: Use only when the user explicitly invokes this skill to coordinate a multi-artifact solution package across HLD, LLD, domain, ADR, NFR, and SPEC slices.
 metadata:
-  version: "0.4"
-  updated: "2026-06-12"
+  version: "1.0"
+  updated: "2026-07-26"
 ---
 
 # Solution Spec Workflow
@@ -54,7 +54,7 @@ Prefer:
 - incident or bug history
 - dependency and platform constraints
 - rollout or migration requirements
-- open questions from sdlc-manager artifacts
+- open questions from SDLC coordination artifacts
 
 If repo evidence is unavailable, mark solution material as proposed. Do not claim it reflects current code reality.
 
@@ -140,7 +140,8 @@ For HLD-oriented material, describe:
 - critical flows
 - deployment or runtime boundaries if relevant
 
-If this information is substantial or contested, route to `sdlc-hld-workflow` and link the resulting HLD here.
+If this information is substantial or contested, recommend
+`sdlc-hld-workflow`; do not invoke it from this workflow.
 
 Recommended table:
 
@@ -170,7 +171,9 @@ When there are alternatives, write a decision matrix:
 | Option | Description | Pros | Cons | Risks | Decision |
 |---|---|---|---|---|---|
 
-If the decision is long-lived or affects HLD, LLD, SPEC, RTM, or future implementation, route it to `sdlc-architecture-decision-record` and link the ADR here.
+If the decision is long-lived or affects HLD, LLD, SPEC, RTM, or future
+implementation, recommend `sdlc-architecture-decision-record`; do not invoke it
+automatically. Link an existing or user-approved ADR here.
 
 ### 6. Define API and interface approach
 
@@ -220,7 +223,9 @@ Repository evidence needed before finalizing directory or module placement.
 ```
 
 Do not invent paths as facts. You may propose candidate areas if clearly marked.
-For modular-monolith directory and dependency rules, use `sdlc-modular-monolith-architecture` or Directory SPEC, then summarize the accepted constraints here.
+For modular-monolith directory and dependency rules, recommend
+`sdlc-modular-monolith-architecture` or Directory SPEC, then summarize only
+constraints already accepted by the user.
 
 ### 9. Define LLD-oriented implementation notes
 
@@ -244,7 +249,8 @@ For each module or capability, use:
 ```
 
 This is not code. It is a dev-readable implementation contract.
-If the notes become detailed module design, route to `sdlc-lld-workflow` and link the LLD here.
+If the notes become detailed module design, recommend `sdlc-lld-workflow`; do
+not invoke it from this workflow.
 
 ### 10. Define validation strategy
 
@@ -312,7 +318,8 @@ Summarize what dev should use:
 - contradictions to resolve
 - suggested order of work
 
-Hand off to `sdlc-dev-handoff-planning` for task card creation.
+Recommend `sdlc-dev-handoff-planning` when task cards are needed; do not invoke
+it automatically.
 
 ## Output
 
@@ -368,7 +375,11 @@ Before calling the solution spec ready:
 
 ## Handoff
 
-Route downstream:
+Recommend at most one downstream skill after completing the requested package.
+Do not invoke it automatically:
+
+For an explicit-control workflow, return its exact
+`$codex-next:<skill-name>` command and stop.
 
 | Need | Next skill |
 |---|---|
@@ -382,7 +393,7 @@ Route downstream:
 | missing UI/API/Data/Admin/Permission slices | `sdlc-spec-slice-writer` |
 | executable implementation task package | `sdlc-dev-handoff-planning` |
 | requirement-to-task/test traceability | `sdlc-requirements-traceability` |
-| readiness judgment | `sdlc-readiness-review` |
+| readiness judgment | `$codex-next:sdlc-readiness-review` |
 
 When handing off to dev, provide:
 

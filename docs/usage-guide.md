@@ -98,10 +98,12 @@ codex plugin list --marketplace codex-is-all-you-need --available --json
 codex plugin add codex-next@codex-is-all-you-need
 ```
 
-After installation, start with `$codex-next:core-router` or ask Codex to use
-Codex Next for the task.
+After installation, use `$codex-next:core-router` when you need a workflow
+recommendation. For a clear task, request the result directly; the router is
+not a required first step.
 
-安装后可以从 `$codex-next:core-router` 开始，或直接要求 Codex 使用 Codex Next。
+安装后，需要工作流建议时使用 `$codex-next:core-router`。任务已经清楚时直接要求
+结果即可，不需要先经过 router。
 
 ### Generate the dashboard / 生成面板
 
@@ -267,7 +269,7 @@ Safety rules:
 
 | Pack | Agents | Skills | Best For |
 |---|---:|---:|---|
-| `common` | 6 | 2 | Planning, orchestration, context summaries, docs verification, quality review |
+| `common` | 6 | 5 | Planning, orchestration, context summaries, docs verification, quality review |
 | `sdlc-manager` | 7 | 21 | Architecture-first SDLC control: requirements, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
 | `dev` | 14 | 20 | SDLC-aware and direct-dev implementation, testing, API, CLI, frontend, Python, security, performance |
 | `data` | 5 | 4 | Data profiling, SQL, cleaning, pipelines, reports |

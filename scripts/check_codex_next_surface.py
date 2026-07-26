@@ -26,6 +26,24 @@ read_skill_metadata = _METADATA_MODULE.read_metadata
 DEFAULT_PLUGIN_DIR = REPO_ROOT / "plugins" / "codex-next"
 DEFAULT_CATALOG_DIR = REPO_ROOT / "examples" / "catalog"
 PLUGIN_ONLY_SKILLS = frozenset({"core-router"})
+EXPLICIT_CONTROL_SKILLS = frozenset(
+    {
+        "core-explore-unknowns",
+        "core-goal-run",
+        "core-grilling",
+        "core-skill-eval",
+        "sdlc-change-control",
+        "sdlc-manager",
+        "sdlc-readiness-review",
+        "sdlc-requirements-workflow",
+        "sdlc-router",
+        "sdlc-solution-spec-workflow",
+    }
+)
+OPENAI_SIDECAR_FIELDS = {
+    "interface": frozenset({"display_name", "short_description"}),
+    "policy": frozenset({"allow_implicit_invocation"}),
+}
 JUNK_FILES = frozenset({".DS_Store", "Thumbs.db", "desktop.ini"})
 WORD_RE = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_'-]*")
 CHECKBOX_RE = re.compile(r"(?m)^\s*-\s+\[[ xX]\]")
@@ -187,6 +205,140 @@ def read_json(path: Path, errors: list[str]) -> dict[str, Any] | None:
     except json.JSONDecodeError as exc:
         errors.append(f"{path}: invalid JSON: {exc}")
         return None
+
+
+def parse_openai_sidecar(
+    path: Path, errors: list[str]
+) -> dict[str, dict[str, Any]]:
+    """Read the canonical stdlib-only agents/openai.yaml subset.
+
+    The authoritative plugin validator owns general YAML validation. This
+    repository deliberately accepts a stricter two-level subset so invocation
+    policy cannot be interpreted differently by this gate and the validator.
+    Any unsupported syntax fails closed instead of being ignored.
+    """
+    data: dict[str, dict[str, Any]] = {}
+    section: str | None = None
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeError) as exc:
+        errors.append(f"{path}: cannot read OpenAI skill metadata: {exc}")
+        return data
+
+    for line_number, raw in enumerate(lines, start=1):
+        if not raw.strip() or raw.lstrip().startswith("#"):
+            continue
+        leading = raw[: len(raw) - len(raw.lstrip())]
+        if "\t" in leading:
+            errors.append(
+                f"{path}:{line_number}: tabs are not supported in YAML indentation"
+            )
+            continue
+
+        indent = len(raw) - len(raw.lstrip(" "))
+        stripped = raw.strip()
+        if indent == 0:
+            if not stripped.endswith(":") or stripped.count(":") != 1:
+                errors.append(
+                    f"{path}:{line_number}: expected a top-level YAML mapping"
+                )
+                section = None
+                continue
+            candidate = stripped[:-1]
+            if candidate not in OPENAI_SIDECAR_FIELDS:
+                errors.append(
+                    f"{path}:{line_number}: unsupported top-level section "
+                    f"{candidate!r}"
+                )
+                section = None
+                continue
+            if candidate in data:
+                errors.append(
+                    f"{path}:{line_number}: duplicate top-level section "
+                    f"{candidate!r}"
+                )
+                section = None
+                continue
+            section = candidate
+            data[section] = {}
+            continue
+
+        if indent != 2:
+            errors.append(
+                f"{path}:{line_number}: unsupported indentation; "
+                "sidecar fields must use exactly two spaces"
+            )
+            continue
+        if section is None:
+            errors.append(
+                f"{path}:{line_number}: sidecar field has no recognized "
+                "top-level section"
+            )
+            continue
+        if ":" not in stripped:
+            errors.append(f"{path}:{line_number}: expected key: value")
+            continue
+        key, raw_value = stripped.split(":", 1)
+        key = key.strip()
+        value = raw_value.strip()
+        if key not in OPENAI_SIDECAR_FIELDS[section]:
+            errors.append(
+                f"{path}:{line_number}: unsupported {section} field {key!r}"
+            )
+            continue
+        if key in data[section]:
+            errors.append(
+                f"{path}:{line_number}: duplicate {section} field {key!r}"
+            )
+            continue
+
+        if section == "interface":
+            try:
+                parsed = json.loads(value)
+            except json.JSONDecodeError:
+                errors.append(
+                    f"{path}:{line_number}: interface.{key} must be a "
+                    "double-quoted JSON string"
+                )
+                continue
+            if not isinstance(parsed, str):
+                errors.append(
+                    f"{path}:{line_number}: interface.{key} must be a string"
+                )
+                continue
+        elif value in {"true", "false"}:
+            parsed = value == "true"
+        else:
+            errors.append(
+                f"{path}:{line_number}: policy.{key} must be true or false"
+            )
+            continue
+        data[section][key] = parsed
+    return data
+
+
+def inspect_openai_sidecar(
+    skill_dir: Path, *, errors: list[str]
+) -> tuple[bool, bool | None]:
+    """Validate and return Codex invocation policy for one skill."""
+    sidecar = skill_dir / "agents" / "openai.yaml"
+    if not sidecar.is_file():
+        return False, None
+
+    data = parse_openai_sidecar(sidecar, errors)
+    interface = data.get("interface", {})
+    for key in ("display_name", "short_description"):
+        value = interface.get(key)
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"{sidecar}: interface.{key} must be a non-empty string")
+
+    policy = data.get("policy", {})
+    allow_implicit = policy.get("allow_implicit_invocation")
+    if allow_implicit is not None and not isinstance(allow_implicit, bool):
+        errors.append(
+            f"{sidecar}: policy.allow_implicit_invocation must be true or false"
+        )
+    return True, allow_implicit if isinstance(allow_implicit, bool) else None
 
 
 def inspect_codex_manifest(
@@ -388,12 +540,16 @@ def run_check(
         skill_dirs = []
     model_invoked = 0
     user_invoked = 0
+    claude_model_invoked = 0
+    claude_user_invoked = 0
     description_words = 0
     references_dirs = 0
     scripts_dirs = 0
     checkbox_markers = 0
     do_not_sections = 0
     do_not_use_when_sections = 0
+    openai_sidecars = 0
+    codex_explicit_skills: set[str] = set()
     skill_names: list[str] = []
 
     for skill_dir in skill_dirs:
@@ -423,11 +579,27 @@ def run_check(
         disable = frontmatter.get("disable-model-invocation", False)
         if isinstance(disable, bool):
             if disable:
-                user_invoked += 1
+                claude_user_invoked += 1
             else:
-                model_invoked += 1
+                claude_model_invoked += 1
         else:
             errors.append(f"{skill_file}: disable-model-invocation must be true or false")
+
+        if disable is True:
+            errors.append(
+                f"{skill_file}: Codex plugin ingestion requires "
+                "disable-model-invocation to be false or omitted; use "
+                "agents/openai.yaml for Codex invocation policy"
+            )
+        has_openai_sidecar, allow_implicit = inspect_openai_sidecar(
+            skill_dir, errors=errors
+        )
+        openai_sidecars += int(has_openai_sidecar)
+        if allow_implicit is False:
+            user_invoked += 1
+            codex_explicit_skills.add(skill_dir.name)
+        else:
+            model_invoked += 1
 
         check_spec_frontmatter(skill_file, frontmatter, errors)
         check_skill_references(skill_dir, errors)
@@ -459,6 +631,31 @@ def run_check(
     catalog_skill_paths = discover_catalog_skills(catalog_dir, errors)
     catalog_skill_set = set(catalog_skill_paths)
     plugin_skill_set = set(skill_names)
+    expected_explicit_skills = set(EXPLICIT_CONTROL_SKILLS)
+    missing_explicit_skills = sorted(expected_explicit_skills - plugin_skill_set)
+    unexpected_explicit_skills = sorted(
+        codex_explicit_skills - expected_explicit_skills
+    )
+    unenforced_explicit_skills = sorted(
+        (expected_explicit_skills & plugin_skill_set) - codex_explicit_skills
+    )
+    if missing_explicit_skills:
+        errors.append(
+            "explicit control skills missing from plugin package: "
+            + ", ".join(missing_explicit_skills)
+        )
+    if unexpected_explicit_skills:
+        errors.append(
+            "plugin skills disable implicit Codex invocation without "
+            "classification: "
+            + ", ".join(unexpected_explicit_skills)
+        )
+    if unenforced_explicit_skills:
+        errors.append(
+            "explicit control skills must set policy.allow_implicit_invocation "
+            "to false: "
+            + ", ".join(unenforced_explicit_skills)
+        )
     plugin_only_skills = sorted(plugin_skill_set - catalog_skill_set)
     unexpected_plugin_only = [
         name for name in plugin_only_skills if name not in PLUGIN_ONLY_SKILLS
@@ -506,6 +703,20 @@ def run_check(
         "skill_names": skill_names,
         "model_invoked": model_invoked,
         "user_invoked": user_invoked,
+        "codex_explicit_skills": sorted(codex_explicit_skills),
+        "missing_explicit_control_skills": missing_explicit_skills,
+        "unexpected_explicit_skills": unexpected_explicit_skills,
+        "unenforced_explicit_control_skills": unenforced_explicit_skills,
+        "claude_frontmatter_model_invoked": claude_model_invoked,
+        "claude_frontmatter_user_invoked": claude_user_invoked,
+        "claude_invocation_basis": (
+            "packaged_frontmatter_inventory_runtime_unverified"
+        ),
+        # Compatibility aliases for existing JSON consumers. These counts are
+        # static packaged-frontmatter inventory, not live runtime evidence.
+        "claude_model_invoked": claude_model_invoked,
+        "claude_user_invoked": claude_user_invoked,
+        "openai_sidecars": openai_sidecars,
         "description_words": description_words,
         "references_dirs": references_dirs,
         "scripts_dirs": scripts_dirs,
@@ -534,8 +745,18 @@ def run_check(
 def print_text(summary: dict[str, Any]) -> None:
     print("Codex Next surface check")
     print(f"- skills: {summary['skills']}")
-    print(f"- model-invoked: {summary['model_invoked']}")
-    print(f"- user-invoked: {summary['user_invoked']}")
+    print(f"- Codex model-invoked: {summary['model_invoked']}")
+    print(f"- Codex user-invoked: {summary['user_invoked']}")
+    print(
+        "- Claude frontmatter model-invoked inventory: "
+        f"{summary['claude_frontmatter_model_invoked']}"
+    )
+    print(
+        "- Claude frontmatter user-invoked inventory: "
+        f"{summary['claude_frontmatter_user_invoked']}"
+    )
+    print(f"- Claude invocation basis: {summary['claude_invocation_basis']}")
+    print(f"- OpenAI sidecars: {summary['openai_sidecars']}")
     print(f"- description words: {summary['description_words']}")
     print(f"- references dirs: {summary['references_dirs']}")
     print(f"- scripts dirs: {summary['scripts_dirs']}")

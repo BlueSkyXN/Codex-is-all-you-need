@@ -1,9 +1,9 @@
 ---
 name: dev-python-quality
-description: Use for Python implementation, typing, async, packaging, pytest, ruff/mypy checks, scripts, and performance cleanup.
+description: Use when Python-specific typing, async behavior, packaging, pytest, ruff/mypy, scripting, or performance quality is central to the request. Do not trigger for generic small code edits merely written in Python.
 metadata:
-  version: "0.3"
-  updated: "2026-06-12"
+  version: "0.4"
+  updated: "2026-07-26"
 ---
 
 # Python quality workflow

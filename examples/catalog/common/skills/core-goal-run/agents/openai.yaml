@@ -1,0 +1,5 @@
+interface:
+  display_name: "Goal Run"
+  short_description: "Run or resume an explicit persistent goal tracker."
+policy:
+  allow_implicit_invocation: false

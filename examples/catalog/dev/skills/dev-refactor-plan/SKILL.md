@@ -1,9 +1,9 @@
 ---
 name: dev-refactor-plan
-description: Use for planning software refactors before editing files, especially when behavior must be preserved.
+description: Use when the user asks for a behavior-preserving refactor plan before implementation. Do not trigger when the user already requested a clear, scoped refactor to be implemented directly.
 metadata:
-  version: "0.4"
-  updated: "2026-07-23"
+  version: "0.5"
+  updated: "2026-07-26"
 ---
 
 # Refactor plan workflow
@@ -31,8 +31,9 @@ Use this workflow when the task is to refactor code while preserving behavior.
    - Database schema
    - External integrations
    - User-visible behavior
-   - If the behavior contract or trade-off set is still contested, run
-     `core-grilling` on it before freezing the decision.
+   - If the behavior contract or trade-off set is still contested, recommend
+     `$codex-next:core-grilling` and stop. Wait for the user to invoke it
+     explicitly; do not imitate or begin that workflow here.
 
 4. Propose an incremental plan.
    - Step 1

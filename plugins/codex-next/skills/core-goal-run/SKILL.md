@@ -1,268 +1,136 @@
 ---
 name: core-goal-run
-description: Use to execute or resume a local goal plan while keeping the plan read-only and updating goal-tasks.md plus goal-log.md.
+description: Use only when the user explicitly invokes this skill to create or resume a persistent file-based goal tracker across sessions.
 metadata:
-  version: "0.4"
-  updated: "2026-07-12"
+  version: "1.0"
+  updated: "2026-07-26"
 ---
 
 # Goal Run
 
-Use this skill when the user provides a local goal or plan file and asks to
-track completion, continue execution, skip human-only items, or leave a handoff.
+Execute or resume an explicitly requested long-running goal while keeping its
+state recoverable across sessions. Do not use this workflow for ordinary work
+that can finish in the current turn.
 
-Typical source file names include:
+## Tracker Contract
 
-- `goal-plan-list.md`
-- `current-plan.md`
-- `todo.md`
-- a dated local planning Markdown file
-
-## Purpose
-
-Keep long-running Codex work recoverable without turning it into a workflow
-platform.
-
-The goal directory uses three plain Markdown files:
+Use three plain Markdown files in the goal directory:
 
 ```text
 <goal-dir>/
-├── goal-plan-list.md  # original input, read-only reference
-├── goal-tasks.md      # current task list and status truth
-└── goal-log.md        # execution notes, evidence, and handoff
+├── goal-plan-list.md  # original plan or source, read-only
+├── goal-tasks.md      # compact current status
+└── goal-log.md        # evidence and handoff notes
 ```
 
-If the source file is not named `goal-plan-list.md`, keep its original name and
-still create `goal-tasks.md` and `goal-log.md` beside it.
+If the source plan has another name, keep that name and create only
+`goal-tasks.md` and `goal-log.md` beside it.
 
-Do not create `.goal-run/`, run-id directories, scripts, hooks, registries, or
-automation unless the user explicitly asks for a heavier tracker.
+Do not create tracker scripts, hooks, run IDs, registries, dashboards, or hidden
+state unless the user explicitly requests a heavier system.
 
-## File Roles
+## `goal-tasks.md`
 
-### Source Goal File
-
-Treat the original goal file as read-only source context after
-`goal-tasks.md` exists.
-
-Do not keep updating the original goal file as the status tracker. If it
-contains old status notes, treat them as historical input and reconcile the
-current state into `goal-tasks.md`.
-
-### `goal-tasks.md`
-
-This is the current status truth. Keep it short.
-
-It should answer:
-
-- What tasks exist?
-- What is each task's current status?
-- Is the task automatic or human-only?
-- What task-specific external anchor justifies the task?
-- Where is the evidence or note?
-
-Use this compact structure:
+Keep this file short enough to understand at a glance:
 
 ```markdown
 # Goal Tasks
 
 Source: `goal-plan-list.md`
-Status truth: this file.
-Execution log and evidence: `goal-log.md`
 
-Allowed status:
-
-- TODO
-- DOING
-- VERIFYING
-- DONE
-- BLOCKED
-- HUMAN_PENDING
-- SKIPPED_HUMAN
-
-| ID | Source | Anchor | Task | Status | Auto | Evidence | Notes |
-|---|---|---|---|---|---|---|---|
-| T001 | goal-plan-list.md §47 | user:confirm current authority | Review current state | DONE | yes | goal-log.md#t001 | current authority confirmed |
-| T002 | goal-plan-list.md §8 | REQ-UI-X | Implement frontend task X | DOING | yes | pending | small reversible diff |
-| T003 | goal-plan-list.md §12 | user:validate credentials | Manual credential validation | SKIPPED_HUMAN | no | goal-log.md#t003 | requires credential |
+| ID | Task | Status | Auto | Evidence | Notes |
+|---|---|---|---|---|---|
+| T001 | Inspect current state | DONE | yes | `goal-log.md#t001` | current baseline read |
+| T002 | Implement the next slice | DOING | yes | pending | scoped to current slice |
+| T003 | Approve production rollout | HUMAN_PENDING | no | pending | user decision required |
 ```
 
-`Source` identifies where the task came from. `Anchor` identifies why that
-specific task is justified. Use concise values such as `REQ-123`, `issue#7`,
-`test:path::name`, `error:<summary>`, or `user:<explicit outcome>`.
-Use `pending` for an actionable task awaiting anchor confirmation and
-`legacy-unresolved` for an inactive historical row whose original anchor cannot
-be recovered. Neither value is a confirmed anchor.
+Use only these statuses unless the user's existing tracker defines another
+taxonomy:
 
-When an existing `goal-tasks.md` has no `Anchor` column:
+- `TODO`
+- `DOING`
+- `VERIFYING`
+- `DONE`
+- `BLOCKED`
+- `HUMAN_PENDING`
+- `SKIPPED_HUMAN`
 
-- Add the column on the next update without rewriting the source goal file.
-- Recover task-specific anchors from explicit REQ/issue/test/error references,
-  the execution log, or a user request tied to the task's outcome.
-- For a task that has not started, write `pending` when the anchor cannot be
-  confirmed, keep the task `TODO`, and report the missing confirmation before
-  starting it.
-- For an existing `DONE`, `BLOCKED`, `HUMAN_PENDING`, or `SKIPPED_HUMAN` row
-  whose anchor cannot be recovered, write `legacy-unresolved`, preserve its
-  status, and record the provenance gap in `Notes` or `goal-log.md`. Confirm an
-  anchor before reopening or resuming the task.
-- Do not treat a generic resume request such as "continue the plan" as the
-  anchor for newly discovered work.
-- If a legacy task is already `DOING` or `VERIFYING` and its anchor cannot be
-  confirmed, set `Anchor` to `pending` and allow exactly its current safe work
-  or verification unit to finish. This one-unit migration exception takes
-  precedence over the normal halting condition.
-- Before writing a terminal `DONE` or `BLOCKED` status after that unit, replace
-  `pending` with any task-specific anchor established during the unit. If none
-  was established, set `Anchor=legacy-unresolved`.
-- After that unit, mark the task `DONE` only if the task is complete with
-  evidence. If further work remains, return it to `TODO` with `Anchor=pending`
-  and request confirmation. If the unit cannot finish because of a concrete
-  blocker, mark it `BLOCKED` and record the blocker.
+Do not paste command output, long rationale, PR bodies, or full logs into the
+table.
 
-Do not put long command output, long rationale, PR bodies, screenshots, or full
-logs in `goal-tasks.md`.
+## `goal-log.md`
 
-### `goal-log.md`
-
-This is the execution record, evidence index, and human handoff.
-
-It should answer:
-
-- What did this run do?
-- What evidence supports each completed or blocked task?
-- What should the next Codex or the user read first?
-- What remains risky, blocked, skipped, or pending?
-
-Use simple sections:
+Record concise evidence and the next handoff:
 
 ```markdown
 # Goal Log
 
-Source: `goal-plan-list.md`
-Task status truth: `goal-tasks.md`
-
 ## YYYY-MM-DD Run
 
 Request:
-
-- Continue automatic tasks from `goal-plan-list.md`.
-- Skip human-only work.
+- Resume automatic work from the source plan.
 
 ## T001
 
 Status: DONE
 
 Evidence:
-
-- Reviewed `goal-plan-list.md`.
-- Confirmed current authority and stale context boundaries.
-
-Notes:
-
-- Older local directories are historical only.
+- Reviewed the current source and repository state.
+- Relevant check completed successfully.
 
 ## Handoff
 
 Read first:
-
 - `goal-tasks.md`
 - `goal-log.md`
 
 Next:
-
 - Continue T002.
-- Keep T003 as `SKIPPED_HUMAN` unless the user provides credentials.
+- Keep T003 pending until the user decides.
 ```
 
-## Status Values
-
-Use only these statuses unless the user explicitly asks for a different local
-taxonomy:
-
-- `TODO`: known task, not started.
-- `DOING`: currently being worked.
-- `VERIFYING`: implementation or artifact is ready, proof is still running or incomplete.
-- `DONE`: completed with evidence in `goal-log.md`.
-- `BLOCKED`: cannot continue without a concrete blocker being resolved.
-- `HUMAN_PENDING`: waits for human decision, credential, approval, or external action.
-- `SKIPPED_HUMAN`: intentionally skipped because it is human-only and the user asked to skip human work.
-
-Do not invent compound statuses such as `DONE_BUT_NEEDS_CI`. Put that detail in
-`Notes` or `goal-log.md`.
+Evidence should be a pointer such as a command and exit status, test result,
+changed path, commit SHA, PR or CI URL, deployment readback, screenshot path, or
+reviewed source section. The tracker itself is not proof of completion.
 
 ## Workflow
 
-1. Read the source goal file.
-2. Read nearby documents only when they are relevant to the user's request.
-3. Create `goal-tasks.md` and `goal-log.md` if missing.
-4. If they already exist, resume from them instead of re-deriving status from
-   the source goal file.
-5. Extract only actionable items. Do not turn every paragraph into a task.
-   Every task must carry a task-specific `Anchor`. New tasks discovered during
-   execution must cite a failing test, observed error, explicit user outcome,
-   REQ/issue ID, or equivalent repository or external evidence. A task whose
-   only source is "improvement idea from the previous iteration" is not
-   actionable — record it in `goal-log.md` suggestions for user review but do
-   not add it to `goal-tasks.md`.
-6. Mark human-only tasks as `HUMAN_PENDING` or `SKIPPED_HUMAN`; do not mark them
-   `DONE` unless the user actually completed the human action and evidence is
-   available.
-7. Keep implementation, testing, PR, CI, deploy, and review work in the
-   appropriate dev or SDLC skills. Use this skill only for the tracker files.
-8. After each meaningful unit of work, update `goal-tasks.md` and append concise
-   evidence or handoff notes to `goal-log.md`.
-9. Before stopping, ensure every `DONE` task has evidence, every `BLOCKED` task
-   names the blocker, and the `Handoff` section states what to read and do next.
+1. Confirm that the user explicitly requested persistent goal tracking or
+   resumption. Otherwise stop using this skill and complete the task normally.
+2. Read the source goal and existing tracker files.
+3. Create tracker files only when they are missing and persistent tracking is
+   part of the request.
+4. Extract actionable tasks, not every paragraph or improvement idea.
+5. Continue the current safe task. Do not invent new work merely to keep the
+   goal active.
+6. Update tracker files only at a meaningful phase boundary, a status change,
+   or before stopping. Do not interrupt implementation after every small unit
+   to rewrite the tracker.
+7. Before stopping, ensure completed work has evidence, blockers are concrete,
+   and `Handoff` says what to read and do next.
 
-## Evidence Rules
+## Human and External Boundaries
 
-Evidence can be concise. Prefer pointers over pasted output.
-
-Good evidence:
-
-- command and exit status
-- test or build result
-- changed file path
-- commit SHA
-- PR URL
-- CI run URL or status
-- deployment URL
-- health or ready endpoint result
-- screenshot path
-- reviewed source file or source section
-
-Do not treat `goal-tasks.md` itself as proof of completion. It is a tracker, not
-the evidence source.
-
-An `Anchor` explains why a task exists. It is not proof that the task is done.
-
-## Subagent Rule
-
-Subagents may investigate, implement, test, or review scoped work. The main
-thread should remain the single writer for `goal-tasks.md` and `goal-log.md` to
-avoid conflicting status edits.
-
-If a subagent produces evidence, summarize it in `goal-log.md` and update the
-matching row in `goal-tasks.md`.
+- Mark business decisions, credentials, permissions, irreversible actions,
+  production changes, and external approvals as `HUMAN_PENDING` unless the
+  user has already authorized the exact action.
+- Never mark a human action complete without current evidence.
+- Keep implementation, testing, Git, release, and deployment behavior under
+  their normal task rules. This skill owns only the tracker files.
+- Subagents may work on scoped tasks, but the main thread remains the only
+  tracker writer.
 
 ## Stop Conditions
 
-Stop and report clearly when:
+Stop and report when:
 
-- After applying the one-unit legacy migration exception, no active task
-  (`TODO`, `DOING`, or `VERIFYING`) has a confirmed task-specific `Anchor`, and
-  no legacy `DOING` or `VERIFYING` task is finishing that allowed unit. This is
-  the halting condition: report `pending` anchors and do not invent work to
-  extend the loop.
-- A `VERIFYING` task cannot complete its current verification. Finish the
-  verification or record a concrete blocker before stopping for lack of other
-  active work.
-- Only unanchored suggestions remain. Keep them in `goal-log.md`; do not promote
-  them into tasks merely to continue the run.
-- The source goal file and existing `goal-tasks.md` contradict each other.
-- A task requires a business decision, credential, permission, or irreversible
-  action.
-- The user asks for a heavier tracker, script, hook, dashboard, or registry.
-- The task scope is too broad to extract into a small status table without
-  first clarifying priorities.
+- no actionable automatic task remains;
+- the next step requires a user decision, credential, permission, or
+  irreversible action;
+- the source plan conflicts with current repository or external evidence;
+- verification has a concrete blocker;
+- the user asks to pause, change scope, or replace the tracking method.
+
+Do not treat a difficult, slow, or incomplete task as blocked while meaningful
+authorized work can still continue.

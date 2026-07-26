@@ -1,0 +1,5 @@
+interface:
+  display_name: "SDLC Change Control"
+  short_description: "Manage an explicit baseline or scope change."
+policy:
+  allow_implicit_invocation: false

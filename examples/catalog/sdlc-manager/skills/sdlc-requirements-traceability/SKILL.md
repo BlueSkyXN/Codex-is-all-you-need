@@ -2,8 +2,8 @@
 name: sdlc-requirements-traceability
 description: Use to build or audit RTM links across requirements, design, validation, tasks, PRs, commits, releases, and evidence gaps.
 metadata:
-  version: "0.4"
-  updated: "2026-06-12"
+  version: "0.5"
+  updated: "2026-07-26"
 ---
 
 # Requirements Traceability
@@ -44,7 +44,7 @@ Do not require BRD/URS/PRD/SRS prefixes before a clear direct-dev, handoff-lite,
 - The task is a small direct code change with no need for formal tracking beyond issue and validation notes.
 - The user only asks to implement, debug, test, or review code.
 - No stable source material exists and the immediate task is safe to route to dev; create a task handoff instead.
-- The request is to approve scope or release readiness. Use `sdlc-readiness-review` or `dev-release-check` as appropriate.
+- The request is to approve scope or release readiness. Recommend `$codex-next:sdlc-readiness-review` or use `dev-release-check` as appropriate.
 
 ## Inputs
 
@@ -284,7 +284,7 @@ Before declaring traceability ready, check:
 - Validation Plan items link to tasks and execution evidence where a validation plan exists.
 - Architecture-sensitive requirements point to HLD, LLD, ADR, Domain Boundary Map, or an explicit accepted gap.
 - SPEC-dependent requirements point to the relevant SPEC slice or missing-SPEC gap.
-- Change-related rows point to `sdlc-change-control` records when baseline is affected.
+- Change-related rows point to existing change-control records when baseline is affected.
 - Status values are consistent.
 - Direct-dev work is not misrepresented as full SDLC-backed work.
 
@@ -299,11 +299,14 @@ Before declaring traceability ready, check:
 
 ## Handoff
 
+Recommend the smallest next step. For an explicit-control workflow, return its
+exact `$codex-next:<skill-name>` command and stop; do not begin it here.
+
 Route findings:
 
 | Finding | Next step |
 |---|---|
-| source not ready | `sdlc-requirements-workflow`, `sdlc-prd-workflow`, or `sdlc-srs-workflow` |
+| source not ready | `$codex-next:sdlc-requirements-workflow`, `sdlc-prd-workflow`, or `sdlc-srs-workflow` |
 | HLD missing | `sdlc-hld-workflow` |
 | LLD missing | `sdlc-lld-workflow` |
 | ADR missing | `sdlc-architecture-decision-record` |
@@ -311,7 +314,7 @@ Route findings:
 | SPEC missing | `sdlc-spec-slice-writer` |
 | validation plan missing | `sdlc-validation-plan-workflow` |
 | handoff missing | `sdlc-dev-handoff-planning` |
-| baseline changed | `sdlc-change-control` |
-| readiness uncertain | `sdlc-readiness-review` |
+| baseline changed | `$codex-next:sdlc-change-control` |
+| readiness uncertain | `$codex-next:sdlc-readiness-review` |
 | implementation ready | dev skill such as `dev-spec-driven-implementation`, `dev-bugfix`, or `dev-test-strategy` |
 | direct-dev safe but untracked | create traceability seed and proceed to dev |

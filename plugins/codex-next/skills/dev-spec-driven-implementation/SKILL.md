@@ -1,9 +1,9 @@
 ---
 name: dev-spec-driven-implementation
-description: Use to implement scoped code changes from specs, handoff, issues, bugs, or direct requests with validation and blocker reporting.
+description: Use to implement a scoped multi-step change from an existing spec, handoff, issue, or explicit delivery request. Do not trigger for read-only analysis, planning, or a trivial localized edit.
 metadata:
-  version: "0.4"
-  updated: "2026-06-12"
+  version: "0.5"
+  updated: "2026-07-26"
 ---
 
 # Spec-driven Implementation
@@ -31,7 +31,7 @@ When these artifacts exist, treat them as delivery inputs. Keep the implementati
 
 When these artifacts are absent, continue from the best available direct input when it is sufficient: user request, issue, bug report, reproduction steps, failing test, local diff, repository evidence, or explicit user instruction. Missing SDLC artifacts are a risk signal, not an automatic stop condition.
 
-Do not make `dev` own, approve, or rewrite SDLC-manager artifacts unless the user explicitly asks for that. Dev may report blockers, contradictions, implementation evidence, and suggested follow-up artifacts.
+Do not make `dev` own, approve, or rewrite SDLC-owned artifacts unless the user explicitly asks for that. Dev may report blockers, contradictions, implementation evidence, and suggested follow-up artifacts.
 
 When present, read the lightweight SDLC-ADS state before implementation:
 
@@ -54,7 +54,9 @@ External Web/GPT/AI discussion is not executable by itself. Implement only the p
 
 ## Do not use when
 
-- The user is asking to create BRD, URS, PRD, SRS, NFR, SPEC, traceability, or change-control materials. Use `sdlc-manager` skills.
+- The user is asking to create coordinated BRD, URS, PRD, SRS, NFR, SPEC,
+  traceability, or change-control materials. Recommend
+  `$codex-next:sdlc-manager` and stop; do not invoke it from this workflow.
 - The repository area is unknown and the task is risky. Start with `dev-repo-onboarding`.
 - The requested change is unsafe, unbounded, or impossible to validate.
 
@@ -194,8 +196,9 @@ Return:
 ## Handoff
 
 - Use `dev-test-strategy` for validation design or test gap review.
-- Use `sdlc-validation-plan-workflow` when the pre-implementation proof-of-correctness artifact itself is missing or needs SDLC-manager ownership.
+- Use `sdlc-validation-plan-workflow` when the pre-implementation proof-of-correctness artifact itself is missing or needs SDLC ownership.
 - Use `dev-pr-review` for diff review before merge.
 - Use `dev-security-review` or `dev-performance-diagnosis` when NFRs require it.
 - Use `dev-release-check` when the change is release-bound.
-- Return to `sdlc-manager` only when artifacts need ownership-level update, baseline change, traceability update, or change control.
+- When artifacts need ownership-level update, baseline change, traceability
+  update, or change control, recommend `$codex-next:sdlc-manager` and stop.

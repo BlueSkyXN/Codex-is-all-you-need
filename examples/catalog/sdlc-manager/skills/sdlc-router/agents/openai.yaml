@@ -1,0 +1,5 @@
+interface:
+  display_name: "SDLC Router"
+  short_description: "Classify SDLC depth only when explicitly invoked."
+policy:
+  allow_implicit_invocation: false

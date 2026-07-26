@@ -1,0 +1,5 @@
+interface:
+  display_name: "Skill Evaluation"
+  short_description: "Evaluate a skill with isolated representative cases."
+policy:
+  allow_implicit_invocation: false

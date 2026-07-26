@@ -4,6 +4,7 @@ import contextlib
 import importlib.util
 import io
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -20,6 +21,16 @@ SPEC.loader.exec_module(check_codex_next_surface)
 
 class CheckCodexNextSurfaceTest(unittest.TestCase):
     def setUp(self) -> None:
+        original_explicit_skills = check_codex_next_surface.EXPLICIT_CONTROL_SKILLS
+        self.addCleanup(
+            setattr,
+            check_codex_next_surface,
+            "EXPLICIT_CONTROL_SKILLS",
+            original_explicit_skills,
+        )
+        check_codex_next_surface.EXPLICIT_CONTROL_SKILLS = frozenset(
+            {"core-goal-run"}
+        )
         self.tmp = tempfile.TemporaryDirectory()
         self.root = Path(self.tmp.name)
         self.plugin = self.root / "plugins" / "codex-next"
@@ -29,7 +40,10 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
         (self.catalog / "common" / "skills").mkdir(parents=True)
         (self.plugin / "skills" / "alpha-skill").mkdir(parents=True)
         (self.plugin / "skills" / "manual-skill").mkdir()
-        (self.plugin / "README.md").write_text("core-router alpha-skill\n", encoding="utf-8")
+        (self.plugin / "skills" / "core-goal-run").mkdir()
+        (self.plugin / "README.md").write_text(
+            "core-router alpha-skill\n", encoding="utf-8"
+        )
         (self.plugin / ".codex-plugin" / "plugin.json").write_text(
             json.dumps(
                 {"name": "codex-next", "version": "1.0.0", "skills": "./skills/"}
@@ -44,7 +58,6 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
         self.write_skill(
             self.plugin / "skills" / "manual-skill",
             "manual-skill",
-            disable_model_invocation=True,
             body="# Manual\n",
         )
         self.write_skill(
@@ -53,8 +66,21 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
         self.write_skill(
             self.catalog / "common" / "skills" / "manual-skill",
             "manual-skill",
-            disable_model_invocation=True,
             body="# Manual\n",
+        )
+        self.write_skill(
+            self.plugin / "skills" / "core-goal-run",
+            "core-goal-run",
+            body="# Goal Run\n",
+        )
+        self.write_skill(
+            self.catalog / "common" / "skills" / "core-goal-run",
+            "core-goal-run",
+            body="# Goal Run\n",
+        )
+        self.write_openai_sidecar(self.plugin / "skills" / "core-goal-run")
+        self.write_openai_sidecar(
+            self.catalog / "common" / "skills" / "core-goal-run"
         )
 
     def write_skill(
@@ -90,25 +116,277 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
             encoding="utf-8",
         )
 
+    def write_openai_sidecar(
+        self,
+        path: Path,
+        *,
+        allow_implicit_invocation: bool = False,
+        include_interface: bool = True,
+    ) -> None:
+        agents = path / "agents"
+        agents.mkdir(exist_ok=True)
+        interface = (
+            'interface:\n'
+            '  display_name: "Manual Skill"\n'
+            '  short_description: "Run an explicit manual workflow."\n'
+            if include_interface
+            else ""
+        )
+        agents.joinpath("openai.yaml").write_text(
+            interface
+            + "policy:\n"
+            + "  allow_implicit_invocation: "
+            + ("true\n" if allow_implicit_invocation else "false\n"),
+            encoding="utf-8",
+        )
+
+    def write_raw_openai_sidecar(self, path: Path, content: str) -> None:
+        agents = path / "agents"
+        agents.mkdir(exist_ok=True)
+        agents.joinpath("openai.yaml").write_text(content, encoding="utf-8")
+
     def tearDown(self) -> None:
         self.tmp.cleanup()
 
     def test_surface_summary_counts_skills_and_manifest_modes(self) -> None:
         summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
 
-        self.assertEqual(summary["skills"], 2)
-        self.assertEqual(summary["model_invoked"], 1)
+        self.assertEqual(summary["skills"], 3)
+        self.assertEqual(summary["model_invoked"], 2)
         self.assertEqual(summary["user_invoked"], 1)
+        self.assertEqual(summary["codex_explicit_skills"], ["core-goal-run"])
+        self.assertEqual(summary["missing_explicit_control_skills"], [])
+        self.assertEqual(summary["unexpected_explicit_skills"], [])
+        self.assertEqual(summary["unenforced_explicit_control_skills"], [])
+        self.assertEqual(summary["claude_frontmatter_model_invoked"], 3)
+        self.assertEqual(summary["claude_frontmatter_user_invoked"], 0)
+        self.assertEqual(
+            summary["claude_invocation_basis"],
+            "packaged_frontmatter_inventory_runtime_unverified",
+        )
+        # Retained as compatibility aliases; the basis field prevents them
+        # from being interpreted as live runtime selection evidence.
+        self.assertEqual(summary["claude_model_invoked"], 3)
+        self.assertEqual(summary["claude_user_invoked"], 0)
+        self.assertEqual(summary["openai_sidecars"], 1)
         self.assertEqual(summary["checkbox_markers"], 1)
         self.assertEqual(summary["do_not_sections"], 1)
         self.assertEqual(summary["codex_manifest_mode"], "directory")
         self.assertEqual(summary["codex_manifest_version"], "1.0.0")
         self.assertEqual(summary["claude_manifest_mode"], "default_directory")
         self.assertEqual(summary["claude_manifest_version"], "1.0.0")
-        self.assertEqual(summary["source_catalog_skills"], 2)
+        self.assertEqual(summary["source_catalog_skills"], 3)
         self.assertEqual(summary["plugin_only_skills"], [])
         self.assertEqual(summary["errors"], [])
         self.assertEqual(summary["warnings"], [])
+
+    def test_skill_without_openai_policy_remains_codex_model_invoked(self) -> None:
+        errors: list[str] = []
+
+        result = check_codex_next_surface.inspect_openai_sidecar(
+            self.plugin / "skills" / "alpha-skill", errors=errors
+        )
+
+        self.assertEqual(result, (False, None))
+        self.assertEqual(errors, [])
+
+    def test_openai_sidecar_requires_interface_metadata(self) -> None:
+        for root in (
+            self.plugin / "skills" / "core-goal-run",
+            self.catalog / "common" / "skills" / "core-goal-run",
+        ):
+            self.write_openai_sidecar(root, include_interface=False)
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any(
+                "interface.display_name must be a non-empty string" in error
+                for error in summary["errors"]
+            )
+        )
+        self.assertTrue(
+            any(
+                "interface.short_description must be a non-empty string" in error
+                for error in summary["errors"]
+            )
+        )
+
+    def test_control_plane_sidecar_must_disable_implicit_invocation(self) -> None:
+        for root in (
+            self.plugin / "skills" / "core-goal-run",
+            self.catalog / "common" / "skills" / "core-goal-run",
+        ):
+            self.write_skill(root, "core-goal-run")
+            self.write_openai_sidecar(root, allow_implicit_invocation=True)
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any(
+                "explicit control skills must set "
+                "policy.allow_implicit_invocation to false: core-goal-run"
+                in error
+                for error in summary["errors"]
+            )
+        )
+
+    def test_claude_true_extension_is_rejected_by_codex_contract(self) -> None:
+        for root in (
+            self.plugin / "skills" / "alpha-skill",
+            self.catalog / "common" / "skills" / "alpha-skill",
+        ):
+            self.write_skill(root, "alpha-skill", disable_model_invocation=True)
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any(
+                "Codex plugin ingestion requires disable-model-invocation "
+                "to be false or omitted" in error
+                for error in summary["errors"]
+            )
+        )
+
+    def test_control_plane_skill_must_be_user_invoked(self) -> None:
+        for root in (
+            self.plugin / "skills" / "core-goal-run",
+            self.catalog / "common" / "skills" / "core-goal-run",
+        ):
+            root.joinpath("agents", "openai.yaml").unlink()
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any(
+                "explicit control skills must set "
+                "policy.allow_implicit_invocation to false: core-goal-run"
+                in error
+                for error in summary["errors"]
+            )
+        )
+
+    def test_bounded_skill_cannot_become_user_invoked_without_classification(
+        self,
+    ) -> None:
+        for root in (
+            self.plugin / "skills" / "alpha-skill",
+            self.catalog / "common" / "skills" / "alpha-skill",
+        ):
+            self.write_openai_sidecar(root)
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertTrue(
+            any(
+                "plugin skills disable implicit Codex invocation without "
+                "classification: alpha-skill"
+                in error
+                for error in summary["errors"]
+            )
+        )
+
+    def test_openai_sidecar_parser_fails_closed_on_noncanonical_yaml(self) -> None:
+        cases = (
+            (
+                'interface:\n'
+                '    display_name: "Manual Skill"\n'
+                '    short_description: "Explicit workflow."\n'
+                'policy:\n'
+                '    allow_implicit_invocation: false\n',
+                "unsupported indentation",
+            ),
+            (
+                'interface:\n'
+                '  display_name: "Manual Skill"\n'
+                '  short_description: "Explicit workflow."\n'
+                'policy:\n'
+                '  allow_implicit_invocation: false\n'
+                'policy:\n'
+                '  allow_implicit_invocation: true\n',
+                "duplicate top-level section 'policy'",
+            ),
+            (
+                'interface:\n'
+                '  display_name: "Manual Skill"\n'
+                '  short_description: "Explicit workflow."\n'
+                'policy:\n'
+                '  allow_implicit_invocation: false\n'
+                '  allow_implicit_invocation: true\n',
+                "duplicate policy field 'allow_implicit_invocation'",
+            ),
+            (
+                'interface:\n'
+                '  display_name: "Manual Skill"\n'
+                '  short_description: "Explicit workflow."\n'
+                '  icon: "icon.svg"\n'
+                'policy:\n'
+                '  allow_implicit_invocation: false\n',
+                "unsupported interface field 'icon'",
+            ),
+            (
+                'interface:\n'
+                '  display_name: Manual Skill\n'
+                '  short_description: "Explicit workflow."\n'
+                'policy:\n'
+                '  allow_implicit_invocation: false\n',
+                "must be a double-quoted JSON string",
+            ),
+        )
+
+        for content, expected_error in cases:
+            with self.subTest(expected_error=expected_error):
+                for root in (
+                    self.plugin / "skills" / "core-goal-run",
+                    self.catalog / "common" / "skills" / "core-goal-run",
+                ):
+                    self.write_raw_openai_sidecar(root, content)
+
+                summary = check_codex_next_surface.run_check(
+                    self.plugin, self.catalog
+                )
+
+                self.assertTrue(
+                    any(
+                        expected_error in error for error in summary["errors"]
+                    ),
+                    summary["errors"],
+                )
+
+    def test_informational_skill_mentions_are_not_policy_errors(self) -> None:
+        body = (
+            "# Alpha\n\n"
+            "Existing `core-goal-run` records may be useful evidence; this is not "
+            "an instruction to invoke that workflow.\n"
+        )
+        for root in (
+            self.plugin / "skills" / "alpha-skill",
+            self.catalog / "common" / "skills" / "alpha-skill",
+        ):
+            self.write_skill(root, "alpha-skill", body=body)
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertEqual(summary["errors"], [])
+
+    def test_explicit_control_policy_members_must_exist(self) -> None:
+        shutil.rmtree(self.plugin / "skills" / "core-goal-run")
+        shutil.rmtree(
+            self.catalog / "common" / "skills" / "core-goal-run"
+        )
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertEqual(
+            summary["missing_explicit_control_skills"], ["core-goal-run"]
+        )
+        self.assertTrue(
+            any(
+                "explicit control skills missing from plugin package: "
+                "core-goal-run" in error
+                for error in summary["errors"]
+            )
+        )
 
     def test_claude_manifest_explicit_packaged_skills_paths_are_supported(self) -> None:
         cases = (

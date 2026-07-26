@@ -1,9 +1,9 @@
 ---
 name: core-explore-unknowns
-description: Build an unknowns map before implementation. Use when the request is underspecified, the repo or domain is unfamiliar, the user needs something concrete to react to, or new facts discovered midstream need to be captured before continuing. Pairs with core-grilling; this skill creates the map, while grilling interrogates an existing plan.
+description: Use only when the user explicitly invokes this skill to map unresolved product, domain, repository, or delivery unknowns before choosing a path.
 metadata:
-  version: "0.2"
-  updated: "2026-07-08"
+  version: "1.0"
+  updated: "2026-07-26"
 ---
 
 # Explore Unknowns

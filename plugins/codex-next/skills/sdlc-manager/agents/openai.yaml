@@ -1,0 +1,5 @@
+interface:
+  display_name: "SDLC Manager"
+  short_description: "Coordinate an explicitly invoked SDLC workstream."
+policy:
+  allow_implicit_invocation: false

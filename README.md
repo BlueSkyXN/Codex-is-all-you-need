@@ -109,7 +109,7 @@ Public examples include:
 
 | Pack | Agents | Skills | Use Case |
 |---|---:|---:|---|
-| `common` | 6 | 2 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
+| `common` | 6 | 5 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
 | `sdlc-manager` | 7 | 21 | Architecture-first SDLC control: BRD/URS/PRD, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
 | `dev` | 14 | 20 | Code mapping, implementation, tests, reviews, APIs, CLI, frontend, Python, security, performance |
 | `data` | 5 | 4 | Data profiling, SQL, cleaning, pipelines, analysis reports |
@@ -122,8 +122,9 @@ See [docs/agent-skill-map.md](docs/agent-skill-map.md) for the full responsibili
 
 Codex Next packages the public-safe skills into one installable plugin. It does
 not package `.codex/agents` custom agent TOML or V1 machine-local suite symlinks.
-The plugin includes a `core-router` entrypoint skill for routing a task to the
-smallest useful bundled workflow.
+The plugin includes an optional `core-router` discovery skill that recommends
+direct execution, one bounded skill, or one explicit control workflow, then
+stops without invoking the recommendation.
 
 Plugin source:
 
@@ -164,8 +165,9 @@ Then install from the configured marketplace:
 codex plugin add codex-next@codex-is-all-you-need
 ```
 
-After installation, invoke `$codex-next:core-router` or ask Codex to use Codex
-Next for the task.
+After installation, invoke `$codex-next:core-router` when you need a workflow
+recommendation. For a clear task, request the result directly; routing is not a
+required first step.
 
 The same marketplace also exposes focused standalone plugins that remain
 separate from Codex Next. Visual Brainstorming is an explicit opt-in because it

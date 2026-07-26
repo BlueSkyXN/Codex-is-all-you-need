@@ -2,8 +2,8 @@
 name: sdlc-spec-slice-writer
 description: Use to write focused implementation SPEC slices for UI, API, data, admin, permissions, directory, observability, or release.
 metadata:
-  version: "0.4"
-  updated: "2026-06-12"
+  version: "0.5"
+  updated: "2026-07-26"
 ---
 
 # SPEC Slice Writer
@@ -27,7 +27,7 @@ A SPEC slice is a narrow contract for one technical or product surface. It shoul
 - The needed artifact is a measurable NFR matrix. Use `sdlc-nfr-spec`.
 - The needed artifact is a standalone HLD. Use `sdlc-hld-workflow`.
 - The needed artifact is a standalone LLD. Use `sdlc-lld-workflow`.
-- The needed artifact is a solution package that coordinates HLD/LLD/ADR/SPEC. Use `sdlc-solution-spec-workflow`.
+- The needed artifact is a solution package that coordinates HLD/LLD/ADR/SPEC. Recommend `$codex-next:sdlc-solution-spec-workflow`.
 - The task is to create dev tasks. Use `sdlc-dev-handoff-planning`.
 
 ## Inputs
@@ -437,6 +437,9 @@ Before calling slices ready:
 
 ## Handoff
 
+Recommend the smallest next step. For an explicit-control workflow, return its
+exact `$codex-next:<skill-name>` command and stop; do not begin it here.
+
 Route downstream:
 
 | Need | Next skill |
@@ -447,10 +450,10 @@ Route downstream:
 | standalone LLD | `sdlc-lld-workflow` |
 | domain ownership or boundary map | `sdlc-domain-boundary-modeling` |
 | modular monolith directory/dependency structure | `sdlc-modular-monolith-architecture` |
-| solution package coordination | `sdlc-solution-spec-workflow` |
+| solution package coordination | `$codex-next:sdlc-solution-spec-workflow` |
 | implementation task package | `sdlc-dev-handoff-planning` |
 | traceability matrix | `sdlc-requirements-traceability` |
-| readiness judgment | `sdlc-readiness-review` |
+| readiness judgment | `$codex-next:sdlc-readiness-review` |
 
 For dev handoff, provide:
 

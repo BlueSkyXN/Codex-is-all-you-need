@@ -1,9 +1,9 @@
 ---
 name: sdlc-readiness-review
-description: Use to assess whether SDLC materials, specs, handoffs, issues, or direct-dev requests are ready, need revision, are not needed, or are blocked.
+description: Use only when the user explicitly invokes this skill to make a readiness-gate judgment on SDLC materials, specs, handoffs, issues, or direct-dev requests.
 metadata:
-  version: "0.5"
-  updated: "2026-07-12"
+  version: "1.0"
+  updated: "2026-07-26"
 ---
 
 # SDLC Readiness Review
@@ -203,8 +203,9 @@ If traceability is absent but the task is safe for direct dev, mark it as an acc
 
 ### 8. Decide readiness verdict
 
-If the trade-off set is still contested, run `core-grilling` on it before
-freezing the decision.
+If the trade-off set is still contested, recommend
+`$codex-next:core-grilling` and stop before freezing the decision. Wait for the
+user to invoke it explicitly; do not imitate or begin it from this review.
 
 Use one verdict only:
 
@@ -317,6 +318,9 @@ Before returning the verdict, check:
 
 ## Handoff
 
+Recommend the smallest next step. For an explicit-control workflow, return its
+exact `$codex-next:<skill-name>` command and stop; do not begin it here.
+
 Route by verdict:
 
 | Verdict | Route |
@@ -324,8 +328,8 @@ Route by verdict:
 | `ready-for-dev` | `sdlc-dev-handoff-planning` or dev implementation skill |
 | `ready-for-direct-dev` | dev skill such as `dev-bugfix`, `dev-repo-onboarding`, or `dev-spec-driven-implementation` |
 | `repo-onboarding-first` | `dev-repo-onboarding` |
-| `revise` | relevant authoring skill: `sdlc-srs-workflow`, `sdlc-nfr-spec`, `sdlc-spec-slice-writer`, `sdlc-requirements-workflow` |
+| `revise` | relevant authoring skill: `sdlc-srs-workflow`, `sdlc-nfr-spec`, `sdlc-spec-slice-writer`, `$codex-next:sdlc-requirements-workflow` |
 | `reduce-scope` | return to the requesting skill or direct-dev with the baseline-compatible smaller alternative named |
-| `change-control-needed` | `sdlc-change-control` |
+| `change-control-needed` | `$codex-next:sdlc-change-control` |
 | `not-needed` | report the evidence that no unmet need remains; do not route to build |
 | `blocked` | ask for required owner decision, missing input, or conflict resolution |

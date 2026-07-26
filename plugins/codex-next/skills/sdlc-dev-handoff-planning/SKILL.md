@@ -2,8 +2,8 @@
 name: sdlc-dev-handoff-planning
 description: Use to create dev handoff packages and task cards from scoped SDLC materials, issues, specs, validation, and blockers.
 metadata:
-  version: "0.4"
-  updated: "2026-06-12"
+  version: "0.5"
+  updated: "2026-07-26"
 ---
 
 # Dev Handoff Planning
@@ -13,7 +13,7 @@ Use this workflow when SDLC manager work must be converted into a package that d
 The handoff is the boundary between the specification control plane and the implementation execution plane:
 
 ```text
-sdlc-manager creates the delivery contract.
+SDLC coordination creates the delivery contract.
 dev executes the delivery contract.
 ```
 
@@ -35,7 +35,7 @@ For lane, ADS, lightweight ID, `local/sdlc`, delivery card, and midstream intake
 - The request is direct implementation and already contains enough scope, target files, and validation instructions; route to dev directly.
 - The work is repo exploration only; use `dev-repo-onboarding` in dev.
 - The user asks for code edits, test execution, PR review, or release publishing.
-- The upstream scope is still unresolved; use `sdlc-readiness-review`, `sdlc-requirements-workflow`, `sdlc-srs-workflow`, or `sdlc-spec-slice-writer` first.
+- The upstream scope is still unresolved; recommend `$codex-next:sdlc-readiness-review`, `$codex-next:sdlc-requirements-workflow`, `sdlc-srs-workflow`, or `sdlc-spec-slice-writer` as appropriate.
 
 ## Inputs
 
@@ -83,7 +83,7 @@ Choose one path:
 | Path | Use when | Output depth |
 |---|---|---|
 | `sdlc-backed` | SRS/SPEC/NFR/RTM or approved planning artifacts exist | Full dev handoff |
-| `lane-routed` | `sdlc-router` already chose a lane and dev path | Match the selected dev path |
+| `lane-routed` | The upstream router already chose a lane and dev path | Match the selected dev path |
 | `issue-backed` | Issue or task is clear, but formal SDLC artifacts are absent | Task handoff |
 | `bugfix-backed` | Reproduction or observed failure exists | Bugfix handoff |
 | `repo-onboarding-first` | Repository or implementation area is unclear | Onboarding handoff |
@@ -355,9 +355,12 @@ Before declaring the handoff ready, check:
 - Do not fabricate SRS, SPEC, or RTM just to satisfy a process shape.
 - Do not replace `sdlc-validation-plan-workflow` when validation planning needs a durable artifact.
 - Do not hide risk when development proceeds without SDLC artifacts.
-- Do not let dev handoff replace `sdlc-requirements-traceability`, `sdlc-readiness-review`, or `sdlc-change-control` when those are needed.
+- Do not let dev handoff replace dedicated traceability, readiness-review, or change-control work when those are needed.
 
 ## Handoff
+
+Recommend the smallest next step. For an explicit-control workflow, return its
+exact `$codex-next:<skill-name>` command and stop; do not begin it here.
 
 Route downstream:
 
@@ -373,5 +376,5 @@ Route downstream:
 | release-bound | `dev-release-check` |
 | validation plan missing or too implicit | `sdlc-validation-plan-workflow` |
 | traceability missing | `sdlc-requirements-traceability` |
-| change affects baseline | `sdlc-change-control` |
+| change affects baseline | `$codex-next:sdlc-change-control` |
 | architecture/domain constraints need authoring | `sdlc-hld-workflow`, `sdlc-lld-workflow`, `sdlc-domain-boundary-modeling`, or `sdlc-architecture-decision-record` |

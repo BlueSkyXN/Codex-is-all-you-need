@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import importlib.util
 import re
+import sys
 import unittest
 from pathlib import Path
 
@@ -8,6 +10,16 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_SKILLS = REPO_ROOT / "plugins" / "codex-next" / "skills"
 CATALOG = REPO_ROOT / "examples" / "catalog"
+
+_SURFACE_SCRIPT = REPO_ROOT / "scripts" / "check_codex_next_surface.py"
+_SURFACE_SPEC = importlib.util.spec_from_file_location(
+    "surface_checker_for_behavior_tests", _SURFACE_SCRIPT
+)
+assert _SURFACE_SPEC is not None and _SURFACE_SPEC.loader is not None
+_surface_checker = importlib.util.module_from_spec(_SURFACE_SPEC)
+sys.modules[_SURFACE_SPEC.name] = _surface_checker
+_SURFACE_SPEC.loader.exec_module(_surface_checker)
+EXPLICIT_CONTROL_SKILLS = frozenset(_surface_checker.EXPLICIT_CONTROL_SKILLS)
 
 READINESS_COPIES = (
     PLUGIN_SKILLS / "sdlc-readiness-review" / "SKILL.md",
@@ -70,6 +82,14 @@ ROUTER = PLUGIN_SKILLS / "core-router" / "SKILL.md"
 
 def normalized(text: str) -> str:
     return " ".join(text.split())
+
+
+def catalog_skill_docs() -> list[Path]:
+    return [
+        path
+        for skills_root in CATALOG.glob("*/skills")
+        for path in skills_root.rglob("*.md")
+    ]
 
 
 def section(text: str, heading: str, next_heading: str | None = None) -> str:
@@ -297,11 +317,39 @@ class SkillBehaviorContractsTest(unittest.TestCase):
             "continue with the selected skill",
             "invoke or approve",
         )
-        for path in sorted(PLUGIN_SKILLS.glob("*/SKILL.md")):
+        scanned_docs = sorted(PLUGIN_SKILLS.rglob("*.md")) + sorted(
+            catalog_skill_docs()
+        )
+        self.assertGreater(len(scanned_docs), 59)
+        for path in scanned_docs:
             compact = normalized(path.read_text(encoding="utf-8")).lower()
             for phrase in legacy_cascade_phrases:
                 with self.subTest(path=path, phrase=phrase):
                     self.assertNotIn(phrase, compact)
+
+    def test_explicit_control_descriptions_stay_explicit(self) -> None:
+        explicit_prefix = "Use only when the user explicitly invokes this skill"
+        self.assertEqual(len(EXPLICIT_CONTROL_SKILLS), 10)
+        for name in sorted(EXPLICIT_CONTROL_SKILLS):
+            copies = [PLUGIN_SKILLS / name / "SKILL.md"]
+            copies.extend(
+                path
+                for path in CATALOG.glob(f"*/skills/{name}/SKILL.md")
+            )
+            self.assertGreaterEqual(len(copies), 2, name)
+            for path in copies:
+                with self.subTest(skill=name, path=path):
+                    text = path.read_text(encoding="utf-8")
+                    match = re.search(
+                        r"^description:\s*(.+)$", text, re.MULTILINE
+                    )
+                    self.assertIsNotNone(match, "missing description")
+                    assert match is not None
+                    self.assertTrue(
+                        match.group(1).startswith(explicit_prefix),
+                        f"{name} description no longer starts with the "
+                        f"explicit-invocation contract: {match.group(1)!r}",
+                    )
 
     def test_sdlc_router_is_explicit_read_only_and_recommend_only(self) -> None:
         for path in SDLC_ROUTER_COPIES:

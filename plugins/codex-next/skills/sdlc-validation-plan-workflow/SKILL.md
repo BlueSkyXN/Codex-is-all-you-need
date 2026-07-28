@@ -2,7 +2,7 @@
 name: sdlc-validation-plan-workflow
 description: Use to create validation plans or behavior baselines linking requirements to checks, evidence, gaps, risks, and release gates.
 metadata:
-  version: "0.5"
+  version: "0.6"
   updated: "2026-07-26"
 ---
 
@@ -28,7 +28,7 @@ dev executes, extends, or reports against that plan.
 
 ## Do not use when
 
-- The task is to run tests, reproduce failures, diagnose logs, or inspect CI output. Use `dev_test_runner` or the relevant dev agent.
+- The task is to run tests, reproduce failures, diagnose logs, or inspect CI output. Run them directly, or use `dev-bugfix` for defect diagnosis.
 - The task is to design repo-specific testing layers, fixtures, coverage, or automation strategy. Use `dev-test-strategy`.
 - The task is to implement code, edit tests, or fix test failures. Use the relevant dev skill.
 - The task is a release checklist after implementation. Use `dev-release-check` when release execution is the main work.
@@ -340,7 +340,7 @@ Before returning the plan, check:
 - Do not modify tests.
 - Do not fix test failures.
 - Do not replace `dev-test-strategy`.
-- Do not replace `dev_test_runner`.
+- Do not replace direct test execution.
 - Do not replace `dev-release-check`.
 - Do not block clear direct-dev tasks solely because a formal validation plan is absent.
 
@@ -355,7 +355,7 @@ Route downstream:
 |---|---|
 | dev execution | `sdlc-dev-handoff-planning` or `dev-spec-driven-implementation` |
 | repo-specific test strategy | `dev-test-strategy` |
-| test execution or failure diagnosis | `dev_test_runner` |
+| test execution or failure diagnosis | direct test run or `dev-bugfix` |
 | traceability update | `sdlc-requirements-traceability` |
 | readiness decision | `$codex-next:sdlc-readiness-review` |
 | release validation execution | `dev-release-check` |

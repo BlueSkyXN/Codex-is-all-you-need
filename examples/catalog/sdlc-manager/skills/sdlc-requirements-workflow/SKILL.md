@@ -2,7 +2,7 @@
 name: sdlc-requirements-workflow
 description: Use only when the user explicitly invokes this skill to establish a coordinated requirements baseline spanning business, user, and product inputs.
 metadata:
-  version: "1.0"
+  version: "1.1"
   updated: "2026-07-26"
 ---
 
@@ -73,7 +73,7 @@ workflow.
 
 2. Decide artifact depth.
    - If depth is unclear, ask one load-bearing question with a recommended
-default. Do not invoke `$codex-next:sdlc-router` from this workflow.
+     default. Do not invoke `$codex-next:sdlc-router` from this workflow.
    - 快线：do not use this workflow unless scope is unclear; prefer direct-dev or handoff-lite.
    - 增补：produce a short requirements package only when product scope, non-scope, or acceptance is unclear.
    - 规则变更：produce `REQ` items and acceptance direction for permission, billing, data metric, state machine, compliance, privacy, or business-semantic changes.

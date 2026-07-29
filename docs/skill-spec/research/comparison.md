@@ -1,9 +1,9 @@
 # 跨平台对比：名词定义 · SKILL.md · 目录结构
 
-Last updated: **2026-07-17**
+Last updated: **2026-07-29**
 
 本文是 **调研证据横表**，不是开发规范正文。规范真源见 [../SPEC.md](../SPEC.md)。
-证据来源：Agent Skills 开放标准 + 各平台 extract 文档 + 脱敏的本机安装样本（2026-07-17）。
+证据来源：Agent Skills 开放标准 + 各平台 extract 文档 + 脱敏的本机安装样本（主体 2026-07-17；WorkBuddy 5.2.6 历史快照 2026-07-28；WorkBuddy 5.3.5 scanner/loader/CLI 复核 2026-07-29）。
 
 ---
 
@@ -94,7 +94,7 @@ Command   = 用户怎么点名调用（常与 Skill 重叠）
 | 字段 | 必须？ | 约束 |
 |---|---|---|
 | `name` | **是** | ≤64；仅 `a-z` `0-9` `-`；不以 `-` 开头/结尾；无连续 `--`；**必须等于父目录名** |
-| `description` | **是** | ≤1024；非空；写清 **做什么 + 何时用**；含触发关键词 |
+| `description` | **是** | ≤1024；非空；写清 **做什么 + 适用事件/任务上下文**。本仓规范进一步要求单行，不用猜测的用户关键词或示例问法代替任务语义 |
 | `license` | 否 | 许可证名或捆绑许可证文件引用 |
 | `compatibility` | 否 | ≤500；环境/产品/依赖要求 |
 | `metadata` | 否 | `string → string` 映射；键名应尽量唯一 |
@@ -166,7 +166,7 @@ policy:
 | `context: fork` | O | O | — | — | — | — | — |
 | `agent` | O | O | — | — | — | — | — |
 | `hooks` | O | O（fork+trust） | — | — | — | — | — |
-| `allowed-tools` / `tools` | O | O | O | **O（tools）** | O | **X 禁止 tools** | — |
+| `allowed-tools` / `tools` | O | O | O | **O（tools）** | O（WorkBuddy 5.3.5 scanner/UI；执行未证） | **X 禁止 tools** | — |
 | `disallowed-tools` | O | — | — | — | — | — | — |
 | `shell` | O | — | — | — | — | — | — |
 
@@ -174,11 +174,15 @@ policy:
 
 | 字段 | 谁 | 作用 | 可移植？ |
 |---|---|---|---|
-| `agent_created: true` | WorkBuddy | 允许 `skill_manage` 后续改删 | ❌ 私有 |
-| `disable` | WorkBuddy 内置样本 | 启用开关 | ❌ |
+| `agent_created: true` | WorkBuddy | Bundled creator 文案将其关联到 SkillManage 生命周期，但 scaffold / validator 未同步；不是本仓默认字段 | ❌ 私有 |
+| `display_name` / `display-name` | WorkBuddy 5.3.5 scanner | 当前 bundled scanner 不读取；5.2.6 曾记录 UI fallback，现仅保留为历史快照。不能替代 `name` / `description` | ❌ 不作为当前 WorkBuddy adapter |
+| `allowed-tools` | WorkBuddy 5.3.5 scanner | 非空逗号分隔值或数组会投影为本地列表对象的 `allowedTools`；空值与缺失都不生成该属性。未证实 invocation runtime 以此作 allowlist | ❌ 扫描/UI 适配，不是已验证安全控制 |
+| `disable-model-invocation` | WorkBuddy 5.3.5 bundled samples | 6 个 builtin 仍带 `true`，但当前 scanner 未读取。5.2.6 的手动调用语义仅是历史记录 | ❌ 未验证当前调用控制 |
+| `disable` | WorkBuddy 5.3.5 scanner + local toggle UI | 读取到本地列表对象；本地 toggle 会写回 `SKILL.md`。是否阻止实际 invocation 未验证 | ❌ 本地管理状态，不是已验证执行策略 |
+| `license` | WorkBuddy 5.3.5 scanner | 读取并投影到本地列表对象；未发现 invocation runtime 语义 | ⚠️ 字段可移植，当前只见扫描/UI 消费 |
 | `version`（顶层） | QoderWork creators | 技能自身版本 | ⚠️ 标准推荐放 `metadata.version` |
 | `description_zh` / `name_en` / `description_en` | QoderWork | 双语 | ❌ UI adapter |
-| `displayName` | QoderWork 部分 skill | UI 名 | ❌ |
+| `displayName` | QoderWork 部分 Skill，以及 WorkBuddy Expert/Plugin/Agent MD 层 | 对应产品包装层的 UI 名；不是 WorkBuddy Skill 的 `display_name` | ❌ 产品/包装层 UI adapter |
 | `metadata.openclaw.*` | OpenClaw | OS/bin/env gating、install、emoji… | ❌ vendor ns（可共存） |
 | `metadata.short-description` 等 | Codex 样本 | 短描述 | ⚠️ 用唯一键 |
 
@@ -197,15 +201,21 @@ metadata:
 ---
 ```
 
-**WorkBuddy 用户 skill（脱敏）：**
+**WorkBuddy bundled skill（脱敏后的字段存在性样本）：**
 
 ```yaml
 ---
-name: example-workflow
-description: This skill should be used when the task involves the example workflow.
-agent_created: true
+name: skill-creator
+description: Guide for creating effective skills and reusable workflow resources.
+license: Complete terms in LICENSE.txt
+allowed-tools:
+disable: false
 ---
 ```
+
+该样本只证明字段存在。WorkBuddy 5.3.5 scanner 会把空 `allowed-tools:`
+视为未设置，并读取 `disable` 与 `license` 供本地列表/管理使用；这不证明任何字段
+已经在 invocation runtime 生效。
 
 **QoderWork 角色插件内 skill（中文 name，不可作为 portable 核心）：**
 
@@ -269,7 +279,13 @@ description: "Use when a task has failed repeatedly and needs structured recover
 | 字符集 | 小写 kebab | 更松；命令名常取 **目录名** | 允许 **中文 name** | 只用 `[a-z0-9-]` |
 | 与目录名 | **必须一致** | 目录名决定 `/` 命令（多数情况） | 目录也用中文 | 目录名 = name = kebab |
 | 大小写 | 禁止大写 | 较宽容 | 中文无此问题 | 全小写 |
-| 显示名 | 无独立字段 | 列表可用 name/目录 | `displayName` / 中文 name | UI 名放产品层，不占 `name` |
+| 显示名 | 无独立字段 | `name` 是列表显示名；个人/项目命令通常来自目录，Plugin Skill 的 `name` 还影响命令末段 | `displayName` / 中文 name | 保持 `name` = 目录；Codex 用 `agents/openai.yaml.interface.display_name`。WorkBuddy 5.3.5 scanner 不读取顶层 `display_name` / `display-name` |
+
+显示名 adapter 不能互换：OpenAI Skill 使用 sidecar snake_case
+`interface.display_name`；Claude Code 没有独立字段；WorkBuddy 5.2.6 中记录的
+`SKILL.md` 顶层 `display_name` / `display-name` fallback 并未出现在 5.3.5 scanner，
+不能作为当前兼容层。WorkBuddy Expert/Plugin 与 QoderWork 观察到的 camelCase
+`displayName` 属于其他产品层。
 
 ---
 
@@ -315,7 +331,7 @@ skill-name/                 # 目录名 = frontmatter name
 | **Claude** | `SKILL.md` + 任意辅助文件；示例含 `examples/` `scripts/` 与平级 `reference.md` | 用户 skill 常极简仅 SKILL.md；插件另有 agents/commands | 结构更自由；eval 实践 |
 | **OpenClaw** | 标准 skill 目录；可用 `{baseDir}` | 随 ClawHub 可有 `.clawhub/` 元数据 | gating 元数据在 frontmatter |
 | **CodeBuddy** | Claude-like；`${CODEBUDDY_SKILL_DIR}` | 同 Claude 家族 | 占位符 |
-| **WorkBuddy** | creator 明示 scripts/references/assets | 用户 skill：`SKILL.md`+`references/` | + `agent_created`；打包 zip |
+| **WorkBuddy** | creator 明示 scripts/references/assets | 用户 skill：`SKILL.md`+`references/` | 产品字段按证据适配；打包 zip |
 | **Qoder 文档** | `SKILL.md` + REFERENCE.md/EXAMPLES.md/scripts/templates | — | 平级大写 md 文件名 |
 | **QoderWork** | creator：`reference.md` `examples.md` `scripts/` | 用户/插件 skill 常仅 `SKILL.md` | 中文目录名 |
 | **Copilot CLI** | Agent Skills 形 | 用户 skill 常仅 `SKILL.md` | agent 不在 skill 目录内 |
@@ -405,7 +421,7 @@ plugin-root/
 | 维度 | 可移植核心（所有人） | 常见兼容扩展 | 明确私有、勿当核心 |
 |---|---|---|---|
 | **名词** | Skill = dir + SKILL.md | Plugin 作分发；Agent 作角色 | Expert/Team 上架壳；Suite |
-| **SKILL.md** | YAML + MD；`name`+`description` 必填与限额 | Claude 调用控制字段；`metadata.*` | 中文 `name`；`agent_created`；顶层随意字段 |
+| **SKILL.md** | YAML + MD；`name`+`description` 必填与限额 | Claude 调用控制字段；WorkBuddy scanner/UI 字段；`metadata.*` | 中文 `name`；未经验证的顶层产品字段 |
 | **目录** | `SKILL.md`；可选 scripts/references/assets | `agents/openai.yaml`；examples/evals | `.xxx-plugin/`；avatars；中文目录 |
 
 ---

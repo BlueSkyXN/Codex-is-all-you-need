@@ -7,9 +7,9 @@
 | Product | WorkBuddy (desktop agent; shares CodeBuddy packaging DNA) |
 | Config root | `$WORKBUDDY_CONFIG_DIR` if set, else `~/.workbuddy` |
 | Public package spec | Still **no stable first-party web authoring page** comparable to Claude/Codex |
-| First-party local evidence | WorkBuddy.app bundled `builtin-skills/` (verified 2026-07-17) |
+| First-party local evidence | WorkBuddy.app 5.3.5 bundled `builtin-skills/` and scanner/loader. No separately named CLI payload was found; a scanner comment says its plugin scan mirrors an Agent CLI loader. 5.2.6 field conclusions are retained below only as a historical snapshot. |
 | Related product | CodeBuddy CLI docs describe a Claude-like skill surface; WorkBuddy reuses `.codebuddy-plugin` names and often CodeBuddy wording inside creators |
-| Extracted | 2026-07-17 from local app package + sanitized local layout samples |
+| Extracted | 2026-07-17 from local app package + sanitized local layout samples; 5.2.6 historical snapshot 2026-07-28; 5.3.5 scanner/loader/CLI boundary refreshed 2026-07-29 |
 
 Primary local sources:
 
@@ -128,32 +128,68 @@ Portable core (from `skill-creator`):
 | Field | Required | Notes |
 |---|---|---|
 | `name` | Yes | Skill id / discovery |
-| `description` | Yes | What + when; third-person preferred |
+| `description` | Yes | What the Skill handles and the applicable event/task context; third-person is preferred by the bundled creator |
 
-WorkBuddy-specific / product-local:
+Additional fields observed in WorkBuddy. The following are strictly versioned;
+the 5.3.5 scanner/UI facts do not establish invocation-runtime behavior.
 
 | Field | Required | Notes |
 |---|---|---|
-| `agent_created` | Required for agent-managed lifecycle | `true` so `skill_manage` can later modify/delete |
-| `allowed-tools` | Optional | Seen on builtin skills (may be empty/list/special host tools) |
-| `disable` | Optional | Builtin creators use `disable: false` |
-| `license` | Optional | e.g. pointer to `LICENSE.txt` |
+| `display_name` / `display-name` | No current scanner support found | The 5.3.5 local Skill scanner's explicit field projection does not read either spelling. The 5.2.6 `display_name`-first / `display-name`-fallback observation is retained below as historical evidence, not a current authoring rule. Neither spelling replaces `name` or `description`. |
+| `allowed-tools` | Optional scanner/UI metadata | In 5.3.5, a non-empty comma-separated value or YAML array is normalized to the local list object's `allowedTools`; empty and absent both produce no value. The inspected app bundle does not prove that invocation enforces it as a tool allowlist. |
+| `disable-model-invocation` | Bundled sample only in 5.3.5 | Six current builtins retain `true`, but the 5.3.5 scanner has no explicit reader. The 5.2.6 manual-only claim is historical and requires a version-matched invocation test before reuse. |
+| `disable` | Local scanner and management UI | 5.3.5 reads the boolean into its local list object and its local toggle flow writes the field back to `SKILL.md`. This proves local management state, not that a running model/invocation runtime excludes the Skill. |
+| `license` | Local scanner/UI metadata | 5.3.5 reads a text value into its local list object. It has no invocation-runtime semantics established by the inspected code. |
+| `agent_created` | Observed lifecycle marker, not a portable/default field | Bundled prose associates `true` with later SkillManage maintenance, but `init_skill.py` does not generate it and `quick_validate.py` does not validate it. Keep it out of the portable definition. |
 
-Sanitized local user-skill frontmatter:
+Sanitized field shape from the current bundled `skill-creator` frontmatter:
 
 ```yaml
 ---
-name: example-workflow
-description: This skill should be used when the task involves the example workflow.
-agent_created: true
+name: skill-creator
+description: Guide for creating effective skills and reusable workflow resources.
+license: Complete terms in LICENSE.txt
+allowed-tools:
+disable: false
 ---
 ```
+
+This example proves field presence only. In 5.3.5, empty `allowed-tools:` is
+not projected as a local list value; `disable` and `license` are projected for
+the scanner/UI. None of those observations proves an invocation-runtime policy.
 
 Marketplace installer builtin uses host-gated tools:
 
 ```yaml
 allowed-tools: workbuddy_marketplace_skill
 ```
+
+### Versioned inventory and evidence boundary
+
+**Current 5.3.5 bundle:** 18 top-level builtin Skills; `license` appears on 3,
+`allowed-tools` on 10 (8 empty, 2 non-empty), bare `disable: false` on 3, and
+`disable-model-invocation: true` on 6. Neither `display_name` nor `display-name`
+appears. The bundled local scanner explicitly projects `allowed-tools`, `disable`,
+and `license`, and the local toggle flow persists `disable`; it does not project
+or otherwise explicitly consume `display_name`, `display-name`, or
+`disable-model-invocation`.
+
+**Historical 5.2.6 snapshot (recorded 2026-07-28):** the prior bundle was
+observed to use `display_name` first with a `display-name` fallback for a Skill
+UI value and documented `disable-model-invocation` as manual-only. This is not a
+current 5.3.5 recommendation and is not evidence of today's invocation behavior.
+
+The app-asar inspection separates two layers: local filesystem scanner/list/toggle
+code versus the runtime that decides which Skill a model may invoke. It establishes
+the former only. No separately named CLI payload was found in the package; a
+scanner comment referring to an Agent CLI loader is not executable CLI evidence.
+No bundled, version-matched invocation test was run, so do not treat
+`allowed-tools`, `disable`, `license`, or the historical 5.2.6 fields as
+execution-policy guarantees.
+
+Do not add `display_name` / `display-name` to a new WorkBuddy Skill by default.
+Do not copy the Expert/Plugin camelCase `displayName` object into a Skill: that is
+a different packaging layer.
 
 ## 6. Progressive disclosure / loading
 
@@ -194,10 +230,15 @@ Expert-manager scripts:
 
 Skills:
 
-- Model auto-selection from description
-- Slash / skill-id style invoke for installed skills
+- Bundled Skill text describes model auto-selection from description and slash /
+  skill-id-style invocation for installed Skills.
 - Marketplace one-shot install via `marketplace-skill-installer` →
   host tool `workbuddy_marketplace_skill` (`search` / `install`)
+
+The current 5.3.5 scanner/list code is not itself the invocation runtime. It
+does not explicitly read `disable-model-invocation`, `display_name`, or
+`display-name`; therefore this extract does not assert their current effect on
+auto-selection, Skill-tool invocation, or slash invocation.
 
 Experts:
 
@@ -256,11 +297,18 @@ Documented / observed product constraints:
 
 ### Skill layer
 
-- `agent_created: true` lifecycle flag
-- Host tool allowlists such as `workbuddy_marketplace_skill`
+- Scanner/UI metadata: `allowed-tools`, `disable`, and `license` (5.3.5)
+- Bundled, but not scanner-consumed: `disable-model-invocation: true` (5.3.5)
+- Historical-only 5.2.6 scanner/UI spelling: `display_name` with `display-name`
+  fallback
+- An observed `agent_created` lifecycle marker whose creator prose, scaffold, and validator are not synchronized; it is not part of the portable/default definition
 - CodeBuddy-compatible resource layout and progressive disclosure doctrine
 
 ### Expert / plugin layer (`.codebuddy-plugin/plugin.json`)
+
+The camelCase `displayName` fields below belong to Expert/Plugin and Agent MD
+presentation contracts. They are distinct from the WorkBuddy Skill frontmatter
+string `display_name` described above.
 
 Core identity:
 
@@ -322,17 +370,26 @@ results to lead via messaging conventions.
 - Expert validate/register before use
 - Treat bundled scripts as executable code
 - Do not put tool ACL in agent frontmatter; system assigns tools
-- Prefer least-privilege skill tool lists when product supports them
+- Do not treat `allowed-tools` as a security boundary until a version-matched
+  invocation test proves enforcement. In 5.3.5 it is scanner/UI metadata and an
+  empty value is absent from the local list projection.
+- Use the local `disable` control only as a WorkBuddy management-state mechanism;
+  its actual invocation effect remains unverified. Do not rely on
+  `disable-model-invocation` without a current consumer test.
 
 ## 14. Authoring practices
 
 1. Author portable skill core as Agent Skills (`name`/`description` + lean body + resources).
-2. On WorkBuddy, set `agent_created: true` if the skill should remain agent-manageable.
-3. Use `skill-creator` for skills; use `expert-manager` when the unit is a marketable role/team.
-4. Keep expert generation inside the fixed `my-experts/plugins` root.
-5. Fill bilingual display fields carefully; they are product UX contracts, not optional polish.
-6. After editing marketplace-installed skills, mark `userModified: true`.
-7. Do not assume WorkBuddy upload/SkillHub rules from community posts alone — prefer
+2. For packages authored under this repository's SPEC, keep `description` as a single line describing capability and applicable event/task context; do not define it as a list of guessed user phrases. This is repository guidance, not a claimed WorkBuddy runtime hard limit.
+3. Do not add observed product-local fields by default. In particular, do not add
+   `display_name`, `display-name`, `allowed-tools`, or
+   `disable-model-invocation` on the strength of the historical 5.2.6 record;
+   do not rely on `disable` as an execution control.
+4. Use `skill-creator` for skills; use `expert-manager` when the unit is a marketable role/team.
+5. Keep expert generation inside the fixed `my-experts/plugins` root.
+6. Fill bilingual display fields carefully; they are product UX contracts, not optional polish.
+7. After editing marketplace-installed skills, mark `userModified: true`.
+8. Do not assume WorkBuddy upload/SkillHub rules from community posts alone — prefer
    app-bundled validators/scripts when packaging.
 
 ## 15. Extraction notes
@@ -351,7 +408,11 @@ results to lead via messaging conventions.
 | Area | Confidence |
 |---|---|
 | Skill package shape (`SKILL.md` + resources) | High |
-| `agent_created` requirement | High (creator + local sample) |
+| 5.3.5 scanner/UI read/write behavior (`allowed-tools` / `disable` / `license`) | High for the inspected bundled local scanner and toggle flow |
+| 5.3.5 `display_name` / `display-name` / `disable-model-invocation` scanner handling | High: no explicit scanner reader found; this is not proof about every remote or future consumer |
+| Invocation semantics for all five fields | Unverified; no version-matched live invocation matrix was run |
+| 5.2.6 `display_name` fallback and manual-only claim | Historical snapshot only; do not generalize to 5.3.5 |
+| `agent_created` lifecycle intent | Medium (creator prose conflicts with scaffold and validator) |
 | Expert plugin schema | High (bundled `plugin-json-spec.md` + scripts) |
 | Exact project-path precedence vs CodeBuddy paths | Medium (path survey + mixed template text) |
 | Public SkillHub upload schema | Still open / not first-party web-documented here |

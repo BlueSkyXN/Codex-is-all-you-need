@@ -177,7 +177,7 @@ Not heavily normative in the core page, but practical implications:
 
 ## 14. Authoring practices
 
-1. Write `description` with both **capability** and **trigger keywords**.
+1. Write `description` with both **capability** and the applicable event/task context. The open requirement is “what + when”; it does not require guessing literal user keywords.
 2. Keep `SKILL.md` short; progressive-disclose detail.
 3. Prefer relative, one-level-deep links to references/scripts.
 4. Put product-only data under unique `metadata` keys.

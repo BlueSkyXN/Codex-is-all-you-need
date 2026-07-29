@@ -1,6 +1,6 @@
 # Research Status / 调查状态与缺口清单
 
-Last updated: **2026-07-17**（本地创建路径补强后）
+Last updated: **2026-07-29**（WorkBuddy 5.3.5 bundled scanner / loader / CLI 读取边界复核后）
 
 This file tracks how complete the multi-vendor skill-spec research is, what was
 already extracted, what can still be investigated from public docs/local samples,
@@ -43,7 +43,7 @@ and what is blocked on missing official sources or runtime verification.
 | Sidecar file | Codex | `agents/openai.yaml` |
 | Frontmatter runtime fields | Claude, CodeBuddy, some Copilot skills | `disable-model-invocation`, `allowed-tools`, `context: fork`, `user-invocable`, … |
 | Frontmatter vendor namespace | OpenClaw | `metadata.openclaw` |
-| Product lifecycle flag | WorkBuddy | `agent_created: true` |
+| Product-local frontmatter | WorkBuddy | 5.3.5 scanner reads `allowed-tools` / `disable` / `license` into its local list model and writes `disable` for the local toggle UI; it does **not** read `display_name`, `display-name`, or `disable-model-invocation`. This is scanner/UI evidence, not invocation-runtime enforcement. |
 | Bilingual / UI-first naming | QoderWork plugins | Chinese `name` + `name_en` / `description_en` |
 | Thin standard only | Qoder public CLI docs | mainly `name`/`description` + optional files |
 | Package manifests | Distribution layers | `.codex-plugin/`, `.claude-plugin/`, `.codebuddy-plugin/`, `.qoder-plugin/`, Copilot `plugin.json`, ClawHub, etc. |
@@ -76,8 +76,7 @@ and what is blocked on missing official sources or runtime verification.
   initialization, and validation helpers
 - **WorkBuddy (2026-07-17):**
   - App bundled `skill-creator`, `expert-manager`, `marketplace-skill-installer`
-  - User skills root `~/.workbuddy/skills/`; sanitized shape includes
-    `agent_created: true`
+  - User skills root `~/.workbuddy/skills/`; product-local frontmatter exists but is not part of the portable/default definition
   - Expert package fields summarized without copying private templates
   - Manifest dir name `.codebuddy-plugin/`
 - **QoderWork CN (2026-07-17):**
@@ -199,7 +198,7 @@ Legend:
 | H3 | Whether `agents/openai.yaml` is ignored harmlessly outside Codex | OPEN | expected yes; verify |
 | H4 | Whether `metadata.openclaw` is ignored harmlessly outside OpenClaw | OPEN | expected yes; verify |
 | H5 | Dual Claude+Codex plugin manifests interoperability | PARTIAL | this repo already ships dual manifests; formal matrix not run |
-| H6 | Whether WorkBuddy `agent_created` / QoderWork Chinese `name` break other clients | OPEN | expected ignore/soft-fail; verify |
+| H6 | Whether WorkBuddy product-local top-level fields / QoderWork Chinese `name` break other clients | OPEN | do not assume ignore/soft-fail; verify |
 
 ---
 
@@ -224,10 +223,13 @@ Primary input: sanitized local path survey across WorkBuddy / QoderWork CN / Cod
 ### WorkBuddy (local first-party assets)
 
 - Bundled creators:
-  - `skill-creator` (Agent Skills progressive disclosure + `agent_created: true`)
+  - `skill-creator` (Agent Skills progressive disclosure; creator prose mentions `agent_created`, but scaffold/validator do not enforce it)
   - `expert-manager` (agent/team experts, init/validate/register/package)
   - `marketplace-skill-installer` (host tool `workbuddy_marketplace_skill`)
 - Skill package shape: `SKILL.md` + optional `scripts/` `references/` `assets/`
+- **Current 5.3.5 bundled inventory** (18 top-level Skills): `license` 3, `allowed-tools` 10 (8 empty, 2 non-empty), bare `disable: false` 3, `disable-model-invocation: true` 6, and Skill-level `display_name` / `display-name` 0.
+- **Current 5.3.5 scanner/loader boundary:** its local Skill-list projection reads `allowed-tools` (normalizes a non-empty comma-separated string or array to `allowedTools`), `disable`, and `license`; the local toggle action writes `disable` back to `SKILL.md`. The same scanner projection has no reader for `display_name`, `display-name`, or `disable-model-invocation`. No separately named CLI payload was found in this app package; the scanner source only says that its plugin scan mirrors an Agent CLI loader. The inspected bundled code does not prove that `allowedTools`, `disable`, or `license` constrain an invocation runtime.
+- **Historical 5.2.6 snapshot (2026-07-28):** this research previously recorded scanner/UI handling for `display_name` with a `display-name` fallback and documented manual-only behavior for `disable-model-invocation`. Keep that record version-scoped; do not use it as a current 5.3.5 authoring recommendation without an invocation test.
 - Live user skill root: `~/.workbuddy/skills/`
 - Expert fixed root: `$WORKBUDDY_CONFIG_DIR/plugins/marketplaces/my-experts/plugins/`
 - Manifest dir: `.codebuddy-plugin/plugin.json`
@@ -282,11 +284,12 @@ Not urgent freeze; when continuing, do this order for highest value:
    - Codex → `agents/openai.yaml`
    - Claude/CodeBuddy/Copilot-ish → frontmatter runtime fields
    - OpenClaw → `metadata.openclaw`
-   - WorkBuddy → `agent_created` + expert package cosmetics
+   - WorkBuddy → default to portable core. In 5.3.5, `allowed-tools` / `disable` / `license` have local scanner/UI evidence only; do not add `display_name`, `display-name`, or `disable-model-invocation` without a version-matched consumer test
    - QoderWork → bilingual UI fields + `.qoder-plugin` role suites
 3. Do not put WorkBuddy expert marketplace cosmetics or QoderWork Chinese UI names into the portable core.
 4. Do not claim cross-runtime behavior that has not been smoke-tested (H1–H6).
-5. When docs conflict (Qoder precedence, OpenClaw description length guidance, WorkBuddy creator text saying `~/.codebuddy`), mark as **unresolved** instead of picking silently.
+5. Do not infer invocation semantics from observed vendor frontmatter or scanner/UI code: in WorkBuddy 5.3.5, `allowed-tools`, `disable`, and `license` are projected by the local scanner, while `display_name`, `display-name`, and `disable-model-invocation` are not. The 5.2.6 display-name/manual-only record is historical, not a current guarantee.
+6. When docs conflict (Qoder precedence, OpenClaw description length guidance, WorkBuddy creator text saying `~/.codebuddy`), mark as **unresolved** instead of picking silently.
 
 ---
 

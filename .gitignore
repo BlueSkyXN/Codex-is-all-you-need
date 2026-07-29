@@ -19,3 +19,4 @@ dashboard/preset-state.json
 dashboard/index.html
 dashboard/dist/
 *.zip
+/.playwright-mcp

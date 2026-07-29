@@ -1,20 +1,55 @@
 ---
 name: visual-brainstorming
-description: 用本地浏览器并排展示并点选 2–4 个结构不同的 UI/mockup、布局、架构/数据流、流程/状态或模型路由方案。仅当存在明确待决策变量，且视觉比较明显优于文字时使用；不要用于普通问答、简单表格、代码轨迹、单张简单图或隐藏推理。
+description: 两种模式。理解模式——把代码/文档里的真实结构提炼成架构图、关系图、流程图，帮助看懂一个项目而无需逐行读码，默认输出单文件 HTML 到 local/。决策模式——用本地浏览器并排展示并点选 2–4 个结构不同的 UI/架构/流程方案。仅在视觉化明显优于文字时使用；不用于普通问答、简单表格、代码轨迹或隐藏推理。
 license: MIT. See LICENSE.txt.
 metadata:
-  short-description: 本地浏览器可视化方案比较与选择
-  version: "0.1"
-  updated: "2026-07-14"
+  short-description: 本地可视化：项目结构理解 + 方案比较选择
+  version: "0.2"
+  updated: "2026-07-29"
 ---
 
 # Visual Brainstorming
 
-把适合“看”的设计决策放进本地浏览器；把需求澄清、理由和最终结论留在对话或项目文档中。
+把适合“看”的东西可视化：要么帮你**看懂一个项目的真实结构**，要么帮你**在几个候选方案里点选一个**。需求澄清、理由和最终结论留在对话或项目文档中。
 
 **硬边界：** 页面是 Agent 生成的 HTML/CSS/SVG 外部产物，不是模型隐藏思维、Token 轨迹、注意力权重或内部状态。
 
 概念参考 `obra/superpowers` 的 Visual Companion / Visual Brainstorming；本 Skill 为独立实现。出处见 `NOTICE.md` 与 `references/SOURCES.md`。
+
+## 0. 先分流：理解模式 还是 决策模式
+
+两种模式共用同一个本地 companion、同一套会话目录和浏览器交互，但目标和触发条件不同。
+
+| | 理解模式（explore） | 决策模式（compare） |
+|---|---|---|
+| 用户要什么 | 帮我**看懂**这个项目/系统 | 帮我**在几个方案里选一个** |
+| 典型触发 | “梳理这个项目”“架构图”“调用关系”“这个项目怎么跑的”“画个图帮我理解” | “帮我选”“哪个方案好”“对比一下这几个设计” |
+| 输入 | 已有代码 + 文档（结构未知） | 2–4 个已想清的候选方案 |
+| 默认产物 | 单文件 HTML 写到 `local/`，**默认不开浏览器** | 本地浏览器并排点选 |
+| 是否需要提炼 | **必须先提炼（EXTRACTION.md）** | 不需要 |
+
+**判断顺序：**
+
+1. 用户想“看懂/梳理/理解”一个已存在的系统 → **理解模式**。
+2. 用户面前摆着几个结构不同的候选，要你帮忙定一个 → **决策模式**。
+3. 两者都不沾（普通问答、Markdown 表格足够、只需一张简单静态图、隐藏推理）→ 不要用本 Skill，用 Mermaid/ASCII/文字。
+
+**理解模式专属规则：**
+
+- **先提炼，后画图。** 生成任何 HTML 之前，必须先按 `references/EXTRACTION.md` 产出 `extraction.json`，把 `entities / edges / claims / paths` 核对清楚，尤其要区分“文档声称（claimed）”“代码坐实（verified）”“存在冲突（contradicted）”。**不允许凭印象直接画图。**
+- **默认不开浏览器。** 提炼后用 `export` 把片段烘成自包含单文件 HTML 写到 `local/`（如 `local/<project>-architecture.html`），同时用 `--extraction` 把提炼 JSON 持久化到运行根的 `exports/<id>/`；产物内联了 frame CSS 和 explore helper，双击即可离线看。只有用户明确说“在浏览器里给我看”时，才走 `companion.py show` 打开本地页。
+
+  ```bash
+  python3 -I -S "$SKILL_DIR/scripts/companion.py" export \
+    --source /tmp/arch.html \
+    --output "$PROJECT_ROOT/local/<project>-architecture.html" \
+    --project-dir "$PROJECT_ROOT" \
+    --extraction /tmp/extraction.json
+  ```
+- **提炼遇到真实架构分叉时**，（例如“代码是单体，文档却说是三层”），把分叉整理成 2–3 个候选，**转入决策模式**让用户点选——这是两种模式的串联点。
+- 渲染用 `assets/templates/explore-map.html`，节点用 `data-node`/`data-flows`/`data-evidence` 标注；交互由 `assets/explore-helper.js` 驱动（路径筛选、节点详情、证据边框、疑惑上报）。
+
+下面第 1–6 节描述**决策模式**的完整流程。
 
 ## 运行要求与网络边界
 
@@ -28,9 +63,9 @@ metadata:
 正常执行只读取：
 
 1. 本文件；
-2. 与当前任务最接近的**一个** `assets/templates/*.html`。
+2. 与当前模式匹配的**一个**模板：决策模式用 `assets/templates/choice-grid.html` 等，理解模式用 `assets/templates/explore-map.html`。
 
-不要默认读取 `README.md`、实现脚本、全部示例或全部参考资料。只有定制视觉时读 `references/VISUAL_AUTHORING.md`；运行失败时读 `references/TROUBLESHOOTING.md`。
+不要默认读取 `README.md`、实现脚本、全部示例或全部参考资料。理解模式画图前必须先读 `references/EXTRACTION.md`；只有定制视觉时读 `references/VISUAL_AUTHORING.md`；运行失败时读 `references/TROUBLESHOOTING.md`。
 
 ## 1. 判断是否启用
 

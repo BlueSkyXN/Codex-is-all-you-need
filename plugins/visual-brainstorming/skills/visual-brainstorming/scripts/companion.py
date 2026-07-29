@@ -38,7 +38,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, List, Optional, Tuple
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 RUNTIME_DIR = ".visual-brainstorming"
 BROWSER_PATH_PREFIX = "/_vb/"
 MAX_SCREEN_BYTES = 5 * 1024 * 1024
@@ -62,6 +62,8 @@ SHELL_CSS_PATH = SKILL_ROOT / "assets" / "browser-shell.css"
 SHELL_JS_PATH = SKILL_ROOT / "assets" / "browser-shell.js"
 HELPER_CSS_PATH = SKILL_ROOT / "assets" / "injected-helper.css"
 HELPER_JS_PATH = SKILL_ROOT / "assets" / "injected-helper.js"
+EXPLORE_CSS_PATH = SKILL_ROOT / "assets" / "explore-helper.css"
+EXPLORE_JS_PATH = SKILL_ROOT / "assets" / "explore-helper.js"
 ICON_PATH = SKILL_ROOT / "assets" / "icon.svg"
 DEMO_PATH = SKILL_ROOT / "assets" / "templates" / "demo.html"
 
@@ -191,6 +193,15 @@ def resolve_project(path: Path) -> Path:
 
 
 def runtime_root(project: Path) -> Path:
+    """Resolve the runtime directory for a project.
+
+    Session state is anchored to a single fixed root ``.visual-brainstorming/``
+    that carries its own deny-all ``.gitignore`` and is rejected outright when
+    symlinked. A dynamic root (for example migrating into ``local/``) would
+    require re-validating the parent chain on every directory operation; a
+    fixed root keeps that trust boundary in one place. Only the final exported
+    HTML is written to ``local/`` (see ``export``), never the session state.
+    """
     return project / RUNTIME_DIR
 
 
@@ -1336,24 +1347,41 @@ class CompanionHTTPServer(ThreadingHTTPServer):
         self.context.log(f"http handler error client={client_address[0]} type={error_name}")
 
 
-def helper_markup(bridge_token: str) -> str:
+def helper_markup(bridge_token: str, explore: bool = False) -> str:
     css = read_asset_text(HELPER_CSS_PATH)
     javascript = read_asset_text(HELPER_JS_PATH).replace(
         "__VB_BRIDGE_TOKEN__", bridge_token
     )
-    return (
+    markup = (
         '<style id="vb-injected-style">'
         + css
         + '</style><script id="vb-injected-helper">'
         + javascript
         + '</script>'
     )
+    if explore:
+        explore_css = read_asset_text(EXPLORE_CSS_PATH)
+        explore_js = read_asset_text(EXPLORE_JS_PATH).replace(
+            "__VB_BRIDGE_TOKEN__", bridge_token
+        )
+        markup += (
+            '<style id="vb-explore-style">'
+            + explore_css
+            + '</style><script id="vb-explore-helper">'
+            + explore_js
+            + '</script>'
+        )
+    return markup
+
+
+def is_explore_document(document: str) -> bool:
+    return "data-vb-explore" in document
 
 
 def inject_helper(document: str, bridge_token: str) -> str:
     if 'id="vb-injected-helper"' in document or "id='vb-injected-helper'" in document:
         return document
-    helper = helper_markup(bridge_token)
+    helper = helper_markup(bridge_token, explore=is_explore_document(document))
     matches = list(re.finditer(r"</body\s*>", document, flags=re.IGNORECASE))
     if matches:
         match = matches[-1]
@@ -1377,7 +1405,7 @@ def render_screen(raw: str, bridge_token: str) -> str:
         + css
         + '</style></head><body>'
         + raw
-        + helper_markup(bridge_token)
+        + helper_markup(bridge_token, explore=is_explore_document(raw))
         + '</body></html>'
     )
 
@@ -2633,6 +2661,113 @@ def cmd_show(args: argparse.Namespace) -> int:
     return 0
 
 
+# Token baked into a static export. The helpers post events to a companion
+# that is not running, so the token is a non-secret placeholder; nothing
+# receives or validates it offline.
+EXPORT_BRIDGE_TOKEN = "static-export"
+
+
+def export_impl(
+    source: Path,
+    output: Path,
+    *,
+    project_dir: Optional[Path] = None,
+    extraction: Optional[Path] = None,
+) -> Dict[str, Any]:
+    """Bake a fragment or document into a self-contained single-file HTML.
+
+    Unlike ``show``/``publish`` this never starts the server; it only inlines
+    frame CSS and the interaction helpers so explore/compare pages work when
+    opened straight from disk (for example under ``local/``).
+
+    When ``extraction`` is given, its JSON is validated and persisted under the
+    project's fixed runtime root at ``exports/<id>/extraction.json`` — a real,
+    Agent-reachable landing spot for the explore-mode evidence contract that
+    does not require a running companion session.
+    """
+    source_path, data = validated_html_source(source)
+    source_text = data.decode("utf-8")
+    rendered = render_screen(source_text, EXPORT_BRIDGE_TOKEN)
+    output_path = output.expanduser()
+    if output_path.suffix.lower() not in {".html", ".htm"}:
+        raise CompanionError("Export output must use .html or .htm")
+    if output_path.exists() and output_path.is_symlink():
+        raise CompanionError(f"Refusing symlinked export target: {output_path}")
+
+    extraction_path: Optional[Path] = None
+    if extraction is not None:
+        extraction_bytes = _validated_extraction_source(extraction)
+        project = resolve_project(project_dir or Path.cwd())
+        # Persist process evidence before publishing the delivery artifact. If
+        # the fixed runtime boundary is unsafe, the command must not leave a
+        # successful-looking HTML export behind.
+        extraction_path = _persist_export_extraction(project, extraction_bytes)
+
+    atomic_write_text(output_path, rendered, mode=0o600)
+
+    result: Dict[str, Any] = {
+        "type": "screen-exported",
+        "source": str(source_path),
+        "output": str(output_path),
+        "bytes": len(rendered.encode("utf-8")),
+        "explore": is_explore_document(source_text),
+    }
+
+    if extraction_path is not None:
+        result["extraction_path"] = str(extraction_path)
+    return result
+
+
+def _validated_extraction_source(extraction: Path) -> bytes:
+    path = extraction.expanduser().resolve()
+    if not path.is_file():
+        raise CompanionError(f"Extraction JSON does not exist: {path}")
+    if path.suffix.lower() != ".json":
+        raise CompanionError("Extraction must be a .json file")
+    data = path.read_bytes()
+    if len(data) > MAX_PAYLOAD_BYTES * 10:
+        raise CompanionError("Extraction JSON is too large")
+    try:
+        json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise CompanionError("Extraction must be valid UTF-8 JSON") from exc
+    return data
+
+
+def _persist_export_extraction(project: Path, data: bytes) -> Path:
+    root = runtime_root(project)
+    ensure_directory_without_symlink(root)
+    ensure_runtime_ignore(root)
+
+    exports = root / "exports"
+    ensure_directory_without_symlink(exports)
+    if path_has_symlink(root, exports):
+        raise CompanionError(f"Refusing symlinked export directory: {exports}")
+
+    export_root = exports / session_id()
+    ensure_directory_without_symlink(export_root)
+    if path_has_symlink(root, export_root):
+        raise CompanionError(f"Refusing symlinked export directory: {export_root}")
+    safe_chmod(export_root, 0o700)
+    target = export_root / "extraction.json"
+    if target.is_symlink():
+        raise CompanionError(f"Refusing symlinked extraction target: {target}")
+    atomic_write_bytes(target, data, mode=0o600)
+    return target
+
+
+def cmd_export(args: argparse.Namespace) -> int:
+    print_result(
+        export_impl(
+            args.source,
+            args.output,
+            project_dir=args.project_dir,
+            extraction=args.extraction,
+        )
+    )
+    return 0
+
+
 def cmd_events(args: argparse.Namespace) -> int:
     project = resolve_project(args.project_dir)
     info = current_info(project)
@@ -2758,6 +2893,20 @@ def build_parser() -> argparse.ArgumentParser:
     show.add_argument("--name")
     show.add_argument("--new", action="store_true", help="Stop the current server and start a new session")
     show.set_defaults(func=cmd_show)
+
+    export = subparsers.add_parser(
+        "export",
+        help="Bake a fragment/document into a self-contained single-file HTML (no server)",
+    )
+    export.add_argument("--source", type=Path, required=True)
+    export.add_argument("--output", type=Path, required=True)
+    export.add_argument("--project-dir", type=Path, default=Path.cwd())
+    export.add_argument(
+        "--extraction",
+        type=Path,
+        help="Persist explore-mode extraction JSON under the project's runtime root",
+    )
+    export.set_defaults(func=cmd_export)
 
     events = subparsers.add_parser("events", help="Read recorded browser events")
     events.add_argument("--project-dir", type=Path, default=Path.cwd())

@@ -420,6 +420,137 @@ class VisualBrainstormingPackageTest(unittest.TestCase):
                 if os.name != "nt":
                     self.assertEqual(ignore_file.stat().st_mode & 0o777, 0o600)
 
+    def test_runtime_root_is_fixed_and_ignores_local(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            project = COMPANION.resolve_project(Path(temporary))
+            expected = project / ".visual-brainstorming"
+            self.assertEqual(COMPANION.runtime_root(project), expected)
+            # A local/ directory (or symlink) must never redirect session state.
+            (project / "local").mkdir()
+            self.assertEqual(COMPANION.runtime_root(project), expected)
+
+    def test_render_screen_injects_explore_helper_for_explore_fragment(self) -> None:
+        template = (
+            SKILL_ROOT / "assets" / "templates" / "explore-map.html"
+        ).read_text(encoding="utf-8")
+        rendered = COMPANION.render_screen(template, "tok")
+        self.assertTrue(COMPANION.is_explore_document(template))
+        self.assertIn('id="vb-explore-helper"', rendered)
+        self.assertIn('id="vb-injected-helper"', rendered)
+        self.assertIn("tok", rendered)
+
+    def test_export_bakes_self_contained_explore_html(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "local" / "arch.html"
+            result = COMPANION.export_impl(
+                SKILL_ROOT / "assets" / "templates" / "explore-map.html", output
+            )
+            text = output.read_text(encoding="utf-8")
+            self.assertTrue(result["explore"])
+            self.assertIn('id="vb-explore-helper"', text)
+            self.assertIn('id="vb-injected-helper"', text)
+            self.assertIn('id="vb-explore-style"', text)
+            self.assertIn("vb-injected-style", text)
+            # Static export must not reference the live-session bridge token.
+            self.assertNotIn("__VB_BRIDGE_TOKEN__", text)
+
+    def test_export_rejects_non_html_output(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            with self.assertRaises(COMPANION.CompanionError):
+                COMPANION.export_impl(
+                    SKILL_ROOT / "assets" / "templates" / "explore-map.html",
+                    Path(temporary) / "out.txt",
+                )
+
+    def test_export_persists_extraction_under_root_exports(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            project = Path(temporary) / "proj"
+            project.mkdir()
+            subprocess.run(
+                ["git", "init", "--quiet", str(project)],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            extraction = Path(temporary) / "ex.json"
+            extraction.write_text(
+                '{"entities": [], "edges": [], "claims": [], "paths": []}',
+                encoding="utf-8",
+            )
+            result = COMPANION.export_impl(
+                SKILL_ROOT / "assets" / "templates" / "explore-map.html",
+                project / "local" / "arch.html",
+                project_dir=project,
+                extraction=extraction,
+            )
+            landing = Path(result["extraction_path"])
+            self.assertIn(".visual-brainstorming", landing.parts)
+            self.assertIn("exports", landing.parts)
+            self.assertNotIn("sessions", landing.parts)
+            self.assertNotIn("local", landing.parts)
+            self.assertTrue(landing.exists())
+            runtime_ignore = project / ".visual-brainstorming" / ".gitignore"
+            self.assertEqual(runtime_ignore.read_text(encoding="utf-8"), "*\n")
+            ignored = subprocess.run(
+                ["git", "check-ignore", "--quiet", str(landing)],
+                cwd=project,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(ignored.returncode, 0)
+            if os.name != "nt":
+                self.assertEqual(landing.stat().st_mode & 0o777, 0o600)
+
+    def test_export_rejects_symlinked_exports_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary, tempfile.TemporaryDirectory() as outside:
+            project = Path(temporary) / "proj"
+            project.mkdir()
+            runtime = project / ".visual-brainstorming"
+            runtime.mkdir()
+            try:
+                (runtime / "exports").symlink_to(outside, target_is_directory=True)
+            except (NotImplementedError, OSError) as exc:
+                self.skipTest(f"symlink unsupported: {exc}")
+            extraction = Path(temporary) / "ex.json"
+            extraction.write_text("{}", encoding="utf-8")
+
+            with self.assertRaisesRegex(COMPANION.CompanionError, "symlinked"):
+                COMPANION.export_impl(
+                    SKILL_ROOT / "assets" / "templates" / "explore-map.html",
+                    project / "local" / "arch.html",
+                    project_dir=project,
+                    extraction=extraction,
+                )
+            self.assertEqual(list(Path(outside).rglob("extraction.json")), [])
+            self.assertFalse((project / "local" / "arch.html").exists())
+
+    def test_export_rejects_invalid_extraction_json(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            project = Path(temporary) / "proj"
+            project.mkdir()
+            bad = Path(temporary) / "bad.json"
+            bad.write_text("{not json", encoding="utf-8")
+            output = project / "local" / "arch.html"
+            with self.assertRaises(COMPANION.CompanionError):
+                COMPANION.export_impl(
+                    SKILL_ROOT / "assets" / "templates" / "explore-map.html",
+                    output,
+                    project_dir=project,
+                    extraction=bad,
+                )
+            self.assertFalse(output.exists())
+
+    def test_helper_markup_injects_explore_only_for_explore_documents(self) -> None:
+        plain = COMPANION.helper_markup("tok", explore=False)
+        explore = COMPANION.helper_markup("tok", explore=True)
+        self.assertNotIn("vb-explore-helper", plain)
+        self.assertIn("vb-explore-helper", explore)
+        self.assertIn("tok", plain)
+        self.assertIn("tok", explore)
+        self.assertTrue(COMPANION.is_explore_document('<section data-vb-explore>'))
+        self.assertFalse(COMPANION.is_explore_document('<article data-choice="a">'))
+
     def test_runtime_gitignore_rejects_symlink_and_non_file(self) -> None:
         with tempfile.TemporaryDirectory() as temporary, tempfile.TemporaryDirectory() as outside:
             root = Path(temporary) / ".visual-brainstorming"

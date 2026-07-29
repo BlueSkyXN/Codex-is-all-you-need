@@ -1,7 +1,7 @@
 {
   "name": "visual-brainstorming",
-  "version": "0.1.0",
-  "description": "Compare visual alternatives in a local browser and record user choices as structured events.",
+  "version": "0.2.0",
+  "description": "Understand a project's real structure as a diagram, or compare visual alternatives in a local browser and record choices as structured events.",
   "author": {
     "name": "BlueSkyXN",
     "url": "https://github.com/BlueSkyXN"
@@ -20,8 +20,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Visual Brainstorming",
-    "shortDescription": "Compare and select visual alternatives locally.",
-    "longDescription": "Visual Brainstorming generates offline HTML comparisons for UI, architecture, process, state, data-flow, and model-routing decisions. It opens a loopback-only browser companion by default and records choices and notes as project-local structured events.",
+    "shortDescription": "Understand a project's structure as a diagram, or compare and select visual alternatives locally.",
+    "longDescription": "Visual Brainstorming has two modes. Explore mode extracts a project's real structure (separating what docs claim from what code proves) into an architecture, relationship, or flow diagram, exported as a self-contained single-file HTML. Compare mode generates offline HTML comparisons for UI, architecture, process, state, data-flow, and model-routing decisions, opening a loopback-only browser companion and recording choices and notes as project-local structured events.",
     "developerName": "BlueSkyXN",
     "category": "Productivity",
     "capabilities": [
@@ -29,8 +29,8 @@
       "Workflow"
     ],
     "defaultPrompt": [
-      "Use $visual-brainstorming:visual-brainstorming to compare visual alternatives.",
-      "用 $visual-brainstorming:visual-brainstorming 把当前视觉决策整理成可点选方案。"
+      "Use $visual-brainstorming:visual-brainstorming to map this project's real structure into an architecture diagram, or to compare visual alternatives.",
+      "用 $visual-brainstorming:visual-brainstorming 把当前项目的真实结构画成架构图，或把待决策的视觉问题整理成可点选方案。"
     ],
     "brandColor": "#5B5CE2",
     "websiteURL": "https://github.com/BlueSkyXN/Codex-is-all-you-need"

@@ -1,8 +1,16 @@
 # Visual Brainstorming
 
-Visual Brainstorming is an installable Codex plugin for comparing genuinely
-different visual alternatives in a local browser and recording the user's
-selection as structured project-local events.
+Visual Brainstorming is an installable Codex plugin with two modes that share
+one local companion:
+
+- **Explore mode** turns the *actual* structure of existing code and docs into
+  an architecture / relationship / flow diagram, so you can understand a
+  project without reading every line. It extracts the structure first
+  (separating what docs claim from what code proves), then renders a
+  single-file HTML page into `local/`.
+- **Compare mode** displays two to four genuinely different visual alternatives
+  in a local browser and records the user's selection as structured
+  project-local events.
 
 It is intentionally distributed as a standalone plugin rather than bundled
 into Codex Next. Installing it is an explicit opt-in to a workflow that starts
@@ -11,18 +19,25 @@ under the current project.
 
 ## Included Skill
 
-- `visual-brainstorming`: compare two to four UI, layout, architecture,
-  data-flow, process, state, or model-routing alternatives when seeing the
-  options materially reduces ambiguity.
+- `visual-brainstorming`: explore mode — extract a project's real structure
+  into a diagram (default output to `local/`, browser optional); compare
+  mode — compare two to four UI, layout, architecture, data-flow, process,
+  state, or model-routing alternatives when seeing the options materially
+  reduces ambiguity.
 
 The skill asks for consent before an implicit invocation opens a browser. It
 falls back to Mermaid, ASCII, a static image, or structured text when the local
 browser cannot reach the companion.
 
-The packaged release is `0.1.0`. It is not only a directory move: the release
-adds the standalone marketplace surface plus runtime locking, version-aware
-reuse, bounded events and logs, per-screen bridge binding, exact-plan pruning,
-remote URL validation, and live runtime path checks.
+The packaged release is `0.2.0`. Building on `0.1.0` (standalone marketplace
+surface, runtime locking, version-aware reuse, bounded events and logs,
+per-screen bridge binding, exact-plan pruning, remote URL validation, and live
+runtime path checks), `0.2.0` adds explore mode: the extraction contract
+(`references/EXTRACTION.md`), the `explore-map.html` template, the
+`explore-helper` interaction layer (path filtering, node detail, evidence
+states, explore events), an `export` command that bakes a fragment into a
+self-contained single-file HTML written to `local/`, and an extraction
+persistence path under the fixed runtime root.
 
 ## Runtime and Security Boundary
 
@@ -32,8 +47,10 @@ remote URL validation, and live runtime path checks.
   `sessionStorage`, path capabilities, Host and Origin checks, CSP, a sandboxed
   iframe, bounded requests, and symlink/path traversal rejection. Cookies are
   not accepted as session credentials.
-- Writes runtime state to `<project>/.visual-brainstorming/`; this directory
-  receives its own deny-all `.gitignore` and should stay untracked.
+- Writes session state to a fixed `<project>/.visual-brainstorming/` root,
+  which receives its own deny-all `.gitignore` and stays untracked. Only the
+  final exported single-file HTML is written to `local/` (via `export`);
+  session state never is.
 - Routine HTTP access logs are disabled so control-query and capability keys
   are not persisted; diagnostic logging is redacted, mode `0600` where
   supported, and capped at 256 KiB per session.

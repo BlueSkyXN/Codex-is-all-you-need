@@ -9,6 +9,7 @@ companion.py status   检查当前项目会话
 companion.py paths    输出当前会话路径
 companion.py publish  原子发布 HTML
 companion.py show     启动/复用、发布并按需打开
+companion.py export   把片段/文档烘成自包含单文件 HTML（不起服务）
 companion.py events   读取浏览器事件
 companion.py stop     停止当前服务
 companion.py prune    预览或按精确计划删除旧会话
@@ -19,13 +20,15 @@ Skill 执行时应显式传入 `--project-dir`，避免因工作目录变化写�
 
 ## 2. 运行目录
 
+会话状态固定锚定在项目根的单一目录，自带 deny-all `.gitignore`，不进入 Git 跟踪：
+
 ```text
-.visual-brainstorming/
+<项目>/.visual-brainstorming/
 ├── .gitignore                 # 自动写入 `*`
 ├── .launch.lock               # 持久 metadata 文件；启动/prune 时持有 OS lock
 ├── .server.lock               # 持久 metadata 文件；服务运行时持有 OS lock
 ├── current.json
-└── sessions/
+├── sessions/
     └── <session-id>/
         ├── content/
         │   ├── *.html
@@ -38,7 +41,12 @@ Skill 执行时应显式传入 `--project-dir`，避免因工作目录变化写�
             ├── server.log
             ├── events.jsonl
             └── server-stopped.json
+└── exports/
+    └── <export-id>/
+        └── extraction.json             # 仅理解模式：结构提炼（见 EXTRACTION.md）
 ```
+
+**为什么是固定根而不是动态迁移到 `local/`：** 会话状态涉及锁、密钥和事件日志，必须锚定在单一、可预测的可信边界内。若依据 `local/` 的实时状态动态选根，就必须反复信任一条可被替换的父目录链。固定根会统一校验 `.visual-brainstorming/`，并在创建受管子目录时逐级拒绝符号链接；**只有最终交付的单文件 HTML 通过 `export` 写入 `local/`，会话状态和 extraction 过程证据都留在固定根。**
 
 目录和状态文件在支持权限位的系统上分别限制为 `0700` 和 `0600`。运行根目录会自动生成内容为 `*` 的内部 `.gitignore`；仍建议项目级忽略：
 
@@ -69,6 +77,38 @@ python3 -I -S scripts/companion.py show \
 若本次新启动的服务在发布阶段失败，`show` 会尝试关闭它；复用的已有服务不会被误停。
 
 它支持 `start` 的公共参数以及 `--new`、`--source`、`--name`。`--source` 必须是 `.html` 或 `.htm`。
+
+## 3.1 `export`
+
+把片段或完整文档烘成自包含单文件 HTML，**不启动服务、不需要会话**：
+
+```bash
+python3 -I -S scripts/companion.py export \
+  --source /tmp/arch.html \
+  --output /project/local/<project>-architecture.html
+```
+
+理解模式默认走这条路径：提炼（EXTRACTION.md）→ 渲染片段 → `export` 成单文件写到 `local/`，全程不开浏览器。`export` 复用与线上一致的渲染管线，内联 frame CSS、基础 helper，以及（当源含 `data-vb-explore` 时）explore helper；烘入的 bridge token 是非密钥占位符，离线打开时 helper 不连任何服务。
+
+`export` 额外支持：
+
+| 参数 | 默认 | 含义 |
+|---|---|---|
+| `--project-dir` | 当前目录 | 解析项目运行根；持久化 extraction 时必填 |
+| `--extraction` | 无 | 把 explore 提炼 JSON 校验后原子写入 `<运行根>/exports/<id>/extraction.json`，返回 `extraction_path` |
+
+约束：源与输出都必须是 `.html`/`.htm`；源 UTF-8 且 ≤5 MiB；输出父目录自动创建，输出已存在且为符号链接时拒绝；`--extraction` 必须是合法 UTF-8 JSON（`.json`，≤100 KiB），落盘 `0600`。返回：
+
+```json
+{
+  "type": "screen-exported",
+  "source": "/tmp/arch.html",
+  "output": "/project/local/<project>-architecture.html",
+  "bytes": 27932,
+  "explore": true,
+  "extraction_path": "/project/.visual-brainstorming/exports/<id>/extraction.json"
+}
+```
 
 ## 4. `start` 与 `serve`
 
@@ -141,7 +181,7 @@ python3 -I -S scripts/companion.py paths  --project-dir /project
 {
   "running": true,
   "compatible": true,
-  "server_version": "0.1.0",
+  "server_version": "0.2.0",
   "project_dir": "/project",
   "url": "http://127.0.0.1:54321/#key=...",
   "pid": 12345,
@@ -236,6 +276,28 @@ python3 -I -S scripts/companion.py events --project-dir /project --after 12
 }
 ```
 
+理解模式的探索事件（用户在架构图上点击某个节点时，由 `explore-helper.js` 上报；`choice` 携带节点 id，`payload` 携带证据与出处）：
+
+```json
+{
+  "id": 9,
+  "ts": "2026-07-12T18:21:40Z",
+  "type": "action",
+  "choice": "feishu-app",
+  "label": "FeishuApp",
+  "detail": "src/app.ts:40",
+  "screen": "20260712-182010-123-abcd-architecture.html",
+  "payload": {
+    "kind": "explore-node",
+    "evidence": "verified",
+    "source": "src/app.ts:40",
+    "flows": ["message", "tool"]
+  }
+}
+```
+
+服务端接受 `choice` / `note` / `action` 三类；未识别类型归一为 `action`。`action` 不强制 `choice` 或 `note` 非空，结构由页面自定义。
+
 限制：
 
 - `choice`：非空，最多 200 字符；
@@ -317,7 +379,7 @@ python3 -I -S scripts/companion.py prune \
 ```json
 {
   "type": "server-started",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "pid": 12345,
   "host": "127.0.0.1",
   "url_host": "127.0.0.1",

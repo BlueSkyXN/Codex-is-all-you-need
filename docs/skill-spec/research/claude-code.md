@@ -8,7 +8,7 @@
 | Primary docs | https://code.claude.com/docs/zh-CN/skills |
 | Open standard | Declares compatibility with [Agent Skills](https://agentskills.io) |
 | Related | Plugins, subagents, hooks, skill-creator plugin, agentskills.io evals |
-| Extracted | 2026-07-16 from public Chinese docs page |
+| Extracted | 2026-07-16 from public Chinese docs page; display-name and command-name semantics refreshed 2026-07-28 from the current English page |
 
 Claude Code **extends** Agent Skills with invocation control, subagent execution,
 dynamic context injection, permissions, and plugin packaging.
@@ -79,7 +79,7 @@ skills. Claude recommends `description` so auto-selection works.
 
 | Field | Required | Description |
 |---|---|---|
-| `name` | No (product) | Display name in skill list; defaults to directory name. Usually does **not** change `/` command name except plugin-root `SKILL.md`. |
+| `name` | No (product) | Display name in the Skill list; defaults to the directory name. Personal/project commands still come from the directory or file path, while Plugin Skill `name` can replace the final command segment. |
 | `description` | Recommended | What + when. If omitted, first Markdown paragraph may be used. Combined with `when_to_use`, listing text truncated to **1536** chars. |
 | `when_to_use` | No | Extra trigger context; appended to listing description; counts toward 1536-char cap |
 | `argument-hint` | No | Autocomplete hint for args, e.g. `[issue-number]` |
@@ -103,8 +103,15 @@ skills. Claude recommends `description` so auto-selection works.
 | `~/.claude/skills/<dir>/` or project `.claude/skills/<dir>/` | Directory name |
 | Nested conflicting skill | Path-qualified name, e.g. `apps/web:deploy` |
 | `.claude/commands/foo.md` | File basename |
-| Plugin `skills/<dir>/` | `plugin:dir` |
+| Plugin `skills/<dir>/` | `plugin:<frontmatter-name>`，省略 `name` 时回退到 `plugin:<dir>` |
 | Plugin root `SKILL.md` | Frontmatter `name`, else plugin directory name |
+
+Current Claude Code Skill docs define no separate `display_name`, `display-name`,
+or `displayName` frontmatter field. `name` itself is the listing label. For
+portable authoring, keep directory name = `name` rather than using Claude's
+product-level flexibility for localized UI text. In a Plugin Skill,
+frontmatter `name` replaces the final namespaced command segment, so it is not
+safe to treat as behavior-free presentation metadata.
 
 ### String substitutions
 

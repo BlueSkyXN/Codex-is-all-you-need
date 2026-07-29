@@ -1,0 +1,94 @@
+<section class="vb-page vb-explore" data-vb-explore>
+  <header class="vb-hero">
+    <p class="vb-eyebrow">架构理解</p>
+    <h1>把项目结构画出来：这张图在讲什么</h1>
+    <p class="vb-lead">用路径筛选看一次调用怎么流动；点节点看职责、证据和源码出处。</p>
+    <div class="vb-decision-strip">
+      <span class="vb-decision-icon">i</span>
+      <div><strong>本图目标：</strong>一句话说明这张架构图帮助理解什么，不改变任何代码。</div>
+    </div>
+  </header>
+
+  <!-- 证据图例：让读者一眼分清"文档声称"与"代码坐实" -->
+  <ul class="vb-legend" aria-label="证据图例">
+    <li><span class="vb-ev vb-ev-claimed">文档声称</span> 只在文档/README 出现，代码未坐实</li>
+    <li><span class="vb-ev vb-ev-verified">代码坐实</span> 文档与源码一致</li>
+    <li><span class="vb-ev vb-ev-contradicted">存在冲突</span> 文档与代码不一致，需澄清</li>
+  </ul>
+
+  <!-- 路径筛选：每按钮对应一条真实调用路径 -->
+  <nav class="vb-pathbar" aria-label="调用路径筛选">
+    <button type="button" data-vb-path="all" aria-pressed="true">全部</button>
+    <button type="button" data-vb-path="message">消息路径</button>
+    <button type="button" data-vb-path="model">模型路径</button>
+    <button type="button" data-vb-path="tool">工具路径</button>
+  </nav>
+  <p class="vb-panel" data-vb-path-panel>当前显示全部组件与连线。</p>
+
+  <!-- 各路径的文字说明（供面板切换） -->
+  <div hidden>
+    <span data-vb-path-desc="all">当前显示全部组件与连线。</span>
+    <span data-vb-path-desc="message">消息路径：从入口到 Agent 的请求流转。</span>
+    <span data-vb-path-desc="model">模型路径：Agent 调用模型/API 的链路。</span>
+    <span data-vb-path-desc="tool">工具路径：Agent 调用外部工具的链路。</span>
+  </div>
+
+  <!-- 架构画布：节点用 data-node + data-flows + data-evidence 标注 -->
+  <div class="vb-visual vb-diagram">
+    <svg viewBox="0 0 960 420" role="img" aria-label="项目架构图"
+         xmlns="http://www.w3.org/2000/svg" font-family="inherit">
+      <defs>
+        <marker id="vb-arrowhead" markerWidth="8" markerHeight="8"
+                refX="7" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 z" fill="currentColor"></path>
+        </marker>
+      </defs>
+
+      <!-- 连线：标注它们属于哪些路径 -->
+      <g class="vb-edges" stroke="currentColor" fill="none" stroke-width="2">
+        <path data-flows="message" d="M180,110 H 400" marker-end="url(#vb-arrowhead)"></path>
+        <path data-flows="message tool" d="M560,110 H 760" marker-end="url(#vb-arrowhead)"></path>
+        <path data-flows="model" d="M470,170 V 300" marker-end="url(#vb-arrowhead)"></path>
+      </g>
+
+      <!-- 节点：data-node 触发详情，data-evidence 标证据，data-flows 归路径 -->
+      <g data-node="entry" data-label="入口 / Channel"
+         data-flows="message" data-evidence="verified"
+         data-source="src/server.ts:12" data-detail="接收外部请求的唯一入口。">
+        <rect class="vb-node-box" x="40" y="70" width="140" height="80" rx="10"
+              fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <text x="110" y="115" text-anchor="middle">入口</text>
+      </g>
+
+      <g data-node="agent-core" data-label="Agent 核心"
+         data-flows="message model tool" data-evidence="verified"
+         data-source="src/agent.ts:40" data-detail="编排调用、维护会话状态。">
+        <rect class="vb-node-box" x="400" y="70" width="160" height="80" rx="10"
+              fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <text x="480" y="115" text-anchor="middle">Agent 核心</text>
+      </g>
+
+      <g data-node="model-gateway" data-label="模型网关"
+         data-flows="model" data-evidence="claimed"
+         data-source="docs/design.md:8" data-detail="文档声称统一走网关，代码未完全坐实。">
+        <rect class="vb-node-box" x="390" y="300" width="160" height="80" rx="10"
+              fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <text x="470" y="345" text-anchor="middle">模型网关</text>
+      </g>
+
+      <g data-node="tools" data-label="外部工具"
+         data-flows="tool" data-evidence="contradicted"
+         data-source="src/tools.ts:55" data-detail="文档与实现对工具边界描述不一致。">
+        <rect class="vb-node-box" x="760" y="70" width="160" height="80" rx="10"
+              fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <text x="840" y="115" text-anchor="middle">外部工具</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- 节点详情面板：点击节点后由 explore-helper 填充 -->
+  <aside class="vb-panel" data-vb-node-detail aria-live="polite">
+    <strong>节点详情</strong>
+    <p>点击上方任一节点，查看它的职责、证据状态和源码出处。</p>
+  </aside>
+</section>

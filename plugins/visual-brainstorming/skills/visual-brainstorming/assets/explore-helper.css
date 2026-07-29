@@ -1,0 +1,76 @@
+/* Explore-mode overlays: path filtering, evidence states, node detail. */
+
+.vb-flow-dim {
+  opacity: 0.16;
+  transition: opacity 160ms ease;
+}
+
+.vb-flow-active {
+  opacity: 1;
+  transition: opacity 160ms ease;
+}
+
+[data-vb-path] {
+  cursor: pointer;
+}
+
+[data-vb-path].vb-path-on {
+  font-weight: 600;
+}
+
+[data-node] {
+  cursor: pointer;
+  outline-offset: 3px;
+}
+
+[data-node]:focus-visible {
+  outline: 3px solid color-mix(in srgb, currentColor 55%, transparent);
+}
+
+/* Evidence states: the border tells you whether a claim is backed by code. */
+[data-evidence="claimed"] > .vb-node-box,
+[data-evidence="claimed"].vb-node-box {
+  stroke-dasharray: 6 5;
+}
+
+[data-evidence="contradicted"] > .vb-node-box,
+[data-evidence="contradicted"].vb-node-box {
+  stroke-width: 2.5px;
+}
+
+.vb-ev {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.vb-ev-claimed {
+  border: 1px dashed currentColor;
+}
+
+.vb-ev-verified {
+  border: 1px solid currentColor;
+}
+
+.vb-ev-contradicted {
+  border: 2px solid currentColor;
+  text-decoration: underline;
+}
+
+[data-vb-node-detail] code {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  word-break: break-all;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vb-flow-dim,
+  .vb-flow-active {
+    transition: none;
+  }
+}

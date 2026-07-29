@@ -14,7 +14,9 @@ OpenAI skill material is **split across surfaces**. The API tools page alone is
 | Open standard | https://agentskills.io/specification | Portable field limits and progressive disclosure | Product packaging |
 | Example repos | `openai/skills` (deprecated pointer), prefer `openai/plugins` | Examples / migration pointer | Treat deprecated repo as historical |
 
-**Extracted:** 2026-07-16 from the sources above.
+**Extracted:** 2026-07-16 from the sources above; Skill display-name and
+`agents/openai.yaml` validation semantics refreshed 2026-07-28 from the current
+Codex manual / official plugin submission reference.
 
 > Important: the `openai/skills` README states the repository is **deprecated**
 > for current Codex skill/plugin examples in favor of
@@ -191,8 +193,8 @@ It does **not** replace `SKILL.md`. Trigger matching still comes from
 
 ```yaml
 interface:
-  display_name: "Optional user-facing name"
-  short_description: "Optional user-facing description"
+  display_name: "User-facing skill name"
+  short_description: "Short user-facing description"
   icon_small: "./assets/small-400px.png"
   icon_large: "./assets/large-logo.svg"
   brand_color: "#3B82F6"
@@ -214,8 +216,8 @@ policy:
 
 | Path | Meaning | Constraints / notes |
 |---|---|---|
-| `interface.display_name` | Human title in UI lists/chips | Quote strings |
-| `interface.short_description` | Short UI blurb | **25–64 chars** (skill-creator validates) |
+| `interface.display_name` | Human title in UI lists/chips | `agents/openai.yaml` is optional, but when present its `interface` and non-empty string `display_name` are required |
+| `interface.short_description` | Short UI blurb | Required and non-empty when `agents/openai.yaml` is present; the local skill-creator applies its own additional length guidance |
 | `interface.icon_small` | Small icon path | Prefer `./assets/...` |
 | `interface.icon_large` | Large logo path | Prefer `./assets/...` |
 | `interface.brand_color` | UI accent hex | e.g. `"#3B82F6"` |
@@ -230,12 +232,22 @@ policy:
 Observed top-level keys in real installed skills: only
 `interface` / `policy` / `dependencies`.
 
+The Skill sidecar is separate from both `SKILL.md` and the plugin manifest:
+
+- `SKILL.md metadata` does not configure the OpenAI Skill interface.
+- Skill UI fields use snake_case under `agents/openai.yaml.interface`, for
+  example `interface.display_name`.
+- Plugin-level UI fields use the plugin manifest's own schema (for example
+  camelCase `interface.displayName`) and do not replace per-Skill metadata.
+- Display-only changes do not alter `SKILL.md.description` matching; invocation
+  policy remains under `policy.allow_implicit_invocation`.
+
 #### Relation to Claude-style controls
 
 | Goal | Codex (`openai.yaml`) | Claude Code (`SKILL.md`) |
 |---|---|---|
 | Block model auto-trigger | `policy.allow_implicit_invocation: false` | `disable-model-invocation: true` |
-| UI display name | `interface.display_name` | mostly directory / `name` |
+| UI display name | `interface.display_name` in sidecar | `SKILL.md name`; no separate documented display-name field |
 | Default invoke prompt | `interface.default_prompt` | `$ARGUMENTS` / body patterns |
 | Declare MCP need | `dependencies.tools` | usually separate MCP config |
 

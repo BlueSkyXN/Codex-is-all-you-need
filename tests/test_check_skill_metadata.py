@@ -114,6 +114,33 @@ class SkillMetadataTest(unittest.TestCase):
         errors = metadata.check(self.repo, self.base)["errors"]
         self.assertTrue(any("without behavior" in error for error in errors))
 
+    def test_check_rejects_stale_updated_date_for_behavior_change(self) -> None:
+        self.write_skill("alpha", version="0.2", updated="2026-01-02", body="# Changed\n")
+        errors = metadata.check(self.repo, self.base)["errors"]
+        self.assertTrue(any("does not match latest substantive state date" in error for error in errors))
+
+    def test_new_canonical_skill_must_start_at_0_1(self) -> None:
+        self.write_skill("beta", version="0.1", updated=dt.date.today().isoformat())
+        self.commit("add beta")
+        self.assertEqual(metadata.check(self.repo, self.base)["errors"], [])
+
+        for version in ("0.2", "9.9"):
+            with self.subTest(version=version):
+                self.write_skill("beta", version=version, updated=dt.date.today().isoformat())
+                errors = metadata.check(self.repo, self.base)["errors"]
+                self.assertTrue(any("new canonical skill must use metadata.version '0.1'" in error for error in errors))
+
+    def test_new_staged_canonical_skill_uses_worktree_date(self) -> None:
+        self.write_skill("beta", version="0.1", updated=dt.date.today().isoformat())
+        self.git("add", ".")
+        self.assertEqual(metadata.check(self.repo, self.base)["errors"], [])
+
+    def test_new_canonical_skill_requires_latest_substantive_date(self) -> None:
+        self.write_skill("beta", version="0.1", updated="2026-01-01")
+        self.commit("add beta")
+        errors = metadata.check(self.repo, self.base)["errors"]
+        self.assertTrue(any("does not match latest substantive state date" in error for error in errors))
+
     def test_behavior_files_count_but_readme_license_and_notice_do_not(self) -> None:
         root = self.skill_dir("alpha")
         (root / "README.md").write_text("ignored", encoding="utf-8")
@@ -122,6 +149,46 @@ class SkillMetadataTest(unittest.TestCase):
         self.assertEqual(metadata.check(self.repo, self.base)["errors"], [])
         (root / "references").mkdir()
         (root / "references" / "rule.md").write_text("behavior", encoding="utf-8")
+        errors = metadata.check(self.repo, self.base)["errors"]
+        self.assertTrue(any("one patch or minor" in error for error in errors))
+
+    def test_governance_and_presentation_only_changes_do_not_require_version_bump(self) -> None:
+        for catalog in (False, True):
+            skill_md = self.skill_dir("alpha", catalog=catalog) / "SKILL.md"
+            text = skill_md.read_text(encoding="utf-8")
+            text = text.replace(
+                "description: test\n",
+                'description: test\ndisplay_name: "Alpha UI"\n',
+            ).replace(
+                '  updated: "2026-01-01"\n',
+                '  updated: "2026-01-01"\n'
+                '  maintainer: "Alice"\n'
+                '  updated_by: "Alice, Bob"\n',
+            )
+            skill_md.write_text(text, encoding="utf-8")
+            sidecar = skill_md.parent / "agents" / "openai.yaml"
+            sidecar.parent.mkdir()
+            sidecar.write_text(
+                'interface:\n'
+                '  display_name: "Alpha"\n'
+                '  short_description: "Alpha UI description"\n'
+                '  icon_small: "./assets/icon.png"\n'
+                '  brand_color: "#123456"\n',
+                encoding="utf-8",
+            )
+        self.assertEqual(metadata.check(self.repo, self.base)["errors"], [])
+
+    def test_openai_behavior_fields_still_require_version_bump(self) -> None:
+        for catalog in (False, True):
+            sidecar = self.skill_dir("alpha", catalog=catalog) / "agents" / "openai.yaml"
+            sidecar.parent.mkdir()
+            sidecar.write_text(
+                'interface:\n'
+                '  display_name: "Alpha"\n'
+                '  short_description: "Alpha UI description"\n'
+                '  default_prompt: "Run $alpha with the current input."\n',
+                encoding="utf-8",
+            )
         errors = metadata.check(self.repo, self.base)["errors"]
         self.assertTrue(any("one patch or minor" in error for error in errors))
 
@@ -174,12 +241,21 @@ class SkillMetadataTest(unittest.TestCase):
         self.assertEqual(len(router), 1)
         self.assertIsNone(router[0].mirror_of)
 
-    def test_visual_brainstorming_uses_fixed_initial_metadata(self) -> None:
-        self.write_skill("visual-brainstorming", version=None, updated=None, catalog=False)
-        self.commit("add visual brainstorming")
+    def test_history_plan_uses_generic_committed_fingerprint_history(self) -> None:
+        self.write_skill("beta", version=None, updated=None)
+        self.commit("add beta")
+        self.write_skill("beta", version=None, updated=None, body="# Beta state two\n")
+        self.commit("change beta")
         plan = metadata.backfill(self.repo, "HEAD", apply=False)
-        visual = next(item for item in plan["skills"] if item["path"].endswith("visual-brainstorming/SKILL.md"))
-        self.assertEqual((visual["version"], visual["updated"]), ("0.1", "2026-07-14"))
+        beta = next(
+            item
+            for item in plan["skills"]
+            if item["path"].endswith("/beta/SKILL.md") and item["mirror_of"] is None
+        )
+        self.assertEqual(beta["version"], "0.2")
+        self.assertEqual(beta["updated"], metadata.git_date(self.repo, "HEAD"))
+        self.assertEqual(beta["states"], 2)
+        self.assertEqual(beta["evidence"], self.rev("HEAD"))
 
     def test_relevant_behavior_and_excluded_paths(self) -> None:
         included = (

@@ -28,7 +28,12 @@ DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 JUNK_NAMES = frozenset({".ds_store", "thumbs.db", "desktop.ini"})
 EXCLUDED_NAMES = frozenset({"readme", "license", "notice"})
 BEHAVIOR_ROOTS = frozenset({"references", "scripts", "assets", "examples"})
-VISUAL_BRAINSTORMING = ("0.1", "2026-07-14")
+GOVERNANCE_METADATA_KEYS = frozenset(
+    {"version", "updated", "maintainer", "updated_by"}
+)
+OPENAI_PRESENTATION_KEYS = frozenset(
+    {"display_name", "short_description", "icon_small", "icon_large", "brand_color"}
+)
 
 
 @dataclass(frozen=True)
@@ -173,7 +178,7 @@ def read_metadata(text: str) -> Metadata:
 
 
 def normalize_skill_markdown(text: str) -> bytes:
-    """Remove only metadata.version/updated from SKILL.md behavior identity."""
+    """Remove governance and WorkBuddy UI fields from SKILL.md behavior identity."""
     lines, end = split_frontmatter(text)
     if end is None:
         return text.encode("utf-8")
@@ -181,6 +186,9 @@ def normalize_skill_markdown(text: str) -> bytes:
     index = 0
     while index < len(lines):
         line = lines[index]
+        if index < end and re.match(r"^display_name\s*:", line):
+            index += 1
+            continue
         if index < end and re.match(r"^metadata\s*:\s*(?:#.*)?(?:\r?\n)?$", line):
             block_end = index + 1
             while block_end < end and lines[block_end].startswith((" ", "\t")):
@@ -188,7 +196,42 @@ def normalize_skill_markdown(text: str) -> bytes:
             remaining = [
                 child
                 for child in lines[index + 1 : block_end]
-                if not re.match(r"^\s+(version|updated)\s*:", child)
+                if not re.match(
+                    rf"^\s+({'|'.join(sorted(GOVERNANCE_METADATA_KEYS))})\s*:",
+                    child,
+                )
+            ]
+            if any(child.strip() and not child.lstrip().startswith("#") for child in remaining):
+                output.append(line)
+                output.extend(remaining)
+            index = block_end
+            continue
+        output.append(line)
+        index += 1
+    return "".join(output).encode("utf-8")
+
+
+def normalize_openai_yaml(text: str) -> bytes:
+    """Remove presentation-only interface fields from OpenAI adapter identity."""
+    lines = text.splitlines(keepends=True)
+    output: list[str] = []
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        if re.match(r"^interface\s*:\s*(?:#.*)?(?:\r?\n)?$", line):
+            block_end = index + 1
+            while block_end < len(lines):
+                child = lines[block_end]
+                if child.strip() and not child.startswith((" ", "\t")):
+                    break
+                block_end += 1
+            remaining = [
+                child
+                for child in lines[index + 1 : block_end]
+                if not re.match(
+                    rf"^\s+({'|'.join(sorted(OPENAI_PRESENTATION_KEYS))})\s*:",
+                    child,
+                )
             ]
             if any(child.strip() and not child.lstrip().startswith("#") for child in remaining):
                 output.append(line)
@@ -220,6 +263,10 @@ def fingerprint_files(files: Iterable[tuple[PurePosixPath, bytes]]) -> str:
             continue
         if relative == PurePosixPath("SKILL.md"):
             content = normalize_skill_markdown(content.decode("utf-8"))
+        elif relative == PurePosixPath("agents/openai.yaml"):
+            content = normalize_openai_yaml(content.decode("utf-8"))
+            if not content.strip():
+                continue
         digest.update(relative.as_posix().encode("utf-8"))
         digest.update(b"\0")
         digest.update(content)
@@ -321,12 +368,6 @@ def git_date(repo: Path, commit: str) -> str:
 def history_plan(
     repo: Path, history_ref: str, skill: Skill
 ) -> tuple[str, str, int, str]:
-    if skill.name == "visual-brainstorming":
-        evidence = git(repo, "log", "-1", "--format=%H", history_ref, "--", skill.directory.as_posix()).strip()
-        current = read_metadata(read_worktree_skill(repo, skill))
-        if not current.errors and current.version and current.updated:
-            return current.version, current.updated, 1, evidence
-        return (*VISUAL_BRAINSTORMING, 1, evidence)
     directories = lineage_directories(repo, history_ref, skill)
     commits = git(
         repo,
@@ -499,6 +540,17 @@ def check(repo: Path, base_ref: str) -> dict[str, Any]:
         old_text = show_at(repo, base_ref, skill.path)
         baseline = read_metadata(old_text) if old_text is not None else None
         behavior_changed: bool | None = None
+        if old_text is None and skill.mirror_of is None and not current.errors:
+            if current.version != "0.1":
+                errors.append(
+                    f"{skill.path}: new canonical skill must use metadata.version '0.1'"
+                )
+            expected_updated = history_plan(repo, "HEAD", skill)[1]
+            if current.updated != expected_updated:
+                errors.append(
+                    f"{skill.path}: metadata.updated {current.updated!r} does not match "
+                    f"latest substantive state date {expected_updated!r}"
+                )
         if old_text is not None and baseline is not None and not baseline.errors and not current.errors:
             behavior_changed = fingerprint_files([(PurePosixPath("SKILL.md"), old_text.encode())]) != fingerprint_files([(PurePosixPath("SKILL.md"), text.encode())])
             # Compare all behavior files too, using base tree if the skill was present.

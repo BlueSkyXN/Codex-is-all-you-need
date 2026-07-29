@@ -41,11 +41,19 @@ docs/skill-spec/
 单文件 / 标准 / 套件 = 一个目录、一个 name、一个 SKILL.md
 群 = 数十个独立 skill 的平级组织 + 可选 router（参考线约 30）
 
-三层加载：触发写 description（L1），主工作流写正文（L2），
+三层加载：能力与适用事件写单行 description（L1），主工作流写正文（L2），
 细节按需读（L3：references/, examples/, scripts/, assets/）
 evals/ 为回归材料，运行时不读；结构按需生长，不预建空目录
 
+治理 metadata：version / updated 记录行为版本与日期；需要随文件明确责任时，
+maintainer / updated_by 只记录当前人类负责人和当前行为版本修改人，不记录 AI
+
+展示名按平台适配：Codex 用 agents/openai.yaml.interface.display_name；Claude Code
+复用 name；WorkBuddy 5.3.5 的 bundled scanner 不读取 SKILL.md 顶层
+display_name / display-name，因此不要把它当成当前通用适配字段
+
 references = 怎么做对   examples = 长什么样   evals = 测过了吗
+skill-manifest.json = 可选且默认不建；治理信息需脱离 Git 随包携带时使用
 大知识放包外，包内只写怎么查；Git 是真源，上传是发布
 ```
 

@@ -1,7 +1,7 @@
 {
   "name": "visual-brainstorming",
-  "version": "0.1.0",
-  "description": "Compare visual alternatives in a local browser and record user choices as structured events.",
+  "version": "0.2.0",
+  "description": "Understand a project's real structure as a diagram, or compare visual alternatives in a local browser and record choices as structured events.",
   "author": {
     "name": "BlueSkyXN",
     "url": "https://github.com/BlueSkyXN"

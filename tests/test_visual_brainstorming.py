@@ -1504,6 +1504,39 @@ finally:
                 self.assertEqual(replacement["version"], COMPANION.VERSION)
                 self.assertTrue(json.loads(run_cli(project, "stop").stdout)["stopped"])
 
+    def test_stop_waits_for_process_exit_before_reporting_success(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            project = Path(temporary)
+            info = {"pid": 4321, "session_dir": str(project / "session")}
+            lock = mock.Mock()
+            with mock.patch.object(
+                COMPANION, "acquire_runtime_lock", return_value=lock
+            ), mock.patch.object(
+                COMPANION, "current_info", return_value=info
+            ), mock.patch.object(
+                COMPANION,
+                "server_reachable",
+                side_effect=[True, False, False],
+            ), mock.patch.object(
+                COMPANION, "stop_info", return_value=True
+            ), mock.patch.object(
+                COMPANION, "process_is_alive", side_effect=[True, False]
+            ) as process_is_alive, mock.patch.object(
+                COMPANION.time, "sleep"
+            ), mock.patch.object(
+                COMPANION, "print_result"
+            ) as print_result:
+                self.assertEqual(
+                    COMPANION.cmd_stop(mock.Mock(project_dir=project)),
+                    0,
+                )
+
+            self.assertEqual(process_is_alive.call_count, 2)
+            print_result.assert_called_once_with(
+                {"stopped": True, "session_dir": info["session_dir"]}
+            )
+            lock.release.assert_called_once_with()
+
     def test_content_and_state_live_swaps_are_rejected_but_shutdown_works(self) -> None:
         if os.name == "nt":
             self.skipTest("live directory symlink swap test is POSIX-only")

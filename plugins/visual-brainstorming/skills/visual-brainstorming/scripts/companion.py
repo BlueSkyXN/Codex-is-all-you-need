@@ -2336,6 +2336,21 @@ def stop_info(info: Dict[str, Any], timeout: float = 3.0) -> bool:
     return result.get("ok") is True
 
 
+def wait_for_process_exit(info: Dict[str, Any], timeout: float = 3.0) -> bool:
+    try:
+        pid = int(info.get("pid", 0))
+    except (TypeError, ValueError):
+        return False
+    if pid <= 0:
+        return False
+    deadline = time.time() + timeout
+    alive = process_is_alive(pid)
+    while alive and time.time() < deadline:
+        time.sleep(0.05)
+        alive = process_is_alive(pid)
+    return not alive
+
+
 def start_impl(args: argparse.Namespace) -> Dict[str, Any]:
     project = resolve_project(args.project_dir)
     settings = requested_server_settings(args)
@@ -2811,7 +2826,14 @@ def cmd_stop(args: argparse.Namespace) -> int:
             deadline = time.time() + 4.0
             while time.time() < deadline and server_reachable(info, timeout=0.25):
                 time.sleep(0.1)
-        print_result({"stopped": not server_reachable(info, timeout=0.25), "session_dir": info.get("session_dir")})
+        server_stopped = not server_reachable(info, timeout=0.25)
+        process_stopped = wait_for_process_exit(info) if server_stopped else False
+        print_result(
+            {
+                "stopped": server_stopped and process_stopped,
+                "session_dir": info.get("session_dir"),
+            }
+        )
     finally:
         launch_lock.release()
     return 0

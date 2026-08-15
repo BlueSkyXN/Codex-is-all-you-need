@@ -19,7 +19,7 @@ Agents:
 Skills:
   common                 5
   sdlc-manager          21
-  dev                   20
+  dev                   21
   data                   4
   office                 5
   research               3

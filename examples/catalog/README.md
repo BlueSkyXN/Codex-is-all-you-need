@@ -40,7 +40,7 @@ Current public subset:
 ```text
 common/                 6 agents, 5 public skills
 sdlc-manager/           7 agents, 21 public skills
-dev/                   14 agents, 20 public skills
+dev/                   14 agents, 21 public skills
 data/                   5 agents, 4 public skills
 office/                 5 agents, 5 public skills
 research/               4 agents, 3 public skills

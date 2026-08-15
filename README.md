@@ -111,7 +111,7 @@ Public examples include:
 |---|---:|---:|---|
 | `common` | 6 | 5 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
 | `sdlc-manager` | 7 | 21 | Architecture-first SDLC control: BRD/URS/PRD, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
-| `dev` | 14 | 20 | Code mapping, implementation, tests, reviews, APIs, CLI, frontend, Python, security, performance |
+| `dev` | 14 | 21 | Code mapping, implementation, tests, reviews, APIs, CLI, frontend, Python, security, performance |
 | `data` | 5 | 4 | Data profiling, SQL, cleaning, pipelines, analysis reports |
 | `office` | 5 | 5 | Meeting minutes, weekly reports, project reports, briefing notes, deck outlines |
 | `research` | 4 | 3 | Material processing, evidence tables, deduplication, synthesis, gap review |

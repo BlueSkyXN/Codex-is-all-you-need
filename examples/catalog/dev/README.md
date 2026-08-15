@@ -8,7 +8,7 @@ Agents and skills for software engineering work: repository exploration, impleme
 
 ```text
 agents/   14 development agents
-skills/   20 public skills
+skills/   21 public skills
 ```
 
 ## Agent Groups
@@ -22,8 +22,8 @@ skills/   20 public skills
 
 ```text
 dev-accessibility-audit      dev-api-contract-review      dev-bugfix
-dev-build-optimization       dev-cli-tooling-workflow     dev-dependency-upgrade
-dev-frontend-ui-implementation
+dev-build-optimization       dev-cli-auth-diagnosis       dev-cli-tooling-workflow
+dev-dependency-upgrade       dev-frontend-ui-implementation
 dev-fullstack-feature        dev-git-workflow             dev-migration-plan
 dev-performance-diagnosis    dev-pr-review                dev-prompt-evaluation
 dev-python-quality           dev-refactor-plan            dev-release-check

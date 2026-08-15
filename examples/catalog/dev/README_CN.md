@@ -8,7 +8,7 @@
 
 ```text
 agents/   14 个开发 agents
-skills/   20 个公开 skills
+skills/   21 个公开 skills
 ```
 
 ## Agent 分组
@@ -22,8 +22,8 @@ skills/   20 个公开 skills
 
 ```text
 dev-accessibility-audit      dev-api-contract-review      dev-bugfix
-dev-build-optimization       dev-cli-tooling-workflow     dev-dependency-upgrade
-dev-frontend-ui-implementation
+dev-build-optimization       dev-cli-auth-diagnosis       dev-cli-tooling-workflow
+dev-dependency-upgrade       dev-frontend-ui-implementation
 dev-fullstack-feature        dev-git-workflow             dev-migration-plan
 dev-performance-diagnosis    dev-pr-review                dev-prompt-evaluation
 dev-python-quality           dev-refactor-plan            dev-release-check

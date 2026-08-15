@@ -97,7 +97,7 @@ handoff skills itself.
 | `dev_api_designer` | API contract design and review | `dev-api-contract-review`, `dev-fullstack-feature`, `dev-test-strategy` |
 | `dev_architect_reviewer` | Architecture, service boundaries, technology choices, migration paths, reliability, and evolution risk review | `dev-migration-plan`, `dev-refactor-plan`, `dev-api-contract-review`, `dev-security-review`, `dev-performance-diagnosis`, `dev-test-strategy` |
 | `dev_backend_engineer` | Backend services, APIs, data integrity, auth, queues, observability | `dev-spec-driven-implementation`, `dev-api-contract-review`, `dev-test-strategy`, `dev-security-review`, `dev-performance-diagnosis` |
-| `dev_cli_engineer` | CLI flags, config discovery, exit codes, terminal UX | `dev-spec-driven-implementation`, `dev-cli-tooling-workflow`, `dev-test-strategy`, `dev-release-check` |
+| `dev_cli_engineer` | CLI flags, config discovery, exit codes, terminal UX | `dev-spec-driven-implementation`, `dev-cli-tooling-workflow`, `dev-cli-auth-diagnosis`, `dev-test-strategy`, `dev-release-check` |
 | `dev_code_mapper` | Read-only codebase mapping before implementation | `dev-repo-onboarding`, `dev-refactor-plan`, `dev-migration-plan` |
 | `dev_code_reviewer` | Review diffs, PRs, regressions, test gaps | `dev-pr-review`, `dev-security-review`, `dev-api-contract-review`, `dev-test-strategy` |
 | `dev_docs_engineer` | Developer docs, API/CLI docs, guides, README structure, and docs-as-code workflows | `dev-repo-onboarding`, `dev-api-contract-review`, `dev-cli-tooling-workflow`, `dev-release-check` |

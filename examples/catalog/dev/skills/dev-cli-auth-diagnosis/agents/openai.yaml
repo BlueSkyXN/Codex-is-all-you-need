@@ -1,0 +1,3 @@
+interface:
+  display_name: "CLI Auth Diagnosis"
+  short_description: "Diagnose CLI auth across Codex sandboxes"

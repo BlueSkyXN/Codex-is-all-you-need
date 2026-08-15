@@ -100,7 +100,7 @@ one skill revision even when it spans several edits, review rounds, or commits.
 ## Source And Package Rules / 源与软件包规则
 
 - `plugins/*/skills/*/SKILL.md` is the canonical published skill surface.
-- The 58 Codex Next catalog skills must remain byte-identical to their packaged
+- The 59 Codex Next catalog skills must remain byte-identical to their packaged
   copies. `core-router` is the only plugin-only Codex Next skill.
 - `local/`, runtime `.codex`, generated output, and private skills are outside
   this policy.
@@ -109,7 +109,7 @@ one skill revision even when it spans several edits, review rounds, or commits.
   package versions.
 
 - `plugins/*/skills/*/SKILL.md` 是公开 skill 的 canonical surface。
-- Codex Next 的 58 个 catalog skill 必须与 package 副本逐字节一致；
+- Codex Next 的 59 个 catalog skill 必须与 package 副本逐字节一致；
   `core-router` 是唯一 plugin-only 例外。
 - `local/`、runtime `.codex`、生成产物和私有 skill 不属于本规则范围。
 - Plugin package SemVer 继续由 `.codex-plugin/plugin.json` 管理；存在 Claude

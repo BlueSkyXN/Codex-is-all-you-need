@@ -118,7 +118,7 @@ Legend:
 | B1 | Main skills page | DONE | `claude-code.md` |
 | B2 | Plugins reference (skills packaging) | OPEN | linked from skills page |
 | B3 | Hooks in skills/agents | PARTIAL | fields known; full schema not extracted |
-| B4 | skill-creator / evals format | PARTIAL | known exists; eval file schema not fully captured |
+| B4 | skill-creator / evals format | DONE enough | plugin doctrine + eval/grading/trigger-optimization workflow extracted first-hand 2026-07-31 (local marketplace copy); exact JSON schemas of every eval artifact still not frozen |
 | B5 | Settings: `skillOverrides`, listing budgets | PARTIAL | main behaviors captured; exact settings schema page open |
 | B6 | Nested monorepo skill qualification | DONE enough | documented on main page |
 
@@ -130,8 +130,8 @@ Legend:
 | C2 | Codex build-skills product page | DONE | discovery paths, budgets, create flows |
 | C3 | `agents/openai.yaml` | DONE | fields + local samples + generator |
 | C4 | Plugin packaging | DONE enough | skill-only plugin layout captured |
-| C5 | skill-creator doctrine | DONE enough | progressive disclosure, freedom levels, validate flow |
-| C6 | Current canonical location after `openai/skills` deprecation | PARTIAL | README points to `openai/plugins`; re-check live install path periodically |
+| C5 | skill-creator doctrine | DONE | progressive disclosure, freedom levels, validate flow; validation-integrity / forward-testing discipline re-extracted first-hand 2026-07-31 from local system install |
+| C6 | Current canonical location after `openai/skills` deprecation | DONE enough | ships as local system skill `skills/.system/skill-creator` (verified 2026-07-31); `openai/plugins` remains the public repo pointer |
 | C7 | Whether `allow_implicit_invocation: false` is common in first-party skills | PARTIAL | sanitized observed set used defaults; sample is not representative enough to freeze prevalence |
 | C8 | Exact schema validation for openai.yaml beyond skill-creator notes | OPEN | no formal JSON schema found yet |
 
@@ -188,6 +188,7 @@ Legend:
 | I3 | Official public plugin schema page | OPEN | currently inferred from samples + path survey |
 | I4 | Skill discovery precedence across `.agents`/`.claude`/`.github`/user roots | OPEN | needs runtime matrix |
 | I5 | Whether Claude dual-manifest install remains green on latest CLI | PARTIAL | previously verified on v1.0.62; re-check on current package |
+| I6 | First-party authoring doctrine / skill-creator | DONE (negative result) | 1.0.61 / 1.0.64-1 / 1.0.75 builtin-skills contain only `customize-cloud-agent`; no creator, no doctrine (2026-07-31) |
 
 ### H. Cross-cutting verification (not docs)
 
@@ -203,6 +204,19 @@ Legend:
 ---
 
 ## Newly gathered facts this pass / 本轮补充到的事实
+
+### Authoring doctrine first-hand comparison (2026-07-31)
+
+- 本地一手提取三家创作方法论并写入平台文档与 [comparison.md](comparison.md) 第 5 节：
+  - Codex system skill-creator（`~/.codex` 安装树）：简洁经济学、自由度三档校准、
+    "Protect Validation Integrity" 与 forward-testing 反污染纪律。
+  - Claude 官方 skill-creator plugin（claude-plugins-official 本地副本）：
+    with-skill vs baseline 双跑 eval loop、反 ALWAYS/NEVER、反过拟合、
+    description 触发优化（60/40 train/test）、盲评。
+  - Copilot CLI 1.0.61 / 1.0.64-1 / 1.0.75：builtin-skills 均仅
+    `customize-cloud-agent`，**无任何 authoring doctrine**（格式采用者）。
+- 交集结论「约束强度匹配风险 + 实证迭代」已作为工程实践依据进入 SPEC 0.3
+  （核心原则 6/7、6.3 内容设计建议、第 8 章评测增补）。
 
 ### Terminology / SKILL.md / directory matrix (2026-07-17)
 

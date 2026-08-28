@@ -51,5 +51,6 @@ SPEC.md     → 我们「规定做什么」（真源）
 - WorkBuddy 5.2.6 历史快照（frontmatter / `display_name`）补录：2026-07-28
 - WorkBuddy 5.3.5 bundled scanner / loader / CLI 读取边界复核：2026-07-29
 - Codex / Claude Code Skill 展示名落点复核：2026-07-28
+- 三家创作方法论一手复核（Codex system skill-creator、Claude skill-creator plugin、Copilot builtin-skills）：2026-07-31
 
 数字限额与字段以各厂商最新文档或本地安装版本为准，引用前建议复核。

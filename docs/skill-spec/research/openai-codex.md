@@ -16,7 +16,9 @@ OpenAI skill material is **split across surfaces**. The API tools page alone is
 
 **Extracted:** 2026-07-16 from the sources above; Skill display-name and
 `agents/openai.yaml` validation semantics refreshed 2026-07-28 from the current
-Codex manual / official plugin submission reference.
+Codex manual / official plugin submission reference; system skill-creator
+doctrine re-extracted 2026-07-31 first-hand from a local Codex install
+(`~/.codex/skills/.system/skill-creator`).
 
 > Important: the `openai/skills` README states the repository is **deprecated**
 > for current Codex skill/plugin examples in favor of
@@ -419,6 +421,32 @@ Synthesized from **skill-creator + Codex build-skills** (stronger than API page 
 5. Validate
 6. Use → observe misses → revise
 
+### Validation integrity / forward-testing doctrine (2026-07-31 local re-extract)
+
+The currently installed system skill-creator contains an explicit
+anti-contamination discipline that earlier public extracts under-covered:
+
+- **"Protect Validation Integrity"**: subagent validation is an evaluation
+  surface; the goal is to learn whether the skill generalizes, not whether
+  another agent can reconstruct the answer from leaked context.
+- **Forward-testing rules**: test with uninformed subagents in fresh threads,
+  phrased as a real user task (`Use $skill-x at /path/to/skill-x to solve
+  problem y`), never as "review this skill and pretend...". Pass raw artifacts
+  (prompts, outputs, diffs, logs), not the author's conclusions; never show
+  expected answers, suspected bugs, or intended fixes; clean up subagent
+  artifacts between iterations to avoid cross-contamination.
+- **Decision rule**: err on the side of forward-testing; ask user approval when
+  a test would take long, require extra approvals, or touch live production
+  systems.
+- **Acceptance bar**: if forward-testing only succeeds when subagents see
+  leaked context, tighten the skill or the test setup before trusting the
+  result.
+
+Combined with the freedom-level framing (section 7), the design stance is:
+**author-side discipline first** — calibrate constraint strength to task
+fragility at writing time, keep context spend justified per paragraph, then
+verify transfer with uncontaminated forward tests.
+
 ## 15. Extraction notes
 
 ### Why the API page felt incomplete
@@ -451,8 +479,10 @@ https://developers.openai.com/api/docs/guides/tools-skills is primarily an
 
 ### Residual gaps
 
-- Exact current location of skill-creator after `openai/skills` deprecation should
-  be re-checked against the latest Codex install / `openai/plugins`
+- ~~Exact current location of skill-creator after `openai/skills` deprecation~~
+  → resolved 2026-07-31: it ships as a system skill inside the local Codex
+  install under `skills/.system/skill-creator` (alongside `plugin-creator`,
+  `skill-installer`, etc.); doctrine re-extracted from there first-hand
 - Numeric listing budgets and API upload limits can change; re-fetch before
   treating as hard compliance gates
 - This repo’s own public skill contract remains

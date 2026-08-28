@@ -8,7 +8,7 @@
 | User config root | `~/.copilot` (not `.copilotcli`) |
 | Binary sample | `/opt/homebrew/bin/copilot` |
 | Local package root | `~/.copilot/pkg/darwin-arm64/<version>/` |
-| Extracted | 2026-07-17 from a versioned local install + sanitized user-layout observations |
+| Extracted | 2026-07-17 from a versioned local install + sanitized user-layout observations; builtin-skill inventory and authoring-doctrine absence re-verified 2026-07-31 across local pkg versions 1.0.61 / 1.0.64-1 / 1.0.75 |
 | Public docs | Product docs exist for cloud-agent customization; local CLI packaging is partly inferred from install layout |
 
 This extract covers **local CLI extensibility paths** observed on disk:
@@ -244,6 +244,27 @@ This YAML format is **Copilot-package-native** and richer than plain user markdo
 - Claude-like `user-invocable` observed on bundled skill
 - No mandatory Copilot-only sidecar found for ordinary skills
 
+### No first-party authoring doctrine (verified 2026-07-31)
+
+Local CLI packages 1.0.61, 1.0.64-1, and 1.0.75 each ship exactly **one**
+builtin skill, `customize-cloud-agent` — a docs-as-skill (rewritten GitHub
+product documentation about `copilot-setup-steps.yml`) marked
+`user-invocable: false`. There is **no bundled skill-creator, no authoring
+guide, no freedom-level or eval doctrine, and no eval-loop tooling** in the CLI
+package.
+
+Contrast with the other two ecosystems:
+
+| Ecosystem | Creator tooling | Design doctrine shipped |
+|---|---|---|
+| Codex | system `skill-creator` (+ `plugin-creator`, `skill-installer`) | conciseness economics, degrees-of-freedom calibration, validation-integrity / forward-testing |
+| Claude Code | official `skill-creator` plugin | empirical eval loop, baseline comparison, anti-MUST / anti-overfitting rules, description trigger optimization |
+| Copilot CLI | none found in package | none — format adopter only |
+
+Copilot CLI consumes Agent Skills-shaped directories and interops with other
+ecosystems' roots, but authoring methodology must come from the open standard
+or the other ecosystems' creators.
+
 ## 13. Security
 
 - Review third-party skills/plugins before install
@@ -268,5 +289,6 @@ This YAML format is **Copilot-package-native** and richer than plain user markdo
   - Skill path + Agent Skills shape: **High**
   - User agent markdown fields: **High** (multiple samples)
   - Bundled `.agent.yaml` richness: **High** (package definitions)
+  - Absence of first-party authoring doctrine in the CLI package: **High** (3 local versions checked 2026-07-31)
   - Complete official plugin schema / precedence matrix: **Medium / open**
   - Cross-runtime marketplace behavior: **Medium** (prior interop experiments + local manifests)

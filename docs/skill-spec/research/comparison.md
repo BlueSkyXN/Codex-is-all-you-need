@@ -426,17 +426,38 @@ plugin-root/
 
 ---
 
-## 5. 对规范设计的直接含义（供 SPEC 校准，非 SPEC 正文）
+## 5. 创作方法论对比（skill-creator doctrine，2026-07-31 本地一手）
+
+三家对「怎么写好 skill」的官方立场差异比文件格式差异更大：
+
+| 维度 | Codex（system skill-creator） | Claude Code（官方 skill-creator plugin） | Copilot CLI |
+|---|---|---|---|
+| 载体 | 系统内置 skill（`.system/skill-creator`） | 官方 marketplace plugin（含 graders / eval 脚本 / viewer） | **无**（1.0.61–1.0.75 仅 `customize-cloud-agent` docs-as-skill） |
+| 核心思想 | **设计期纪律**：上下文是公共品；默认模型已聪明，只写它缺的 | **经验主义闭环**：draft → eval → 人审 → 迭代，"measure, don't legislate" | 无立场，格式采用者 |
+| 约束观 | 自由度三档校准：多解环节高自由、偏好模式中自由、脆弱序列低自由 | 反 ALWAYS/NEVER 大写禁令（yellow flag），改讲 why；但工具脆弱处仍钉死字段名 | — |
+| 质量验证 | forward-testing 反污染：不知情子代理 + 原始工件，不泄预期答案 | with-skill vs baseline 双跑对照、盲评、60/40 train/test 触发优化 | — |
+| 反过拟合 | 通过「泄露上下文才通过 = 未通过」间接约束 | 显式条款：只满足迭代样例的修补视为无效 | — |
+| 共同点 | 两家一致：渐进披露、正文 <500 行、触发信息只放 description、案例优于长解释、约束强度跟脆弱性走 | 同左 | 仅继承格式层共识 |
+
+结论：**约束强度匹配风险 + 实证迭代**是两家 creator doctrine 的交集，可作为
+SPEC 内容设计条款的工程实践依据；Copilot 侧没有可引用的创作方法论证据。
+详细摘录见 [openai-codex.md](openai-codex.md)、[claude-code.md](claude-code.md)、
+[copilot-cli.md](copilot-cli.md)。
+
+---
+
+## 6. 对规范设计的直接含义（供 SPEC 校准，非 SPEC 正文）
 
 1. **名词**：SPEC 应只把 Skill 定义成工序单元；Plugin/Agent/Expert 最多作为边界说明，不并进 skill 分类。
 2. **SKILL.md**：可移植必须集 = 开放标准六字段模型（2 必填 + 4 可选）；其余一律「平台扩展」。
 3. **目录**：标准推荐 scripts/references/assets；允许有独立职责的新目录；禁止把分发壳目录写成 skill 必选。
 4. **冲突处理**：`name` 字符集与「目录名一致」以开放标准为准；QoderWork 中文 UI 名视为产品例外。
 5. **仍待 runtime 验证**：未知 frontmatter 忽略还是拒绝；Copilot 多根发现优先级；Qoder 重名优先级。
+6. **写法条款**：硬约束与默认分离并附理由、不可逆操作写失败分支、外部结构写探测法、正反例优先——由第 5 节两家 doctrine 交集支撑，属「工程实践」级依据。
 
 ---
 
-## 6. 证据索引
+## 7. 证据索引
 
 | 主题 | 文档 |
 |---|---|

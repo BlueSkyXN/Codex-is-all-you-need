@@ -8,7 +8,7 @@
 | Primary docs | https://code.claude.com/docs/zh-CN/skills |
 | Open standard | Declares compatibility with [Agent Skills](https://agentskills.io) |
 | Related | Plugins, subagents, hooks, skill-creator plugin, agentskills.io evals |
-| Extracted | 2026-07-16 from public Chinese docs page; display-name and command-name semantics refreshed 2026-07-28 from the current English page |
+| Extracted | 2026-07-16 from public Chinese docs page; display-name and command-name semantics refreshed 2026-07-28 from the current English page; official skill-creator plugin doctrine extracted first-hand 2026-07-31 from the local `claude-plugins-official` marketplace copy |
 
 Claude Code **extends** Agent Skills with invocation control, subagent execution,
 dynamic context injection, permissions, and plugin packaging.
@@ -237,6 +237,43 @@ Claude-specific power features:
 7. Measure trigger quality and output quality separately (skill-creator / evals).
 8. Fix “never triggers” by improving description keywords; fix “over-triggers” by
    narrowing description or disabling model invocation.
+
+### Official skill-creator plugin doctrine (2026-07-31 local extract)
+
+Extracted first-hand from Anthropic's `skill-creator` plugin in the
+`claude-plugins-official` marketplace (SKILL.md ~33KB + `agents/` graders +
+`scripts/` eval tooling + `eval-viewer/`). It is an **empirical eval-loop
+methodology**, not a template pack — the design stance is "measure, don't
+legislate":
+
+1. **Core loop**: draft skill → 2–3 realistic test prompts → spawn
+   **with-skill and baseline runs in parallel** (baseline = no skill for new
+   skills, snapshot of the old version for improvements) → human reviews
+   outputs in a generated HTML viewer → improve → rerun into
+   `iteration-N/` workspaces with feedback carry-over.
+2. **Anti-rigidity rule** (verbatim doctrine): "If you find yourself writing
+   ALWAYS or NEVER in all caps, or using super rigid structures, that's a
+   yellow flag — reframe and explain the reasoning." Explain the *why* in lieu
+   of heavy-handed MUSTs; use theory of mind.
+3. **Anti-overfitting rule**: skills will be used across huge numbers of
+   prompts; iterating on a few examples is only a speed device. Changes that
+   merely satisfy those examples ("fiddly overfitty changes, or oppressively
+   constrictive MUSTs") are treated as useless; prefer branching to different
+   metaphors or work patterns when an issue is stubborn.
+4. **Keep the prompt lean**: read run transcripts, not just outputs; delete
+   skill content that causes unproductive work. If multiple test runs
+   independently rewrote the same helper script, bundle it into `scripts/`.
+5. **Description optimization as ML problem**: generate ~20 realistic trigger
+   evals (should-trigger plus genuinely tricky near-miss negatives), 60/40
+   train/test split, iterative description rewriting scored on the held-out
+   test set to avoid overfitting (`scripts/run_loop.py`; best description
+   selected by test score).
+6. **Blind comparison** (optional): comparator/analyzer subagents judge two
+   skill versions without knowing which is which.
+7. **Selective hardness**: the same doctrine that bans rigid MUSTs in prose
+   pins exact field names where tooling is fragile (`grading.json` must use
+   `text` / `passed` / `evidence` — "the viewer depends on these exact field
+   names"). Constraint strength follows fragility, not author anxiety.
 
 ## 15. Extraction notes
 

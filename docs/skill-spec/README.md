@@ -6,6 +6,8 @@
 2. **一份上手指南**：[GUIDE.md](GUIDE.md) —— SPEC 的入门伴侣，面向第一次写 skill 的业务作者，十分钟从模板到能用；条款以 SPEC 为准
 3. **调研结果**：[research/](research/) —— 证据库，可选阅读
 
+规范只维护可移植底座、通用工程默认和平台适配边界。组织命名、责任、源码目录、审批与分发规则应放在各自仓库的增量 profile 中，不复制或改写成新的“通用标准”。
+
 ```text
 docs/skill-spec/
   README.md           # 本说明
@@ -44,6 +46,9 @@ docs/skill-spec/
 三层加载：能力与适用事件写单行 description（L1），主工作流写正文（L2），
 细节按需读（L3：references/, examples/, scripts/, assets/）
 evals/ 为回归材料，运行时不读；结构按需生长，不预建空目录
+
+普通 skill 满足准确触发、主流程、完成/停止条件、按需资源、依赖副作用说明和
+风险匹配验证即可停止扩展；不为形式补 manifest、脚本、评测、adapter 或部署证据
 
 治理 metadata：version / updated 记录行为版本与日期；需要随文件明确责任时，
 maintainer / updated_by 只记录当前人类负责人和当前行为版本修改人，不记录 AI

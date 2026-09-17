@@ -14,7 +14,7 @@
 | [openai-codex.md](openai-codex.md) | OpenAI / Codex（含 `agents/openai.yaml`） |
 | [openclaw.md](openclaw.md) | OpenClaw |
 | [codebuddy.md](codebuddy.md) | CodeBuddy |
-| [workbuddy.md](workbuddy.md) | WorkBuddy（本地 app 资产 + 专家包） |
+| [workbuddy.md](workbuddy.md) | WorkBuddy（5.5.3 创建指南、脚本、CLI 与桌面字段读取；保留旧版快照） |
 | [qoder.md](qoder.md) | Qoder / QoderWork |
 | [copilot-cli.md](copilot-cli.md) | GitHub Copilot CLI |
 
@@ -50,6 +50,7 @@ SPEC.md     → 我们「规定做什么」（真源）
 - 本地创建路径 / 专家包 / Copilot CLI 补强：2026-07-17
 - WorkBuddy 5.2.6 历史快照（frontmatter / `display_name`）补录：2026-07-28
 - WorkBuddy 5.3.5 bundled scanner / loader / CLI 读取边界复核：2026-07-29
+- WorkBuddy 5.5.3 creator / helper scripts / CLI loader / 桌面字段读取复核：2026-09-16
 - Codex / Claude Code Skill 展示名落点复核：2026-07-28
 - 三家创作方法论一手复核（Codex system skill-creator、Claude skill-creator plugin、Copilot builtin-skills）：2026-07-31
 

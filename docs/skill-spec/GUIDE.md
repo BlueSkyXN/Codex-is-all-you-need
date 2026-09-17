@@ -2,6 +2,7 @@
 
 | 项 | 值 |
 |---|---|
+| 对应规范 | SPEC 0.4 正式版 |
 | 定位 | [SPEC.md](SPEC.md)（Agent Skill 开发规范）的入门伴侣：十分钟写出第一个能用的 skill |
 | 读者 | 第一次写 skill 的人，不要求会写代码；工程与评审读者请直接读 SPEC |
 | 效力 | 本文只讲路径与示例，条款以 SPEC 为准；两文冲突时以 SPEC 为准 |
@@ -14,6 +15,8 @@
 1. Skill 是给 AI 助手（Claude Code、Codex、Copilot CLI、CodeBuddy、WorkBuddy、Qoder 等）预先写好的一份**工作说明书**：教它在某类任务上按你的流程做事。
 2. 最小的 skill 就是**一个文件夹 + 一个 `SKILL.md` 文件**，纯文本，不用写代码。
 3. AI 会参考文件开头的单行 `description` 判断这个 Skill 能处理什么事件或任务——描述是否准确，直接影响 Skill 是否被正确选择。
+
+先分别判断三个问题：是否需要辅助文件、是否有多条任务路线、是否需要脚本或外部工具。它们可以组合：多路线也能只用一个文件，有脚本也可以只有一条路线。类型与选择表见 SPEC 第 2 章。
 
 ## 1. 第一步：抄模板
 
@@ -53,7 +56,7 @@ description: 将一周内的工作记录归纳为结构化周报，适用于已�
 
 规则一句话：**全小写英文，词间用连字符，文件夹名和 `name` 保持一致**。如 `weekly-report`、`prd-writer`、`meeting-notes`。
 
-想叫中文名（如「周报生成」）怎么办：文件夹和 `name` 仍用英文，在 `description` 中用中文描述能力和适用事件。AI 选择 Skill 时主要参考 `description`，不是靠 `name` 猜任务，所以英文命名不影响中文环境使用。部分产品界面另有「展示名」字段可填中文，属产品自己的功能，填不填都不影响 Skill 本体。
+想叫中文名（如「周报生成」）怎么办：文件夹和 `name` 仍用英文，在 `description` 中用中文描述能力和适用事件，在正文一级标题写 `# 周报生成`。需要产品界面显示中文名时，再按该平台规则适配；Markdown 标题或自定义展示名不保证被产品 UI 采用。
 
 ### 2.2 `description`：描述能力和适用事件
 
@@ -62,7 +65,7 @@ description: 将一周内的工作记录归纳为结构化周报，适用于已�
 - 描述客观任务语义：处理对象、已有输入、目标动作和所处状态。不要猜用户会说哪些关键词、口令或固定句式。
 - 整段必须写在 `description:` 所在的单个物理行；不要使用 `>`、`>-`、`|`、`|-` 等多行写法。
 - 建议 100～200 字，核心能力和适用事件前置。
-- 办公类 Skill（如 `office-*`，以及文档、表格、演示、PDF、周报、邮件、飞书流程）默认优先使用中文 `description`；只有目标用户明确以其他语言为主时才例外，产品名、API、配置键和代码标识符保留原文。这是本项目规范，不是各平台的语言硬限制。
+- 使用目标读者的主要语言，面向中文办公环境时优先中文；产品名、API、配置键和代码标识符保留原文。组织的固定语言要求写在自己的 profile 中。
 - 默认不写「什么时候不用」；只有相邻 Skill 职责确实重叠、正向边界仍无法区分时，才补最小必要的排除说明。
 - 开头两条 `---` 之间这块区域叫 frontmatter（元信息区）：冒号后面有空格，缩进用空格不用 Tab。
 
@@ -77,15 +80,17 @@ description: 将一周内的工作记录归纳为结构化周报，适用于已�
 - 不记录 AI、formatter、CI 或自动镜像；AI 参与修改时，记录提出、审阅并接受该版本的人类负责人和修改人。
 - 不设置 `author`；原始作者和历史贡献者由 Git history / PR 保存。
 
-个人自用且不需要随文件记录维护责任时，可以只保留 `name`、`description`，省略整个 `metadata`。多人协作或公开发布时必须维护 `version` / `updated`；`maintainer` / `updated_by` 用于需要随文件明确责任的场景。
+个人自用且不需要随文件记录维护责任时，可以只保留 `name`、`description`，省略整个 `metadata`。采用本规范进行多人协作或公开发布时维护 `version` / `updated`；`maintainer` / `updated_by` 用于需要随文件明确责任的场景。项目已有字段或版本契约时遵循项目契约，不重复加字段。
 
 ### 2.4 平台展示名：默认不加，按目标产品落位
 
 展示名不是可移植 frontmatter 字段，不能为了“兼容更多平台”同时堆进 `SKILL.md`：
 
-- OpenAI Codex / ChatGPT：写在 `agents/openai.yaml` 的 `interface.display_name`；创建该 sidecar 时同时填写非空 `interface.short_description`。
+- OpenAI Codex / ChatGPT：写在 `agents/openai.yaml` 的 `interface.display_name`；面向插件目录提交时，该 sidecar 若存在，必须同时填写非空 `interface.short_description`。
 - Claude Code：当前 Skill frontmatter 没有独立 display-name 字段；`name` 本身用于列表展示。为保持可移植性，仍让目录名与 `name` 一致，不拿它做本地化文案。
-- WorkBuddy：只有明确面向 WorkBuddy 且需要单独 UI 名时，才在 `SKILL.md` 顶层写 `display_name: "展示名"`。它不影响触发，不能替代 `name` / `description`；默认省略，不写 `display-name` 或 camelCase `displayName`。
+- WorkBuddy：默认省略 `display_name`，用 `name` 标识 Skill、Markdown 标题供人阅读。需要独立 UI 名时核对目标版本，具体证据见 [WorkBuddy 调研记录](research/workbuddy.md)。
+
+组织为人工阅读或自有目录索引保留的展示元信息，由组织 profile 规定。资源读取时机写在正文；平台管理字段按该平台的适配说明添加。
 
 ### 2.5 正文：把你的做法写成步骤
 
@@ -131,15 +136,15 @@ description: 将一周内的工作记录归纳为结构化周报，适用于已�
 - 想给 AI 看输出样例 → 放 `examples/`
 - 有固定要跑的脚本 → 放 `scripts/`
 
-先建空目录等着装东西是被规范明确禁止的。详细规则见 SPEC 第 4～5 章。
+先建空目录等着装东西是被规范明确禁止的。目录、文件格式与资源引用规则见 SPEC 第 3、6 章，完整示例见第 7 章。
 
 ## 6. 想分享给团队或网上发布时
 
 个人自用到此为止。要多人协作或分发时再补三件事：
 
-1. frontmatter 里维护 `metadata.version`（一个未发布修改批次最终形成新的实质状态时只升一次）和 `metadata.updated`（该批次最终状态日期）；需要随文件明确责任时，再维护 `metadata.maintainer` 与 `metadata.updated_by`。规则见 SPEC 第 6、9 章。
-2. 先区分内部私有协作与公开 / 可外发分发：任何包都不得含密钥、凭据或客户原始报告；公开边界不得含内网地址或可识别个人 / 客户数据。内部私有案例只有逐项满足 SPEC 4.3 的明确授权、写入前风险提醒、人工持久化决定、最小必要、受限分发和对外脱敏条件时才可纳入；仅本次使用授权不等于允许写进 Skill（SPEC 5.4）。
-3. 用 SPEC 第 11 章的清单自查一遍。
+1. 按采用的治理契约记录版本和责任。使用本规范的默认契约时，在 frontmatter 维护 `metadata.version`（同一未发布修改批次只升一次）和 `metadata.updated`（该批次最终状态日期）；需要随文件明确责任时，再维护 `metadata.maintainer` 与 `metadata.updated_by`。`name`、`description` 或调用控制变化也属于行为变更。规则见 SPEC 第 11 章。
+2. 先区分内部私有协作与公开 / 可外发分发：任何包都不得含密钥、凭据或原始报告；公开边界不得含内网地址或可识别个人 / 客户数据。内部私有案例只有逐项满足 SPEC 附录 B 的明确授权、写入前风险提醒、人工持久化决定、最小必要、受限分发和对外脱敏条件时才可纳入；仅本次使用授权不等于允许写进 Skill（SPEC 10.3）。
+3. 用 SPEC 第 10 章的清单自查一遍。
 
 默认不要创建 `skill-manifest.json`。只有 Skill 脱离 Git 分发后仍必须随包携带维护人和简短 changelog 时，才按下面的轻量格式增加：
 
@@ -161,12 +166,12 @@ manifest 中的 `maintainer` 和最新一项 `updated_by` 必须与 `SKILL.md` �
 
 ## FAQ
 
-- **必须懂 Git 吗？** 个人自用不必须。团队协作或公开发布时，规范要求以 Git 仓库为唯一真源（SPEC 2.3、第 9 章）。
-- **一个 skill 能干几件事吗？** 同一类事的几条路线可以（如「PDF 提取 / 填表 / 合并」），互不相干的事（如「写周报」和「初始化数据库」）必须拆成两个 skill（SPEC 3.2）。
-- **`version` 和 `updated` 不写行吗？** 个人自用可不写；分发时必须写（SPEC 6.1）。
+- **必须懂 Git 吗？** 个人自用不必须。团队协作或公开发布时，以 Git 仓库为真源（SPEC 第 11 章）。
+- **一个 skill 能干几件事吗？** 同一类事的几条路线可以（如「PDF 提取 / 填表 / 合并」），互不相干的事（如「写周报」和「初始化数据库」）应拆成独立 Skill（SPEC 2.4）。
+- **`version` 和 `updated` 不写行吗？** 个人自用可不写；采用本规范默认治理契约进行协作或分发时要写，项目已有契约时遵循项目契约（SPEC 11.1）。
 - **为什么不写 `author`？** Git history / PR 已经保存原始作者和历次贡献者；`maintainer` 表示当前负责人，`updated_by` 表示形成当前行为版本的人类修改人，三者不应混用。
-- **不同平台怎么写展示名？** Codex 用 `agents/openai.yaml.interface.display_name`；WorkBuddy 才在 `SKILL.md` 顶层写可选 `display_name`；Claude Code 没有独立字段。纯展示名变化不升级行为版本。
+- **不同平台怎么写展示名？** 人类可读名称默认写 Markdown 标题；Codex UI 名用 `agents/openai.yaml.interface.display_name`。WorkBuddy 不预设独立 UI 字段，Claude Code 没有独立展示名字段。纯展示文案变化不升级行为版本。
 - **短时间连续修改要每次升版吗？** 不要。同一未发布任务、同一 PR 或同一轮 review 中的连续修订合并成一个版本，只在最终形成新的实质状态时升一次。初始开发阶段统一递增 `0.x` 次段（如 `0.1 -> 0.2`）；`1.0` 是负责人明确声明的首个稳定公开契约，不由一次不兼容修改自动触发。进入稳定阶段后，兼容变化升次段，破坏公开契约才升主段。前一版本已发布或成为正式基线后，新的实质变化才开始下一次升版。
 - **`skill-manifest.json` 必须有吗？** 不必须，默认不要创建。只有维护人与简短 changelog 确需脱离 Git 随包携带时才添加，而且不放运行时规则。
 - **怎么禁止模型自动调用？** 默认不写任何字段；只有目标平台支持且 Skill 必须由用户显式调用时，才写 `disable-model-invocation: true`。Codex 使用 `agents/openai.yaml` 中的 `policy.allow_implicit_invocation: false`。
-- **别人的 skill 能直接装吗？** 装之前通读它的 `SKILL.md` 和脚本——skill 既是提示词也是可执行代码，按不可信代码对待（SPEC 5.4）。
+- **别人的 skill 能直接装吗？** 装之前通读它的 `SKILL.md` 和脚本，核对依赖与副作用；实际安装时检查目标实例（SPEC 10.3、11.4）。

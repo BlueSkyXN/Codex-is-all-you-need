@@ -1,5 +1,10 @@
 # WorkBuddy Skills / Experts
 
+> Latest verification: **WorkBuddy 5.5.3, 2026-09-16**, in section 16.
+> Sections 1–15 preserve the **5.3.5 / 2026-07-29 historical snapshot**; their
+> uses of “current” refer to that snapshot. The newer loader and tool findings
+> in section 16 take precedence for 5.5.3.
+
 ## 1. Product and sources
 
 | Item | Value |
@@ -416,3 +421,59 @@ results to lead via messaging conventions.
 | Expert plugin schema | High (bundled `plugin-json-spec.md` + scripts) |
 | Exact project-path precedence vs CodeBuddy paths | Medium (path survey + mixed template text) |
 | Public SkillHub upload schema | Still open / not first-party web-documented here |
+
+## 16. WorkBuddy 5.5.3 verification (2026-09-16)
+
+Read-only inspection of the installed app confirmed version **5.5.3**. The
+creator and scripts were read as source; no vendor script, Skill invocation,
+installation, or management action was executed.
+
+### Sources
+
+Paths below are relative to the application bundle's resource/archive roots:
+
+- `resources/plugins/workbuddy-builtin/skills/skill-creator/SKILL.md`
+- The same creator's `scripts/init_skill.py`, `scripts/quick_validate.py`, and
+  `scripts/package_skill.py`
+- `cli/dist/codebuddy.js`: `parseSkillFile`, `deriveSkillVisibility`, Skill tool
+  schema, and SkillManage's `validateAgentCreated`
+- `main/server.js`: `asSkillFrontmatter` desktop-list projection
+
+### Field and interface findings
+
+| Topic | Verified source behavior | Authoring consequence |
+|---|---|---|
+| `name` length | Initializer help says 40 characters; the inspected initializer and quick validator do not enforce a length limit | Do not publish 40 as a confirmed runtime hard limit; retain the open-standard 64-character ceiling unless the target consumer establishes a stricter one |
+| `display_name` / `display-name` | CLI `parseSkillFile` reads both, preferring the underscore spelling, into `displayName`; the desktop `asSkillFrontmatter` projection reads neither | Loader support and desktop display are separate facts. Omit by default; a UI requirement needs a target-interface check |
+| `agent_created` | Creator prose requires `true`, but the initializer template omits it. SkillManage's modify/delete guard accepts either `agent_created: true` or an entry in its agent-created registry | It is a host-management marker, not a portable required field, and its absence alone does not prove SkillManage will reject the Skill |
+| `allowed-tools` | CLI parses the list into `allowedTools`; desktop projection also reads it | It is separate from the sibling boolean `disable`; `disable: false` is not an allowed-tools example. Tool enforcement was not exercised |
+| `disable-model-invocation` / `disable` | CLI `deriveSkillVisibility` reads the explicit invocation field, falling back to `disable` when it is absent; desktop projection also includes both fields | The 5.3.5 absence of a scanner reader cannot be generalized to 5.5.3. This is source evidence, not an end-to-end invocation test |
+| `read_when` | Not found in the inspected creator, helper scripts, or CLI payload; not included in the desktop Skill frontmatter projection | Do not describe it as a supported Skill field; write resource-reading conditions in the body |
+| Skill tool arguments | `skill` is the preferred name; `command` is a legacy alias for the skill name; at least one is required; `args` is an optional string | `command` is not a separate subcommand selector |
+| SkillManage arguments | `action` selects `list`, `create`, `modify`, or `delete`; `name` identifies the target for mutation workflows | This is a separate tool contract, not Skill frontmatter |
+
+### Helper script interfaces
+
+```text
+init_skill.py <skill-name> --path <output-directory>
+package_skill.py <skill-folder> [output-directory]
+```
+
+- `init_skill.py.main` requires the name and explicit `--path` argument. The
+  creator's prose claims an optional path with a `~/.codebuddy/skills/` default;
+  the inspected script does not implement that default. Choose the intended
+  WorkBuddy target directory explicitly. It creates template files under
+  `scripts/`, `references/`, and `assets/`; retain only resources the Skill uses.
+- `package_skill.py` defaults its output directory to the current directory and
+  calls `validate_skill` before creating a ZIP. That validator checks the entry
+  file, frontmatter delimiters, presence of `name` / `description`, a limited
+  name pattern, and angle brackets in the description. It does not parse full
+  YAML, enforce the stated name-length limit or directory/name equality, check
+  resource links, or validate workflow quality.
+- Packaging recursively includes files in the target folder; passing the quick
+  validator does not replace the publication checks in SPEC section 11.
+
+The creation guide, frontmatter fields, helper-script arguments, and host-tool
+arguments are four distinct interfaces. Project rules such as keeping only
+`name` and `description`, and organization-specific governance, belong in the
+target project's profile; they are not WorkBuddy-wide runtime requirements.

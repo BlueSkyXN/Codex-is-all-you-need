@@ -1,6 +1,6 @@
 # Research Status / 调查状态与缺口清单
 
-Last updated: **2026-07-29**（WorkBuddy 5.3.5 bundled scanner / loader / CLI 读取边界复核后）
+Last updated: **2026-09-16**（WorkBuddy 5.5.3 creator / helper scripts / CLI loader / 桌面字段读取复核后）
 
 This file tracks how complete the multi-vendor skill-spec research is, what was
 already extracted, what can still be investigated from public docs/local samples,
@@ -43,7 +43,7 @@ and what is blocked on missing official sources or runtime verification.
 | Sidecar file | Codex | `agents/openai.yaml` |
 | Frontmatter runtime fields | Claude, CodeBuddy, some Copilot skills | `disable-model-invocation`, `allowed-tools`, `context: fork`, `user-invocable`, … |
 | Frontmatter vendor namespace | OpenClaw | `metadata.openclaw` |
-| Product-local frontmatter | WorkBuddy | 5.3.5 scanner reads `allowed-tools` / `disable` / `license` into its local list model and writes `disable` for the local toggle UI; it does **not** read `display_name`, `display-name`, or `disable-model-invocation`. This is scanner/UI evidence, not invocation-runtime enforcement. |
+| Product-local frontmatter | WorkBuddy | 5.5.3 CLI loader reads `display_name` / `display-name`, invocation controls, and `agent_created`; the desktop Skill frontmatter projection does not read either display-name spelling. Creator prose, helper scripts, and management tools have distinct contracts; see `workbuddy.md` section 16. |
 | Bilingual / UI-first naming | QoderWork plugins | Chinese `name` + `name_en` / `description_en` |
 | Thin standard only | Qoder public CLI docs | mainly `name`/`description` + optional files |
 | Package manifests | Distribution layers | `.codex-plugin/`, `.claude-plugin/`, `.codebuddy-plugin/`, `.qoder-plugin/`, Copilot `plugin.json`, ClawHub, etc. |
@@ -178,6 +178,7 @@ Legend:
 | G3 | Expert vs skill relationship | DONE enough | `expert-manager` + plugin-json/agent-md/team specs |
 | G4 | Compatibility with CodeBuddy / Agent Skills | DONE enough for design | shared progressive disclosure + `.codebuddy-plugin`; live root `~/.workbuddy` |
 | G5 | Project skill path precedence vs CodeBuddy template paths | PARTIAL | creator text still says `~/.codebuddy`; live survey uses `~/.workbuddy` |
+| G6 | 5.5.3 creator, helper scripts, CLI loader, Skill/SkillManage schemas | DONE for source inspection | `workbuddy.md` section 16; desktop display and invocation behavior remain untested |
 
 ### I. GitHub Copilot CLI
 

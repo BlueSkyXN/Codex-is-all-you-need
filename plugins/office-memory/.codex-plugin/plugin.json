@@ -1,6 +1,6 @@
 {
   "name": "office-memory",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Manual V1 Lite method for AI-curated daily, current, and durable project memory.",
   "author": {
     "name": "BlueSkyXN",
@@ -9,7 +9,13 @@
   "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/office-memory",
   "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
   "license": "GPL-3.0-only",
-  "keywords": ["codex", "office", "memory", "workspace", "curation"],
+  "keywords": [
+    "codex",
+    "office",
+    "memory",
+    "workspace",
+    "curation"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Office Memory",

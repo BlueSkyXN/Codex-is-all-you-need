@@ -1,8 +1,8 @@
 # Office Memory V1 Lite
 
 Office Memory is a public method plugin for AI-curated date records, current
-AWARENESS.md, and durable MEMORY.md. The package uses strict SemVer `0.1.0`
-(the v0.1 line), while its workflow Skill independently uses version `0.1`.
+AWARENESS.md, and durable MEMORY.md. The package uses strict SemVer `0.2.0`
+(the v0.2 line), while its workflow Skill independently uses version `0.2`.
 It does not ship project content or automatically discover sources.
 
 ## Explicit manual authorization
@@ -79,6 +79,7 @@ python3 skills/manage-office-memory/scripts/office_memory.py snapshot --config "
   --material documents/current.md
 python3 skills/manage-office-memory/scripts/office_memory.py init --config "$CONFIG"
 python3 skills/manage-office-memory/scripts/office_memory.py init --config "$CONFIG" --apply
+python3 skills/manage-office-memory/scripts/office_memory.py rotate --config "$CONFIG" --apply
 python3 skills/manage-office-memory/scripts/office_memory.py validate --config "$CONFIG"
 ```
 
@@ -95,6 +96,14 @@ outputs rather than evidence; the helper never recursively traverses project
 content or rewrites source text. It hashes each snapshot through one file
 descriptor and rejects a file whose identity, size, or timestamps change while
 it is read.
+
+`rotate --apply` archives the current AWARENESS.md verbatim to
+`awareness/history/AWARENESS-YYYY-MM-DD.md` beside it (same-day reruns add
+`-HHMM`), then deletes copies whose filename date is older than the 7-day
+window and the oldest copies beyond 10 files. Run it before every AWARENESS.md
+rewrite: the archived copies are a rollback and diff-check safety net only,
+never factual input for the rewrite. `validate` also checks the history window
+(filename pattern, retention, count, per-file 16 KiB limit).
 
 For daily and awareness work, the caller must use `--focus project` or an exact
 configured scope. Exact scope requires every material to be within that

@@ -3,8 +3,8 @@ name: manage-office-memory
 description: "Manual-only Office Memory V1 Lite workflow. Run when the user explicitly invokes $manage-office-memory from a project-local Skill or $office-memory:manage-office-memory from the installed plugin. Use to curate date-based short-term project memory, current AWARENESS.md, and durable MEMORY.md from explicitly selected project materials and whitelisted sources."
 disable-model-invocation: true
 metadata:
-  version: "0.1"
-  updated: "2026-07-25"
+  version: "0.2"
+  updated: "2026-09-18"
 ---
 
 # Manage Office Memory
@@ -53,11 +53,12 @@ Skill and is not expected to be on `PATH`.
 | Mode | Action |
 | --- | --- |
 | `init` | Run `python3 "$SKILL_DIR/scripts/office_memory.py" init --config .agents/office-memory.toml`, review dry-run, then add `--apply`. It only creates missing result files. |
-| `status` | Run `python3 "$SKILL_DIR/scripts/office_memory.py" check-config --config .agents/office-memory.toml`; it reports canonical outputs and daily count/latest without reading source or daily bodies. |
+| `rotate` | Run `python3 "$SKILL_DIR/scripts/office_memory.py" rotate --apply --config .agents/office-memory.toml` before every AWARENESS.md rewrite. It archives the current file verbatim to `awareness/history/AWARENESS-YYYY-MM-DD.md` (same-day reruns add `-HHMM`), then deletes copies older than the 7-day window and the oldest copies beyond 10 files. |
+| `status` | Run `python3 "$SKILL_DIR/scripts/office_memory.py" check-config --config .agents/office-memory.toml`; it reports canonical outputs, the awareness history count, and daily count/latest without reading source or daily bodies. |
 | `daily` | With an explicit focus, read the existing same-day record plus selected evidence, then create or wholly revise `YYYY-MM-DD.md` only when meaningful project content exists. |
-| `awareness` | Select source IDs and relevant date records, pass `--focus project` or `--focus <exact-scope>` plus explicit materials, then update only AWARENESS.md. |
+| `awareness` | Run `rotate --apply` first, then select source IDs and relevant date records, pass `--focus project` or `--focus <exact-scope>` plus explicit materials, and update only AWARENESS.md. |
 | `memory` | Promote only verified, scoped, sourced durable items into MEMORY.md; do not delete supporting date records. |
-| `validate` | Run `python3 "$SKILL_DIR/scripts/office_memory.py" validate --config .agents/office-memory.toml`; it validates canonical outputs and every date record. |
+| `validate` | Run `python3 "$SKILL_DIR/scripts/office_memory.py" validate --config .agents/office-memory.toml`; it validates canonical outputs, every date record, and the awareness history window (filename pattern, retention, count, per-file size). |
 
 ## Daily memory
 
@@ -98,6 +99,20 @@ was decided on that date; Awareness synthesizes what is currently true or needs
 attention; long-term Memory preserves only stable, reusable conclusions. Merge
 the same fact from multiple clients into one date item with combined source
 references instead of repeating Awareness prose or client-specific entries.
+
+## Awareness rotation
+
+- Before every AWARENESS.md rewrite, run the helper `rotate --apply`. It copies
+  the current AWARENESS.md verbatim to `awareness/history/AWARENESS-YYYY-MM-DD.md`
+  beside it (same-day reruns add `-HHMM`) and keeps a 7-day rolling window of at
+  most 10 copies, each within 16 KiB.
+- History is a rollback and diff-check safety net only. After rewriting, compare
+  the new AWARENESS.md against the archived copy to confirm no `Needs attention`
+  item was dropped by accident. Never use history copies as factual input for
+  the rewrite; facts come from date records, MEMORY.md, and selected evidence.
+- Rotation copies are the only sanctioned extra artifacts beside the canonical
+  outputs. The no-retention rule for date records is unchanged: they are never
+  deleted or archived, and rotation applies to AWARENESS.md only.
 
 ## Required Markdown
 

@@ -10,13 +10,16 @@ import re
 import tempfile
 import tomllib
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any, Iterable
 
 SOURCE_ID = re.compile(r"^[a-z][a-z0-9-]{0,63}$")
 KEY = re.compile(r"^[a-z][a-z0-9.-]{0,79}$")
 DAILY_FILE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.md$")
+AWARENESS_HISTORY_FILE = re.compile(r"^AWARENESS-(\d{4}-\d{2}-\d{2})(?:-\d{4})?\.md$")
+AWARENESS_HISTORY_RETENTION_DAYS = 7
+AWARENESS_HISTORY_MAX_FILES = 10
 SECRET = re.compile(r"(?:-----BEGIN [A-Z ]*PRIVATE KEY-----|\b(?:AKIA|ASIA)[0-9A-Z]{16}\b|\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|hf_[A-Za-z0-9]{20,}|npm_[A-Za-z0-9]{20,}|glpat-[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|sk-[A-Za-z0-9_-]{16,})\b|\bauthorization\s*:\s*bearer\s+[A-Za-z0-9._~+/=-]{8,}|(?<![A-Za-z0-9])(?:password|passwd|secret|token|api[ _-]?key|access[ _-]?key|client[ _-]?secret)\s*[:=]\s*[^\s]{8,})", re.I)
 KINDS = {"fact", "preference", "decision", "runbook", "lesson"}
 AWARENESS_SECTIONS = ("Current understanding", "Relevant changes", "Conflicts and unknowns", "Needs attention", "Memory candidates")
@@ -460,8 +463,79 @@ def memory_errors(text: str, cfg: Config) -> list[str]:
     return errors
 
 
+def awareness_history_directory(cfg: Config) -> Path:
+    return cfg.awareness.parent / "history"
+
+
+def awareness_history_records(cfg: Config) -> tuple[list[Path], list[str]]:
+    records: list[Path] = []
+    errors: list[str] = []
+    directory = awareness_history_directory(cfg)
+    if not directory.exists():
+        return records, errors
+    for path in sorted(directory.iterdir()):
+        if path.name == ".DS_Store":
+            continue
+        if AWARENESS_HISTORY_FILE.fullmatch(path.name) is None:
+            errors.append(f"unexpected awareness history artifact: {path.name}")
+            continue
+        if path.is_symlink() or not path.is_file():
+            errors.append(f"unsafe awareness history path: {path.name}")
+            continue
+        records.append(path)
+    cutoff = date.today() - timedelta(days=AWARENESS_HISTORY_RETENTION_DAYS)
+    if len(records) > AWARENESS_HISTORY_MAX_FILES:
+        errors.append(f"awareness history exceeds {AWARENESS_HISTORY_MAX_FILES} files; rotate out the oldest copies")
+    for path in records:
+        if path.stat().st_size > 16 * 1024:
+            errors.append(f"{path.name}: exceeds 16 KiB for an awareness history copy")
+        if date.fromisoformat(AWARENESS_HISTORY_FILE.fullmatch(path.name).group(1)) < cutoff:
+            errors.append(f"{path.name}: older than the {AWARENESS_HISTORY_RETENTION_DAYS}-day retention window; rotate it out")
+    return records, errors
+
+
+def command_rotate(cfg: Config) -> int:
+    if cfg.awareness.is_symlink() or not cfg.awareness.is_file():
+        raise ContractError("AWARENESS.md is missing or not a regular file; nothing to rotate")
+    directory = awareness_history_directory(cfg)
+    directory.mkdir(parents=True, exist_ok=True)
+    today = date.today()
+    name = f"AWARENESS-{today.isoformat()}.md"
+    if (directory / name).exists():
+        name = f"AWARENESS-{today.isoformat()}-{datetime.now().strftime('%H%M')}.md"
+        if (directory / name).exists():
+            raise ContractError("cannot derive a free awareness history filename for today")
+    target = directory / name
+    target.write_bytes(cfg.awareness.read_bytes())
+    cutoff = today - timedelta(days=AWARENESS_HISTORY_RETENTION_DAYS)
+    history = [
+        path for path in sorted(directory.iterdir())
+        if path.name != ".DS_Store" and AWARENESS_HISTORY_FILE.fullmatch(path.name)
+    ]
+    deleted: list[str] = []
+    for path in history:
+        if date.fromisoformat(AWARENESS_HISTORY_FILE.fullmatch(path.name).group(1)) < cutoff:
+            path.unlink()
+            deleted.append(path.name)
+    remaining = [path for path in history if path.name not in deleted]
+    while len(remaining) > AWARENESS_HISTORY_MAX_FILES:
+        oldest = remaining.pop(0)
+        oldest.unlink()
+        deleted.append(oldest.name)
+    output_json({
+        "rotated": target.relative_to(cfg.root).as_posix(),
+        "bytes": target.stat().st_size,
+        "deleted": deleted,
+        "history_count": len(remaining),
+        "retention_days": AWARENESS_HISTORY_RETENTION_DAYS,
+        "max_files": AWARENESS_HISTORY_MAX_FILES,
+    })
+    return 0
+
+
 def command_check(cfg: Config) -> int:
     daily, invalid = daily_records(cfg)
+    history, history_invalid = awareness_history_records(cfg)
     output_json({
         "valid": True,
         "project_id": cfg.project_id,
@@ -470,6 +544,7 @@ def command_check(cfg: Config) -> int:
             "awareness": {"path": cfg.awareness.relative_to(cfg.root).as_posix(), "exists": cfg.awareness.is_file()},
             "memory": {"path": cfg.memory.relative_to(cfg.root).as_posix(), "exists": cfg.memory.is_file()},
             "daily": {"directory": cfg.memory.parent.relative_to(cfg.root).as_posix(), "count": len(daily), "latest": daily[-1].stem if daily else None, "invalid": len(invalid)},
+            "awareness_history": {"directory": awareness_history_directory(cfg).relative_to(cfg.root).as_posix(), "count": len(history), "latest": history[-1].name if history else None, "invalid": len(history_invalid)},
         },
     })
     return 0
@@ -511,6 +586,8 @@ def command_validate(cfg: Config) -> int:
         errors.append("MEMORY.md exceeds 64 KiB; compress it without splitting files")
     else:
         errors.extend(memory_errors(text, cfg))
+    history, history_errors = awareness_history_records(cfg)
+    errors.extend(history_errors)
     daily, daily_path_errors = daily_records(cfg)
     errors.extend(daily_path_errors)
     for path in daily:
@@ -525,17 +602,17 @@ def command_validate(cfg: Config) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate two canonical office-memory results and AI-curated daily records.")
-    parser.add_argument("command", choices=("check-config", "snapshot", "validate", "init"))
+    parser.add_argument("command", choices=("check-config", "snapshot", "validate", "init", "rotate"))
     parser.add_argument("--config", required=True, help="Path to office-memory.toml.")
     parser.add_argument("--source", action="append", default=[], help="Configured source id; repeatable.")
     parser.add_argument("--material", action="append", default=[], help="Explicit project-relative material path; repeatable.")
     parser.add_argument("--focus", help="project or an exact configured scope when materials are supplied.")
-    parser.add_argument("--apply", action="store_true", help="Required for init writes; other commands never write.")
+    parser.add_argument("--apply", action="store_true", help="Required for init and rotate writes; other commands never write.")
     args = parser.parse_args()
     try:
         cfg = load_config(args.config)
-        if args.apply and args.command != "init":
-            raise ContractError("--apply is valid only for init")
+        if args.apply and args.command not in {"init", "rotate"}:
+            raise ContractError("--apply is valid only for init and rotate")
         if args.command != "snapshot" and (args.source or args.material or args.focus is not None):
             raise ContractError("--source, --material, and --focus are valid only for snapshot")
         if args.command == "check-config":
@@ -547,6 +624,10 @@ def main() -> int:
             return 0
         if args.command == "init":
             return command_init(cfg, args.apply)
+        if args.command == "rotate":
+            if not args.apply:
+                raise ContractError("rotate writes require --apply")
+            return command_rotate(cfg)
         return command_validate(cfg)
     except (ContractError, OSError, UnicodeError) as error:
         parser.error(str(error))

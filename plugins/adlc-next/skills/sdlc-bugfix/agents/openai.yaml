@@ -1,0 +1,5 @@
+interface:
+  display_name: "SDLC Bug Fix"
+  short_description: "Reproduce, diagnose, fix, and guard a defect."
+policy:
+  allow_implicit_invocation: false

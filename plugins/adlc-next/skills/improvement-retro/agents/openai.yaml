@@ -1,0 +1,5 @@
+interface:
+  display_name: "Improvement Retro"
+  short_description: "Turn recurring friction into small, placed fixes."
+policy:
+  allow_implicit_invocation: false

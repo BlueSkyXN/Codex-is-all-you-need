@@ -28,8 +28,8 @@ Authorization, task-file, and reporting rules are in
 
 | Change | Approach |
 |---|---|
-| New or changed behavior with a stable automated check | Test first: write a check that fails for the right reason, make it pass, refactor, then take the next behavior |
-| Bug fix | Establish a reproduction or diagnostic signal first, find the root cause, fix it, then re-run the signal and nearby regressions. If it cannot be reproduced, record the evidence you have and what remains uncertain; do not substitute an unrelated failing test |
+| New or changed behavior with a stable automated check | [The test-first method](../../sdlc-test-first/references/test-first.md) |
+| Bug fix | [The bug-fix method](../../sdlc-bugfix/references/bugfix.md) |
 | Behavior-preserving refactor | Existing tests, plus focused additions where coverage is thin |
 | Configuration, generated content, or documentation | Validate with the tool that consumes it: parser, generator, build, or link check |
 | Exploratory experiment | State the question and how the result will be judged before running it |

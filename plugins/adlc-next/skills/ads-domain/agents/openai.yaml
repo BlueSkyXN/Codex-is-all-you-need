@@ -1,0 +1,5 @@
+interface:
+  display_name: "ADS Domain"
+  short_description: "Make business terms, rules, and ownership explicit."
+policy:
+  allow_implicit_invocation: false

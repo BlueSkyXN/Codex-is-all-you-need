@@ -182,8 +182,9 @@ See [plugins/visual-brainstorming/README.md](plugins/visual-brainstorming/README
 for its runtime boundary and sparse-marketplace upgrade instructions.
 
 ADLC Next is a separate plugin for delegating one software task and having it
-carried through investigation, implementation, review, and rework. Its skills
-run only on explicit invocation, such as `$adlc-next:sdlc-solve`:
+carried through investigation, implementation, review, and rework, with
+design, work-item, and method-improvement skills around it. Its skills run
+only on explicit invocation, such as `$adlc-next:sdlc-solve`:
 
 ```bash
 codex plugin add adlc-next@codex-is-all-you-need

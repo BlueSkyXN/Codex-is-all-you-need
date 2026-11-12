@@ -1,0 +1,5 @@
+interface:
+  display_name: "Tasks Wrap-Up"
+  short_description: "Review a batch of work and set up the next."
+policy:
+  allow_implicit_invocation: false

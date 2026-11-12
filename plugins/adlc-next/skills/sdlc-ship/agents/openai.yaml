@@ -1,0 +1,5 @@
+interface:
+  display_name: "SDLC Ship"
+  short_description: "Take a verified change to its delivery point."
+policy:
+  allow_implicit_invocation: false

@@ -44,7 +44,7 @@
     },
     {
       "name": "adlc-next",
-      "description": "Explicit-only skills for handing a software task to an agent and having it carried through investigation, implementation, review, and rework.",
+      "description": "Explicit-only ADLC skills: carry a delegated software task through to its delivery point, with design, work-item, and method-improvement skills around it.",
       "source": "./plugins/adlc-next",
       "category": "productivity"
     }

@@ -1,7 +1,7 @@
 {
   "name": "adlc-next",
   "version": "0.1.0",
-  "description": "Explicit-only skills for handing a software task to an agent and having it carried through investigation, implementation, review, and rework to the requested delivery point.",
+  "description": "Explicit-only ADLC skills: carry a delegated software task through to its delivery point, with design, work-item, and method-improvement skills around it.",
   "author": {
     "name": "BlueSkyXN",
     "url": "https://github.com/BlueSkyXN"

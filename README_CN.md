@@ -175,8 +175,9 @@ codex plugin add visual-brainstorming@codex-is-all-you-need
 运行边界和 sparse marketplace 升级说明见
 [plugins/visual-brainstorming/README.md](plugins/visual-brainstorming/README.md)。
 
-ADLC Next 是另一个独立插件：把一件软件任务交给 agent，由它完成调查、实施、检查和返工。
-其中的 skill 只在显式调用时运行，例如 `$adlc-next:sdlc-solve`：
+ADLC Next 是另一个独立插件：把一件软件任务交给 agent，由它完成调查、实施、检查和返工，
+并配有设计、工作项管理和工作方法改进类 skill。其中的 skill 只在显式调用时运行，例如
+`$adlc-next:sdlc-solve`：
 
 ```bash
 codex plugin add adlc-next@codex-is-all-you-need

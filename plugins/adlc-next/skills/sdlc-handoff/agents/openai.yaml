@@ -1,0 +1,5 @@
+interface:
+  display_name: "SDLC Handoff"
+  short_description: "Make an in-progress task resumable by someone else."
+policy:
+  allow_implicit_invocation: false

@@ -41,6 +41,12 @@
       "description": "Manual V1 Lite method for AI-curated daily, current, and durable project memory.",
       "source": "./plugins/office-memory",
       "category": "productivity"
+    },
+    {
+      "name": "adlc-next",
+      "description": "Explicit-only skills for handing a software task to an agent and having it carried through investigation, implementation, review, and rework.",
+      "source": "./plugins/adlc-next",
+      "category": "productivity"
     }
   ]
 }

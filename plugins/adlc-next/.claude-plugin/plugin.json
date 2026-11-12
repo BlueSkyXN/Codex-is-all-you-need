@@ -1,0 +1,18 @@
+{
+  "name": "adlc-next",
+  "version": "0.1.0",
+  "description": "Explicit-only skills for handing a software task to an agent and having it carried through investigation, implementation, review, and rework to the requested delivery point.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/adlc-next",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "skills",
+    "adlc",
+    "sdlc",
+    "software-delivery"
+  ]
+}

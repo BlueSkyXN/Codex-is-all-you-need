@@ -1,0 +1,5 @@
+interface:
+  display_name: "SDLC Solve"
+  short_description: "Own a delegated software task through to delivery."
+policy:
+  allow_implicit_invocation: false

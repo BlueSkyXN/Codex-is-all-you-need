@@ -1,9 +1,10 @@
 ---
 name: sdlc-requirements-workflow
 description: Use only when the user explicitly invokes this skill to establish a coordinated requirements baseline spanning business, user, and product inputs.
+disable-model-invocation: true
 metadata:
-  version: "1.1"
-  updated: "2026-07-26"
+  version: "1.2"
+  updated: "2026-11-13"
 ---
 
 # Requirements Workflow

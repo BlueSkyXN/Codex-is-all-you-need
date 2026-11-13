@@ -55,14 +55,14 @@ the user's task differs.
 - Invocation: keep a skill model-invoked only when the user's natural-language
   request already authorizes the bounded result and the skill does not add
   governance scope, persistent state, interrogation, or multi-artifact
-  coordination. Control-plane workflows must set
-  `policy.allow_implicit_invocation: false` in `agents/openai.yaml`; the surface
-  checker enforces the Codex policy. Do not set
-  `disable-model-invocation: true` in this shared package: current Codex plugin
-  ingestion rejects that Claude extension. Claude therefore has no equivalent
-  hard per-skill gate in this shared package: descriptions must narrowly bound
-  discovery, while recommend-only bodies constrain behavior after selection
-  rather than preventing selection.
+  coordination. Control-plane workflows must set both
+  `policy.allow_implicit_invocation: false` in `agents/openai.yaml` for Codex
+  and `disable-model-invocation: true` in `SKILL.md` for Claude Code; Codex
+  ignores the Claude field. The surface checker requires both sets to equal
+  the declared explicit-control set. Validators that accept only Agent Skills
+  specification fields reject `disable-model-invocation`, for example Codex
+  `skill-creator`'s `quick_validate.py` and single-skill uploads to claude.ai
+  or the Skills API; distribute these skills through the plugin.
 - Authorization: explicit invocation is not transitive. A user must invoke
   each control-plane skill with its exact `$codex-next:<skill-name>` command;
   approval of a recommendation is not invocation. When a router, manager, or
@@ -107,7 +107,7 @@ the user's task differs.
 
 - `python3 scripts/check_codex_next_surface.py` (from the repo root) - hard gate
   for catalog/plugin content parity, manifest version parity, Agent Skills spec
-  frontmatter, Codex invocation policy, and reference resolution.
+  frontmatter, invocation policy on both hosts, and reference resolution.
 - `python3 scripts/check_skill_metadata.py check --base-ref origin/main` - hard
   gate for independent skill metadata and version transitions.
 - `python3 ~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/codex-next` - plugin manifest/package validation; requires the local system validator path.

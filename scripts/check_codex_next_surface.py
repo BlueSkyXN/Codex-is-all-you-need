@@ -550,6 +550,7 @@ def run_check(
     do_not_use_when_sections = 0
     openai_sidecars = 0
     codex_explicit_skills: set[str] = set()
+    claude_explicit_skills: set[str] = set()
     skill_names: list[str] = []
 
     for skill_dir in skill_dirs:
@@ -580,17 +581,12 @@ def run_check(
         if isinstance(disable, bool):
             if disable:
                 claude_user_invoked += 1
+                claude_explicit_skills.add(skill_dir.name)
             else:
                 claude_model_invoked += 1
         else:
             errors.append(f"{skill_file}: disable-model-invocation must be true or false")
 
-        if disable is True:
-            errors.append(
-                f"{skill_file}: Codex plugin ingestion requires "
-                "disable-model-invocation to be false or omitted; use "
-                "agents/openai.yaml for Codex invocation policy"
-            )
         has_openai_sidecar, allow_implicit = inspect_openai_sidecar(
             skill_dir, errors=errors
         )
@@ -656,6 +652,23 @@ def run_check(
             "to false: "
             + ", ".join(unenforced_explicit_skills)
         )
+    unexpected_claude_explicit_skills = sorted(
+        claude_explicit_skills - expected_explicit_skills
+    )
+    unenforced_claude_explicit_skills = sorted(
+        (expected_explicit_skills & plugin_skill_set) - claude_explicit_skills
+    )
+    if unexpected_claude_explicit_skills:
+        errors.append(
+            "plugin skills disable Claude Code model invocation without "
+            "classification: "
+            + ", ".join(unexpected_claude_explicit_skills)
+        )
+    if unenforced_claude_explicit_skills:
+        errors.append(
+            "explicit control skills must set disable-model-invocation to true: "
+            + ", ".join(unenforced_claude_explicit_skills)
+        )
     plugin_only_skills = sorted(plugin_skill_set - catalog_skill_set)
     unexpected_plugin_only = [
         name for name in plugin_only_skills if name not in PLUGIN_ONLY_SKILLS
@@ -707,6 +720,11 @@ def run_check(
         "missing_explicit_control_skills": missing_explicit_skills,
         "unexpected_explicit_skills": unexpected_explicit_skills,
         "unenforced_explicit_control_skills": unenforced_explicit_skills,
+        "claude_explicit_skills": sorted(claude_explicit_skills),
+        "unexpected_claude_explicit_skills": unexpected_claude_explicit_skills,
+        "unenforced_claude_explicit_control_skills": (
+            unenforced_claude_explicit_skills
+        ),
         "claude_frontmatter_model_invoked": claude_model_invoked,
         "claude_frontmatter_user_invoked": claude_user_invoked,
         "claude_invocation_basis": (

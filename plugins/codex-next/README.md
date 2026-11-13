@@ -39,20 +39,22 @@ synthesis.
 
 Clear tasks do not need to pass through a router. Bounded skills remain
 available through natural-language matching when the user already requested
-their result. In Codex, control-plane skills that introduce interrogation,
-persistent state, SDLC governance, readiness gates, or multi-artifact
-coordination are explicit-only and must be selected with `$skill` syntax.
+their result. Control-plane skills that introduce interrogation, persistent
+state, SDLC governance, readiness gates, or multi-artifact coordination are
+explicit-only: select them with `$codex-next:<skill-name>` in Codex or
+`/codex-next:<skill-name>` in Claude Code.
 
 `core-router` remains visible as the plugin entrypoint for discovery questions,
 but it only recommends a path. It does not call another skill, create files, or
 start an SDLC workflow.
 
-Codex enforces explicit-only control workflows through each skill's
-`agents/openai.yaml`. The shared `SKILL.md` files intentionally omit Claude's
-`disable-model-invocation: true` extension because current Codex plugin
-ingestion rejects it. Claude therefore has no equivalent hard per-skill gate in
-this shared package: narrowed descriptions reduce automatic selection, while
-recommend-only workflow bodies constrain behavior only after selection.
+Both hosts keep the explicit-only control workflows out of model selection:
+each skill's `agents/openai.yaml` sets `allow_implicit_invocation: false` for
+Codex, and its `SKILL.md` sets `disable-model-invocation: true` for Claude
+Code. Codex ignores the Claude field. Validators that accept only Agent Skills
+specification fields reject it, for example Codex `skill-creator`'s
+`quick_validate.py` and single-skill uploads to claude.ai or the Skills API,
+so use these skills through the plugin.
 
 Explicit invocation is not transitive. A router, manager, or bounded workflow
 may recommend an exact `$codex-next:<skill-name>` command, but it must stop and

@@ -1,9 +1,10 @@
 ---
 name: core-grilling
 description: Use only when the user explicitly invokes this skill to stress-test an existing plan or design through one load-bearing question at a time.
+disable-model-invocation: true
 metadata:
-  version: "1.0"
-  updated: "2026-07-26"
+  version: "1.1"
+  updated: "2026-11-13"
 ---
 
 # Grilling

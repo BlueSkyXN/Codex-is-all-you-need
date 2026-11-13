@@ -1,9 +1,10 @@
 ---
 name: sdlc-readiness-review
 description: Use only when the user explicitly invokes this skill to make a readiness-gate judgment on SDLC materials, specs, handoffs, issues, or direct-dev requests.
+disable-model-invocation: true
 metadata:
-  version: "1.0"
-  updated: "2026-07-26"
+  version: "1.1"
+  updated: "2026-11-13"
 ---
 
 # SDLC Readiness Review

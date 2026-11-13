@@ -61,6 +61,12 @@ may recommend an exact `$codex-next:<skill-name>` command, but it must stop and
 wait for the user to invoke that control workflow. Approval of a recommendation
 does not invoke another skill.
 
+Since Codex Next 0.6.0, AGENTS.md hierarchy design is distributed through the
+standalone [AGENTS.md Builder plugin](../agents-md-builder/README.md).
+Install `agents-md-builder@codex-is-all-you-need` and replace the former
+`$codex-next:core-codex-agents-md-builder` invocation with
+`$agents-md-builder:agents-md-builder` (use `/` in Claude Code).
+
 ## What It Does Not Include
 
 - Custom agent TOML files from `.codex/agents`.

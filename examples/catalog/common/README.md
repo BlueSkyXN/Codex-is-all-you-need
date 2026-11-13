@@ -2,7 +2,7 @@
 
 [中文](README_CN.md) | English
 
-Shared agents and skills for planning, coordination, research of local docs, file organization, quality review, context handoff, and Codex project instruction design. These roles are domain-neutral and can be combined with `dev`, `data`, `office`, or `research` presets.
+Shared agents and skills for planning, coordination, research of local docs, file organization, quality review, and context handoff. These roles are domain-neutral and can be combined with `dev`, `data`, `office`, or `research` presets.
 
 ## Contents
 
@@ -15,7 +15,6 @@ agents/
   common_quality_reviewer.toml
   common_task_planner.toml
 skills/
-  core-codex-agents-md-builder/
   core-explore-unknowns/
   core-goal-run/
   core-grilling/
@@ -33,7 +32,6 @@ skills/
 
 ## Skills
 
-- `core-codex-agents-md-builder`: design, audit, or restructure repository `AGENTS.md` files for the Codex loading model.
 - `core-explore-unknowns`: map knowns and unknowns before implementation when a request is ambiguous, underspecified, or unfamiliar.
 - `core-goal-run`: execute, resume, and hand off work from a local goal or plan file using `goal-tasks.md` for status and `goal-log.md` for evidence and notes.
 - `core-grilling`: interrogate a plan or design one question at a time until assumptions, tradeoffs, and edge cases are explicit.
@@ -42,3 +40,6 @@ skills/
 ## Maintenance Notes
 
 Keep this group broadly reusable. Do not add domain-specific implementation details here if they belong in `dev`, `data`, `office`, or `research`. Follow the publication boundary in `../PUBLIC-SUBSET.md` and the catalog rules in `../AGENTS.md`.
+
+AGENTS.md hierarchy design is distributed separately through
+[AGENTS.md Builder](../../../plugins/agents-md-builder/README.md).

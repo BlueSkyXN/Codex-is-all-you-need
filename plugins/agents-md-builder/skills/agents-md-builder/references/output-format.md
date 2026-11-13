@@ -1,6 +1,6 @@
 # 探索清单、自检、最终汇报格式
 
-本文件覆盖 Step 1（探索）和 Step 5（自检与汇报）需要的所有详细 checklist。
+本文件覆盖 Step 1（探索）和 Step 6（自检与汇报）需要的所有详细 checklist。
 
 ---
 
@@ -25,9 +25,18 @@
 
 **已有文档**
 - `README` / `README.md` / `CONTRIBUTING.md` / `docs/`
-- 已有 `AGENTS.md` / `AGENTS.override.md`（任意层级）
 - Architecture / RFC / ADR 文档
+
+**已有指令文件**（任意层级）
+- `AGENTS.md` / `.claude/AGENTS.md` / `AGENTS.override.md`
+- `CLAUDE.md` / `.claude/CLAUDE.md` / `CLAUDE.local.md` / `.claude/rules/`
+- 其他客户端的规则文件，如 `.cursor/rules/`、`.github/copilot-instructions.md`、`GEMINI.md`
+- 仓库根以上各级目录里的上述指令文件：按客户端设置判断加载，区分用户全局文件、项目指令与阻断 AGENTS.md 直接加载的文件
 - 如果目标目录已有 `AGENTS.override.md`，暂停并让用户决定 override 策略；不要继续写会被同目录 override 屏蔽的普通 `AGENTS.md`
+
+**客户端线索**
+- `.codex/`、`.claude/`、`.cursor/` 等配置目录
+- README / CONTRIBUTING 里提到的 Agent 工具
 
 **命令源**
 - `package.json` 的 `scripts` 字段
@@ -87,9 +96,31 @@ cat pyproject.toml 2>/dev/null
 cat go.mod 2>/dev/null
 cat Cargo.toml 2>/dev/null
 
-# 已有 AGENTS.md
-find . -name 'AGENTS.md' -not -path '*/node_modules/*'
-find . -name 'AGENTS.override.md' -not -path '*/node_modules/*'
+# 已有指令文件
+find . \( -name 'AGENTS.md' -o -name 'AGENTS.override.md' -o -name 'CLAUDE.md' -o -name 'CLAUDE.local.md' \) \
+  -not -path '*/node_modules/*'
+find . -path '*/.claude/rules/*' -not -path '*/node_modules/*'
+
+# 仓库根以上的指令文件；非 Git 工作区从当前目录向上查
+python3 - <<'PY'
+from pathlib import Path
+import subprocess
+
+probe = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"],
+    capture_output=True, text=True, check=False,
+)
+start = Path(probe.stdout.strip()) if probe.returncode == 0 else Path.cwd()
+names = (
+    "AGENTS.md", ".claude/AGENTS.md", "AGENTS.override.md",
+    "CLAUDE.md", ".claude/CLAUDE.md", "CLAUDE.local.md",
+)
+for parent in start.parents:
+    for name in names:
+        path = parent / name
+        if path.is_file():
+            print(path)
+PY
 
 # Git 状态（只读）
 git status
@@ -111,13 +142,13 @@ git log --oneline -10
 
 ---
 
-## 2. 自检清单（Step 5 用）
+## 2. 自检清单（Step 6 用）
 
-写完所有 AGENTS.md 后，逐项确认：
+写完所有指令文件后，逐项确认：
 
 ### 文件层面
 
-- [ ] 只有 AGENTS.md 文件被改（`git status` / `git diff` 确认）
+- [ ] 只改了 Step 2 策略里列出的指令文件（`git status` / `git diff` 确认）
 - [ ] 未执行 `git add` / `git commit` / `git reset` / `git checkout` / `git clean` / `git stash`
 - [ ] 没创建 `AGENTS.override.md`（除非用户明确同意）
 - [ ] 未在存在同目录 `AGENTS.override.md` 的位置写入会被屏蔽的普通 `AGENTS.md`
@@ -126,7 +157,7 @@ git log --oneline -10
 ### 根 AGENTS.md 内容
 
 - [ ] 包含仓库 Purpose
-- [ ] 包含 Codex startup behavior 说明
+- [ ] 包含 Agent startup behavior 说明（所用客户端各自怎么加载）
 - [ ] 包含 Directory map，有 Local AGENTS.md 列和 Read when 列
 - [ ] 包含 On-demand cat protocol
 - [ ] 关键命令复述（install/build/test/lint/typecheck/format/codegen/migration 中实际存在的）
@@ -140,6 +171,14 @@ git log --oneline -10
 - [ ] 没有空段落（标题下没内容就删整段）
 - [ ] 高风险目录有 Do not 和 Required before changes
 - [ ] Generated / 只读目录卡片足够短（< 0.5 KiB）
+
+### 客户端加载
+
+- [ ] 加载对照表里每个客户端从根启动读到的文件，与仓库实际文件一致
+- [ ] 共享规则能被所需客户端读取；专属规则只留在对应客户端入口。检查 override、上级文件、个人文件和实际 Project instructions 设置
+- [ ] 两个客户端都要看到的内容没有放在 `@path` 导入里
+- [ ] Claude 入口（如有）按其所在目录导入实际存在的 AGENTS.md；检查 `.claude/CLAUDE.md` 的相对路径，没有复述共享规则
+- [ ] 仓库内没有 CLAUDE.md 时，也已检查上级阻断与会话兼容性；导入根文件后，子目录卡片仍有可执行的读取路径
 
 ### 命令真实性
 
@@ -171,6 +210,16 @@ git log --oneline -10
 简述本仓库 Root router / Domain card / Guardrail card 的使用方式。例如：
 
 > 根 AGENTS.md 作为 router 提供目录地图和命令索引；services/payments/、packages/ui/ 各有 Domain card；infra/terraform/、migrations/ 各有 Guardrail card；apps/* 和 docs/ 不创建本地卡片（无独立规则）。
+
+### 客户端加载对照
+
+| 客户端 | 从根启动时读到 | 按需读到 | 读不到 / 需注意 |
+|---|---|---|---|
+| Codex | 根 AGENTS.md；从子目录启动时还包含路径链上的卡片 | 按根路由读取其他子目录卡片 | 默认 Git 项目边界之外的上级 AGENTS.md |
+| Claude Code（直接启用 AGENTS.md） | 根及上级目录的 AGENTS.md | 读取子目录文件时相应的 AGENTS.md | 不读取 AGENTS.override.md；先检查阻断文件与设置 |
+| Claude Code（CLAUDE.md 导入） | 实际加载的 CLAUDE.md 系列文件及其导入 | 依实际入口和根路由读取卡片 | 导入根文件不自动导入其他卡片 |
+
+表格是填写提示，按实际加载模式保留对应行，并核对常用子目录启动时的结果。运行时复核：Claude Code 用 `/context all` 检查启动时的 Memory files，用 `/memory` 定位 AGENTS.md；子目录按需加载要通过读取该目录文件后观察 Loaded 提示。Codex 新开会话后，查 `$CODEX_HOME/sessions`（默认 `~/.codex/sessions`）中对应会话注入的 `# AGENTS.md instructions` 段。
 
 ### 新增或更新文件
 
@@ -219,12 +268,12 @@ git log --oneline -10
 
 ### Git diff 摘要
 
-- 只修改了以下 AGENTS.md：
+- 只修改了以下指令文件：
   - `AGENTS.md`（新建 / 更新）
   - `services/payments/AGENTS.md`（新建）
   - `infra/terraform/AGENTS.md`（新建）
 - 确认未执行 `git add` / `git commit` / `git reset` / `git checkout` / `git clean` / `git stash`
-- 如果不小心改了非 AGENTS.md 文件，**必须**在此处明确指出并说明原因
+- 如果不小心改了策略之外的文件，**必须**在此处明确指出并说明原因
 
 ---
 

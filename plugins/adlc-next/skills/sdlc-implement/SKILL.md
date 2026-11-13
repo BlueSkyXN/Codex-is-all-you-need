@@ -3,7 +3,7 @@ name: sdlc-implement
 description: "Explicit-only ADLC implementer. Use only when the user invokes $adlc-next:sdlc-implement or /adlc-next:sdlc-implement with an already clear task description, spec, handoff, or task file, to implement it with self-checks and fixes. Not for framing an open problem, analysis-only requests, or work that was not delegated through this command."
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Implement
@@ -29,7 +29,8 @@ Activation lasts until the implementation is done or the user redirects.
   build. When a task file is given, its current requirements are the spec.
 - When the material and the code still leave what to build unclear, ask for
   the missing parts in one batch. When the user actually wants an open problem
-  solved end to end, say that `$adlc-next:sdlc-solve` covers that, and stop.
+  solved end to end, name the `sdlc-solve` command in the current host's form
+  and stop.
 
 ## Workflow
 
@@ -37,9 +38,8 @@ Activation lasts until the implementation is done or the user redirects.
    [the implementation method](references/implement.md).
 2. Implement following the method, in small verified steps.
 3. Run the method's self-check and fix every failure your change caused.
-4. Take the result to the delivery point the request asks for, within the
-   existing authorization. When none is stated, stop at "local change
-   verified".
+4. Take the result to the delivery point chosen as the conventions describe,
+   within the existing authorization.
 5. Update the task file when one exists, then report as the conventions
    describe.
 

@@ -3,7 +3,7 @@ name: sdlc-clarify
 description: "Explicit-only ADLC clarifier. Use only when the user invokes $adlc-next:sdlc-clarify or /adlc-next:sdlc-clarify to pin down the goal, scope, constraints, acceptance, or delivery point of a software request before work starts. Produces a clarified brief and does not implement. Not for work that was not delegated through this command."
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Clarify
@@ -44,5 +44,5 @@ an owner.
 
 - Clarification only: no implementation, and no design beyond what the
   questions need.
-- When the brief is ready, name `$adlc-next:sdlc-solve` or
-  `$adlc-next:sdlc-implement` as the next command and stop.
+- When the brief is ready, name the next command, `sdlc-solve` or
+  `sdlc-implement`, in the current host's form, and stop.

@@ -3,7 +3,7 @@ name: tasks-wrap-up
 description: "Explicit-only ADLC batch wrap-up. Use only when the user invokes $adlc-next:tasks-wrap-up or /adlc-next:tasks-wrap-up to review a batch of work items or tasks against evidence: what finished, what is blocked, what was learned, what to adjust, and what the next batch should be. Not for work that was not delegated through this command."
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Wrap-Up
@@ -38,8 +38,7 @@ location where the work items live.
 5. Turn follow-ups from task files and reviews into new items in the
    work-item format.
 6. Note repeated friction, such as repeated investigation, rework, or
-   unnecessary interruptions, as candidates for
-   `$adlc-next:improvement-retro`.
+   unnecessary interruptions, as candidates for `improvement-retro`.
 7. Update the item statuses at their location and write the wrap-up.
 
 ## Output and completion
@@ -50,6 +49,6 @@ proposed next batch, and the method-improvement candidates.
 
 ## Boundaries
 
-- Wrap-up does not start the next batch. To start an item, name
-  `$adlc-next:sdlc-solve` with it and stop.
+- Wrap-up does not start the next batch. To start an item, name the
+  `sdlc-solve` command with it, in the current host's form, and stop.
 - Writing to an external tracker follows the conventions' authorization rule.

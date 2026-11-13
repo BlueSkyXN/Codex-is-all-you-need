@@ -3,7 +3,7 @@ name: ads-requirements
 description: "Explicit-only ADLC requirements. Use only when the user invokes $adlc-next:ads-requirements or /adlc-next:ads-requirements to settle the problem, users, desired outcome, scope, constraints, and observable success conditions of a product or system change before design. Not for work that was not delegated through this command."
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Requirements
@@ -42,6 +42,6 @@ rule says, with a status of draft, confirmed, or superseded.
 
 - Requirements state needs, not designs; no implementation.
 - Scope, priority, and success conditions are the user's to confirm.
-- When the requirements are ready, name `$adlc-next:ads-architecture`,
-  `$adlc-next:ads-spec`, or `$adlc-next:sdlc-solve` as the next command and
-  stop.
+- When the requirements are ready, name the next command,
+  `ads-architecture`, `ads-spec`, or `sdlc-solve`, in the current host's form,
+  and stop.

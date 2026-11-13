@@ -3,7 +3,7 @@ name: ads-architecture
 description: "Explicit-only ADLC architecture. Use only when the user invokes $adlc-next:ads-architecture or /adlc-next:ads-architecture to decide module structure, dependencies, interfaces, data ownership, or technical choices for a change, sized to its impact and recorded as a decision. Not for work that was not delegated through this command."
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Architecture
@@ -42,5 +42,5 @@ decisions are recorded where the conventions' design-record rule says.
 - Design only; no implementation.
 - Choices that change compatibility, cost, external commitments, or a
   confirmed goal go to the user with options and a recommendation.
-- When the decision is ready for implementation, name `$adlc-next:ads-spec`
-  or `$adlc-next:sdlc-solve` as the next command and stop.
+- When the decision is ready for implementation, name the next command,
+  `ads-spec` or `sdlc-solve`, in the current host's form, and stop.

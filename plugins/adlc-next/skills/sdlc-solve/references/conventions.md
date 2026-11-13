@@ -20,8 +20,9 @@ Code.
   methods. It never loads another skill's `SKILL.md`, and reading a method
   does not widen scope or authorization.
 - A standalone skill whose result calls for a different kind of work, such as
-  implementation after a design, names the exact command for that work and
-  stops. Approving the recommendation is not an invocation.
+  implementation after a design, names the exact command for that work in the
+  current host's form and stops; when the host is unclear, it gives both
+  forms. Approving the recommendation is not an invocation.
 
 ## Project settings
 

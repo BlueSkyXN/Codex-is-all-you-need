@@ -3,7 +3,7 @@ name: tasks-intake
 description: "Explicit-only ADLC work intake. Use only when the user invokes $adlc-next:tasks-intake or /adlc-next:tasks-intake to turn ideas, defects, review findings, feedback, or task follow-ups into deduplicated work items with outcomes, done conditions, dependencies, and a proposed order. Not for work that was not delegated through this command."
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Intake
@@ -46,8 +46,8 @@ were written.
 
 ## Boundaries
 
-- Intake arranges work and does not start it. To work on an item, name
-  `$adlc-next:sdlc-solve` with that item and stop.
+- Intake arranges work and does not start it. To work on an item, name the
+  `sdlc-solve` command with that item, in the current host's form, and stop.
 - Steps inside one task stay in that task's file; intake handles the
   relationships between tasks.
 - Business priority is the user's. Without stated priorities, propose an order

@@ -3,7 +3,7 @@ name: ads-spec
 description: "Explicit-only ADLC spec writer. Use only when the user invokes $adlc-next:ads-spec or /adlc-next:ads-spec to turn confirmed goals and design decisions into observable behaviors, edge and failure cases, and completion criteria with a verification method for each. Not for work that was not delegated through this command."
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Spec
@@ -45,5 +45,5 @@ behavior; its location is recorded.
   itself the requirement.
 - Gaps or conflicts in the confirmed requirements go to the user; do not fill
   them with new scope.
-- When the spec is ready, name `$adlc-next:sdlc-implement` or
-  `$adlc-next:sdlc-solve` as the next command and stop.
+- When the spec is ready, name the next command, `sdlc-implement` or
+  `sdlc-solve`, in the current host's form, and stop.

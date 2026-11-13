@@ -1,0 +1,5 @@
+interface:
+  display_name: "SDLC Review"
+  short_description: "Review work against its current requirements."
+policy:
+  allow_implicit_invocation: false

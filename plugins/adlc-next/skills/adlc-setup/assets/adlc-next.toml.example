@@ -1,0 +1,29 @@
+# ADLC Next personal project settings.
+# Place at <main worktree>/local/adlc/adlc-next.toml and keep it out of Git;
+# linked worktrees of the same repository read this one copy.
+# Defaults the whole team should share belong in the project instructions.
+# Every key is optional; an omitted key uses the default shown here.
+# Paths stay inside the repository: task_root and design_docs_dir are relative
+# to the worktree where the task runs, work_items_file to the main worktree.
+
+version = "0.1"
+
+# Parent directory for task folders: <task_root>/<YYYYMMDD>-<topic>/TASK.md
+task_root = "local"
+
+# Delivery point used when a request does not state one:
+# "local", "commit", "pr", "merge", "release", or "verified".
+default_delivery_point = "local"
+
+# Where tasks-intake and tasks-wrap-up keep work items:
+# "file" uses work_items_file; "github-issues" uses the repository's issues.
+tracker = "file"
+work_items_file = "local/adlc/WORK-ITEMS.md"
+
+# Where lasting design records go: requirements, decisions, domain notes, specs.
+# Empty means: follow the project's existing locations, otherwise ask once.
+design_docs_dir = ""
+
+# Language for task files, work items, and design records.
+# Empty means: the language the user works in.
+language = ""

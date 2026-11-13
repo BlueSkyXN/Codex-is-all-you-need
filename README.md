@@ -64,6 +64,7 @@ docs/
 
 plugins/
   codex-next/                      # installable skills plugin
+  adlc-next/                       # delegated software task plugin
   visual-brainstorming/            # opt-in local visual comparison plugin
 
 examples/
@@ -179,6 +180,19 @@ codex plugin add visual-brainstorming@codex-is-all-you-need
 
 See [plugins/visual-brainstorming/README.md](plugins/visual-brainstorming/README.md)
 for its runtime boundary and sparse-marketplace upgrade instructions.
+
+ADLC Next is a separate plugin for delegating one software task and having it
+carried through investigation, implementation, review, and rework, with
+design, work-item, and method-improvement skills around it. Its core skill
+starts when you hand a task over or invoke `$adlc-next:sdlc-solve`; most other
+skills run only on their command:
+
+```bash
+codex plugin add adlc-next@codex-is-all-you-need
+```
+
+See [plugins/adlc-next/README.md](plugins/adlc-next/README.md) for its skills,
+task file, and invocation boundary.
 
 If you are moving an existing V1 machine from suite-based runtime entrypoints
 to Codex Next, see [V1 To V2 Migration](docs/v1/suite-to-plugin-migration.md).

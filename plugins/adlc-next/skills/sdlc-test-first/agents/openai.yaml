@@ -1,0 +1,5 @@
+interface:
+  display_name: "SDLC Test First"
+  short_description: "Drive behavior changes with red-green-refactor."
+policy:
+  allow_implicit_invocation: false

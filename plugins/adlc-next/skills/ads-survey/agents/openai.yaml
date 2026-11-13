@@ -1,0 +1,5 @@
+interface:
+  display_name: "ADS Survey"
+  short_description: "Map how an existing project works, with sources."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,5 @@
+interface:
+  display_name: "ADS Architecture"
+  short_description: "Decide structure, interfaces, and technical choices."
+policy:
+  allow_implicit_invocation: false

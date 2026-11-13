@@ -1,0 +1,5 @@
+interface:
+  display_name: "ADS Requirements"
+  short_description: "Settle the problem and success conditions."
+policy:
+  allow_implicit_invocation: false

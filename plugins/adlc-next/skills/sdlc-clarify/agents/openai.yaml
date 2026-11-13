@@ -1,0 +1,5 @@
+interface:
+  display_name: "SDLC Clarify"
+  short_description: "Pin down goal, scope, and acceptance before work."
+policy:
+  allow_implicit_invocation: false

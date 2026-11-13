@@ -41,6 +41,12 @@
       "description": "Manual V1 Lite method for AI-curated daily, current, and durable project memory.",
       "source": "./plugins/office-memory",
       "category": "productivity"
+    },
+    {
+      "name": "adlc-next",
+      "description": "ADLC skills that carry a delegated software task through to its delivery point, with design, work-item, and method-improvement skills around it.",
+      "source": "./plugins/adlc-next",
+      "category": "productivity"
     }
   ]
 }

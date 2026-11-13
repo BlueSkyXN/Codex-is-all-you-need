@@ -1,0 +1,18 @@
+{
+  "name": "adlc-next",
+  "version": "0.1.0",
+  "description": "ADLC skills that carry a delegated software task through to its delivery point, with design, work-item, and method-improvement skills around it.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/adlc-next",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "skills",
+    "adlc",
+    "sdlc",
+    "software-delivery"
+  ]
+}

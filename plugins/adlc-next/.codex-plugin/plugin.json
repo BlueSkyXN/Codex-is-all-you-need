@@ -1,0 +1,38 @@
+{
+  "name": "adlc-next",
+  "version": "0.1.0",
+  "description": "ADLC skills that carry a delegated software task through to its delivery point, with design, work-item, and method-improvement skills around it.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/adlc-next",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "codex",
+    "skills",
+    "adlc",
+    "sdlc",
+    "software-delivery"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "ADLC Next",
+    "shortDescription": "Delegate a software task once and get it carried through.",
+    "longDescription": "ADLC Next packages skills in four groups. SDLC skills own a delegated task from investigation to the requested delivery point (solve, implement, review, clarify, handoff, test-first, bugfix, ship); ADS skills settle requirements, architecture, domain rules, and specs; tasks skills turn inputs into ordered work items and wrap up batches; improvement skills turn recurring friction into placed fixes and evaluate skills and prompts. A shared task file keeps paused and handed-off work resumable.",
+    "developerName": "BlueSkyXN",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills",
+      "Workflow"
+    ],
+    "defaultPrompt": [
+      "Use $adlc-next:sdlc-solve to fix this bug and verify the result.",
+      "Use $adlc-next:sdlc-review to review the current branch against its task.",
+      "Use $adlc-next:adlc-router to find which ADLC skill fits this request."
+    ],
+    "brandColor": "#4F46E5",
+    "websiteURL": "https://github.com/BlueSkyXN/Codex-is-all-you-need"
+  }
+}

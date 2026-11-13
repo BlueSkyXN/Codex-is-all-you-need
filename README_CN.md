@@ -61,6 +61,7 @@ docs/
 
 plugins/
   codex-next/                      # 可安装的 skills 插件
+  adlc-next/                       # 软件任务委托插件
   visual-brainstorming/            # 显式 opt-in 的本地视觉比较插件
 
 examples/
@@ -173,6 +174,17 @@ codex plugin add visual-brainstorming@codex-is-all-you-need
 
 运行边界和 sparse marketplace 升级说明见
 [plugins/visual-brainstorming/README.md](plugins/visual-brainstorming/README.md)。
+
+ADLC Next 是另一个独立插件：把一件软件任务交给 agent，由它完成调查、实施、检查和返工，
+并配有设计、工作项管理和工作方法改进类 skill。核心 skill 在你明确交出任务或输入
+`$adlc-next:sdlc-solve` 时启动，其余大多数 skill 只在输入命令时运行：
+
+```bash
+codex plugin add adlc-next@codex-is-all-you-need
+```
+
+skill 列表、任务文件和调用边界见
+[plugins/adlc-next/README.md](plugins/adlc-next/README.md)。
 
 如果你要把已有 V1 机器从 suite-based runtime entrypoints 迁移到 Codex Next，见
 [V1 To V2 Migration](docs/v1/suite-to-plugin-migration.md)。

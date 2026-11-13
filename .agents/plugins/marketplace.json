@@ -116,6 +116,24 @@
       },
       "category": "Productivity",
       "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/office-memory"
+    },
+    {
+      "name": "adlc-next",
+      "description": "ADLC skills that carry a delegated software task through to its delivery point, with design, work-item, and method-improvement skills around it.",
+      "author": {
+        "name": "BlueSkyXN",
+        "url": "https://github.com/BlueSkyXN"
+      },
+      "source": {
+        "source": "local",
+        "path": "./plugins/adlc-next"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity",
+      "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/adlc-next"
     }
   ]
 }

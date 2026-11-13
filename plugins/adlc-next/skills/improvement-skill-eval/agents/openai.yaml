@@ -1,0 +1,5 @@
+interface:
+  display_name: "Improvement Skill Eval"
+  short_description: "Test a skill's triggers and outcomes with cases."
+policy:
+  allow_implicit_invocation: false

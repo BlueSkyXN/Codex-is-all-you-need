@@ -1,0 +1,5 @@
+interface:
+  display_name: "ADS Spec"
+  short_description: "Write observable behaviors and completion criteria."
+policy:
+  allow_implicit_invocation: false

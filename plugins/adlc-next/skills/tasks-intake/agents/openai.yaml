@@ -1,0 +1,5 @@
+interface:
+  display_name: "Tasks Intake"
+  short_description: "Turn inputs into ordered, verifiable work items."
+policy:
+  allow_implicit_invocation: false

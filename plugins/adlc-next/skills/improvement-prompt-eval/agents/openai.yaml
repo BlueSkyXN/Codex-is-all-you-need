@@ -1,0 +1,5 @@
+interface:
+  display_name: "Improvement Prompt Eval"
+  short_description: "Compare prompts and instruction files by effect."
+policy:
+  allow_implicit_invocation: false

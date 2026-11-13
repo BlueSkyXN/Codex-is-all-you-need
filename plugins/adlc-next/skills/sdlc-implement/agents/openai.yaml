@@ -1,0 +1,5 @@
+interface:
+  display_name: "SDLC Implement"
+  short_description: "Implement a clear spec with self-checks and fixes."
+policy:
+  allow_implicit_invocation: false

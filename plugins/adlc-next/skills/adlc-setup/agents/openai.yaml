@@ -1,0 +1,5 @@
+interface:
+  display_name: "ADLC Setup"
+  short_description: "Configure ADLC Next defaults for this project."
+policy:
+  allow_implicit_invocation: false

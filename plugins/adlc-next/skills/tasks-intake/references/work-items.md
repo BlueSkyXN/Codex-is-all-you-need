@@ -11,7 +11,10 @@ tracker entry should carry.
    repository's issues; `tracker = "file"` uses `work_items_file`.
 3. Otherwise `local/adlc/WORK-ITEMS.md`.
 
-Do not start a second, competing list next to an existing one. Writing to an
+The work-items file belongs to the repository: in a linked worktree, use the
+main worktree's copy, and resolve `work_items_file` against the main
+worktree, as the conventions describe. Do not start a second, competing list
+next to an existing one. Writing to an
 external tracker follows the authorization rule in
 [the shared conventions](../../sdlc-solve/references/conventions.md).
 

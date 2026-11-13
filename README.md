@@ -64,7 +64,7 @@ docs/
 
 plugins/
   codex-next/                      # installable skills plugin
-  adlc-next/                       # explicit-only delegated software task plugin
+  adlc-next/                       # delegated software task plugin
   visual-brainstorming/            # opt-in local visual comparison plugin
 
 examples/
@@ -183,8 +183,9 @@ for its runtime boundary and sparse-marketplace upgrade instructions.
 
 ADLC Next is a separate plugin for delegating one software task and having it
 carried through investigation, implementation, review, and rework, with
-design, work-item, and method-improvement skills around it. Its skills run
-only on explicit invocation, such as `$adlc-next:sdlc-solve`:
+design, work-item, and method-improvement skills around it. Its core skill
+starts when you hand a task over or invoke `$adlc-next:sdlc-solve`; most other
+skills run only on their command:
 
 ```bash
 codex plugin add adlc-next@codex-is-all-you-need

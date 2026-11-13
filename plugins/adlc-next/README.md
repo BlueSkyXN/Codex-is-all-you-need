@@ -6,7 +6,8 @@ implements, checks, and reworks until the result reaches the delivery point
 you asked for, or until a decision only you can make comes up. Around that
 core, the plugin provides design, work-item, and method-improvement skills.
 
-Every skill is explicit-only, and the package adds no scheduler, hooks,
+`sdlc-solve` and `adlc-router` also start from a plain request; the other 18
+skills run only on their command. The package adds no scheduler, hooks,
 background services, or scripts: it is skills, shared methods, and two
 templates.
 
@@ -20,13 +21,17 @@ $adlc-next:sdlc-solve        # Codex
 /adlc-next:sdlc-solve        # Claude Code
 ```
 
-Everyday questions and small edits keep the host's normal behavior. For most
-tasks, `sdlc-solve` is the only command you need: once invoked, it reads the
-other skills' methods itself (survey, clarification, design, test-first,
-bug-fix, review, shipping, handoff) and keeps going. Invoke another skill when
-you want only that kind of result, for example a review without fixes or a
-design without implementation. `adlc-router` recommends one skill when you are
-unsure, then stops.
+You can also start `sdlc-solve` by handing a task over in plain words, for
+example "see it through and verify it" or "take it all the way to a PR", or by
+naming it. Questions, analysis, small edits, and work you direct step by step
+stay with the host as usual.
+
+For most tasks, `sdlc-solve` is the only skill you need: once started, it
+reads the other skills' methods itself (survey, clarification, design,
+test-first, bug-fix, review, shipping, handoff) and keeps going. Invoke
+another skill when you want only that kind of result, for example a review
+without fixes or a design without implementation. `adlc-router` answers when
+you ask which ADLC skill fits, then stops.
 
 ## Skills
 
@@ -81,14 +86,22 @@ flat.
 
 ## Invocation boundary
 
-Both hosts keep these skills out of model selection. Each skill's
-`agents/openai.yaml` sets `allow_implicit_invocation: false` for Codex, and
-each `SKILL.md` sets `disable-model-invocation: true` for Claude Code; Codex
-ignores the Claude field. A skill therefore runs only from its command, and
-its description stays out of the model's skill list. In Claude Code, a
-scheduled task or `/loop` passes these commands to the model as plain text
-instead of running them. Each skill body also stops when it was loaded
-without an explicit invocation.
+Two skills are visible to the model on both hosts; the other 18 are not.
+
+- `sdlc-solve` and `adlc-router` set `allow_implicit_invocation: true` for
+  Codex and omit Claude Code's `disable-model-invocation`. The model may start
+  them when a request meets their activation rules: handing a whole task over,
+  or asking which ADLC skill fits. When started this way, `sdlc-solve` says so
+  in one line before it proceeds.
+- The other 18 set `allow_implicit_invocation: false` and
+  `disable-model-invocation: true`. They run only from their commands, and
+  their descriptions stay out of the model's skill list. In Claude Code, a
+  scheduled task or `/loop` passes their commands to the model as plain text
+  instead of running them.
+
+Codex ignores the Claude field. Each skill body checks its own start condition
+and, when it was selected for a request that does not meet it, stops and
+leaves the request to the host without recommending ADLC.
 
 `disable-model-invocation` is not an Agent Skills specification field.
 Validators that accept only specification fields reject it, for example Codex
@@ -101,7 +114,7 @@ Explicit invocation is not transitive. An active skill reads other skills'
 standalone skill whose result calls for a different kind of work names the
 exact command and stops.
 
-Invoking a skill delegates investigation, local edits within scope, and local
+Starting a skill delegates investigation, local edits within scope, and local
 checks. Commits, pushes, PRs, merges, releases, deployments, tracker writes,
 and other external actions still follow the user's request, the project's
 instructions, and the host's settings.
@@ -121,6 +134,10 @@ and language. Like the task file, it stays out of commits; defaults the whole
 team should share belong in the project instructions, which take precedence
 over it. The keys are listed in
 [the settings example](skills/adlc-setup/assets/adlc-next.toml.example).
+
+With Git worktrees, task files stay in the worktree where the task runs. The
+settings file and the work-items file live in the main worktree, and every
+linked worktree uses that copy; the host may ask for permission to reach it.
 
 ## Package layout
 
@@ -169,7 +186,7 @@ Maintenance rules:
   two manifests stays identical.
 - These skills are plugin-only; they have no `examples/catalog/` mirror.
 - `tests/test_adlc_next.py` checks the package contract in CI: skill set,
-  frontmatter, explicit-only sidecars, reference resolution, manifests,
+  frontmatter, invocation policy on both hosts, reference resolution, manifests,
   marketplace entries, and this index.
 
 ## Relation to Codex Next
@@ -215,9 +232,10 @@ git diff --check -- plugins/adlc-next
 ## Status
 
 Version `0.1.0` is the first public state. Behavior on Codex and Claude Code
-has not yet been exercised with representative tasks; explicit invocation on
-each host, cross-skill reference reading, and resume quality are the first
-things to check in real use, for example with `improvement-skill-eval`.
+has not yet been exercised with representative tasks; which requests start
+`sdlc-solve` on each host, cross-skill reference reading, and resume quality
+are the first things to check in real use, for example with
+`improvement-skill-eval`.
 
 ## License
 

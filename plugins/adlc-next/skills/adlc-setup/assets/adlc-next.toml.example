@@ -1,8 +1,10 @@
 # ADLC Next personal project settings.
-# Place at <project root>/local/adlc/adlc-next.toml and keep it out of Git.
+# Place at <main worktree>/local/adlc/adlc-next.toml and keep it out of Git;
+# linked worktrees of the same repository read this one copy.
 # Defaults the whole team should share belong in the project instructions.
 # Every key is optional; an omitted key uses the default shown here.
-# Paths are relative to the project root and must stay inside it.
+# Paths stay inside the repository: task_root and design_docs_dir are relative
+# to the worktree where the task runs, work_items_file to the main worktree.
 
 version = "0.1"
 

@@ -53,6 +53,8 @@ EXPECTED_SKILLS = frozenset(
         "adlc-setup",
     }
 )
+# Skills the model may start from a matching request; all others are command-only.
+MODEL_INVOCABLE = frozenset({"sdlc-solve", "adlc-router"})
 GROUP_PREFIXES = ("sdlc-", "ads-", "tasks-", "improvement-", "adlc-")
 DELIVERY_POINTS = ("local", "commit", "pr", "merge", "release", "verified")
 JUNK_FILES = frozenset({".DS_Store", "Thumbs.db", "desktop.ini"})
@@ -84,7 +86,6 @@ class AdlcNextSkillSurfaceTest(unittest.TestCase):
             surface.check_spec_frontmatter(skill_file, frontmatter, errors)
             self.assertEqual(errors, [], skill_file)
             self.assertEqual(frontmatter.get("name"), skill_dir.name)
-            self.assertIs(frontmatter.get("disable-model-invocation"), True, skill_file)
             self.assertIn("metadata", frontmatter)
 
             name = skill_dir.name
@@ -97,15 +98,23 @@ class AdlcNextSkillSurfaceTest(unittest.TestCase):
             body_lines = len(text.splitlines())
             self.assertLessEqual(body_lines, surface.SPEC_BODY_LINE_BUDGET, skill_file)
 
-    def test_every_skill_is_explicit_only_in_codex(self) -> None:
+    def test_invocation_policy_matches_on_both_hosts(self) -> None:
+        self.assertLessEqual(MODEL_INVOCABLE, EXPECTED_SKILLS)
         for skill_dir in skill_dirs():
+            model_invocable = skill_dir.name in MODEL_INVOCABLE
             errors: list[str] = []
             has_sidecar, allow_implicit = surface.inspect_openai_sidecar(
                 skill_dir, errors=errors
             )
             self.assertEqual(errors, [], skill_dir)
             self.assertTrue(has_sidecar, skill_dir)
-            self.assertIs(allow_implicit, False, skill_dir)
+            self.assertIs(allow_implicit, model_invocable, skill_dir)
+
+            frontmatter, _, _ = surface.parse_frontmatter(skill_dir / "SKILL.md")
+            if model_invocable:
+                self.assertNotIn("disable-model-invocation", frontmatter, skill_dir)
+            else:
+                self.assertIs(frontmatter.get("disable-model-invocation"), True, skill_dir)
 
     def test_references_resolve_inside_the_package(self) -> None:
         errors: list[str] = []

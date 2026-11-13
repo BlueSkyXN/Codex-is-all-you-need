@@ -1,7 +1,7 @@
 {
   "name": "adlc-next",
   "version": "0.1.0",
-  "description": "Explicit-only ADLC skills: carry a delegated software task through to its delivery point, with design, work-item, and method-improvement skills around it.",
+  "description": "ADLC skills that carry a delegated software task through to its delivery point, with design, work-item, and method-improvement skills around it.",
   "author": {
     "name": "BlueSkyXN",
     "url": "https://github.com/BlueSkyXN"
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "ADLC Next",
     "shortDescription": "Delegate a software task once and get it carried through.",
-    "longDescription": "ADLC Next packages explicit-only skills in four groups. SDLC skills own a delegated task from investigation to the requested delivery point (solve, implement, review, clarify, handoff, test-first, bugfix, ship); ADS skills settle requirements, architecture, domain rules, and specs; tasks skills turn inputs into ordered work items and wrap up batches; improvement skills turn recurring friction into placed fixes and evaluate skills and prompts. A shared task file keeps paused and handed-off work resumable.",
+    "longDescription": "ADLC Next packages skills in four groups. SDLC skills own a delegated task from investigation to the requested delivery point (solve, implement, review, clarify, handoff, test-first, bugfix, ship); ADS skills settle requirements, architecture, domain rules, and specs; tasks skills turn inputs into ordered work items and wrap up batches; improvement skills turn recurring friction into placed fixes and evaluate skills and prompts. A shared task file keeps paused and handed-off work resumable.",
     "developerName": "BlueSkyXN",
     "category": "Productivity",
     "capabilities": [

@@ -2,4 +2,4 @@ interface:
   display_name: "ADLC Router"
   short_description: "Recommend which ADLC Next skill fits, then stop."
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

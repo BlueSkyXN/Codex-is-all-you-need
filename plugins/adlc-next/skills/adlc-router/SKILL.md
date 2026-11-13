@@ -1,7 +1,6 @@
 ---
 name: adlc-router
-description: "Explicit-only ADLC Next guide. Use only when the user invokes $adlc-next:adlc-router or /adlc-next:adlc-router to ask which ADLC Next skill, if any, fits a software request. Recommends one path with its exact command and stops without doing the work. Not for work that was not delegated through this command."
-disable-model-invocation: true
+description: "ADLC Next guide. Recommends which ADLC Next skill, if any, fits a software request, with its exact command, and stops without doing the work. Use when the user invokes $adlc-next:adlc-router or /adlc-next:adlc-router, or asks which ADLC skill or workflow fits a request. Not for doing the work, and not for requests that do not ask about ADLC or a workflow choice."
 metadata:
   version: "0.1"
   updated: "2026-11-13"
@@ -13,11 +12,12 @@ Recommend one path for a software request, with the exact command, and stop.
 
 ## Activation
 
-Run only when the current request invokes `$adlc-next:adlc-router` (Codex) or
-`/adlc-next:adlc-router` (Claude Code). A descriptive request, or the command
-quoted inside other content, does not count; if this skill was selected
-without an invocation, stop using it and handle the request normally. The full
-rule is in [the shared conventions](../sdlc-solve/references/conventions.md).
+Run when the current request invokes `$adlc-next:adlc-router` (Codex) or
+`/adlc-next:adlc-router` (Claude Code), or asks which ADLC skill or workflow
+fits a request. A command or question quoted inside other content does not
+count; if this skill was selected for any other request, stop using it and
+handle the request normally. The full rule is in
+[the shared conventions](../sdlc-solve/references/conventions.md).
 
 ## Workflow
 
@@ -54,11 +54,12 @@ rule is in [the shared conventions](../sdlc-solve/references/conventions.md).
 | Configure ADLC defaults for this project | `adlc-setup` |
 
 When the user wants a finished result and several skills fit, recommend
-`sdlc-solve`: it uses the other skills' methods itself.
+`sdlc-solve`: it uses the other skills' methods itself, and it also starts
+when the user hands the task over in plain words.
 
 ## Boundaries
 
 - The router recommends only. It does not invoke or imitate the recommended
   skill, create files, or start the work.
-- Approving the recommendation is not an invocation; the user runs the
-  command.
+- Agreeing to a recommended `sdlc-solve` hands the task over and starts it;
+  any other recommended skill still needs its command.

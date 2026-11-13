@@ -71,11 +71,13 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
         self.write_skill(
             self.plugin / "skills" / "core-goal-run",
             "core-goal-run",
+            disable_model_invocation=True,
             body="# Goal Run\n",
         )
         self.write_skill(
             self.catalog / "common" / "skills" / "core-goal-run",
             "core-goal-run",
+            disable_model_invocation=True,
             body="# Goal Run\n",
         )
         self.write_openai_sidecar(self.plugin / "skills" / "core-goal-run")
@@ -158,16 +160,19 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
         self.assertEqual(summary["missing_explicit_control_skills"], [])
         self.assertEqual(summary["unexpected_explicit_skills"], [])
         self.assertEqual(summary["unenforced_explicit_control_skills"], [])
-        self.assertEqual(summary["claude_frontmatter_model_invoked"], 3)
-        self.assertEqual(summary["claude_frontmatter_user_invoked"], 0)
+        self.assertEqual(summary["claude_explicit_skills"], ["core-goal-run"])
+        self.assertEqual(summary["unexpected_claude_explicit_skills"], [])
+        self.assertEqual(summary["unenforced_claude_explicit_control_skills"], [])
+        self.assertEqual(summary["claude_frontmatter_model_invoked"], 2)
+        self.assertEqual(summary["claude_frontmatter_user_invoked"], 1)
         self.assertEqual(
             summary["claude_invocation_basis"],
             "packaged_frontmatter_inventory_runtime_unverified",
         )
         # Retained as compatibility aliases; the basis field prevents them
         # from being interpreted as live runtime selection evidence.
-        self.assertEqual(summary["claude_model_invoked"], 3)
-        self.assertEqual(summary["claude_user_invoked"], 0)
+        self.assertEqual(summary["claude_model_invoked"], 2)
+        self.assertEqual(summary["claude_user_invoked"], 1)
         self.assertEqual(summary["openai_sidecars"], 1)
         self.assertEqual(summary["checkbox_markers"], 1)
         self.assertEqual(summary["do_not_sections"], 1)
@@ -231,7 +236,9 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
             )
         )
 
-    def test_claude_true_extension_is_rejected_by_codex_contract(self) -> None:
+    def test_bounded_skill_cannot_become_claude_user_only_without_classification(
+        self,
+    ) -> None:
         for root in (
             self.plugin / "skills" / "alpha-skill",
             self.catalog / "common" / "skills" / "alpha-skill",
@@ -240,10 +247,31 @@ class CheckCodexNextSurfaceTest(unittest.TestCase):
 
         summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
 
+        self.assertEqual(summary["unexpected_claude_explicit_skills"], ["alpha-skill"])
         self.assertTrue(
             any(
-                "Codex plugin ingestion requires disable-model-invocation "
-                "to be false or omitted" in error
+                "plugin skills disable Claude Code model invocation without "
+                "classification: alpha-skill" in error
+                for error in summary["errors"]
+            )
+        )
+
+    def test_control_plane_skill_must_disable_claude_model_invocation(self) -> None:
+        for root in (
+            self.plugin / "skills" / "core-goal-run",
+            self.catalog / "common" / "skills" / "core-goal-run",
+        ):
+            self.write_skill(root, "core-goal-run", body="# Goal Run\n")
+
+        summary = check_codex_next_surface.run_check(self.plugin, self.catalog)
+
+        self.assertEqual(
+            summary["unenforced_claude_explicit_control_skills"], ["core-goal-run"]
+        )
+        self.assertTrue(
+            any(
+                "explicit control skills must set disable-model-invocation to "
+                "true: core-goal-run" in error
                 for error in summary["errors"]
             )
         )

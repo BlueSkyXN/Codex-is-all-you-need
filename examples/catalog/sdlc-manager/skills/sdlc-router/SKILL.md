@@ -1,9 +1,10 @@
 ---
 name: sdlc-router
 description: Use only when the user explicitly invokes this skill to decide whether work needs SDLC/ADS and which minimum materials, if any, are justified.
+disable-model-invocation: true
 metadata:
-  version: "1.0"
-  updated: "2026-07-26"
+  version: "1.1"
+  updated: "2026-11-13"
 ---
 
 # SDLC Router

@@ -1,9 +1,10 @@
 ---
 name: core-goal-run
 description: Use only when the user explicitly invokes this skill to create or resume a persistent file-based goal tracker across sessions.
+disable-model-invocation: true
 metadata:
-  version: "1.1"
-  updated: "2026-07-26"
+  version: "1.2"
+  updated: "2026-11-13"
 ---
 
 # Goal Run

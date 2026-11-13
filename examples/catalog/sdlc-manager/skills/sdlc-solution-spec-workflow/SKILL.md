@@ -1,9 +1,10 @@
 ---
 name: sdlc-solution-spec-workflow
 description: Use only when the user explicitly invokes this skill to coordinate a multi-artifact solution package across HLD, LLD, domain, ADR, NFR, and SPEC slices.
+disable-model-invocation: true
 metadata:
-  version: "1.0"
-  updated: "2026-07-26"
+  version: "1.1"
+  updated: "2026-11-13"
 ---
 
 # Solution Spec Workflow

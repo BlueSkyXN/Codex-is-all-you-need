@@ -1,9 +1,10 @@
 ---
 name: core-skill-eval
 description: Use only when the user explicitly invokes this skill to evaluate a skill with representative cases, isolated runs, independent judging, and evidence-driven edits.
+disable-model-invocation: true
 metadata:
-  version: "1.1"
-  updated: "2026-07-26"
+  version: "1.2"
+  updated: "2026-11-13"
 ---
 
 # Skill Eval

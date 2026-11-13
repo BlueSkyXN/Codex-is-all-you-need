@@ -24,15 +24,17 @@ Key files: `sync_codex_entrypoints.py`, `check_codex_next_surface.py`,
 
 - `check_codex_next_surface.py` is read-only. It enforces the packaged
   `plugins/codex-next` gates: catalog/plugin content parity, manifest version
-  parity, Agent Skills spec frontmatter constraints, Codex invocation policy
-  for explicit control workflows, and parent-path/relative link resolution.
+  parity, Agent Skills spec frontmatter constraints, invocation policy for
+  explicit control workflows on both hosts, and parent-path/relative link
+  resolution.
   Exit code 1 means a hard gate failed.
 - The checker intentionally accepts a strict stdlib-only subset of
   `agents/openai.yaml`: known two-level mappings, exactly two-space child
   indentation, double-quoted interface strings, literal booleans, and no
   duplicate or unknown fields. Unsupported YAML must fail closed. The actual
   `allow_implicit_invocation: false` set must equal the declared explicit-control
-  set, including existence checks for every declared member.
+  set, including existence checks for every declared member, and so must the
+  set of skills whose `SKILL.md` sets `disable-model-invocation: true`.
 - Keep the surface checker focused on deterministic package contracts. Do not
   make it parse arbitrary Skill prose or enforce one Markdown spelling for
   recommend-only behavior. Regression-test known cascade risks in focused

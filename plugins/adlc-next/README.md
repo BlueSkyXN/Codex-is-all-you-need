@@ -58,7 +58,7 @@ flat.
 |---|---|---|
 | `ads-survey` | Find out how the project currently works, with sources | The question is answered or the unknowns are named |
 | `ads-requirements` | Settle the problem and its success conditions | Problem, outcome, scope, constraints, and success conditions are written |
-| `ads-architecture` | Decide structure, dependencies, and interfaces | The decision is sized, reasoned, and recorded |
+| `ads-architecture` | Decide structure, codebase layout, dependencies, and interfaces | The decision is sized, reasoned, and recorded |
 | `ads-domain` | Make business terms, rules, and ownership explicit | Terms are defined, rules have a status, and ownership is assigned |
 | `ads-spec` | Write observable behaviors and completion criteria | Every in-scope requirement maps to verifiable items |
 
@@ -157,7 +157,7 @@ plugins/adlc-next/
     ├── sdlc-ship/             SKILL.md, references/ship.md
     ├── ads-survey/            SKILL.md, references/survey.md
     ├── ads-requirements/      SKILL.md, references/requirements.md
-    ├── ads-architecture/      SKILL.md, references/architecture.md
+    ├── ads-architecture/      SKILL.md, references/architecture.md, references/structure.md
     ├── ads-domain/            SKILL.md, references/domain.md
     ├── ads-spec/              SKILL.md, references/spec.md
     ├── tasks-intake/          SKILL.md, references/work-items.md
@@ -173,8 +173,8 @@ Every skill also has `agents/openai.yaml`.
 
 Maintenance rules:
 
-- Each method has one source file, owned by the skill it is named after; other
-  skills reference it by relative path. `references/conventions.md` is the
+- Each method has one source file, owned by one skill, usually the one it is
+  named after; other skills reference it by relative path. `references/conventions.md` is the
   single source for activation, authorization, delivery points, the task file,
   requirements, and reporting.
 - Cross-skill reuse reads another skill's `references/` or `assets/` only,
@@ -231,11 +231,11 @@ git diff --check -- plugins/adlc-next
 
 ## Status
 
-Version `0.1.0` is the first public state. Behavior on Codex and Claude Code
-has not yet been exercised with representative tasks; which requests start
-`sdlc-solve` on each host, cross-skill reference reading, and resume quality
-are the first things to check in real use, for example with
-`improvement-skill-eval`.
+Behavior on Codex and Claude Code has not yet been exercised with
+representative tasks; which requests start `sdlc-solve` on each host,
+cross-skill reference reading, whether structural changes reach the codebase
+structure method, and resume quality are the first things to check in real
+use, for example with `improvement-skill-eval`.
 
 ## License
 

@@ -33,13 +33,19 @@ not reproduce:
 
 Explain the mechanism: which condition produces the wrong behavior. Fix it at
 the cause, not at the symptom, with the smallest change. Look for the same
-pattern nearby.
+pattern nearby, and for copies of the faulty rule or value elsewhere: a copy
+usually carries the same defect. Copies that must behave the same are part of
+the fix; when merging them is outside the task, record the merge as a
+follow-up.
 
 ## 5. Verify
 
 Re-run the signal and confirm it passes; keep it as a regression test when it
-can be automated. Run the nearby tests. Confirm that the scenario in the
-original report is resolved, not only the reduced case.
+can be automated. Run the nearby tests. When the fix covered several copies,
+check each copy that still stands with its own regression input; after a
+merge, check the shared rule and each entry point whose call path changed.
+Confirm that the scenario in the original report is resolved, not only the
+reduced case.
 
 ## Done
 

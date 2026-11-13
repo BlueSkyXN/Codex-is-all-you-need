@@ -10,7 +10,7 @@
 | 分发 | 自包含单文件；平台调研与仓库资料为可选参考 |
 | 适用对象 | Skill 作者、评审者、AI Agent |
 
-本规范以 [Agent Skills 开放标准](https://agentskills.io/specification) 为格式底座，规定采用本规范时的工程写法。阅读顺序是：先理解 Skill 是什么，再选择类型与结构，最后按格式编写和验收。
+本规范以 [Agent Skills 开放标准](https://agentskills.io/specification) 为格式底座，规定采用本规范时的工程写法。阅读顺序是：先理解 Skill 是什么，再确定分类与结构，最后按格式编写和验收。
 
 | 要回答的问题 | 阅读 |
 |---|---|

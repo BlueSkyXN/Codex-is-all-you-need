@@ -3,7 +3,7 @@ name: sdlc-implement
 description: "Explicit-only ADLC implementer. Use only when the user invokes $adlc-next:sdlc-implement or /adlc-next:sdlc-implement with an already clear task description, spec, handoff, or task file, to implement it with self-checks and fixes. Not for framing an open problem, analysis-only requests, or work that was not delegated through this command."
 disable-model-invocation: true
 metadata:
-  version: "0.1"
+  version: "0.2"
   updated: "2026-11-13"
 ---
 

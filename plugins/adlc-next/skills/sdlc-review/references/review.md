@@ -22,8 +22,19 @@ Spend effort in proportion to risk:
    user's original problem? Passing checks can still miss it, for example a
    cache that makes repeated queries fast while the reported slow first query
    stays slow.
-2. **Design constraints.** Module and dependency boundaries, domain rules and
-   data ownership, interfaces, and compatibility.
+2. **Design constraints.** Module and dependency boundaries, placement of new
+   code, domain rules and data ownership, interfaces, and compatibility. Size
+   what the diff actually does with
+   [the architecture method](../../ads-architecture/references/architecture.md),
+   then:
+   - Local: the checks above are enough.
+   - Bounded or Structural: check the result against its recorded decision;
+     for a structure decision, also run its dependency checks and change
+     scenarios, as
+     [the codebase structure method](../../ads-architecture/references/structure.md)
+     describes. When no reason is recorded, in the task file, a design record,
+     the PR description, or beside the code, report an issue that names the
+     missing decision and what it must record for this change.
 3. **Correctness.** Edge cases, error paths, concurrency, data integrity,
    security, and secrets.
 4. **Evidence.** Were the claimed checks run, do they test the claim, and what

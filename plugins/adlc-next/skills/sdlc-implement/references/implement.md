@@ -21,8 +21,13 @@ Authorization, task-file, and reporting rules are in
 ## Making the change
 
 - Make the smallest sufficient change and follow the existing structure,
-  naming, and style. Add no unrelated refactors, formatting sweeps, or new
-  dependencies; when the task does require one, state why.
+  naming, and style; put new code where code of the same kind already lives.
+  Add no unrelated refactors, formatting sweeps, or new dependencies; when the
+  task does require one, state why.
+- Before creating a top-level directory, a package, a new kind of entry point,
+  or a shared area such as `utils` or `common`, and when the change has to be
+  repeated in several copies of one rule, size the decision with
+  [the architecture method](../../ads-architecture/references/architecture.md).
 - Work in small verified steps ordered by dependency.
 - Choose verification by the kind of change:
 
@@ -30,7 +35,7 @@ Authorization, task-file, and reporting rules are in
 |---|---|
 | New or changed behavior with a stable automated check | [The test-first method](../../sdlc-test-first/references/test-first.md) |
 | Bug fix | [The bug-fix method](../../sdlc-bugfix/references/bugfix.md) |
-| Behavior-preserving refactor | Existing tests, plus focused additions where coverage is thin |
+| Behavior-preserving refactor | Existing tests, plus focused additions where coverage is thin; when code moves between modules or packages, the move steps in [the codebase structure method](../../ads-architecture/references/structure.md#move-code-safely) |
 | Configuration, generated content, or documentation | Validate with the tool that consumes it: parser, generator, build, or link check |
 | Exploratory experiment | State the question and how the result will be judged before running it |
 

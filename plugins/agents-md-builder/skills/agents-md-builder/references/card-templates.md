@@ -18,7 +18,7 @@ SKILL.md 已经讲清"什么时候用哪种"，本文件只讲"怎么写"。
 
 ## Root router 模板（仓库根 AGENTS.md）
 
-**必须创建**。从仓库根目录启动 Codex 时，这是 repo-local 启动上下文中的主项目指令。
+**必须创建**。根文件承载共享规则与启动路由。先按 `loading-model.md` 确认所用客户端能直接加载或导入它，再填写下面的启动行为。
 
 ### 推荐结构
 
@@ -29,13 +29,13 @@ SKILL.md 已经讲清"什么时候用哪种"，本文件只讲"怎么写"。
 
 <一句话说明仓库用途。>
 
-## Codex startup behavior
+## Agent startup behavior
 
-- Codex 通常从仓库根目录启动
-- 本文件是启动期主规则
-- 子目录 AGENTS.md 是按需导航卡片
+- 本文件是启动期主规则；子目录 AGENTS.md 是按需导航卡片
 - 修改有本地 AGENTS.md 的目录前必须先 cat 对应文件
-- 如果从子目录启动，Codex 也可能自动加载路径链上的本地 AGENTS.md；仍以本文件的目录地图作为根启动 workflow 的 router
+- Codex 的项目指令：从仓库根启动时读取本文件；从子目录启动时也会加载路径链上的本地 AGENTS.md（按已核对的项目边界和 override 情况填写）
+- Claude Code：写明本仓库使用直接加载 AGENTS.md 还是 CLAUDE.md 导入；未自动加载的子目录卡片按目录地图读取
+- `CLAUDE.md` 只导入本文件并补充 Claude Code 专属内容（仓库有这个文件时才写这一条）
 
 ## Directory map
 
@@ -253,6 +253,29 @@ Use root validation commands unless a regeneration command is listed there.
 
 ---
 
+## 客户端专属文件模板（如 CLAUDE.md）
+
+**只在** `loading-model.md` 第 4 节确定需要桥接时创建或改写：已有客户端入口、上级文件阻断直接加载，或目标会话不支持直接加载 AGENTS.md。先检查实际设置；`managed-only` 需要用户调整配置。
+
+```md
+@AGENTS.md
+
+## Claude Code only
+
+- <只对 Claude Code 成立的内容，例如某个 hook、skill 或 `.claude/` 下的配置约定>
+```
+
+### 规则
+
+- 首行按导入文件所在位置引用共享原件：根 `CLAUDE.md` 用 `@AGENTS.md`；根 `.claude/CLAUDE.md` 则导入上一级目录的 AGENTS.md。相对路径按目标原件与入口所在目录计算，再加 `@` 前缀。Claude Code 先读导入内容，再读下面的部分
+- 不复述 AGENTS.md 已有的内容
+- 没有 Claude Code 专属内容时删掉 `## Claude Code only` 整段，只留导入行
+- 子目录的 `CLAUDE.md` 用 `@AGENTS.md` 导入同目录原件；`.claude/` 内入口按其所在位置计算相对路径。确认目标存在，不把所有入口都写成同一路径
+- 仅导入根文件时，子目录卡片继续遵循根路由的按需读取协议
+- 导入写在行内代码或代码块里不会展开，`@AGENTS.md` 直接写在正文里
+
+---
+
 ## 三类卡片选哪个：决策快查
 
 | 目录特征 | 选 |
@@ -266,5 +289,6 @@ Use root validation commands unless a regeneration command is listed there.
 | auth / payments / secrets | Guardrail card |
 | 生成代码 / vendor / 第三方 | Guardrail card |
 | 纯组织目录、无规则、无验证 | 不创建 |
+| 已有客户端入口、上级文件阻断，或会话不支持直接加载 AGENTS.md | 按加载对照表设置客户端入口；配置禁用项目指令时先报告限制 |
 
 如果同时满足 Domain card 和 Guardrail card 条件（如 `services/payments/`），优先用 Domain card 结构，但把 guardrail 内容融入 Do not 和 Local invariants。

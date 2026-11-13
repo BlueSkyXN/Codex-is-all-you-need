@@ -2,7 +2,7 @@
 
 [English](README.md) | 中文
 
-这里存放规划、协调、本地文档核对、文件整理、质量复核、上下文交接和 Codex 项目指令设计相关的通用 agents 与 skills。这些角色不绑定具体领域，可与 `dev`、`data`、`office`、`research` 组合使用。
+这里存放规划、协调、本地文档核对、文件整理、质量复核和上下文交接相关的通用 agents 与 skills。这些角色不绑定具体领域，可与 `dev`、`data`、`office`、`research` 组合使用。
 
 ## 内容清单
 
@@ -15,7 +15,6 @@ agents/
   common_quality_reviewer.toml
   common_task_planner.toml
 skills/
-  core-codex-agents-md-builder/
   core-explore-unknowns/
   core-goal-run/
   core-grilling/
@@ -33,7 +32,6 @@ skills/
 
 ## Skills
 
-- `core-codex-agents-md-builder`：按 Codex 加载模型设计、审计或重构仓库的 `AGENTS.md` 文件。
 - `core-explore-unknowns`：在需求含糊、信息不足或领域不熟悉时，先梳理已知和未知，再进入实现。
 - `core-goal-run`：基于本地 goal/plan 文件推进、恢复和交接任务，用 `goal-tasks.md` 记录状态，用 `goal-log.md` 记录证据和过程说明。
 - `core-grilling`：围绕计划或设计逐问追问，把假设、取舍和边界条件问清楚。
@@ -42,3 +40,6 @@ skills/
 ## 维护说明
 
 本分组应保持通用可复用。不要把明显属于 `dev`、`data`、`office` 或 `research` 的领域实现细节放在这里。维护时遵循 `../PUBLIC-SUBSET.md` 的发布边界和 `../AGENTS.md` 的 catalog 规则。
+
+AGENTS.md 分层设计通过独立的
+[AGENTS.md Builder 插件](../../../plugins/agents-md-builder/README.md)分发。

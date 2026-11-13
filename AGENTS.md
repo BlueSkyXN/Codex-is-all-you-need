@@ -204,8 +204,8 @@ filesystem state, state whether it was skipped or run and why.
 - The public catalog currently uses groups `common`, `sdlc-manager`, `dev`,
   `data`, `office`, and `research`. Verify counts from the filesystem before
   reporting them.
-- `examples/catalog/common/skills/core-codex-agents-md-builder/` is the public copy
-  of the AGENTS design workflow. When editing it, keep the skill body and
+- `plugins/agents-md-builder/skills/agents-md-builder/` is the standalone
+  AGENTS design workflow. When editing it, keep the skill body and
   references self-contained and public-safe.
 - Production use should prefer the checked-in Codex Next plugin and marketplace
   path. Local `.codex/agents` and `.codex/skills` symlinks may still appear for

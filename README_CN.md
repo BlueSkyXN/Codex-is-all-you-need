@@ -61,6 +61,7 @@ docs/
 
 plugins/
   codex-next/                      # 可安装的 skills 插件
+  agents-md-builder/               # AGENTS.md 分层设计独立插件
   adlc-next/                       # 软件任务委托插件
   visual-brainstorming/            # 显式 opt-in 的本地视觉比较插件
 
@@ -107,7 +108,7 @@ find examples/catalog -maxdepth 3 \( -path '*/agents/*.toml' -o -path '*/skills/
 
 | Pack | Agents | Skills | 用途 |
 |---|---:|---:|---|
-| `common` | 6 | 5 | 规划、编排、文档核查、质量复核、上下文压缩、文件整理 |
+| `common` | 6 | 4 | 规划、编排、文档核查、质量复核、上下文压缩、文件整理 |
 | `sdlc-manager` | 7 | 21 | 架构先行 SDLC 控制：BRD/URS/PRD、SRS/NFR、HLD/LLD、ADR、领域边界、SPEC、交接 |
 | `dev` | 14 | 21 | 代码阅读、实现、测试、review、API、CLI、前端、Python、安全、性能 |
 | `data` | 5 | 4 | 数据画像、SQL、清洗、pipeline、分析报告 |
@@ -174,6 +175,15 @@ codex plugin add visual-brainstorming@codex-is-all-you-need
 
 运行边界和 sparse marketplace 升级说明见
 [plugins/visual-brainstorming/README.md](plugins/visual-brainstorming/README.md)。
+
+AGENTS.md Builder 是独立插件，用于设计 Codex 和 Claude Code 共用的仓库指令：
+
+```bash
+codex plugin add agents-md-builder@codex-is-all-you-need
+```
+
+安装方式及原 Codex Next skill 的迁移说明见
+[AGENTS.md Builder](plugins/agents-md-builder/README.md)。
 
 ADLC Next 是另一个独立插件：把一件软件任务交给 agent，由它完成调查、实施、检查和返工，
 并配有设计、工作项管理和工作方法改进类 skill。核心 skill 在你明确交出任务或输入

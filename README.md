@@ -64,6 +64,7 @@ docs/
 
 plugins/
   codex-next/                      # installable skills plugin
+  agents-md-builder/               # shared AGENTS.md hierarchy design
   adlc-next/                       # delegated software task plugin
   visual-brainstorming/            # opt-in local visual comparison plugin
 
@@ -110,7 +111,7 @@ Public examples include:
 
 | Pack | Agents | Skills | Use Case |
 |---|---:|---:|---|
-| `common` | 6 | 5 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
+| `common` | 6 | 4 | Planning, orchestration, docs verification, quality review, context summaries, file organization |
 | `sdlc-manager` | 7 | 21 | Architecture-first SDLC control: BRD/URS/PRD, SRS/NFR, HLD/LLD, ADR, domain boundaries, SPEC, handoff |
 | `dev` | 14 | 21 | Code mapping, implementation, tests, reviews, APIs, CLI, frontend, Python, security, performance |
 | `data` | 5 | 4 | Data profiling, SQL, cleaning, pipelines, analysis reports |
@@ -180,6 +181,16 @@ codex plugin add visual-brainstorming@codex-is-all-you-need
 
 See [plugins/visual-brainstorming/README.md](plugins/visual-brainstorming/README.md)
 for its runtime boundary and sparse-marketplace upgrade instructions.
+
+AGENTS.md Builder is a standalone plugin for shared repository instructions in
+Codex and Claude Code:
+
+```bash
+codex plugin add agents-md-builder@codex-is-all-you-need
+```
+
+See [AGENTS.md Builder](plugins/agents-md-builder/README.md) for installation and
+migration from the former Codex Next skill.
 
 ADLC Next is a separate plugin for delegating one software task and having it
 carried through investigation, implementation, review, and rework, with

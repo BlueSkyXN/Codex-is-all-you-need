@@ -17,7 +17,7 @@ Agents:
   research               4
 
 Skills:
-  common                 5
+  common                 4
   sdlc-manager          21
   dev                   21
   data                   4
@@ -25,11 +25,11 @@ Skills:
   research               3
 ```
 
-The included agents and skills are generic workflows for planning, Codex project
-instructions, Architecture-first SDLC management, software development, data
-analysis, office reporting, and research synthesis.
+The included agents and skills are generic workflows for planning,
+Architecture-first SDLC management, software development, data analysis,
+office reporting, and research synthesis.
 
-已包含内容都是通用工作流，覆盖任务规划、Codex 项目指令、架构先行 SDLC 管理、软件开发、数据分析、办公报告和研究综合。
+已包含内容都是通用工作流，覆盖任务规划、架构先行 SDLC 管理、软件开发、数据分析、办公报告和研究综合。
 
 ## Excluded / 已排除
 

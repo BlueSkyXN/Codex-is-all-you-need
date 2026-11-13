@@ -13,6 +13,12 @@
       "category": "productivity"
     },
     {
+      "name": "agents-md-builder",
+      "description": "Design and maintain shared AGENTS.md hierarchies for Codex and Claude Code, including directory routing and client-specific instruction files.",
+      "source": "./plugins/agents-md-builder",
+      "category": "productivity"
+    },
+    {
       "name": "github-publish-zip",
       "description": "Package Git worktree files that would be publishable to GitHub into a local ZIP archive.",
       "source": "./plugins/github-publish-zip",

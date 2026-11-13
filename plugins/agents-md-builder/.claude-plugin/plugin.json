@@ -1,0 +1,19 @@
+{
+  "name": "agents-md-builder",
+  "version": "0.1.0",
+  "description": "Design and maintain shared AGENTS.md hierarchies for Codex and Claude Code, including directory routing and client-specific instruction files.",
+  "author": {
+    "name": "BlueSkyXN",
+    "url": "https://github.com/BlueSkyXN"
+  },
+  "homepage": "https://github.com/BlueSkyXN/Codex-is-all-you-need/tree/main/plugins/agents-md-builder",
+  "repository": "https://github.com/BlueSkyXN/Codex-is-all-you-need",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "agents-md",
+    "codex",
+    "claude-code",
+    "instructions",
+    "repository"
+  ]
+}

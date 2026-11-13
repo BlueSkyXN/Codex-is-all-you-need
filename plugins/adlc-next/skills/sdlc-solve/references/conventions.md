@@ -26,11 +26,15 @@ Code.
 
 ## Project settings
 
-When `.agents/adlc-next.toml` exists at the project root, read it at the start
-of a run. `adlc-setup` creates and maintains it; the keys are described in
-[the settings example](../../adlc-setup/assets/adlc-next.toml.example).
+When `local/adlc/adlc-next.toml` exists at the project root, read it at the
+start of a run. `adlc-setup` creates and maintains it; the keys are described
+in [the settings example](../../adlc-setup/assets/adlc-next.toml.example).
 Precedence: the current request, then project instructions, then this file,
 then the defaults in these conventions.
+
+The file holds one person's defaults and is working state: do not stage or
+commit it. Defaults the whole team should share belong in the project
+instructions.
 
 ## Authorization
 

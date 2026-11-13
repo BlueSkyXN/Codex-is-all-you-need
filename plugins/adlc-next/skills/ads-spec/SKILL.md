@@ -1,6 +1,7 @@
 ---
 name: ads-spec
 description: "Explicit-only ADLC spec writer. Use only when the user invokes $adlc-next:ads-spec or /adlc-next:ads-spec to turn confirmed goals and design decisions into observable behaviors, edge and failure cases, and completion criteria with a verification method for each. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
   updated: "2026-11-13"

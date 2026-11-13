@@ -1,6 +1,7 @@
 ---
 name: ads-architecture
 description: "Explicit-only ADLC architecture. Use only when the user invokes $adlc-next:ads-architecture or /adlc-next:ads-architecture to decide module structure, dependencies, interfaces, data ownership, or technical choices for a change, sized to its impact and recorded as a decision. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
   updated: "2026-11-13"

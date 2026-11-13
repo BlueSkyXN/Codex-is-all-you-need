@@ -1,6 +1,7 @@
 ---
 name: ads-domain
 description: "Explicit-only ADLC domain modeling. Use only when the user invokes $adlc-next:ads-domain or /adlc-next:ads-domain to make business terms, rules, invariants, lifecycles, ownership, and boundaries explicit so code and specs agree with the business. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
   updated: "2026-11-13"

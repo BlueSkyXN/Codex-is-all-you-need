@@ -1,6 +1,7 @@
 ---
 name: sdlc-clarify
 description: "Explicit-only ADLC clarifier. Use only when the user invokes $adlc-next:sdlc-clarify or /adlc-next:sdlc-clarify to pin down the goal, scope, constraints, acceptance, or delivery point of a software request before work starts. Produces a clarified brief and does not implement. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
   updated: "2026-11-13"

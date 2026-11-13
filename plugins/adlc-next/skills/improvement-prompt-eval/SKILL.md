@@ -1,9 +1,10 @@
 ---
 name: improvement-prompt-eval
 description: "Explicit-only ADLC prompt evaluation. Use only when the user invokes $adlc-next:improvement-prompt-eval or /adlc-next:improvement-prompt-eval to compare system prompts, instruction files such as AGENTS.md or CLAUDE.md, handoff prompts, or tool descriptions by their effect on representative tasks. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Prompt Eval

@@ -1,9 +1,10 @@
 ---
 name: improvement-skill-eval
 description: "Explicit-only ADLC skill evaluation. Use only when the user invokes $adlc-next:improvement-skill-eval or /adlc-next:improvement-skill-eval to test whether an agent skill triggers correctly and improves task outcomes, using representative cases written before running, a baseline, and judged results. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Skill Eval

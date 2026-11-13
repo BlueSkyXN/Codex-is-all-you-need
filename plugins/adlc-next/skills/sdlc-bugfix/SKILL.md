@@ -1,9 +1,10 @@
 ---
 name: sdlc-bugfix
 description: "Explicit-only ADLC bug fixer. Use only when the user invokes $adlc-next:sdlc-bugfix or /adlc-next:sdlc-bugfix with a concrete defect or regression to reproduce, diagnose to its root cause, fix, and guard with a regression check. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Bug Fix

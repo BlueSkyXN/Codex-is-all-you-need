@@ -84,7 +84,7 @@ class AdlcNextSkillSurfaceTest(unittest.TestCase):
             surface.check_spec_frontmatter(skill_file, frontmatter, errors)
             self.assertEqual(errors, [], skill_file)
             self.assertEqual(frontmatter.get("name"), skill_dir.name)
-            self.assertNotIn("disable-model-invocation", frontmatter)
+            self.assertIs(frontmatter.get("disable-model-invocation"), True, skill_file)
             self.assertIn("metadata", frontmatter)
 
             name = skill_dir.name
@@ -187,7 +187,7 @@ class AdlcNextPackageTest(unittest.TestCase):
         conventions = CONVENTIONS.read_text(encoding="utf-8")
         for code in DELIVERY_POINTS:
             self.assertIn(f"| `{code}` |", conventions, code)
-        self.assertIn(".agents/adlc-next.toml", conventions)
+        self.assertIn("local/adlc/adlc-next.toml", conventions)
 
 
 if __name__ == "__main__":

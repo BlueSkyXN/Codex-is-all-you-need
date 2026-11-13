@@ -1,15 +1,16 @@
 ---
 name: adlc-setup
-description: "Explicit-only ADLC Next setup. Use only when the user invokes $adlc-next:adlc-setup or /adlc-next:adlc-setup to create or update the project's .agents/adlc-next.toml with defaults for task files, delivery point, work items, design records, and language. Not for work that was not delegated through this command."
+description: "Explicit-only ADLC Next setup. Use only when the user invokes $adlc-next:adlc-setup or /adlc-next:adlc-setup to create or update the project's local/adlc/adlc-next.toml with personal defaults for task files, delivery point, work items, design records, and language. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # ADLC Setup
 
-Create or update `.agents/adlc-next.toml`, the project settings that ADLC
-skills read at the start of a run.
+Create or update `local/adlc/adlc-next.toml`, the personal project settings
+that ADLC skills read at the start of a run.
 
 ## Activation
 
@@ -21,8 +22,8 @@ rule is in [the shared conventions](../sdlc-solve/references/conventions.md).
 
 ## Inputs
 
-The project root, any existing `.agents/adlc-next.toml`, and the preferences
-stated in the request.
+The project root, any existing `local/adlc/adlc-next.toml`, and the
+preferences stated in the request.
 
 ## Workflow
 
@@ -43,13 +44,15 @@ stated in the request.
 ## Output and completion
 
 The final file content; for each non-default value, what it changes and why
-it was chosen; whether `task_root` and `work_items_file` are ignored by Git;
-and whether the settings file itself is tracked.
+it was chosen; and whether the settings file, `task_root`, and
+`work_items_file` are ignored by Git, with the ignore line to add for any that
+is not.
 
 ## Boundaries
 
-- Write only `.agents/adlc-next.toml`. Do not create task folders, move
+- Write only `local/adlc/adlc-next.toml`. Do not create task folders, move
   existing notes, or edit ignore rules; when an ignore rule is needed, show
   the line and leave the edit to the user.
-- Committing the settings file shares the defaults with everyone who uses the
-  repository; leave that decision to the user and say so.
+- The settings file is personal working state: do not stage or commit it.
+  When the user wants a default shared with the team, say that it belongs in
+  the project instructions.

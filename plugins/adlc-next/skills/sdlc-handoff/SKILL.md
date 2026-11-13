@@ -1,9 +1,10 @@
 ---
 name: sdlc-handoff
 description: "Explicit-only ADLC handoff. Use only when the user invokes $adlc-next:sdlc-handoff or /adlc-next:sdlc-handoff to prepare an in-progress software task so another session, agent, or person can continue it without the original conversation. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Handoff

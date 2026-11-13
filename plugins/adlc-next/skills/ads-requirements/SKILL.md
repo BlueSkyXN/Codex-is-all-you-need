@@ -1,6 +1,7 @@
 ---
 name: ads-requirements
 description: "Explicit-only ADLC requirements. Use only when the user invokes $adlc-next:ads-requirements or /adlc-next:ads-requirements to settle the problem, users, desired outcome, scope, constraints, and observable success conditions of a product or system change before design. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
   updated: "2026-11-13"

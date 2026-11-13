@@ -12,7 +12,8 @@ templates.
 
 ## Using it
 
-Invoke a skill with its plugin namespace:
+Invoke a skill with its plugin namespace. In Claude Code, start the message
+with the command:
 
 ```text
 $adlc-next:sdlc-solve        # Codex
@@ -76,17 +77,24 @@ flat.
 | Skill | Use it to | Ends when |
 |---|---|---|
 | `adlc-router` | Get a recommendation for which skill fits | One recommendation with its command is given |
-| `adlc-setup` | Configure project defaults in `.agents/adlc-next.toml` | The settings file is written and checked |
+| `adlc-setup` | Configure personal project defaults in `local/adlc/adlc-next.toml` | The settings file is written and checked |
 
 ## Invocation boundary
 
-Each skill's `agents/openai.yaml` sets `allow_implicit_invocation: false`, so
-Codex selects the skills only on explicit invocation. The shared `SKILL.md`
-files omit Claude's `disable-model-invocation: true`, following the repository
-rule that current Codex plugin ingestion rejects that field. Claude Code
-therefore has no hard per-skill gate here: narrow descriptions reduce
-automatic selection, and each skill body stops when it was not explicitly
-invoked.
+Both hosts keep these skills out of model selection. Each skill's
+`agents/openai.yaml` sets `allow_implicit_invocation: false` for Codex, and
+each `SKILL.md` sets `disable-model-invocation: true` for Claude Code; Codex
+ignores the Claude field. A skill therefore runs only from its command, and
+its description stays out of the model's skill list. In Claude Code, a
+scheduled task or `/loop` passes these commands to the model as plain text
+instead of running them. Each skill body also stops when it was loaded
+without an explicit invocation.
+
+`disable-model-invocation` is not an Agent Skills specification field.
+Validators that accept only specification fields reject it, for example Codex
+`skill-creator`'s `quick_validate.py` and the checks for uploading a single
+skill to claude.ai or the Skills API. Install the skills as this plugin: they
+read each other's files, so they do not work as separate uploads.
 
 Explicit invocation is not transitive. An active skill reads other skills'
 `references/` and `assets/` as methods but never loads their `SKILL.md`. A
@@ -107,9 +115,11 @@ working-notes location, or `<task_root>/<YYYYMMDD>-<topic>/TASK.md` with
 is `in-progress`, `paused`, or `done`, and the file is updated while the work
 proceeds so a new session can resume it.
 
-`adlc-setup` writes optional project defaults to `.agents/adlc-next.toml`: task
-root, default delivery point, work-item location, design-record location, and
-language. The keys are listed in
+`adlc-setup` writes optional personal defaults to `local/adlc/adlc-next.toml`:
+task root, default delivery point, work-item location, design-record location,
+and language. Like the task file, it stays out of commits; defaults the whole
+team should share belong in the project instructions, which take precedence
+over it. The keys are listed in
 [the settings example](skills/adlc-setup/assets/adlc-next.toml.example).
 
 ## Package layout
@@ -205,9 +215,9 @@ git diff --check -- plugins/adlc-next
 ## Status
 
 Version `0.1.0` is the first public state. Behavior on Codex and Claude Code
-has not yet been exercised with representative tasks; trigger behavior,
-cross-skill reference reading, and resume quality are the first things to
-check in real use, for example with `improvement-skill-eval`.
+has not yet been exercised with representative tasks; explicit invocation on
+each host, cross-skill reference reading, and resume quality are the first
+things to check in real use, for example with `improvement-skill-eval`.
 
 ## License
 

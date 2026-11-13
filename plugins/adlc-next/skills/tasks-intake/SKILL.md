@@ -1,6 +1,7 @@
 ---
 name: tasks-intake
 description: "Explicit-only ADLC work intake. Use only when the user invokes $adlc-next:tasks-intake or /adlc-next:tasks-intake to turn ideas, defects, review findings, feedback, or task follow-ups into deduplicated work items with outcomes, done conditions, dependencies, and a proposed order. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
   updated: "2026-11-13"

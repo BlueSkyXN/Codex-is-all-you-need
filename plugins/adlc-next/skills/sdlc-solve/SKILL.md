@@ -1,6 +1,7 @@
 ---
 name: sdlc-solve
 description: "Explicit-only ADLC task owner. Use only when the user invokes $adlc-next:sdlc-solve or /adlc-next:sdlc-solve to hand over a software problem or goal, or to resume such a task, and have it carried through investigation, design, implementation, verification, and rework to the requested delivery point. Not for ordinary questions, analysis-only requests, or work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
   updated: "2026-11-13"

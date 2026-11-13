@@ -1,6 +1,7 @@
 ---
 name: tasks-wrap-up
 description: "Explicit-only ADLC batch wrap-up. Use only when the user invokes $adlc-next:tasks-wrap-up or /adlc-next:tasks-wrap-up to review a batch of work items or tasks against evidence: what finished, what is blocked, what was learned, what to adjust, and what the next batch should be. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
   updated: "2026-11-13"

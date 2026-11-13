@@ -1,9 +1,10 @@
 ---
 name: ads-survey
 description: "Explicit-only ADLC project survey. Use only when the user invokes $adlc-next:ads-survey or /adlc-next:ads-survey to establish, with sources, how an existing project currently works on a question: structure, entry points, commands, existing decisions, constraints, and unknowns. Read-only. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Survey

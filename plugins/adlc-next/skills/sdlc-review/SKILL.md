@@ -1,9 +1,10 @@
 ---
 name: sdlc-review
 description: "Explicit-only ADLC reviewer. Use only when the user invokes $adlc-next:sdlc-review or /adlc-next:sdlc-review to check a change, branch, PR, or design against its current requirements and get findings classified as met, issue, or cannot judge. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Review

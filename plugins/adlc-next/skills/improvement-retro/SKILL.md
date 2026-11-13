@@ -1,9 +1,10 @@
 ---
 name: improvement-retro
 description: "Explicit-only ADLC retrospective. Use only when the user invokes $adlc-next:improvement-retro or /adlc-next:improvement-retro to analyze a finished task, session, PR, or batch for recurring friction and propose, or when asked apply, the smallest changes to docs, rules, skills, tools, or checks that prevent it. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Retro

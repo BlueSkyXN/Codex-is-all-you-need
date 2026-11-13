@@ -1,9 +1,10 @@
 ---
 name: sdlc-ship
 description: "Explicit-only ADLC delivery. Use only when the user invokes $adlc-next:sdlc-ship or /adlc-next:sdlc-ship to take an already verified change to a requested delivery point: commit, PR, merge, release or deployment, or verification in the real environment. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Ship

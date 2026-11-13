@@ -1,5 +1,6 @@
-# ADLC Next project settings.
-# Place at <project root>/.agents/adlc-next.toml.
+# ADLC Next personal project settings.
+# Place at <project root>/local/adlc/adlc-next.toml and keep it out of Git.
+# Defaults the whole team should share belong in the project instructions.
 # Every key is optional; an omitted key uses the default shown here.
 # Paths are relative to the project root and must stay inside it.
 

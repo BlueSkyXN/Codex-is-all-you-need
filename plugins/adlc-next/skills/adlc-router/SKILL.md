@@ -1,9 +1,10 @@
 ---
 name: adlc-router
 description: "Explicit-only ADLC Next guide. Use only when the user invokes $adlc-next:adlc-router or /adlc-next:adlc-router to ask which ADLC Next skill, if any, fits a software request. Recommends one path with its exact command and stops without doing the work. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # ADLC Router

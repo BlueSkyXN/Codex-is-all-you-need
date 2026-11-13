@@ -1,9 +1,10 @@
 ---
 name: sdlc-test-first
 description: "Explicit-only ADLC test-first driver. Use only when the user invokes $adlc-next:sdlc-test-first or /adlc-next:sdlc-test-first to build or change behavior through a red-green-refactor loop with automated tests. Not for work that was not delegated through this command."
+disable-model-invocation: true
 metadata:
   version: "0.1"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 ---
 
 # Test First
